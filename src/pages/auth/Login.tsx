@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { X, Loader2, ArrowRight } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
@@ -6,7 +5,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
-import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSlot,
+} from "@/components/ui/input-otp";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -17,7 +20,7 @@ const Login = () => {
   const [resendDisabled, setResendDisabled] = useState(false);
   const [resendTimer, setResendTimer] = useState(0);
   const { toast } = useToast();
-  const { generateOTP, loginWithOTP, loginWithGoogle } = useAuth();
+  const { generateOTP, loginWithOTP, loginWithGoogle, loading } = useAuth();
   const navigate = useNavigate();
 
   const handleGenerateOtp = async (e: React.FormEvent) => {
@@ -32,13 +35,13 @@ const Login = () => {
     }
 
     setIsGeneratingOtp(true);
-    
+
     try {
       await generateOTP(email);
       setOtpSent(true);
       setResendDisabled(true);
       setResendTimer(30);
-      
+
       // Start resend timer
       const interval = setInterval(() => {
         setResendTimer((prev) => {
@@ -50,7 +53,7 @@ const Login = () => {
           return prev - 1;
         });
       }, 1000);
-      
+
       toast({
         title: "OTP Sent",
         description: "Check your email for the verification code",
@@ -133,8 +136,8 @@ const Login = () => {
               {otpSent ? "Enter verification code" : "Sign in to continue"}
             </h1>
             <p className="text-gray-600">
-              {otpSent 
-                ? `We've sent a code to ${email}` 
+              {otpSent
+                ? `We've sent a code to ${email}`
                 : "Use your email to sign in or create an account"}
             </p>
           </div>
@@ -151,9 +154,9 @@ const Login = () => {
                 />
               </div>
 
-              <Button 
-                type="submit" 
-                className="w-full py-6" 
+              <Button
+                type="submit"
+                className="w-full py-6"
                 disabled={isGeneratingOtp}
               >
                 {isGeneratingOtp ? (
@@ -172,23 +175,30 @@ const Login = () => {
           ) : (
             <form onSubmit={handleVerifyOtp} className="space-y-6">
               <div className="flex justify-center mb-4">
-                <InputOTP
+                {/* <InputOTP
                   maxLength={6}
                   value={otp}
                   onChange={(value) => setOtp(value)}
                   render={({ slots }) => (
                     <InputOTPGroup>
-                      {slots.map((slot, index) => (
+                      {slots?.map((slot, index) => (
                         <InputOTPSlot key={index} {...slot} index={index} />
                       ))}
                     </InputOTPGroup>
                   )}
+                /> */}
+                <Input
+                  type="text"
+                  placeholder="Enter verification code"
+                  value={otp}
+                  onChange={(e) => setOtp(e.target.value)}
+                  required
                 />
               </div>
 
-              <Button 
-                type="submit" 
-                className="w-full py-6" 
+              <Button
+                type="submit"
+                className="w-full py-6"
                 disabled={isVerifyingOtp}
               >
                 {isVerifyingOtp ? (
@@ -209,8 +219,8 @@ const Login = () => {
                   disabled={resendDisabled}
                   className="text-sm"
                 >
-                  {resendDisabled 
-                    ? `Resend code in ${resendTimer}s` 
+                  {resendDisabled
+                    ? `Resend code in ${resendTimer}s`
                     : "Didn't receive code? Resend"}
                 </Button>
               </div>
