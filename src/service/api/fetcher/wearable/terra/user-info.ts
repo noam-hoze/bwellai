@@ -14,6 +14,22 @@ const getWearableGraphDataV3 = ({
   resource: string;
 }) =>
   `wearable/v3/data/graphs?resource=${resource}&from=${startDate}&to=${endDate}`;
+const getWearableDailyRecommendationDataV4 = ({
+  startDate,
+  language,
+  resource,
+}: {
+  startDate: string;
+  language: string;
+  resource: string;
+}) =>
+  `wearable/v4/daily/insight?resource=${resource}&date=${startDate}&language=${language}`;
+
+const getWearableWeeklyRecommendationDataV4 = ({
+  language,
+}: {
+  language: string;
+}) => `wearable/v4/weekly/insight?language=${language}`;
 
 // const getUpdateConnectedDevice = (
 //   userId: string,
@@ -135,4 +151,18 @@ export const getWearableElasticSearchHistoricalDataFetcher = (
   return Client.get(
     getWearableElasticSearchHistoricalData(device, timeZone, type)
   );
+};
+export const getWearableDailyRecommendationDataV4Fetcher = (
+  resource: string,
+  startDate: string,
+  language: string
+) => {
+  return Client.get(
+    getWearableDailyRecommendationDataV4({ resource, startDate, language })
+  );
+};
+export const getWearableWeeklyRecommendationDataV4Fetcher = (
+  language: string
+) => {
+  return Client.get(getWearableWeeklyRecommendationDataV4({ language }));
 };

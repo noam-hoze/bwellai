@@ -4,12 +4,14 @@ import {
   getDeviceAuthURLFetcher,
   getUpdateConnectedDeviceFetcher,
   getUserInfoFetcher,
+  getWearableDailyRecommendationDataV4Fetcher,
   getWearableDataFetcher,
   getWearableDataFetcherV2,
   getWearableElasticSearchDataFetcher,
   getWearableElasticSearchHistoricalDataFetcher,
   getWearableElasticSearchHistoricalDataFetcherV2,
   getWearableGraphDataV3Fetcher,
+  getWearableWeeklyRecommendationDataV4Fetcher,
 } from "../../../api/fetcher/wearable/terra/user-info";
 
 export const useGetUserInfoTerraData = ({ isAuthenticated }) => {
@@ -111,6 +113,51 @@ export const useGetTerraWearableData = (device: string, isEnable: string) => {
   const { data, error, isError, isLoading, isSuccess, refetch } = useQuery({
     queryKey: ["get-wearable-terra-data", device],
     queryFn: () => getWearableDataFetcher(device),
+    enabled: isEnable ? true : false,
+  });
+
+  return { data: data?.data, error, isError, isLoading, isSuccess, refetch };
+};
+
+export const useGetWearableDailyRecommendationDataV4 = ({
+  resource,
+  startDate,
+  language,
+  isEnable,
+}: {
+  resource: string;
+  startDate: string;
+  language: string;
+  isEnable: string;
+}) => {
+  const { data, error, isError, isLoading, isSuccess, refetch } = useQuery({
+    queryKey: [
+      "get-wearable-daily-recommendation-data-v4",
+      resource,
+      startDate,
+      language,
+    ],
+    queryFn: () =>
+      getWearableDailyRecommendationDataV4Fetcher(
+        resource,
+        startDate,
+        language
+      ),
+    enabled: isEnable ? true : false,
+  });
+
+  return { data: data?.data, error, isError, isLoading, isSuccess, refetch };
+};
+export const useGetWearableWeeklyRecommendationDataV4 = ({
+  language,
+  isEnable,
+}: {
+  language: string;
+  isEnable: string;
+}) => {
+  const { data, error, isError, isLoading, isSuccess, refetch } = useQuery({
+    queryKey: ["get-wearable-weekly-recommendation-data-v4", language],
+    queryFn: () => getWearableWeeklyRecommendationDataV4Fetcher(language),
     enabled: isEnable ? true : false,
   });
 
