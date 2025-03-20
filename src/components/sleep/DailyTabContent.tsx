@@ -17,11 +17,13 @@ import {
 interface DailyTabContentProps {
   selectedDate: Date;
   wearableDailyRecommendationData;
+  wearableDailyData;
 }
 
 const DailyTabContent = ({
   selectedDate,
   wearableDailyRecommendationData,
+  wearableDailyData,
 }: DailyTabContentProps) => {
   // Mock data for score cards
   const scoreData = {
@@ -72,17 +74,24 @@ const DailyTabContent = ({
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           <SleepScoreCard
-            score={scoreData.sleepScore}
-            bedtime={scoreData.bedtime}
+            score={wearableDailyData?.average}
+            bedtime={
+              wearableDailyData?.finalDailySpikeSleepDataV4?.bedtime_start?.split(
+                "T"
+              )?.[1]
+            }
             wakeup={scoreData.wakeup}
-            totalSleep={scoreData.totalSleep}
-            wakeupCount={scoreData.wakeupCount}
+            totalSleep={`${(
+              wearableDailyData?.finalDailySpikeSleepDataV4?.total_sleep / 3600
+            ).toFixed(1)}H`}
+            wakeupCount={wearableDailyData?.wakeUpTimes}
+            // wakeupCount={scoreData.wakeupCount}
           />
           <SleepDistributionCard
-            lightSleep={scoreData.lightSleep}
-            deepSleep={scoreData.deepSleep}
-            remSleep={scoreData.remSleep}
-            awake={scoreData.awake}
+            lightSleep={wearableDailyData?.finalDailySpikeSleepDataV4?.light}
+            deepSleep={wearableDailyData?.finalDailySpikeSleepDataV4?.deep}
+            remSleep={wearableDailyData?.finalDailySpikeSleepDataV4?.rem}
+            awake={wearableDailyData?.finalDailySpikeSleepDataV4?.awake}
           />
         </div>
       )}
