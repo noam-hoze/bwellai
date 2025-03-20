@@ -15,6 +15,7 @@ import {
 import { TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   useGetUserInfoTerraData,
+  useGetWearableDailyDataV4,
   useGetWearableDailyRecommendationDataV4,
   useGetWearableWeeklyRecommendationDataV4,
 } from "@/service/hooks/wearable/terra/useGetUserInfo";
@@ -42,6 +43,15 @@ const Sleep = () => {
     startDate: formatDate(selectedDate),
     isEnable: connectedDevicesData?.length > 0 ? connectedDevicesData?.[0] : "",
     language: "english",
+  });
+  const {
+    data: wearableDailyData,
+    isSuccess: wearableDailyIsSuccess,
+    isLoading: wearableDailyIsLoading,
+  } = useGetWearableDailyDataV4({
+    resource: connectedDevicesData?.[0],
+    startDate: formatDate(selectedDate),
+    isEnable: connectedDevicesData?.length > 0 ? connectedDevicesData?.[0] : "",
   });
 
   const {
@@ -117,6 +127,7 @@ const Sleep = () => {
                   wearableDailyRecommendationData={
                     wearableDailyRecommendationData
                   }
+                  wearableDailyData={wearableDailyData}
                 />
               </TabsContent>
 

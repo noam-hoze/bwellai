@@ -24,6 +24,15 @@ const getWearableDailyRecommendationDataV4 = ({
   resource: string;
 }) =>
   `wearable/v4/daily/insight?resource=${resource}&date=${startDate}&language=${language}`;
+const getWearableDailyDataV4 = ({
+  startDate,
+  resource,
+}: {
+  startDate: string;
+  resource: string;
+}) => `wearable/v4/daily?resource=${resource}&date=${startDate}`;
+const getWearableWeeklyDataV4 = ({ resource }: { resource: string }) =>
+  `wearable/v4/weekly?resource=${resource}`;
 
 const getWearableWeeklyRecommendationDataV4 = ({
   language,
@@ -160,6 +169,15 @@ export const getWearableDailyRecommendationDataV4Fetcher = (
   return Client.get(
     getWearableDailyRecommendationDataV4({ resource, startDate, language })
   );
+};
+export const getWearableDailyDataV4Fetcher = (
+  resource: string,
+  startDate: string
+) => {
+  return Client.get(getWearableDailyDataV4({ resource, startDate }));
+};
+export const getWearableWeeklyDataV4Fetcher = (resource: string) => {
+  return Client.get(getWearableWeeklyDataV4({ resource }));
 };
 export const getWearableWeeklyRecommendationDataV4Fetcher = (
   language: string
