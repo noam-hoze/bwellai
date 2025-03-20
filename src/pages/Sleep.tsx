@@ -17,6 +17,7 @@ import {
   useGetUserInfoTerraData,
   useGetWearableDailyDataV4,
   useGetWearableDailyRecommendationDataV4,
+  useGetWearableWeeklyDataV4,
   useGetWearableWeeklyRecommendationDataV4,
 } from "@/service/hooks/wearable/terra/useGetUserInfo";
 
@@ -63,7 +64,16 @@ const Sleep = () => {
     language: "english",
   });
 
-  console.log(wearableWeeklyRecommendationData);
+  const {
+    data: wearableWeeklyData,
+    isSuccess: wearableWeeklyIsSuccess,
+    isLoading: wearableWeeklyIsLoading,
+  } = useGetWearableWeeklyDataV4({
+    resource: connectedDevicesData?.[0],
+    isEnable: connectedDevicesData?.length > 0 ? connectedDevicesData?.[0] : "",
+  });
+
+  console.log(wearableWeeklyData);
 
   const handlePrevious = () => {
     setSelectedDate((prev) => goToPreviousDate(prev, viewType));
@@ -137,6 +147,7 @@ const Sleep = () => {
                   wearableWeeklyRecommendationData={
                     wearableWeeklyRecommendationData
                   }
+                  wearableWeeklyData={wearableWeeklyData}
                 />
               </TabsContent>
 

@@ -82,8 +82,9 @@ const DailyTabContent = ({
             }
             wakeup={scoreData.wakeup}
             totalSleep={`${(
-              wearableDailyData?.finalDailySpikeSleepDataV4?.total_sleep / 3600
-            ).toFixed(1)}H`}
+              (wearableDailyData?.finalDailySpikeSleepDataV4?.total_sleep ||
+                0) / 3600
+            )?.toFixed(1)} H`}
             wakeupCount={wearableDailyData?.wakeUpTimes}
             // wakeupCount={scoreData.wakeupCount}
           />
