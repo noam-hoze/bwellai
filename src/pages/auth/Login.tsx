@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { X, Loader2, ArrowRight } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -10,6 +10,10 @@ import {
   InputOTPGroup,
   InputOTPSlot,
 } from "@/components/ui/input-otp";
+import {
+  useGenerateOTP,
+  useOtpValidation,
+} from "@/service/hooks/authentication/useAuthentication";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -19,28 +23,59 @@ const Login = () => {
   const [otpSent, setOtpSent] = useState(false);
   const [resendDisabled, setResendDisabled] = useState(false);
   const [resendTimer, setResendTimer] = useState(0);
+  const [useAuthRequestId, setUseAuthRequestId] = useState<string | null>(null);
   const { toast } = useToast();
   const { generateOTP, loginWithOTP, loginWithGoogle, loading } = useAuth();
   const navigate = useNavigate();
 
-  const handleGenerateOtp = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!email) {
+  const {
+    data: generateOTPData,
+    // isError: generateOTPIsError,
+    mutate: generateOTPMutate,
+    isPending: generateOTPPending,
+    isSuccess: generateOTPSuccess,
+  } = useGenerateOTP();
+
+  const {
+    data: otpValidationData,
+    error: otpValidationError,
+    mutate: otpValidationMutate,
+    isSuccess: otpValidationSuccess,
+    isPending: otpValidationPending,
+  } = useOtpValidation();
+
+  useEffect(() => {
+    if (otpValidationSuccess) {
       toast({
-        title: "Email required",
-        description: "Please enter your email address",
-        variant: "destructive",
+        title: "Welcome!",
+        description: "You have successfully logged in.",
       });
-      return;
+      console.log("navigating to dashboard");
+
+      localStorage.setItem(
+        "token",
+        otpValidationData?.payload?.token?.accessToken?.token
+      );
+      localStorage.setItem(
+        "refresh_token",
+        otpValidationData?.payload?.token?.refreshToken?.token
+      );
+      localStorage.setItem(
+        "is_Profile_updated",
+        otpValidationData?.payload?.isProfileUpdated
+      );
+
+      navigate("/dashboard");
     }
+  }, [otpValidationSuccess]);
 
-    setIsGeneratingOtp(true);
-
-    try {
-      await generateOTP(email);
+  useEffect(() => {
+    if (generateOTPSuccess && generateOTPData) {
       setOtpSent(true);
       setResendDisabled(true);
       setResendTimer(30);
+
+      setUseAuthRequestId(generateOTPData?.requestId);
 
       // Start resend timer
       const interval = setInterval(() => {
@@ -58,6 +93,25 @@ const Login = () => {
         title: "OTP Sent",
         description: "Check your email for the verification code",
       });
+    }
+  }, [generateOTPSuccess]);
+
+  const handleGenerateOtp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email) {
+      toast({
+        title: "Email required",
+        description: "Please enter your email address",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsGeneratingOtp(true);
+
+    try {
+      // await generateOTP(email);
+      generateOTPMutate({ email: email });
     } catch (error) {
       toast({
         title: "Error",
@@ -82,12 +136,11 @@ const Login = () => {
 
     setIsVerifyingOtp(true);
     try {
-      await loginWithOTP(email, otp);
-      toast({
-        title: "Welcome!",
-        description: "You have successfully logged in.",
+      // await loginWithOTP(email, otp);
+      otpValidationMutate({
+        otp: otp,
+        requestId: useAuthRequestId,
       });
-      navigate("/dashboard");
     } catch (error) {
       toast({
         title: "Error",
