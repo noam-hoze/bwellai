@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { LineChart, BarChart, BrainCircuit, Lightbulb } from "lucide-react";
 import SleepChart from "@/components/sleep/SleepChart";
@@ -7,9 +6,13 @@ import SleepRecommendations from "@/components/sleep/SleepRecommendations";
 
 interface WeeklyTabContentProps {
   selectedDate: Date;
+  wearableWeeklyRecommendationData;
 }
 
-const WeeklyTabContent = ({ selectedDate }: WeeklyTabContentProps) => {
+const WeeklyTabContent = ({
+  selectedDate,
+  wearableWeeklyRecommendationData,
+}: WeeklyTabContentProps) => {
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
@@ -24,7 +27,7 @@ const WeeklyTabContent = ({ selectedDate }: WeeklyTabContentProps) => {
             <SleepSummary date={selectedDate} viewType="week" />
           </CardContent>
         </Card>
-        
+
         <Card className="wellness-card border-l-4 border-l-blue-400">
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center gap-2 text-lg">
@@ -33,11 +36,17 @@ const WeeklyTabContent = ({ selectedDate }: WeeklyTabContentProps) => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <SleepRecommendations date={selectedDate} viewType="week" />
+            <SleepRecommendations
+              date={selectedDate}
+              viewType="week"
+              wearableWeeklyRecommendationData={
+                wearableWeeklyRecommendationData
+              }
+            />
           </CardContent>
         </Card>
       </div>
-      
+
       <Card className="lg:col-span-3 wellness-card border-l-4 border-l-blue-400">
         <CardHeader className="pb-2">
           <CardTitle className="flex items-center gap-2 text-lg">
