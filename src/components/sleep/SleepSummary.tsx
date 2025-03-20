@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Sparkles, Clock, Bed, Moon } from "lucide-react";
@@ -8,9 +7,14 @@ import { useIsMobile } from "@/hooks/use-mobile";
 interface SleepSummaryProps {
   date: Date;
   viewType: "day" | "week" | "month";
+  wearableWeeklyData;
 }
 
-const SleepSummary: React.FC<SleepSummaryProps> = ({ date, viewType }) => {
+const SleepSummary: React.FC<SleepSummaryProps> = ({
+  date,
+  viewType,
+  wearableWeeklyData,
+}) => {
   const getSummaryData = () => {
     if (viewType === "day") {
       return {
@@ -23,7 +27,7 @@ const SleepSummary: React.FC<SleepSummaryProps> = ({ date, viewType }) => {
         bedtime: "11:30 PM",
         wakeup: "7:03 AM",
         respiratoryRate: "15.4 breaths/min",
-        wakeupCount: 3
+        wakeupCount: 3,
       };
     } else if (viewType === "week") {
       return {
@@ -35,7 +39,7 @@ const SleepSummary: React.FC<SleepSummaryProps> = ({ date, viewType }) => {
         avgSleepScore: 79,
         consistentBedtime: "11:45 PM (±28 min)",
         consistentWakeup: "7:10 AM (±15 min)",
-        avgWakeupCount: 2.4
+        avgWakeupCount: 2.4,
       };
     } else {
       return {
@@ -48,13 +52,13 @@ const SleepSummary: React.FC<SleepSummaryProps> = ({ date, viewType }) => {
         lowestDay: "April 12 (5h 45m)",
         highestDay: "April 26 (8h 30m)",
         consistencyScore: "76%",
-        avgWakeupCount: 2.8
+        avgWakeupCount: 2.8,
       };
     }
   };
-  
+
   const data = getSummaryData();
-  
+
   const getScoreColor = (score: number): string => {
     if (score === 100) return "#53A15E"; // Excellent - Green
     if (score >= 85) return "#0EA5E9"; // Good - Blue
@@ -62,7 +66,7 @@ const SleepSummary: React.FC<SleepSummaryProps> = ({ date, viewType }) => {
     if (score >= 50) return "#F97316"; // Poor - Orange
     return "#ef4444"; // Very Poor - Red
   };
-  
+
   const getScoreStatus = (score: number): string => {
     if (score === 100) return "Excellent Sleep";
     if (score >= 85) return "Good Sleep";
@@ -70,51 +74,70 @@ const SleepSummary: React.FC<SleepSummaryProps> = ({ date, viewType }) => {
     if (score >= 50) return "Poor Sleep";
     return "Very Poor Sleep";
   };
-  
+
   const isMobile = useIsMobile();
-  
+
   const renderSleepScore = (score: number) => {
     const ringColor = getScoreColor(score);
     const scoreStatus = getScoreStatus(score);
-    
+
     const radius = 55;
     const circumference = 2 * Math.PI * radius;
     const strokeDashoffset = circumference - (score / 100) * circumference;
-    
+
     return (
       <div className="flex flex-col items-center">
         <div className="flex justify-center w-full mb-4">
-          <div className={`relative ${isMobile ? 'h-36 w-36' : 'h-44 w-44'} flex items-center justify-center`}>
-            <svg className={`${isMobile ? 'h-36 w-36' : 'h-44 w-44'} transform -rotate-90`} viewBox="0 0 150 150">
-              <circle 
-                cx="75" 
-                cy="75" 
-                r={radius} 
-                fill="#f9fafb" 
-                stroke="#f6f7fc" 
+          <div
+            className={`relative ${
+              isMobile ? "h-36 w-36" : "h-44 w-44"
+            } flex items-center justify-center`}
+          >
+            <svg
+              className={`${
+                isMobile ? "h-36 w-36" : "h-44 w-44"
+              } transform -rotate-90`}
+              viewBox="0 0 150 150"
+            >
+              <circle
+                cx="75"
+                cy="75"
+                r={radius}
+                fill="#f9fafb"
+                stroke="#f6f7fc"
                 strokeWidth="12"
               />
-              <circle 
-                cx="75" 
-                cy="75" 
-                r={radius} 
-                fill="transparent" 
-                stroke={ringColor} 
-                strokeWidth="12" 
-                strokeLinecap="round" 
-                strokeDasharray={circumference} 
-                strokeDashoffset={strokeDashoffset} 
+              <circle
+                cx="75"
+                cy="75"
+                r={radius}
+                fill="transparent"
+                stroke={ringColor}
+                strokeWidth="12"
+                strokeLinecap="round"
+                strokeDasharray={circumference}
+                strokeDashoffset={strokeDashoffset}
                 className="transition-all duration-1000 ease-out"
               />
             </svg>
-            
+
             <div className="absolute inset-0 flex flex-col items-center justify-center">
-              <span className={`${isMobile ? 'text-3xl' : 'text-4xl'} font-bold text-black`}>{score}</span>
-              <span className={`${isMobile ? 'text-xs' : 'text-sm'} text-gray-600`}>{scoreStatus}</span>
+              <span
+                className={`${
+                  isMobile ? "text-3xl" : "text-4xl"
+                } font-bold text-black`}
+              >
+                {score}
+              </span>
+              <span
+                className={`${isMobile ? "text-xs" : "text-sm"} text-gray-600`}
+              >
+                {scoreStatus}
+              </span>
             </div>
           </div>
         </div>
-        
+
         <div className="flex justify-center items-center gap-4 mb-6 w-full">
           <div className="flex items-center gap-1">
             <div className="w-3 h-3 rounded-full bg-[#53A15E]"></div>
@@ -132,26 +155,41 @@ const SleepSummary: React.FC<SleepSummaryProps> = ({ date, viewType }) => {
       </div>
     );
   };
-  
+
   if (viewType === "day") {
     return (
       <div className="space-y-6">
         <div className="space-y-6">
           <div className="border-l-4 border-orange-400 pl-4 pb-2">
-            <h3 className="text-xl font-bold mb-2">You didn't get enough rest!</h3>
+            <h3 className="text-xl font-bold mb-2">
+              You didn't get enough rest!
+            </h3>
             <p className="text-gray-700">
-              You slept <span className="text-red-500 font-medium">{data.totalSleep}</span>, but optimal sleep is 8+ hours.
+              You slept{" "}
+              <span className="text-red-500 font-medium">
+                {data.totalSleep}
+              </span>
+              , but optimal sleep is 8+ hours.
             </p>
             <p className="text-gray-700 mt-2">
-              <span className="text-red-500 font-medium">{data.lightSleep}</span> of your sleep was light sleep. Deep sleep was <span className="text-red-500 font-medium">low</span> ({data.deepSleep}).
+              <span className="text-red-500 font-medium">
+                {data.lightSleep}
+              </span>{" "}
+              of your sleep was light sleep. Deep sleep was{" "}
+              <span className="text-red-500 font-medium">low</span> (
+              {data.deepSleep}).
             </p>
             <p className="text-gray-700 mt-2">
-              You had <span className="text-red-500 font-medium">{data.wakeupCount}</span> wake-up events.
+              You had{" "}
+              <span className="text-red-500 font-medium">
+                {data.wakeupCount}
+              </span>{" "}
+              wake-up events.
             </p>
           </div>
-          
+
           <Separator className="my-4" />
-          
+
           <div className="border-l-4 border-blue-400 pl-4 pb-2">
             <h3 className="text-xl font-bold mb-2">Possible Reasons</h3>
             <p className="text-gray-700 mt-2">
@@ -161,17 +199,16 @@ const SleepSummary: React.FC<SleepSummaryProps> = ({ date, viewType }) => {
               You used your phone before bed – blue light can reduce melatonin.
             </p>
             <p className="text-gray-700 mt-2">
-              Your activity level was low today – light exercise can improve deep sleep.
+              Your activity level was low today – light exercise can improve
+              deep sleep.
             </p>
           </div>
-          
+
           <Separator className="my-4" />
-          
+
           <div className="border-l-4 border-green-400 pl-4 pb-2">
             <h3 className="text-xl font-bold mb-2">Recommendations</h3>
-            <p className="text-gray-700 mt-2">
-              Try to get 8 hours of sleep.
-            </p>
+            <p className="text-gray-700 mt-2">Try to get 8 hours of sleep.</p>
             <p className="text-gray-700 mt-2">
               Avoid heavy meals 2 hours before bed.
             </p>
@@ -181,8 +218,11 @@ const SleepSummary: React.FC<SleepSummaryProps> = ({ date, viewType }) => {
             <p className="text-gray-700 mt-2">
               Stay active during the day for better sleep quality.
             </p>
-            
-            <Button variant="outline" className="flex items-center gap-2 w-full mt-4">
+
+            <Button
+              variant="outline"
+              className="flex items-center gap-2 w-full mt-4"
+            >
               <Sparkles className="h-4 w-4 text-amber-500" />
               Want to Improve
             </Button>
@@ -190,12 +230,14 @@ const SleepSummary: React.FC<SleepSummaryProps> = ({ date, viewType }) => {
         </div>
       </div>
     );
-  } 
-  
+  }
+
   return (
     <div className="space-y-6 bg-[#f9fafb] p-6 rounded-lg text-black">
-      {renderSleepScore(viewType === "week" ? data.avgSleepScore : data.avgSleepScore)}
-      
+      {renderSleepScore(
+        viewType === "week" ? data.avgSleepScore : data.avgSleepScore
+      )}
+
       <div className="w-full grid grid-cols-2 gap-x-4 gap-y-3">
         {viewType === "week" && (
           <>
@@ -204,35 +246,43 @@ const SleepSummary: React.FC<SleepSummaryProps> = ({ date, viewType }) => {
                 <Clock className="h-4 w-4 text-wellness-bright-green" />
                 <h3 className="text-sm text-black">Avg Bedtime</h3>
               </div>
-              <p className="text-lg font-medium mt-1 text-black">{data.consistentBedtime}</p>
+              <p className="text-lg font-medium mt-1 text-black">
+                {wearableWeeklyData?.averageBedTime}
+              </p>
             </div>
-            
+
             <div className="flex flex-col">
               <div className="flex items-center gap-2">
                 <Clock className="h-4 w-4 text-wellness-bright-green" />
                 <h3 className="text-sm text-black">Avg Wake-up</h3>
               </div>
-              <p className="text-lg font-medium mt-1 text-black">{data.consistentWakeup}</p>
+              <p className="text-lg font-medium mt-1 text-black">
+                {wearableWeeklyData?.averageWakeUp}
+              </p>
             </div>
-            
+
             <div className="flex flex-col">
               <div className="flex items-center gap-2">
                 <Bed className="h-4 w-4 text-wellness-bright-green" />
                 <h3 className="text-sm text-black">Avg Sleep</h3>
               </div>
-              <p className="text-lg font-medium mt-1 text-black">{data.avgTotalSleep}</p>
+              <p className="text-lg font-medium mt-1 text-black">
+                {wearableWeeklyData?.averageSleep}
+              </p>
             </div>
-            
+
             <div className="flex flex-col">
               <div className="flex items-center gap-2">
                 <Moon className="h-4 w-4 text-black" />
                 <h3 className="text-sm text-black">Avg Wake-up Times</h3>
               </div>
-              <p className="text-lg font-medium mt-1 text-black">{data.avgWakeupCount} times</p>
+              <p className="text-lg font-medium mt-1 text-black">
+                {wearableWeeklyData?.averageWakeupTimes?.toFixed(1)} times
+              </p>
             </div>
           </>
         )}
-        
+
         {viewType === "month" && (
           <>
             <div className="flex flex-col">
@@ -240,31 +290,39 @@ const SleepSummary: React.FC<SleepSummaryProps> = ({ date, viewType }) => {
                 <Bed className="h-4 w-4 text-wellness-bright-green" />
                 <h3 className="text-sm text-black">Lowest Sleep</h3>
               </div>
-              <p className="text-lg font-medium mt-1 text-black">{data.lowestDay}</p>
+              <p className="text-lg font-medium mt-1 text-black">
+                {data.lowestDay}
+              </p>
             </div>
-            
+
             <div className="flex flex-col">
               <div className="flex items-center gap-2">
                 <Bed className="h-4 w-4 text-wellness-bright-green" />
                 <h3 className="text-sm text-black">Best Sleep</h3>
               </div>
-              <p className="text-lg font-medium mt-1 text-black">{data.highestDay}</p>
+              <p className="text-lg font-medium mt-1 text-black">
+                {data.highestDay}
+              </p>
             </div>
-            
+
             <div className="flex flex-col">
               <div className="flex items-center gap-2">
                 <Clock className="h-4 w-4 text-wellness-bright-green" />
                 <h3 className="text-sm text-black">Consistency</h3>
               </div>
-              <p className="text-lg font-medium mt-1 text-black">{data.consistencyScore}</p>
+              <p className="text-lg font-medium mt-1 text-black">
+                {data.consistencyScore}
+              </p>
             </div>
-            
+
             <div className="flex flex-col">
               <div className="flex items-center gap-2">
                 <Moon className="h-4 w-4 text-black" />
                 <h3 className="text-sm text-black">Avg Wake-up Times</h3>
               </div>
-              <p className="text-lg font-medium mt-1 text-black">{data.avgWakeupCount} times</p>
+              <p className="text-lg font-medium mt-1 text-black">
+                {data.avgWakeupCount} times
+              </p>
             </div>
           </>
         )}
