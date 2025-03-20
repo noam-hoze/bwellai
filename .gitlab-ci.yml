@@ -1,0 +1,13 @@
+stages:
+  - dev-deploy
+
+# Job for building and running the React application
+build_and_run_mvp_stage:
+  stage: dev-deploy
+  tags:
+    - dev-frontend-001
+  when: manual
+  script:
+    - docker build -t bwell-ui-v2 .
+    - sh deploy.sh
+    - docker run --name bwell-ui-v2 --restart always -p 3005:3000 -d bwell-ui-v2
