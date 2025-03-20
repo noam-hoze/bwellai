@@ -33,14 +33,17 @@ const Sleep = () => {
   const { data: connectedDevicesData, refetch: connectedDevicesRefetch } =
     useGetUserInfoTerraData({ isAuthenticated: true });
 
-  const { data, isSuccess, isLoading } =
-    useGetWearableDailyRecommendationDataV4({
-      resource: connectedDevicesData?.[0],
-      startDate: formatDate(selectedDate),
-      isEnable:
-        connectedDevicesData?.length > 0 ? connectedDevicesData?.[0] : "",
-      language: "english",
-    });
+  const {
+    data: wearableDailyRecommendationData,
+    isSuccess: wearableDailyRecommendationIsSuccess,
+    isLoading: wearableDailyRecommendationIsLoading,
+  } = useGetWearableDailyRecommendationDataV4({
+    resource: connectedDevicesData?.[0],
+    startDate: formatDate(selectedDate),
+    isEnable: connectedDevicesData?.length > 0 ? connectedDevicesData?.[0] : "",
+    language: "english",
+  });
+
   const {
     data: wearableWeeklyRecommendationData,
     isSuccess: wearableWeeklyRecommendationIsSuccess,
@@ -49,6 +52,8 @@ const Sleep = () => {
     isEnable: connectedDevicesData?.length > 0 ? connectedDevicesData?.[0] : "",
     language: "english",
   });
+
+  console.log(wearableWeeklyRecommendationData);
 
   const handlePrevious = () => {
     setSelectedDate((prev) => goToPreviousDate(prev, viewType));
@@ -107,11 +112,21 @@ const Sleep = () => {
               </TabsList>
 
               <TabsContent value="day" className="mt-6">
-                <DailyTabContent selectedDate={selectedDate} />
+                <DailyTabContent
+                  selectedDate={selectedDate}
+                  wearableDailyRecommendationData={
+                    wearableDailyRecommendationData
+                  }
+                />
               </TabsContent>
 
               <TabsContent value="week" className="mt-6">
-                <WeeklyTabContent selectedDate={selectedDate} />
+                <WeeklyTabContent
+                  selectedDate={selectedDate}
+                  wearableWeeklyRecommendationData={
+                    wearableWeeklyRecommendationData
+                  }
+                />
               </TabsContent>
 
               <TabsContent value="month" className="mt-6">

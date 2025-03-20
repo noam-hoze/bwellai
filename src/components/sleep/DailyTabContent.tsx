@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Lightbulb, UtensilsCrossed, Dumbbell, HeartPulse } from "lucide-react";
 import SleepPossibleReasons from "@/components/sleep/SleepPossibleReasons";
@@ -17,9 +16,13 @@ import {
 
 interface DailyTabContentProps {
   selectedDate: Date;
+  wearableDailyRecommendationData;
 }
 
-const DailyTabContent = ({ selectedDate }: DailyTabContentProps) => {
+const DailyTabContent = ({
+  selectedDate,
+  wearableDailyRecommendationData,
+}: DailyTabContentProps) => {
   // Mock data for score cards
   const scoreData = {
     sleepScore: 82,
@@ -32,7 +35,7 @@ const DailyTabContent = ({ selectedDate }: DailyTabContentProps) => {
     lightSleep: 60,
     deepSleep: 16,
     remSleep: 18,
-    awake: 6
+    awake: 6,
   };
 
   const isMobile = useIsMobile();
@@ -45,7 +48,7 @@ const DailyTabContent = ({ selectedDate }: DailyTabContentProps) => {
           <Carousel className="w-full">
             <CarouselContent>
               <CarouselItem>
-                <SleepScoreCard 
+                <SleepScoreCard
                   score={scoreData.sleepScore}
                   bedtime={scoreData.bedtime}
                   wakeup={scoreData.wakeup}
@@ -54,7 +57,7 @@ const DailyTabContent = ({ selectedDate }: DailyTabContentProps) => {
                 />
               </CarouselItem>
               <CarouselItem>
-                <SleepDistributionCard 
+                <SleepDistributionCard
                   lightSleep={scoreData.lightSleep}
                   deepSleep={scoreData.deepSleep}
                   remSleep={scoreData.remSleep}
@@ -68,14 +71,14 @@ const DailyTabContent = ({ selectedDate }: DailyTabContentProps) => {
         </div>
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          <SleepScoreCard 
+          <SleepScoreCard
             score={scoreData.sleepScore}
             bedtime={scoreData.bedtime}
             wakeup={scoreData.wakeup}
             totalSleep={scoreData.totalSleep}
             wakeupCount={scoreData.wakeupCount}
           />
-          <SleepDistributionCard 
+          <SleepDistributionCard
             lightSleep={scoreData.lightSleep}
             deepSleep={scoreData.deepSleep}
             remSleep={scoreData.remSleep}
@@ -98,28 +101,82 @@ const DailyTabContent = ({ selectedDate }: DailyTabContentProps) => {
               <div className="flex items-start gap-2">
                 <UtensilsCrossed className="h-5 w-5 text-wellness-bright-green mt-1 flex-shrink-0" />
                 <div>
-                  <p className="text-wellness-muted-black font-bold">Late Meal Logged at 11:00 PM</p>
-                  <p className="text-wellness-muted-black">Eating late can disrupt sleep. Try finishing meals earlier for better rest.</p>
+                  <p className="text-wellness-muted-black font-bold">
+                    Actionable Tip
+                  </p>
+                  <p className="text-wellness-muted-black">
+                    {wearableDailyRecommendationData &&
+                      wearableDailyRecommendationData?.actionable_tip?.map(
+                        (tip) => {
+                          return (
+                            <p className="text-wellness-muted-black">{tip}</p>
+                          );
+                        }
+                      )}
+                  </p>
                 </div>
               </div>
             </div>
-            
+
             <div className="rounded-lg border bg-white p-4">
               <div className="flex items-start gap-2">
                 <Dumbbell className="h-5 w-5 text-wellness-bright-green mt-1 flex-shrink-0" />
                 <div>
-                  <p className="text-wellness-muted-black font-bold">Low Activity Today</p>
-                  <p className="text-wellness-muted-black">Less movement = lighter sleep. Even a 10-min walk tomorrow can help.</p>
+                  <p className="text-wellness-muted-black font-bold">
+                    Alternative Cause
+                  </p>
+                  <p className="text-wellness-muted-black">
+                    {wearableDailyRecommendationData &&
+                      wearableDailyRecommendationData?.alternative_cause?.map(
+                        (tip) => {
+                          return (
+                            <p className="text-wellness-muted-black">{tip}</p>
+                          );
+                        }
+                      )}
+                  </p>
                 </div>
               </div>
             </div>
-            
+
             <div className="rounded-lg border bg-white p-4">
               <div className="flex items-start gap-2">
                 <HeartPulse className="h-5 w-5 text-wellness-bright-green mt-1 flex-shrink-0" />
                 <div>
-                  <p className="text-wellness-muted-black font-bold">High Stress Today</p>
-                  <p className="text-wellness-muted-black">Try deep breathing or a short wind-down routine before bed.</p>
+                  <p className="text-wellness-muted-black font-bold">
+                    Observation
+                  </p>
+                  <p className="text-wellness-muted-black">
+                    {wearableDailyRecommendationData &&
+                      wearableDailyRecommendationData?.observation?.map(
+                        (tip) => {
+                          return (
+                            <p className="text-wellness-muted-black">{tip}</p>
+                          );
+                        }
+                      )}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="rounded-lg border bg-white p-4">
+              <div className="flex items-start gap-2">
+                <HeartPulse className="h-5 w-5 text-wellness-bright-green mt-1 flex-shrink-0" />
+                <div>
+                  <p className="text-wellness-muted-black font-bold">
+                    Possible Cause
+                  </p>
+                  <p className="text-wellness-muted-black">
+                    {wearableDailyRecommendationData &&
+                      wearableDailyRecommendationData?.possible_cause?.map(
+                        (tip) => {
+                          return (
+                            <p className="text-wellness-muted-black">{tip}</p>
+                          );
+                        }
+                      )}
+                  </p>
                 </div>
               </div>
             </div>
