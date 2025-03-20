@@ -1,0 +1,133 @@
+
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Lightbulb, UtensilsCrossed, Dumbbell, HeartPulse } from "lucide-react";
+import SleepPossibleReasons from "@/components/sleep/SleepPossibleReasons";
+import SleepRecommendations from "@/components/sleep/SleepRecommendations";
+import { Separator } from "@/components/ui/separator";
+import SleepScoreCard from "@/components/sleep/SleepScoreCard";
+import SleepDistributionCard from "@/components/sleep/SleepDistributionCard";
+import { useIsMobile } from "@/hooks/use-mobile";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
+
+interface DailyTabContentProps {
+  selectedDate: Date;
+}
+
+const DailyTabContent = ({ selectedDate }: DailyTabContentProps) => {
+  // Mock data for score cards
+  const scoreData = {
+    sleepScore: 82,
+    bedtime: "11:30 PM",
+    wakeup: "7:03 AM",
+    totalSleep: "7h 33m",
+    wakeupCount: 3,
+    totalSleepHours: 7.55, // 7 hours and 33 minutes in decimal
+    optimalSleep: 8, // optimal sleep in hours
+    lightSleep: 60,
+    deepSleep: 16,
+    remSleep: 18,
+    awake: 6
+  };
+
+  const isMobile = useIsMobile();
+
+  return (
+    <div className="space-y-6">
+      {/* Sleep Score Cards Section */}
+      {isMobile ? (
+        <div className="w-full">
+          <Carousel className="w-full">
+            <CarouselContent>
+              <CarouselItem>
+                <SleepScoreCard 
+                  score={scoreData.sleepScore}
+                  bedtime={scoreData.bedtime}
+                  wakeup={scoreData.wakeup}
+                  totalSleep={scoreData.totalSleep}
+                  wakeupCount={scoreData.wakeupCount}
+                />
+              </CarouselItem>
+              <CarouselItem>
+                <SleepDistributionCard 
+                  lightSleep={scoreData.lightSleep}
+                  deepSleep={scoreData.deepSleep}
+                  remSleep={scoreData.remSleep}
+                  awake={scoreData.awake}
+                />
+              </CarouselItem>
+            </CarouselContent>
+            <CarouselPrevious className="left-1" />
+            <CarouselNext className="right-1" />
+          </Carousel>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <SleepScoreCard 
+            score={scoreData.sleepScore}
+            bedtime={scoreData.bedtime}
+            wakeup={scoreData.wakeup}
+            totalSleep={scoreData.totalSleep}
+            wakeupCount={scoreData.wakeupCount}
+          />
+          <SleepDistributionCard 
+            lightSleep={scoreData.lightSleep}
+            deepSleep={scoreData.deepSleep}
+            remSleep={scoreData.remSleep}
+            awake={scoreData.awake}
+          />
+        </div>
+      )}
+
+      {/* Combined Insights & Suggestions Card */}
+      <Card className="wellness-card border-l-4 border-l-wellness-deep-orange">
+        <CardHeader className="pb-2">
+          <CardTitle className="flex items-center gap-2 text-lg text-wellness-muted-black">
+            <Lightbulb className="h-5 w-5 text-wellness-bright-green" />
+            Insights & Suggestions
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            <div className="rounded-lg border bg-white p-4">
+              <div className="flex items-start gap-2">
+                <UtensilsCrossed className="h-5 w-5 text-wellness-bright-green mt-1 flex-shrink-0" />
+                <div>
+                  <p className="text-wellness-muted-black font-bold">Late Meal Logged at 11:00 PM</p>
+                  <p className="text-wellness-muted-black">Eating late can disrupt sleep. Try finishing meals earlier for better rest.</p>
+                </div>
+              </div>
+            </div>
+            
+            <div className="rounded-lg border bg-white p-4">
+              <div className="flex items-start gap-2">
+                <Dumbbell className="h-5 w-5 text-wellness-bright-green mt-1 flex-shrink-0" />
+                <div>
+                  <p className="text-wellness-muted-black font-bold">Low Activity Today</p>
+                  <p className="text-wellness-muted-black">Less movement = lighter sleep. Even a 10-min walk tomorrow can help.</p>
+                </div>
+              </div>
+            </div>
+            
+            <div className="rounded-lg border bg-white p-4">
+              <div className="flex items-start gap-2">
+                <HeartPulse className="h-5 w-5 text-wellness-bright-green mt-1 flex-shrink-0" />
+                <div>
+                  <p className="text-wellness-muted-black font-bold">High Stress Today</p>
+                  <p className="text-wellness-muted-black">Try deep breathing or a short wind-down routine before bed.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+};
+
+export default DailyTabContent;
