@@ -1,4 +1,7 @@
-
+import {
+  useGenerateOTP,
+  useOtpValidation,
+} from "@/service/hooks/authentication/useAuthentication";
 import React, { createContext, useContext, useState, useEffect } from "react";
 
 type AuthContextType = {
@@ -13,13 +16,38 @@ type AuthContextType = {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [useAuthRequestId, setUseAuthRequestId] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+
+  const {
+    data: generateOTPData,
+    // isError: generateOTPIsError,
+    mutate: generateOTPMutate,
+    isPending: generateOTPPending,
+    isSuccess: generateOTPSuccess,
+  } = useGenerateOTP();
+
+  const {
+    data: otpValidationData,
+    error: otpValidationError,
+    mutate: otpValidationMutate,
+    isSuccess: otpValidationSuccess,
+    isPending: otpValidationPending,
+  } = useOtpValidation();
+
+  useEffect(() => {
+    if (generateOTPSuccess && generateOTPData) {
+      setUseAuthRequestId(generateOTPData?.requestId);
+    }
+  }, [generateOTPSuccess, generateOTPData]);
 
   useEffect(() => {
     // Check if there's an existing login token in localStorage
-    const token = localStorage.getItem("auth_token");
+    const token = localStorage.getItem("token");
     if (token) {
       setIsAuthenticated(true);
     }
@@ -45,7 +73,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       setLoading(true);
       // Simulate OTP generation
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      // await new Promise((resolve) => setTimeout(resolve, 1000));
+      generateOTPMutate({ email: email });
       setLoading(false);
       return;
     } catch (error) {
@@ -58,8 +87,25 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       setLoading(true);
       // In a real app, this would verify OTP
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      localStorage.setItem("auth_token", "otp_token");
+      // await new Promise((resolve) => setTimeout(resolve, 1000));
+      otpValidationMutate({
+        otp: otp,
+        requestId: useAuthRequestId,
+      });
+
+      localStorage.setItem(
+        "token",
+        otpValidationData?.payload?.token?.accessToken?.token
+      );
+      localStorage.setItem(
+        "refresh_token",
+        otpValidationData?.payload?.token?.refreshToken?.token
+      );
+      localStorage.setItem(
+        "is_Profile_updated",
+        otpValidationData?.payload?.isProfileUpdated
+      );
+
       setIsAuthenticated(true);
       setLoading(false);
     } catch (error) {
@@ -96,7 +142,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         generateOTP,
         loginWithGoogle,
         logout,
-        loading
+        loading,
       }}
     >
       {children}
