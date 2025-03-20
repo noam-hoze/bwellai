@@ -7,6 +7,10 @@
     "dev": "vite",
     "build": "vite build",
     "build:dev": "vite build --mode development",
+    "build:development": "tsc && vite build --mode development",
+    "start:development": "vite --host 0.0.0.0 --port 3000 --mode development",
+    "build:production": "tsc && vite build --mode production",
+    "start:production": "vite --host 0.0.0.0 --port 3000 --mode production",
     "lint": "eslint .",
     "preview": "vite preview"
   },
