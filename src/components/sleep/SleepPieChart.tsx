@@ -141,7 +141,7 @@ const SleepPieChart: React.FC<SleepPieChartProps> = ({
           <span className="text-sm text-gray-700">
             Light
             <br />
-            {lightSleep}%
+            {lightSleep?.toFixed(0)}%
           </span>
         </div>
         <div className="flex items-center gap-2">
@@ -149,7 +149,7 @@ const SleepPieChart: React.FC<SleepPieChartProps> = ({
           <span className="text-sm text-gray-700">
             Deep
             <br />
-            {deepSleep}%
+            {deepSleep?.toFixed(0)}%
           </span>
         </div>
         <div className="flex items-center gap-2">
@@ -157,7 +157,7 @@ const SleepPieChart: React.FC<SleepPieChartProps> = ({
           <span className="text-sm text-gray-700">
             REM
             <br />
-            {remSleep}%
+            {remSleep?.toFixed(0)}%
           </span>
         </div>
       </div>

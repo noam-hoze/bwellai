@@ -14,6 +14,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import { convertUnderscoresToCapitalizeHeading } from "@/utils/utils";
 
 interface DailyTabContentProps {
   selectedDate: Date;
@@ -98,16 +99,56 @@ const DailyTabContent = ({
             // wakeupCount={scoreData.wakeupCount}
           />
           <SleepDistributionCard
-            lightSleep={wearableDailyData?.finalDailySpikeSleepDataV4?.light}
-            deepSleep={wearableDailyData?.finalDailySpikeSleepDataV4?.deep}
-            remSleep={wearableDailyData?.finalDailySpikeSleepDataV4?.rem}
-            awake={wearableDailyData?.finalDailySpikeSleepDataV4?.awake}
+            lightSleep={
+              (wearableDailyData?.finalDailySpikeSleepDataV4?.light /
+                wearableDailyData?.finalDailySpikeSleepDataV4
+                  ?.bedtime_duration) *
+              100
+            }
+            deepSleep={
+              (wearableDailyData?.finalDailySpikeSleepDataV4?.deep /
+                wearableDailyData?.finalDailySpikeSleepDataV4
+                  ?.bedtime_duration) *
+              100
+            }
+            remSleep={
+              (wearableDailyData?.finalDailySpikeSleepDataV4?.rem /
+                wearableDailyData?.finalDailySpikeSleepDataV4
+                  ?.bedtime_duration) *
+              100
+            }
+            awake={
+              (wearableDailyData?.finalDailySpikeSleepDataV4?.awake /
+                wearableDailyData?.finalDailySpikeSleepDataV4
+                  ?.bedtime_duration) *
+              100
+            }
           />
           <SleepQualityCard
-            lightSleep={wearableDailyData?.finalDailySpikeSleepDataV4?.light}
-            deepSleep={wearableDailyData?.finalDailySpikeSleepDataV4?.deep}
-            remSleep={wearableDailyData?.finalDailySpikeSleepDataV4?.rem}
-            awake={wearableDailyData?.finalDailySpikeSleepDataV4?.awake}
+            lightSleep={
+              (wearableDailyData?.finalDailySpikeSleepDataV4?.light /
+                wearableDailyData?.finalDailySpikeSleepDataV4
+                  ?.bedtime_duration) *
+              100
+            }
+            deepSleep={
+              (wearableDailyData?.finalDailySpikeSleepDataV4?.deep /
+                wearableDailyData?.finalDailySpikeSleepDataV4
+                  ?.bedtime_duration) *
+              100
+            }
+            remSleep={
+              (wearableDailyData?.finalDailySpikeSleepDataV4?.rem /
+                wearableDailyData?.finalDailySpikeSleepDataV4
+                  ?.bedtime_duration) *
+              100
+            }
+            awake={
+              (wearableDailyData?.finalDailySpikeSleepDataV4?.awake /
+                wearableDailyData?.finalDailySpikeSleepDataV4
+                  ?.bedtime_duration) *
+              100
+            }
           />
         </div>
       )}
@@ -130,11 +171,24 @@ const DailyTabContent = ({
                     Actionable Tip
                   </p>
                   <p className="text-wellness-muted-black">
-                    {wearableDailyRecommendationData &&
-                      wearableDailyRecommendationData?.actionable_tip?.map(
-                        (tip) => {
+                    {wearableDailyRecommendationData?.[0] &&
+                      Object.entries(wearableDailyRecommendationData?.[0])?.map(
+                        ([key, descriptions], index) => {
                           return (
-                            <p className="text-wellness-muted-black">{tip}</p>
+                            <div key={index}>
+                              <p className="text-wellness-muted-black font-bold mt-2">
+                                {convertUnderscoresToCapitalizeHeading(key)}
+                              </p>
+                              {Array.isArray(descriptions) &&
+                                descriptions?.map((desc, i) => (
+                                  <p
+                                    key={i}
+                                    className="text-wellness-muted-black"
+                                  >
+                                    {desc}
+                                  </p>
+                                ))}
+                            </div>
                           );
                         }
                       )}
@@ -151,11 +205,24 @@ const DailyTabContent = ({
                     Alternative Cause
                   </p>
                   <p className="text-wellness-muted-black">
-                    {wearableDailyRecommendationData &&
-                      wearableDailyRecommendationData?.alternative_cause?.map(
-                        (tip) => {
+                    {wearableDailyRecommendationData?.[1] &&
+                      Object.entries(wearableDailyRecommendationData?.[1])?.map(
+                        ([key, descriptions], index) => {
                           return (
-                            <p className="text-wellness-muted-black">{tip}</p>
+                            <div key={index}>
+                              <p className="text-wellness-muted-black font-bold mt-2">
+                                {convertUnderscoresToCapitalizeHeading(key)}
+                              </p>
+                              {Array.isArray(descriptions) &&
+                                descriptions?.map((desc, i) => (
+                                  <p
+                                    key={i}
+                                    className="text-wellness-muted-black"
+                                  >
+                                    {desc}
+                                  </p>
+                                ))}
+                            </div>
                           );
                         }
                       )}
@@ -172,32 +239,24 @@ const DailyTabContent = ({
                     Observation
                   </p>
                   <p className="text-wellness-muted-black">
-                    {wearableDailyRecommendationData &&
-                      wearableDailyRecommendationData?.observation?.map(
-                        (tip) => {
+                    {wearableDailyRecommendationData?.[2] &&
+                      Object.entries(wearableDailyRecommendationData?.[2])?.map(
+                        ([key, descriptions], index) => {
                           return (
-                            <p className="text-wellness-muted-black">{tip}</p>
-                          );
-                        }
-                      )}
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="rounded-lg border bg-white p-4">
-              <div className="flex items-start gap-2">
-                <HeartPulse className="h-5 w-5 text-wellness-bright-green mt-1 flex-shrink-0" />
-                <div>
-                  <p className="text-wellness-muted-black font-bold">
-                    Possible Cause
-                  </p>
-                  <p className="text-wellness-muted-black">
-                    {wearableDailyRecommendationData &&
-                      wearableDailyRecommendationData?.possible_cause?.map(
-                        (tip) => {
-                          return (
-                            <p className="text-wellness-muted-black">{tip}</p>
+                            <div key={index}>
+                              <p className="text-wellness-muted-black font-bold mt-2">
+                                {convertUnderscoresToCapitalizeHeading(key)}
+                              </p>
+                              {Array.isArray(descriptions) &&
+                                descriptions?.map((desc, i) => (
+                                  <p
+                                    key={i}
+                                    className="text-wellness-muted-black"
+                                  >
+                                    {desc}
+                                  </p>
+                                ))}
+                            </div>
                           );
                         }
                       )}
