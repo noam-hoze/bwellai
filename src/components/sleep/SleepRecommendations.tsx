@@ -8,6 +8,7 @@ import {
   HeartPulse,
 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
+import { convertUnderscoresToCapitalizeHeading } from "@/utils/utils";
 
 interface SleepRecommendationsProps {
   date: Date;
@@ -133,29 +134,46 @@ const SleepRecommendations: React.FC<SleepRecommendationsProps> = ({
                 </div>
               </div>
             ))} */}
-        {wearableWeeklyRecommendationData &&
-          Object.entries(wearableWeeklyRecommendationData)
-            ?.slice(0, expanded ? recommendations.length : 1)
-            ?.map(([key, descriptions], index) => (
+        <div className="space-y-3">
+          {recommendations
+            .slice(0, expanded ? recommendations.length : 1)
+            .map((rec, index) => (
               <div key={index} className="rounded-lg border bg-white p-4">
                 <div className="flex items-start gap-2">
-                  {/* If you have icons for each type, use a mapping function */}
+                  {rec.icon}
                   <div>
                     <p className="text-wellness-muted-black font-bold">
-                      {key
-                        ?.replace(/_/g, " ")
-                        ?.replace(/\b\w/g, (char) => char?.toUpperCase())}
+                      {rec.title}
                     </p>
-                    {Array.isArray(descriptions) &&
-                      descriptions?.map((desc, i) => (
-                        <p key={i} className="text-wellness-muted-black">
-                          {desc}
-                        </p>
-                      ))}
+                    {/* <p className="text-wellness-muted-black">
+                      {rec.description}
+                    </p> */}
+                    {wearableWeeklyRecommendationData?.[index] &&
+                      Object.entries(
+                        wearableWeeklyRecommendationData?.[index]
+                      )?.map(([key, descriptions], index) => {
+                        return (
+                          <div key={index}>
+                            <p className="text-wellness-muted-black font-bold mt-2">
+                              {convertUnderscoresToCapitalizeHeading(key)}
+                            </p>
+                            {Array.isArray(descriptions) &&
+                              descriptions?.map((desc, i) => (
+                                <p
+                                  key={i}
+                                  className="text-wellness-muted-black"
+                                >
+                                  {desc}
+                                </p>
+                              ))}
+                          </div>
+                        );
+                      })}
                   </div>
                 </div>
               </div>
             ))}
+        </div>
       </div>
 
       {recommendations.length > 1 && (

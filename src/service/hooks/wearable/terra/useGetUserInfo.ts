@@ -145,6 +145,7 @@ export const useGetWearableDailyRecommendationDataV4 = ({
         startDate,
         language
       ),
+    placeholderData: (previousData) => previousData,
     enabled: isEnable ? true : false,
   });
 
@@ -160,6 +161,7 @@ export const useGetWearableWeeklyRecommendationDataV4 = ({
   const { data, error, isError, isLoading, isSuccess, refetch } = useQuery({
     queryKey: ["get-wearable-weekly-recommendation-data-v4", language],
     queryFn: () => getWearableWeeklyRecommendationDataV4Fetcher(language),
+    placeholderData: (previousData) => previousData,
     enabled: isEnable ? true : false,
   });
 
@@ -177,6 +179,7 @@ export const useGetWearableDailyDataV4 = ({
   const { data, error, isError, isLoading, isSuccess, refetch } = useQuery({
     queryKey: ["get-wearable-daily-data-v4", startDate, resource],
     queryFn: () => getWearableDailyDataV4Fetcher(resource, startDate),
+    placeholderData: (previousData) => previousData,
     enabled: isEnable ? true : false,
   });
 
@@ -192,6 +195,7 @@ export const useGetWearableWeeklyDataV4 = ({
   const { data, error, isError, isLoading, isSuccess, refetch } = useQuery({
     queryKey: ["get-wearable-weekly-data-v4", resource],
     queryFn: () => getWearableWeeklyDataV4Fetcher(resource),
+    placeholderData: (previousData) => previousData,
     enabled: isEnable ? true : false,
   });
 

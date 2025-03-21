@@ -30,7 +30,6 @@ const formatDate = (date: Date) => {
 const Sleep = () => {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [viewType, setViewType] = useState<ViewType>("day");
-  console.log(selectedDate);
 
   const { data: connectedDevicesData, refetch: connectedDevicesRefetch } =
     useGetUserInfoTerraData({ isAuthenticated: true });
@@ -72,8 +71,6 @@ const Sleep = () => {
     resource: connectedDevicesData?.[0],
     isEnable: connectedDevicesData?.length > 0 ? connectedDevicesData?.[0] : "",
   });
-
-  console.log(wearableWeeklyData);
 
   const handlePrevious = () => {
     setSelectedDate((prev) => goToPreviousDate(prev, viewType));
@@ -135,7 +132,7 @@ const Sleep = () => {
                 <DailyTabContent
                   selectedDate={selectedDate}
                   wearableDailyRecommendationData={
-                    wearableDailyRecommendationData
+                    wearableDailyRecommendationData?.insights
                   }
                   wearableDailyData={wearableDailyData}
                 />
@@ -145,7 +142,7 @@ const Sleep = () => {
                 <WeeklyTabContent
                   selectedDate={selectedDate}
                   wearableWeeklyRecommendationData={
-                    wearableWeeklyRecommendationData
+                    wearableWeeklyRecommendationData?.insights
                   }
                   wearableWeeklyData={wearableWeeklyData}
                 />
