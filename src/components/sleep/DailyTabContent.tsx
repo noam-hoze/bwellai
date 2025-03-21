@@ -104,10 +104,10 @@ const DailyTabContent = ({
             awake={wearableDailyData?.finalDailySpikeSleepDataV4?.awake}
           />
           <SleepQualityCard
-            lightSleep={wearableDailyData?.finalDailySpikeSleepDataV4.light}
-            deepSleep={wearableDailyData?.finalDailySpikeSleepDataV4.deep}
-            remSleep={wearableDailyData?.finalDailySpikeSleepDataV4.rem}
-            awake={wearableDailyData?.finalDailySpikeSleepDataV4.awake}
+            lightSleep={wearableDailyData?.finalDailySpikeSleepDataV4?.light}
+            deepSleep={wearableDailyData?.finalDailySpikeSleepDataV4?.deep}
+            remSleep={wearableDailyData?.finalDailySpikeSleepDataV4?.rem}
+            awake={wearableDailyData?.finalDailySpikeSleepDataV4?.awake}
           />
         </div>
       )}

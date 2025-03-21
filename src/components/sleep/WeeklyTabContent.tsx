@@ -61,7 +61,11 @@ const WeeklyTabContent = ({
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <SleepChart date={selectedDate} viewType="week" />
+          <SleepChart
+            date={selectedDate}
+            viewType="week"
+            apiData={wearableWeeklyData?.finalSpikeWeeklySleepDataV4s}
+          />
         </CardContent>
       </Card>
     </div>
