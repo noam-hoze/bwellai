@@ -133,7 +133,7 @@ const SleepDistributionCard = ({
             {/* Center text showing dominant sleep stage - repositioned upwards */}
             <div className="absolute top-[40%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center">
               <div className="text-3xl font-bold">
-                {dominantStage.value?.toFixed(0)}%
+                {(dominantStage?.value || 0)?.toFixed(0)}%
               </div>
               <div className="text-sm text-gray-600">{dominantStage.name}</div>
             </div>

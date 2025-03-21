@@ -53,27 +53,74 @@ const DailyTabContent = ({
             <CarouselContent>
               <CarouselItem>
                 <SleepScoreCard
-                  score={scoreData.sleepScore}
-                  bedtime={scoreData.bedtime}
+                  score={wearableDailyData?.average}
+                  bedtime={
+                    wearableDailyData?.finalDailySpikeSleepDataV4?.bedtime_start?.split(
+                      "T"
+                    )?.[1]
+                  }
                   wakeup={scoreData.wakeup}
-                  totalSleep={scoreData.totalSleep}
-                  wakeupCount={scoreData.wakeupCount}
+                  totalSleep={`${(
+                    (wearableDailyData?.finalDailySpikeSleepDataV4
+                      ?.total_sleep || 0) / 3600
+                  )?.toFixed(1)} H`}
+                  wakeupCount={wearableDailyData?.wakeUpTimes}
                 />
               </CarouselItem>
               <CarouselItem>
                 <SleepDistributionCard
-                  lightSleep={scoreData.lightSleep}
-                  deepSleep={scoreData.deepSleep}
-                  remSleep={scoreData.remSleep}
-                  awake={scoreData.awake}
+                  lightSleep={
+                    (wearableDailyData?.finalDailySpikeSleepDataV4?.light /
+                      wearableDailyData?.finalDailySpikeSleepDataV4
+                        ?.bedtime_duration) *
+                    100
+                  }
+                  deepSleep={
+                    (wearableDailyData?.finalDailySpikeSleepDataV4?.deep /
+                      wearableDailyData?.finalDailySpikeSleepDataV4
+                        ?.bedtime_duration) *
+                    100
+                  }
+                  remSleep={
+                    (wearableDailyData?.finalDailySpikeSleepDataV4?.rem /
+                      wearableDailyData?.finalDailySpikeSleepDataV4
+                        ?.bedtime_duration) *
+                    100
+                  }
+                  awake={
+                    (wearableDailyData?.finalDailySpikeSleepDataV4?.awake /
+                      wearableDailyData?.finalDailySpikeSleepDataV4
+                        ?.bedtime_duration) *
+                    100
+                  }
                 />
               </CarouselItem>
               <CarouselItem>
                 <SleepQualityCard
-                  lightSleep={scoreData.lightSleep}
-                  deepSleep={scoreData.deepSleep}
-                  remSleep={scoreData.remSleep}
-                  awake={scoreData.awake}
+                  lightSleep={
+                    (wearableDailyData?.finalDailySpikeSleepDataV4?.light /
+                      wearableDailyData?.finalDailySpikeSleepDataV4
+                        ?.bedtime_duration) *
+                    100
+                  }
+                  deepSleep={
+                    (wearableDailyData?.finalDailySpikeSleepDataV4?.deep /
+                      wearableDailyData?.finalDailySpikeSleepDataV4
+                        ?.bedtime_duration) *
+                    100
+                  }
+                  remSleep={
+                    (wearableDailyData?.finalDailySpikeSleepDataV4?.rem /
+                      wearableDailyData?.finalDailySpikeSleepDataV4
+                        ?.bedtime_duration) *
+                    100
+                  }
+                  awake={
+                    (wearableDailyData?.finalDailySpikeSleepDataV4?.awake /
+                      wearableDailyData?.finalDailySpikeSleepDataV4
+                        ?.bedtime_duration) *
+                    100
+                  }
                 />
               </CarouselItem>
             </CarouselContent>
