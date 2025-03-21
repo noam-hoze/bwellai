@@ -12,6 +12,7 @@ import {
   getWearableElasticSearchHistoricalDataFetcher,
   getWearableElasticSearchHistoricalDataFetcherV2,
   getWearableGraphDataV3Fetcher,
+  getWearableMonthlyDataV4Fetcher,
   getWearableWeeklyDataV4Fetcher,
   getWearableWeeklyRecommendationDataV4Fetcher,
 } from "../../../api/fetcher/wearable/terra/user-info";
@@ -179,6 +180,22 @@ export const useGetWearableDailyDataV4 = ({
   const { data, error, isError, isLoading, isSuccess, refetch } = useQuery({
     queryKey: ["get-wearable-daily-data-v4", startDate, resource],
     queryFn: () => getWearableDailyDataV4Fetcher(resource, startDate),
+    placeholderData: (previousData) => previousData,
+    enabled: isEnable ? true : false,
+  });
+
+  return { data: data?.data, error, isError, isLoading, isSuccess, refetch };
+};
+export const useGetWearableMonthlyDataV4 = ({
+  resource,
+  isEnable,
+}: {
+  resource: string;
+  isEnable: string;
+}) => {
+  const { data, error, isError, isLoading, isSuccess, refetch } = useQuery({
+    queryKey: ["get-wearable-monthly-data-v4", resource],
+    queryFn: () => getWearableMonthlyDataV4Fetcher(resource),
     placeholderData: (previousData) => previousData,
     enabled: isEnable ? true : false,
   });

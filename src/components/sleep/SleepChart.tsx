@@ -84,12 +84,13 @@ const generateSleepData = (
     })) as WeekData[];
   } else {
     const numWeeks = 4;
-    return Array.from({ length: numWeeks }, (_, i) => ({
-      name: `Week ${i + 1}`,
-      light: 4 + Math.random(),
-      deep: 1.5 + Math.random(),
-      rem: 1.5 + Math.random(),
-      awake: 0.5 + Math.random() * 0.5,
+    return apiData?.map((day) => ({
+      date: format(new Date(day?.bedtime_start), "EEE"), // Short weekday name (e.g., "Mon")
+      fullDate: format(new Date(day?.bedtime_start), "MMM dd"), // Month + day (e.g., "Mar 14")
+      light: day?.light / 3600, // Convert seconds to hours
+      deep: day?.deep / 3600, // Convert seconds to hours
+      rem: day?.rem / 3600, // Convert seconds to hours
+      awake: day?.awake / 3600, // Convert seconds to hours
     })) as MonthData[];
   }
 };
