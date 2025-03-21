@@ -17,6 +17,7 @@ import {
   useGetUserInfoTerraData,
   useGetWearableDailyDataV4,
   useGetWearableDailyRecommendationDataV4,
+  useGetWearableMonthlyDataV4,
   useGetWearableWeeklyDataV4,
   useGetWearableWeeklyRecommendationDataV4,
 } from "@/service/hooks/wearable/terra/useGetUserInfo";
@@ -51,6 +52,14 @@ const Sleep = () => {
   } = useGetWearableDailyDataV4({
     resource: connectedDevicesData?.[0],
     startDate: formatDate(selectedDate),
+    isEnable: connectedDevicesData?.length > 0 ? connectedDevicesData?.[0] : "",
+  });
+  const {
+    data: wearableMonthlyData,
+    isSuccess: wearableMonthlyIsSuccess,
+    isLoading: wearableMonthlyIsLoading,
+  } = useGetWearableMonthlyDataV4({
+    resource: connectedDevicesData?.[0],
     isEnable: connectedDevicesData?.length > 0 ? connectedDevicesData?.[0] : "",
   });
 
@@ -149,7 +158,10 @@ const Sleep = () => {
               </TabsContent>
 
               <TabsContent value="month" className="mt-6">
-                <MonthlyTabContent selectedDate={selectedDate} />
+                <MonthlyTabContent
+                  selectedDate={selectedDate}
+                  wearableMonthlyData={wearableMonthlyData}
+                />
               </TabsContent>
             </Tabs>
           </div>

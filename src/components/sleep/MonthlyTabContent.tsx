@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { TrendingUp, BarChart3, Lightbulb } from "lucide-react";
 import SleepChart from "@/components/sleep/SleepChart";
@@ -7,9 +6,13 @@ import SleepRecommendations from "@/components/sleep/SleepRecommendations";
 
 interface MonthlyTabContentProps {
   selectedDate: Date;
+  wearableMonthlyData;
 }
 
-const MonthlyTabContent = ({ selectedDate }: MonthlyTabContentProps) => {
+const MonthlyTabContent = ({
+  selectedDate,
+  wearableMonthlyData,
+}: MonthlyTabContentProps) => {
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
@@ -21,10 +24,14 @@ const MonthlyTabContent = ({ selectedDate }: MonthlyTabContentProps) => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <SleepSummary date={selectedDate} viewType="month" />
+            <SleepSummary
+              date={selectedDate}
+              viewType="month"
+              wearableWeeklyData={wearableMonthlyData}
+            />
           </CardContent>
         </Card>
-        
+
         <Card className="wellness-card border-l-4 border-l-green-400">
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center gap-2 text-lg">
@@ -33,11 +40,15 @@ const MonthlyTabContent = ({ selectedDate }: MonthlyTabContentProps) => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <SleepRecommendations date={selectedDate} viewType="month" />
+            <SleepRecommendations
+              date={selectedDate}
+              viewType="month"
+              wearableWeeklyRecommendationData={[]}
+            />
           </CardContent>
         </Card>
       </div>
-      
+
       <Card className="lg:col-span-3 wellness-card border-l-4 border-l-green-400">
         <CardHeader className="pb-2">
           <CardTitle className="flex items-center gap-2 text-lg">
@@ -46,7 +57,14 @@ const MonthlyTabContent = ({ selectedDate }: MonthlyTabContentProps) => {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <SleepChart date={selectedDate} viewType="month" />
+          <SleepChart
+            date={selectedDate}
+            viewType="month"
+            apiData={
+              wearableMonthlyData?.weeklySleepDataV4List?.[0]
+                ?.finalSpikeWeeklySleepDataV4s
+            }
+          />
         </CardContent>
       </Card>
     </div>
