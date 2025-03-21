@@ -210,107 +210,110 @@ const DailyTabContent = ({
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            <div className="rounded-lg border bg-white p-4">
-              <div className="flex items-start gap-2">
-                <UtensilsCrossed className="h-5 w-5 text-wellness-bright-green mt-1 flex-shrink-0" />
-                <div>
-                  <p className="text-wellness-muted-black font-bold">
-                    Actionable Tip
-                  </p>
-                  <p className="text-wellness-muted-black">
-                    {wearableDailyRecommendationData?.[0] &&
-                      Object.entries(wearableDailyRecommendationData?.[0])?.map(
-                        ([key, descriptions], index) => {
-                          return (
-                            <div key={index}>
-                              <p className="text-wellness-muted-black font-bold mt-2">
-                                {convertUnderscoresToCapitalizeHeading(key)}
-                              </p>
-                              {Array.isArray(descriptions) &&
-                                descriptions?.map((desc, i) => (
-                                  <p
-                                    key={i}
-                                    className="text-wellness-muted-black"
-                                  >
-                                    {desc}
-                                  </p>
-                                ))}
-                            </div>
-                          );
-                        }
-                      )}
-                  </p>
+            {wearableDailyRecommendationData?.[0] && (
+              <div className="rounded-lg border bg-white p-4">
+                <div className="flex items-start gap-2">
+                  <UtensilsCrossed className="h-5 w-5 text-wellness-bright-green mt-1 flex-shrink-0" />
+                  <div>
+                    <p className="text-wellness-muted-black font-bold">
+                      Actionable Tip
+                    </p>
+                    <p className="text-wellness-muted-black">
+                      {Object.entries(
+                        wearableDailyRecommendationData?.[0]
+                      )?.map(([key, descriptions], index) => {
+                        return (
+                          <div key={index}>
+                            <p className="text-wellness-muted-black font-bold mt-2">
+                              {convertUnderscoresToCapitalizeHeading(key)}
+                            </p>
+                            {Array.isArray(descriptions) &&
+                              descriptions?.map((desc, i) => (
+                                <p
+                                  key={i}
+                                  className="text-wellness-muted-black"
+                                >
+                                  {desc}
+                                </p>
+                              ))}
+                          </div>
+                        );
+                      })}
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
 
-            <div className="rounded-lg border bg-white p-4">
-              <div className="flex items-start gap-2">
-                <Dumbbell className="h-5 w-5 text-wellness-bright-green mt-1 flex-shrink-0" />
-                <div>
-                  <p className="text-wellness-muted-black font-bold">
-                    Alternative Cause
-                  </p>
-                  <p className="text-wellness-muted-black">
-                    {wearableDailyRecommendationData?.[1] &&
-                      Object.entries(wearableDailyRecommendationData?.[1])?.map(
-                        ([key, descriptions], index) => {
-                          return (
-                            <div key={index}>
-                              <p className="text-wellness-muted-black font-bold mt-2">
-                                {convertUnderscoresToCapitalizeHeading(key)}
-                              </p>
-                              {Array.isArray(descriptions) &&
-                                descriptions?.map((desc, i) => (
-                                  <p
-                                    key={i}
-                                    className="text-wellness-muted-black"
-                                  >
-                                    {desc}
-                                  </p>
-                                ))}
-                            </div>
-                          );
-                        }
-                      )}
-                  </p>
+            {wearableDailyRecommendationData?.[1] && (
+              <div className="rounded-lg border bg-white p-4">
+                <div className="flex items-start gap-2">
+                  <Dumbbell className="h-5 w-5 text-wellness-bright-green mt-1 flex-shrink-0" />
+                  <div>
+                    <p className="text-wellness-muted-black font-bold">
+                      Alternative Cause
+                    </p>
+                    <p className="text-wellness-muted-black">
+                      {Object.entries(
+                        wearableDailyRecommendationData?.[1]
+                      )?.map(([key, descriptions], index) => {
+                        return (
+                          <div key={index}>
+                            <p className="text-wellness-muted-black font-bold mt-2">
+                              {convertUnderscoresToCapitalizeHeading(key)}
+                            </p>
+                            {Array.isArray(descriptions) &&
+                              descriptions?.map((desc, i) => (
+                                <p
+                                  key={i}
+                                  className="text-wellness-muted-black"
+                                >
+                                  {desc}
+                                </p>
+                              ))}
+                          </div>
+                        );
+                      })}
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
 
-            <div className="rounded-lg border bg-white p-4">
-              <div className="flex items-start gap-2">
-                <HeartPulse className="h-5 w-5 text-wellness-bright-green mt-1 flex-shrink-0" />
-                <div>
-                  <p className="text-wellness-muted-black font-bold">
-                    Observation
-                  </p>
-                  <p className="text-wellness-muted-black">
-                    {wearableDailyRecommendationData?.[2] &&
-                      Object.entries(wearableDailyRecommendationData?.[2])?.map(
-                        ([key, descriptions], index) => {
-                          return (
-                            <div key={index}>
-                              <p className="text-wellness-muted-black font-bold mt-2">
-                                {convertUnderscoresToCapitalizeHeading(key)}
-                              </p>
-                              {Array.isArray(descriptions) &&
-                                descriptions?.map((desc, i) => (
-                                  <p
-                                    key={i}
-                                    className="text-wellness-muted-black"
-                                  >
-                                    {desc}
-                                  </p>
-                                ))}
-                            </div>
-                          );
-                        }
-                      )}
-                  </p>
+            {wearableDailyRecommendationData?.[2] && (
+              <div className="rounded-lg border bg-white p-4">
+                <div className="flex items-start gap-2">
+                  <HeartPulse className="h-5 w-5 text-wellness-bright-green mt-1 flex-shrink-0" />
+                  <div>
+                    <p className="text-wellness-muted-black font-bold">
+                      Observation
+                    </p>
+                    <p className="text-wellness-muted-black">
+                      {Object.entries(
+                        wearableDailyRecommendationData?.[2]
+                      )?.map(([key, descriptions], index) => {
+                        return (
+                          <div key={index}>
+                            <p className="text-wellness-muted-black font-bold mt-2">
+                              {convertUnderscoresToCapitalizeHeading(key)}
+                            </p>
+                            {Array.isArray(descriptions) &&
+                              descriptions?.map((desc, i) => (
+                                <p
+                                  key={i}
+                                  className="text-wellness-muted-black"
+                                >
+                                  {desc}
+                                </p>
+                              ))}
+                          </div>
+                        );
+                      })}
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
           </div>
         </CardContent>
       </Card>
