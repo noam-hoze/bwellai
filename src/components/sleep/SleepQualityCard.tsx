@@ -68,10 +68,10 @@ const SleepQualityCard = ({
       </CardHeader>
       <CardContent className="pt-0 h-full">
         <SleepPieChart
-          lightSleep={lightSleep}
-          deepSleep={deepSleep}
-          remSleep={remSleep}
-          awake={awake}
+          lightSleep={lightSleep || 0}
+          deepSleep={deepSleep || 0}
+          remSleep={remSleep || 0}
+          awake={awake || 0}
         />
       </CardContent>
     </Card>
