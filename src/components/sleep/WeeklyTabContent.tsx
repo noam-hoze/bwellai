@@ -42,13 +42,15 @@ const WeeklyTabContent = ({
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <SleepRecommendations
-              date={selectedDate}
-              viewType="week"
-              wearableWeeklyRecommendationData={
-                wearableWeeklyRecommendationData
-              }
-            />
+            {wearableWeeklyRecommendationData && (
+              <SleepRecommendations
+                date={selectedDate}
+                viewType="week"
+                wearableWeeklyRecommendationData={
+                  wearableWeeklyRecommendationData
+                }
+              />
+            )}
           </CardContent>
         </Card>
       </div>
