@@ -5,6 +5,7 @@ import SleepRecommendations from "@/components/sleep/SleepRecommendations";
 import { Separator } from "@/components/ui/separator";
 import SleepScoreCard from "@/components/sleep/SleepScoreCard";
 import SleepDistributionCard from "@/components/sleep/SleepDistributionCard";
+import SleepQualityCard from "@/components/sleep/SleepQualityCard";
 import { useIsMobile } from "@/hooks/use-mobile";
 import {
   Carousel,
@@ -66,13 +67,21 @@ const DailyTabContent = ({
                   awake={scoreData.awake}
                 />
               </CarouselItem>
+              <CarouselItem>
+                <SleepQualityCard
+                  lightSleep={scoreData.lightSleep}
+                  deepSleep={scoreData.deepSleep}
+                  remSleep={scoreData.remSleep}
+                  awake={scoreData.awake}
+                />
+              </CarouselItem>
             </CarouselContent>
             <CarouselPrevious className="left-1" />
             <CarouselNext className="right-1" />
           </Carousel>
         </div>
       ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
           <SleepScoreCard
             score={wearableDailyData?.average}
             bedtime={
@@ -93,6 +102,12 @@ const DailyTabContent = ({
             deepSleep={wearableDailyData?.finalDailySpikeSleepDataV4?.deep}
             remSleep={wearableDailyData?.finalDailySpikeSleepDataV4?.rem}
             awake={wearableDailyData?.finalDailySpikeSleepDataV4?.awake}
+          />
+          <SleepQualityCard
+            lightSleep={wearableDailyData?.finalDailySpikeSleepDataV4.light}
+            deepSleep={wearableDailyData?.finalDailySpikeSleepDataV4.deep}
+            remSleep={wearableDailyData?.finalDailySpikeSleepDataV4.rem}
+            awake={wearableDailyData?.finalDailySpikeSleepDataV4.awake}
           />
         </div>
       )}
