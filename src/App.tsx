@@ -30,7 +30,8 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             {/* Auth & Onboarding Routes */}
-            <Route path="/" element={<Navigate to="/welcome" replace />} />
+            <Route path="/" element={<Navigate to="/dashboard" replace />} />
+
             <Route path="/welcome" element={<Welcome />} />
             <Route path="/onboarding/:step" element={<OnboardingScreen />} />
             <Route path="/auth/signup" element={<SignUp />} />
