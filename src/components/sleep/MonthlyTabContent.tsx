@@ -60,10 +60,7 @@ const MonthlyTabContent = ({
           <SleepChart
             date={selectedDate}
             viewType="month"
-            apiData={
-              wearableMonthlyData?.weeklySleepDataV4List?.[0]
-                ?.finalSpikeWeeklySleepDataV4s
-            }
+            apiData={wearableMonthlyData?.weeklySleepDataV4List}
           />
         </CardContent>
       </Card>

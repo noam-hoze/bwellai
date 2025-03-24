@@ -213,11 +213,11 @@ const DailyTabContent = ({
             {wearableDailyRecommendationData?.[0] && (
               <div className="rounded-lg border bg-white p-4">
                 <div className="flex items-start gap-2">
-                  <UtensilsCrossed className="h-5 w-5 text-wellness-bright-green mt-1 flex-shrink-0" />
+                  <UtensilsCrossed className="h-5 w-5 text-wellness-bright-green mt-2 flex-shrink-0" />
                   <div>
-                    <p className="text-wellness-muted-black font-bold">
+                    {/* <p className="text-wellness-muted-black font-bold">
                       Actionable Tip
-                    </p>
+                    </p> */}
                     <p className="text-wellness-muted-black">
                       {Object.entries(
                         wearableDailyRecommendationData?.[0]
@@ -248,11 +248,11 @@ const DailyTabContent = ({
             {wearableDailyRecommendationData?.[1] && (
               <div className="rounded-lg border bg-white p-4">
                 <div className="flex items-start gap-2">
-                  <Dumbbell className="h-5 w-5 text-wellness-bright-green mt-1 flex-shrink-0" />
+                  <Dumbbell className="h-5 w-5 text-wellness-bright-green mt-2 flex-shrink-0" />
                   <div>
-                    <p className="text-wellness-muted-black font-bold">
+                    {/* <p className="text-wellness-muted-black font-bold">
                       Alternative Cause
-                    </p>
+                    </p> */}
                     <p className="text-wellness-muted-black">
                       {Object.entries(
                         wearableDailyRecommendationData?.[1]
@@ -283,11 +283,11 @@ const DailyTabContent = ({
             {wearableDailyRecommendationData?.[2] && (
               <div className="rounded-lg border bg-white p-4">
                 <div className="flex items-start gap-2">
-                  <HeartPulse className="h-5 w-5 text-wellness-bright-green mt-1 flex-shrink-0" />
+                  <HeartPulse className="h-5 w-5 text-wellness-bright-green mt-2 flex-shrink-0" />
                   <div>
-                    <p className="text-wellness-muted-black font-bold">
+                    {/* <p className="text-wellness-muted-black font-bold">
                       Observation
-                    </p>
+                    </p> */}
                     <p className="text-wellness-muted-black">
                       {Object.entries(
                         wearableDailyRecommendationData?.[2]

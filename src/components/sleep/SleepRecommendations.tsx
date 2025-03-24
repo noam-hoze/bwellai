@@ -140,11 +140,11 @@ const SleepRecommendations: React.FC<SleepRecommendationsProps> = ({
             .map((rec, index) => (
               <div key={index} className="rounded-lg border bg-white p-4">
                 <div className="flex items-start gap-2">
-                  {rec.icon}
+                  <div className="mt-1">{rec.icon}</div>
                   <div>
-                    <p className="text-wellness-muted-black font-bold">
+                    {/* <p className="text-wellness-muted-black font-bold">
                       {rec.title}
-                    </p>
+                    </p> */}
                     {/* <p className="text-wellness-muted-black">
                       {rec.description}
                     </p> */}
