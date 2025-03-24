@@ -18,6 +18,7 @@ import {
   useGetWearableDailyDataV4,
   useGetWearableDailyRecommendationDataV4,
   useGetWearableMonthlyDataV4,
+  useGetWearableMonthlyRecommendationDataV4,
   useGetWearableWeeklyDataV4,
   useGetWearableWeeklyRecommendationDataV4,
 } from "@/service/hooks/wearable/terra/useGetUserInfo";
@@ -61,6 +62,7 @@ const Sleep = () => {
   } = useGetWearableMonthlyDataV4({
     resource: connectedDevicesData?.[0],
     isEnable: connectedDevicesData?.length > 0 ? connectedDevicesData?.[0] : "",
+    startDate: formatDate(selectedDate),
   });
 
   const {
@@ -70,6 +72,16 @@ const Sleep = () => {
   } = useGetWearableWeeklyRecommendationDataV4({
     isEnable: connectedDevicesData?.length > 0 ? connectedDevicesData?.[0] : "",
     language: "english",
+    startDate: formatDate(selectedDate),
+  });
+  const {
+    data: wearableMonthlyRecommendationData,
+    isSuccess: wearableMonthlyRecommendationIsSuccess,
+    isLoading: wearableMonthlyRecommendationIsLoading,
+  } = useGetWearableMonthlyRecommendationDataV4({
+    isEnable: connectedDevicesData?.length > 0 ? connectedDevicesData?.[0] : "",
+    language: "english",
+    startDate: formatDate(selectedDate),
   });
 
   const {
@@ -79,6 +91,7 @@ const Sleep = () => {
   } = useGetWearableWeeklyDataV4({
     resource: connectedDevicesData?.[0],
     isEnable: connectedDevicesData?.length > 0 ? connectedDevicesData?.[0] : "",
+    startDate: formatDate(selectedDate),
   });
 
   const handlePrevious = () => {
@@ -151,7 +164,7 @@ const Sleep = () => {
                 <WeeklyTabContent
                   selectedDate={selectedDate}
                   wearableWeeklyRecommendationData={
-                    wearableWeeklyRecommendationData?.insights
+                    wearableWeeklyRecommendationData?.ai_response?.insights
                   }
                   wearableWeeklyData={wearableWeeklyData}
                 />
@@ -160,6 +173,9 @@ const Sleep = () => {
               <TabsContent value="month" className="mt-6">
                 <MonthlyTabContent
                   selectedDate={selectedDate}
+                  wearableMonthlyRecommendationData={
+                    wearableMonthlyRecommendationData?.ai_response?.insights
+                  }
                   wearableMonthlyData={wearableMonthlyData}
                 />
               </TabsContent>
