@@ -59,7 +59,11 @@ const DailyTabContent = ({
                       "T"
                     )?.[1]
                   }
-                  wakeup={scoreData.wakeup}
+                  wakeup={
+                    wearableDailyData?.finalDailySpikeSleepDataV4?.bedtime_end?.split(
+                      "T"
+                    )?.[1]
+                  }
                   totalSleep={`${(
                     (wearableDailyData?.finalDailySpikeSleepDataV4
                       ?.total_sleep || 0) / 3600
@@ -137,13 +141,16 @@ const DailyTabContent = ({
                 "T"
               )?.[1]
             }
-            wakeup={scoreData.wakeup}
+            wakeup={
+              wearableDailyData?.finalDailySpikeSleepDataV4?.bedtime_end?.split(
+                "T"
+              )?.[1]
+            }
             totalSleep={`${(
               (wearableDailyData?.finalDailySpikeSleepDataV4?.total_sleep ||
                 0) / 3600
             )?.toFixed(1)} H`}
             wakeupCount={wearableDailyData?.wakeUpTimes}
-            // wakeupCount={scoreData.wakeupCount}
           />
           <SleepDistributionCard
             lightSleep={
