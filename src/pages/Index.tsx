@@ -18,9 +18,9 @@ const Index = () => {
   const [isFaceScanOpen, setIsFaceScanOpen] = useState(false);
 
   // Redirect to welcome page if not authenticated
-  // if (!loading && !isAuthenticated) {
-  //   return <Navigate to="/welcome" replace />;
-  // }
+  if (!loading && !localStorage.getItem("token")) {
+    return <Navigate to="/welcome" replace />;
+  }
 
   const handleLogMeal = () => {
     toast({

@@ -1,5 +1,3 @@
-
-import React from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import OnboardingLayout from "@/components/onboarding/OnboardingLayout";
@@ -19,19 +17,16 @@ const Welcome = () => {
               Your Personalized Health Assistant
             </h1>
             <p className="text-gray-600">
-              Track, monitor, and understand your health data in one secure place.
+              Track, monitor, and understand your health data in one secure
+              place.
             </p>
           </div>
 
           <div className="space-y-4 pt-8">
-            <Button
-              className="w-full py-6 text-lg"
-              size="lg"
-              asChild
-            >
+            <Button className="w-full py-6 text-lg" size="lg" asChild>
               <Link to="/onboarding/1">Get Started</Link>
             </Button>
-            
+
             <Button
               variant="outline"
               className="w-full py-6 text-lg"
