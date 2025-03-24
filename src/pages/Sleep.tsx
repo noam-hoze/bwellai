@@ -154,7 +154,7 @@ const Sleep = () => {
                 <DailyTabContent
                   selectedDate={selectedDate}
                   wearableDailyRecommendationData={
-                    wearableDailyRecommendationData?.insights
+                    wearableDailyRecommendationData?.ai_response?.insights
                   }
                   wearableDailyData={wearableDailyData}
                 />
