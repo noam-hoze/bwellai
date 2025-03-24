@@ -13,6 +13,7 @@ import {
   getWearableElasticSearchHistoricalDataFetcherV2,
   getWearableGraphDataV3Fetcher,
   getWearableMonthlyDataV4Fetcher,
+  getWearableMonthlyRecommendationDataV4Fetcher,
   getWearableWeeklyDataV4Fetcher,
   getWearableWeeklyRecommendationDataV4Fetcher,
 } from "../../../api/fetcher/wearable/terra/user-info";
@@ -154,14 +155,44 @@ export const useGetWearableDailyRecommendationDataV4 = ({
 };
 export const useGetWearableWeeklyRecommendationDataV4 = ({
   language,
+  startDate,
   isEnable,
 }: {
   language: string;
+  startDate: string;
   isEnable: string;
 }) => {
   const { data, error, isError, isLoading, isSuccess, refetch } = useQuery({
-    queryKey: ["get-wearable-weekly-recommendation-data-v4", language],
-    queryFn: () => getWearableWeeklyRecommendationDataV4Fetcher(language),
+    queryKey: [
+      "get-wearable-weekly-recommendation-data-v4",
+      language,
+      startDate,
+    ],
+    queryFn: () =>
+      getWearableWeeklyRecommendationDataV4Fetcher(language, startDate),
+    placeholderData: (previousData) => previousData,
+    enabled: isEnable ? true : false,
+  });
+
+  return { data: data?.data, error, isError, isLoading, isSuccess, refetch };
+};
+export const useGetWearableMonthlyRecommendationDataV4 = ({
+  language,
+  startDate,
+  isEnable,
+}: {
+  language: string;
+  startDate: string;
+  isEnable: string;
+}) => {
+  const { data, error, isError, isLoading, isSuccess, refetch } = useQuery({
+    queryKey: [
+      "get-wearable-monthly-recommendation-data-v4",
+      language,
+      startDate,
+    ],
+    queryFn: () =>
+      getWearableMonthlyRecommendationDataV4Fetcher(language, startDate),
     placeholderData: (previousData) => previousData,
     enabled: isEnable ? true : false,
   });
@@ -189,13 +220,15 @@ export const useGetWearableDailyDataV4 = ({
 export const useGetWearableMonthlyDataV4 = ({
   resource,
   isEnable,
+  startDate,
 }: {
   resource: string;
   isEnable: string;
+  startDate: string;
 }) => {
   const { data, error, isError, isLoading, isSuccess, refetch } = useQuery({
     queryKey: ["get-wearable-monthly-data-v4", resource],
-    queryFn: () => getWearableMonthlyDataV4Fetcher(resource),
+    queryFn: () => getWearableMonthlyDataV4Fetcher(resource, startDate),
     placeholderData: (previousData) => previousData,
     enabled: isEnable ? true : false,
   });
@@ -205,13 +238,15 @@ export const useGetWearableMonthlyDataV4 = ({
 export const useGetWearableWeeklyDataV4 = ({
   resource,
   isEnable,
+  startDate,
 }: {
   resource: string;
   isEnable: string;
+  startDate: string;
 }) => {
   const { data, error, isError, isLoading, isSuccess, refetch } = useQuery({
-    queryKey: ["get-wearable-weekly-data-v4", resource],
-    queryFn: () => getWearableWeeklyDataV4Fetcher(resource),
+    queryKey: ["get-wearable-weekly-data-v4", resource, startDate],
+    queryFn: () => getWearableWeeklyDataV4Fetcher(resource, startDate),
     placeholderData: (previousData) => previousData,
     enabled: isEnable ? true : false,
   });

@@ -31,16 +31,35 @@ const getWearableDailyDataV4 = ({
   startDate: string;
   resource: string;
 }) => `wearable/v4/daily?resource=${resource}&date=${startDate}`;
-const getWearableWeeklyDataV4 = ({ resource }: { resource: string }) =>
-  `wearable/v4/weekly?resource=${resource}`;
-const getWearableMonthlyDataV4 = ({ resource }: { resource: string }) =>
-  `wearable/v4/monthly?resource=${resource}`;
+const getWearableWeeklyDataV4 = ({
+  resource,
+  startDate,
+}: {
+  resource: string;
+  startDate: string;
+}) => `wearable/v4/weekly?resource=${resource}&date=${startDate}`;
+const getWearableMonthlyDataV4 = ({
+  resource,
+  startDate,
+}: {
+  resource: string;
+  startDate: string;
+}) => `wearable/v4/monthly?resource=${resource}&date=${startDate}`;
 
 const getWearableWeeklyRecommendationDataV4 = ({
   language,
+  startDate,
 }: {
   language: string;
-}) => `wearable/v4/weekly/insight?language=${language}`;
+  startDate: string;
+}) => `wearable/v4/weekly/insight?language=${language}&date=${startDate}`;
+const getWearableMonthlyRecommendationDataV4 = ({
+  language,
+  startDate,
+}: {
+  language: string;
+  startDate: string;
+}) => `wearable/v4/monthly/insight?language=${language}&date=${startDate}`;
 
 // const getUpdateConnectedDevice = (
 //   userId: string,
@@ -178,14 +197,31 @@ export const getWearableDailyDataV4Fetcher = (
 ) => {
   return Client.get(getWearableDailyDataV4({ resource, startDate }));
 };
-export const getWearableWeeklyDataV4Fetcher = (resource: string) => {
-  return Client.get(getWearableWeeklyDataV4({ resource }));
+export const getWearableWeeklyDataV4Fetcher = (
+  resource: string,
+  startDate: string
+) => {
+  return Client.get(getWearableWeeklyDataV4({ resource, startDate }));
 };
-export const getWearableMonthlyDataV4Fetcher = (resource: string) => {
-  return Client.get(getWearableMonthlyDataV4({ resource }));
+export const getWearableMonthlyDataV4Fetcher = (
+  resource: string,
+  startDate: string
+) => {
+  return Client.get(getWearableMonthlyDataV4({ resource, startDate }));
 };
 export const getWearableWeeklyRecommendationDataV4Fetcher = (
-  language: string
+  language: string,
+  startDate: string
 ) => {
-  return Client.get(getWearableWeeklyRecommendationDataV4({ language }));
+  return Client.get(
+    getWearableWeeklyRecommendationDataV4({ language, startDate })
+  );
+};
+export const getWearableMonthlyRecommendationDataV4Fetcher = (
+  language: string,
+  startDate: string
+) => {
+  return Client.get(
+    getWearableMonthlyRecommendationDataV4({ language, startDate })
+  );
 };

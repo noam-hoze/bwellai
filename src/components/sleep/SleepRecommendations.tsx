@@ -23,6 +23,8 @@ const SleepRecommendations: React.FC<SleepRecommendationsProps> = ({
 }) => {
   const [expanded, setExpanded] = React.useState(false);
 
+  console.log(wearableWeeklyRecommendationData);
+
   // Mock data for recommendations
   const getRecommendations = () => {
     if (viewType === "day") {

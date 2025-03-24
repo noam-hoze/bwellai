@@ -1,19 +1,27 @@
-
 import { format, subDays } from "date-fns";
 
-export const getDateDisplay = (selectedDate: Date, viewType: "day" | "week" | "month"): string => {
+export const getDateDisplay = (
+  selectedDate: Date,
+  viewType: "day" | "week" | "month"
+): string => {
   if (viewType === "day") {
     return format(selectedDate, "EEEE, MMMM d, yyyy");
   } else if (viewType === "week") {
     const endDate = new Date(selectedDate);
-    endDate.setDate(endDate.getDate() + 6);
-    return `${format(selectedDate, "MMM d")} - ${format(endDate, "MMM d, yyyy")}`;
+    endDate.setDate(endDate.getDate() - 6);
+    return `${format(endDate, "MMM d")} - ${format(
+      selectedDate,
+      "MMM d, yyyy"
+    )}`;
   } else {
     return format(selectedDate, "MMMM yyyy");
   }
 };
 
-export const goToPreviousDate = (selectedDate: Date, viewType: "day" | "week" | "month"): Date => {
+export const goToPreviousDate = (
+  selectedDate: Date,
+  viewType: "day" | "week" | "month"
+): Date => {
   if (viewType === "day") {
     return subDays(selectedDate, 1);
   } else if (viewType === "week") {
@@ -25,7 +33,10 @@ export const goToPreviousDate = (selectedDate: Date, viewType: "day" | "week" | 
   }
 };
 
-export const goToNextDate = (selectedDate: Date, viewType: "day" | "week" | "month"): Date => {
+export const goToNextDate = (
+  selectedDate: Date,
+  viewType: "day" | "week" | "month"
+): Date => {
   if (viewType === "day") {
     const tomorrow = new Date(selectedDate);
     tomorrow.setDate(tomorrow.getDate() + 1);
@@ -42,5 +53,7 @@ export const goToNextDate = (selectedDate: Date, viewType: "day" | "week" | "mon
 };
 
 export const isToday = (selectedDate: Date): boolean => {
-  return format(selectedDate, "yyyy-MM-dd") === format(new Date(), "yyyy-MM-dd");
+  return (
+    format(selectedDate, "yyyy-MM-dd") === format(new Date(), "yyyy-MM-dd")
+  );
 };

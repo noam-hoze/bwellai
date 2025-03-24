@@ -7,11 +7,13 @@ import SleepRecommendations from "@/components/sleep/SleepRecommendations";
 interface MonthlyTabContentProps {
   selectedDate: Date;
   wearableMonthlyData;
+  wearableMonthlyRecommendationData;
 }
 
 const MonthlyTabContent = ({
   selectedDate,
   wearableMonthlyData,
+  wearableMonthlyRecommendationData,
 }: MonthlyTabContentProps) => {
   return (
     <div className="space-y-6">
@@ -43,7 +45,9 @@ const MonthlyTabContent = ({
             <SleepRecommendations
               date={selectedDate}
               viewType="month"
-              wearableWeeklyRecommendationData={[]}
+              wearableWeeklyRecommendationData={
+                wearableMonthlyRecommendationData
+              }
             />
           </CardContent>
         </Card>
