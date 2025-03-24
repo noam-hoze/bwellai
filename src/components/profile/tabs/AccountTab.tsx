@@ -27,15 +27,9 @@ import {
 import { toast } from "sonner";
 import { useGetUserProfile } from "@/service/hooks/profile/useGetUserProfile";
 
-const AccountTab = () => {
+const AccountTab = ({ getProfileIsData }) => {
   const navigate = useNavigate();
   const [openDeleteDialog, setOpenDeleteDialog] = useState<string | null>(null);
-
-  const {
-    data,
-    isSuccess: getProfileIsSuccess,
-    refetch: getUserProfileRefetch,
-  } = useGetUserProfile();
 
   const handleLogout = () => {
     // Placeholder for logout functionality
@@ -84,9 +78,11 @@ const AccountTab = () => {
                   </div>
                   <div>
                     <h3 className="text-xl font-medium">
-                      {data?.fullName || "john doe"}
+                      {getProfileIsData?.fullName || "john doe"}
                     </h3>
-                    <p className="text-gray-500">{data?.email || "john doe"}</p>
+                    <p className="text-gray-500">
+                      {getProfileIsData?.email || "john doe"}
+                    </p>
                   </div>
                 </div>
               </AccordionContent>

@@ -85,12 +85,20 @@ const generateSleepData = (
   } else {
     const numWeeks = 4;
     return apiData?.map((day) => ({
-      date: format(new Date(day?.bedtime_start), "EEE"), // Short weekday name (e.g., "Mon")
-      fullDate: format(new Date(day?.bedtime_start), "MMM dd"), // Month + day (e.g., "Mar 14")
-      light: day?.light / 3600, // Convert seconds to hours
-      deep: day?.deep / 3600, // Convert seconds to hours
-      rem: day?.rem / 3600, // Convert seconds to hours
-      awake: day?.awake / 3600, // Convert seconds to hours
+      date: format(new Date(day?.from), "EEE"), // Short weekday name (e.g., "Mon")
+      fullDate: format(new Date(day?.from), "MMM dd"), // Month + day (e.g., "Mar 14")
+      light: `${day?.weeklyAverageLightSleep?.split(":")?.[0]}.${
+        day?.weeklyAverageLightSleep?.split(":")?.[1]
+      }`, // Convert seconds to hours
+      deep: `${day?.weeklyAverageDeepSleep?.split(":")?.[0]}.${
+        day?.weeklyAverageDeepSleep?.split(":")?.[1]
+      }`, // Convert seconds to hours
+      rem: `${day?.weeklyAverageRemSleep?.split(":")?.[0]}.${
+        day?.weeklyAverageRemSleep?.split(":")?.[1]
+      }`, // Convert seconds to hours
+      awake: `${day?.weeklyAverageWakeUp?.split(":")?.[0]}.${
+        day?.weeklyAverageWakeUp?.split(":")?.[1]
+      }`, // Convert seconds to hours
     })) as MonthData[];
   }
 };
