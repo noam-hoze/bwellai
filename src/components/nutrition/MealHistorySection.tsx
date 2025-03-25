@@ -67,9 +67,8 @@ const MealItem = ({ type, time, name, calories, protein }: MealItemProps) => {
   );
 };
 
-const MealHistorySection = () => {
+const MealHistorySection = ({ loggedMealData, date, setDate }) => {
   const [expanded, setExpanded] = useState(false);
-  const [date, setDate] = useState<Date | undefined>(new Date());
   const [currentPage, setCurrentPage] = useState(1);
   const [mealTypeFilter, setMealTypeFilter] = useState<string | null>(null);
   const itemsPerPage = 5;
@@ -140,13 +139,6 @@ const MealHistorySection = () => {
       date: new Date(Date.now() - 86400000), // Yesterday
     },
   ];
-
-  console.log(date);
-
-  const { data: loggedMealData } = useGetUserLoggedMealDataFetcherV4(
-    new Date(date || new Date())?.toISOString()?.split("T")?.[0],
-    true
-  );
 
   // Filter meals by date and type
   const filteredMeals = allMeals.filter((meal) => {

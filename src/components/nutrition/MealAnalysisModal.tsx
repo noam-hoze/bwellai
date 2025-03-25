@@ -10,18 +10,34 @@ import {
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { useGetLogFoodDataV4Fetcher } from "@/service/hooks/nutrition/useGetFoodReportUpload";
+import { useEffect } from "react";
 
 interface MealAnalysisModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   meal?;
+  refetchLoggedMeals;
 }
 
 const MealAnalysisModal = ({
   open,
   onOpenChange,
   meal,
+  refetchLoggedMeals,
 }: MealAnalysisModalProps) => {
+  const {
+    data: logMealData,
+    isSuccess: logMealIsSuccess,
+    mutate: logMealMutate,
+  } = useGetLogFoodDataV4Fetcher();
+
+  useEffect(() => {
+    if (logMealIsSuccess && logMealData) {
+      refetchLoggedMeals();
+    }
+  }, [logMealData, logMealIsSuccess]);
+
   if (!meal) return null;
 
   return (
@@ -301,7 +317,10 @@ const MealAnalysisModal = ({
               </Button>
               <Button
                 className="bg-blue-500 hover:bg-blue-600 text-white"
-                onClick={() => onOpenChange(false)}
+                onClick={() => {
+                  logMealMutate({ es_id: meal?.id, meal_type: meal?.type });
+                  onOpenChange(false);
+                }}
               >
                 Log Meal
               </Button>
