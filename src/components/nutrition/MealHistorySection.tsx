@@ -34,6 +34,7 @@ import {
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { format } from "date-fns";
 import { useGetUserLoggedMealDataFetcherV4 } from "@/service/hooks/nutrition/useGetFoodReportUpload";
+import MealAnalysisModal from "./MealAnalysisModal";
 
 interface MealItemProps {
   type: string;
@@ -41,11 +42,29 @@ interface MealItemProps {
   name: string;
   calories: number;
   protein: number;
+  meal?;
+  setCurrentMeal?;
+  setAnalysisOpen?;
 }
 
-const MealItem = ({ type, time, name, calories, protein }: MealItemProps) => {
+const MealItem = ({
+  type,
+  time,
+  name,
+  calories,
+  protein,
+  meal,
+  setCurrentMeal,
+  setAnalysisOpen,
+}: MealItemProps) => {
   return (
-    <Card className="mb-4 hover:shadow-md transition-shadow border-gray-100">
+    <Card
+      className="mb-4 hover:shadow-md transition-shadow border-gray-100"
+      onClick={() => {
+        setCurrentMeal(meal?.ai_response);
+        setAnalysisOpen(true);
+      }}
+    >
       <CardContent className="p-4">
         <div className="flex items-center gap-4">
           <div className="bg-gray-100 p-4 rounded-md">
@@ -67,9 +86,17 @@ const MealItem = ({ type, time, name, calories, protein }: MealItemProps) => {
   );
 };
 
-const MealHistorySection = ({ loggedMealData, date, setDate }) => {
+const MealHistorySection = ({
+  loggedMealData,
+  date,
+  setDate,
+  refetchLoggedMeals,
+}) => {
   const [expanded, setExpanded] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const [analysisOpen, setAnalysisOpen] = useState(false);
+  const [currentMeal, setCurrentMeal] = useState(null);
+
   const [mealTypeFilter, setMealTypeFilter] = useState<string | null>(null);
   const itemsPerPage = 5;
 
@@ -252,6 +279,9 @@ const MealHistorySection = ({ loggedMealData, date, setDate }) => {
               name={meal?.ai_response?.food_name}
               calories={meal?.ai_response?.estimated_calories}
               protein={0}
+              meal={meal}
+              setCurrentMeal={setCurrentMeal}
+              setAnalysisOpen={setAnalysisOpen}
             />
           );
         })}
@@ -281,6 +311,15 @@ const MealHistorySection = ({ loggedMealData, date, setDate }) => {
         >
           View More <ChevronDown className="ml-2 h-4 w-4" />
         </Button>
+      )}
+
+      {currentMeal && (
+        <MealAnalysisModal
+          open={analysisOpen}
+          onOpenChange={setAnalysisOpen}
+          meal={currentMeal}
+          refetchLoggedMeals={refetchLoggedMeals}
+        />
       )}
 
       {expanded && totalPages > 1 && (

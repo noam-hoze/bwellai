@@ -7,8 +7,6 @@ import ScanMealModal from "./ScanMealModal";
 import ScanBarcodeModal from "./ScanBarcodeModal";
 import MealDetailModal from "./MealDetailModal";
 import MealAnalysisModal from "./MealAnalysisModal";
-import { useGetUserFoodReportUpload } from "@/service/hooks/nutrition/useGetFoodReportUpload";
-
 const MealLoggingSection = ({ refetchLoggedMeals }) => {
   const [manualEntry, setManualEntry] = useState("");
   const [isVoiceActive, setIsVoiceActive] = useState(false);
@@ -49,7 +47,6 @@ const MealLoggingSection = ({ refetchLoggedMeals }) => {
     setCurrentMeal({
       id: mealData?.es_id,
       type: determineMealTypeByTime(),
-
       ...mealData?.jsonNode,
     });
 

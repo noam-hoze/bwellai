@@ -36,6 +36,7 @@ const Nutrition = () => {
             date={date}
             setDate={setDate}
             loggedMealData={loggedMealData}
+            refetchLoggedMeals={refetchLoggedMeals}
           />
           {activeTab === "trends" && <TrendsInsightsSection />}
         </div>
