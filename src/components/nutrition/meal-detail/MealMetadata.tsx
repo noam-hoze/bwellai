@@ -17,7 +17,7 @@ interface MealMetadataProps {
   mealType: string;
   notes: string;
   saveAsRecurring: boolean;
-  ingredients: string[];
+  ingredients;
   setMealType: (value: string) => void;
   setNotes: (value: string) => void;
   setSaveAsRecurring: (value: boolean) => void;
@@ -65,8 +65,8 @@ const MealMetadata = ({
       <div>
         <Label className="mb-2 block">Ingredients</Label>
         <ul className="list-disc list-inside space-y-1 text-gray-700">
-          {(currentMeal?.ingredients || ingredients)?.map((ingredient, idx) => (
-            <li key={idx}>{ingredient}</li>
+          {ingredients?.map((ingredient, idx) => (
+            <li key={idx}>{ingredient?.name}</li>
           ))}
         </ul>
         {isEditing && (

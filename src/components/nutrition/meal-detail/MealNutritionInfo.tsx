@@ -52,13 +52,16 @@ const MealNutritionInfo = ({
           <Input
             type="number"
             defaultValue={
-              currentMeal?.carbs?.quantity || originalMeal.carbs?.quantity
+              currentMeal?.carbohydrates?.quantity ||
+              originalMeal.carbohydrates?.quantity
             }
             className="text-lg font-semibold p-1 h-8"
           />
         ) : (
           <p className="text-lg font-semibold">
-            {currentMeal?.carbs?.quantity || originalMeal.carbs?.quantity}g
+            {currentMeal?.carbohydrates?.quantity ||
+              originalMeal.carbohydrates?.quantity}
+            g
           </p>
         )}
       </div>

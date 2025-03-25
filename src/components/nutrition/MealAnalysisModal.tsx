@@ -17,7 +17,7 @@ interface MealAnalysisModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   meal?;
-  refetchLoggedMeals;
+  refetchLoggedMeals?;
 }
 
 const MealAnalysisModal = ({
@@ -277,7 +277,7 @@ const MealAnalysisModal = ({
                 Ingredients Analysis
               </h2>
 
-              {meal.ingredients.map((ingredient, idx) => (
+              {meal?.ingredients?.map((ingredient, idx) => (
                 <div key={idx} className="flex items-center mb-2">
                   {idx === 0 ? (
                     <AlertTriangle size={16} className="mr-2 text-yellow-500" />
@@ -289,7 +289,7 @@ const MealAnalysisModal = ({
                       idx === 0 ? "font-medium" : ""
                     }`}
                   >
-                    {ingredient}
+                    {ingredient?.name}
                   </span>
                   <span className="ml-auto text-sm text-gray-500">
                     {idx === 0
