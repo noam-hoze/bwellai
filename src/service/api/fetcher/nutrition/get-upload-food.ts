@@ -1,9 +1,11 @@
 import { Client } from "../../api.client";
 
 const getUserFoodReportUpload = (language: string) =>
-  `/food/upload?language=${language}`;
+  `/food/upload/v4?language=${language}`;
 const getUserLatestFoodReportUpload = () => `/food/upload/latest`;
 const getUserDefaultFoodReportUpload = () => `/food/upload/default`;
+const getUserLoggedMealDataV4 = (date: string) =>
+  `/food/logged/v4?date=${date}`;
 // const getUserFoodReportByBarCode = ({ bar_code }) =>
 //   `/food/barcode/detail?bar_code=${bar_code}`;
 const getUserFoodReportByBarCode = ({ bar_code }) =>
@@ -47,6 +49,9 @@ export const getUserLatestFoodReportUploadFetcher = () => {
 };
 export const getUserDefaultFoodReportUploadFetcher = () => {
   return Client.get(getUserDefaultFoodReportUpload());
+};
+export const getUserLoggedMealDataV4Fetcher = (date: string) => {
+  return Client.get(getUserLoggedMealDataV4(date));
 };
 
 export const getSaveUserFoodProfileDataFetcher = ({

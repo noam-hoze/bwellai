@@ -10,6 +10,7 @@ import {
   getUserFoodReportUploadByBarCodeFetcher,
   getUserFoodReportUploadFetcher,
   getUserLatestFoodReportUploadFetcher,
+  getUserLoggedMealDataV4Fetcher,
 } from "../../api/fetcher/nutrition/get-upload-food";
 
 export const useGetUserFoodReportUpload = () => {
@@ -19,7 +20,7 @@ export const useGetUserFoodReportUpload = () => {
 
   return {
     data: data?.data,
-    error: error as any,
+    error: error,
     isError,
     isPending,
     isSuccess,
@@ -33,7 +34,7 @@ export const useGetUserFoodReportByBarCode = () => {
 
   return {
     data: data?.data,
-    error: error as any,
+    error: error,
     isError,
     isPending,
     isSuccess,
@@ -122,6 +123,25 @@ export const useGetUserFoodGraphDetailsFetcher = ({
   };
 };
 
+export const useGetUserLoggedMealDataFetcherV4 = (
+  date: string,
+  isAuthenticated: boolean
+) => {
+  const { data, error, isError, isLoading, isSuccess, refetch } = useQuery({
+    queryKey: ["get-user-logged-meal-data-v4", date],
+    queryFn: () => getUserLoggedMealDataV4Fetcher(date),
+    enabled: isAuthenticated,
+  });
+
+  return {
+    data: data?.data,
+    error,
+    isError,
+    isLoading,
+    isSuccess,
+    refetch,
+  };
+};
 export const useGetUserLatestFoodReportUploadFetcher = (
   isAuthenticated: boolean
 ) => {
@@ -176,7 +196,7 @@ export const useGetUserFoodReportBarCodeDataByReportId = ({
 
   return {
     data: data?.data,
-    error: error as any,
+    error: error,
     isError,
     isLoading,
     isSuccess,

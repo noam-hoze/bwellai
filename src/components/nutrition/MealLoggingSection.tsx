@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Camera, Barcode, Mic } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -7,15 +6,17 @@ import { toast } from "sonner";
 import ScanMealModal from "./ScanMealModal";
 import ScanBarcodeModal from "./ScanBarcodeModal";
 import MealDetailModal from "./MealDetailModal";
+import MealAnalysisModal from "./MealAnalysisModal";
 
 const MealLoggingSection = () => {
   const [manualEntry, setManualEntry] = useState("");
   const [isVoiceActive, setIsVoiceActive] = useState(false);
-  
+
   const [scanMealOpen, setScanMealOpen] = useState(false);
   const [scanBarcodeOpen, setScanBarcodeOpen] = useState(false);
   const [mealDetailOpen, setMealDetailOpen] = useState(false);
-  const [currentMeal, setCurrentMeal] = useState<any>(null);
+  const [analysisOpen, setAnalysisOpen] = useState(false);
+  const [currentMeal, setCurrentMeal] = useState(null);
 
   const handleScanMeal = () => {
     setScanMealOpen(true);
@@ -43,21 +44,23 @@ const MealLoggingSection = () => {
     }
   };
 
-  const handleMealDetected = (mealData: any) => {
+  const handleMealDetected = (mealData) => {
     setCurrentMeal({
-      id: Math.random(),
+      id: mealData?.es_id,
       type: determineMealTypeByTime(),
-      ...mealData
+
+      ...mealData?.jsonNode,
     });
-    setMealDetailOpen(true);
-    toast.success("Meal detected! You can edit details before saving.");
+
+    // First show the analysis modal
+    setAnalysisOpen(true);
   };
 
-  const handleProductDetected = (productData: any) => {
+  const handleProductDetected = (productData) => {
     setCurrentMeal({
       id: Math.random(),
       type: determineMealTypeByTime(),
-      ...productData
+      ...productData,
     });
     setMealDetailOpen(true);
     toast.success("Product found! You can edit details before saving.");
@@ -76,16 +79,16 @@ const MealLoggingSection = () => {
   return (
     <div className="mb-8">
       <div className="grid grid-cols-2 gap-4 mb-4">
-        <Button 
-          variant="default" 
+        <Button
+          variant="default"
           className="h-24 bg-gray-900 hover:bg-gray-800 flex flex-col items-center justify-center gap-2 py-6"
           onClick={handleScanMeal}
         >
           <Camera className="h-8 w-8" />
           <span className="text-base">Scan Meal</span>
         </Button>
-        <Button 
-          variant="default" 
+        <Button
+          variant="default"
           className="h-24 bg-gray-900 hover:bg-gray-800 flex flex-col items-center justify-center gap-2 py-6"
           onClick={handleScanBarcode}
         >
@@ -93,7 +96,7 @@ const MealLoggingSection = () => {
           <span className="text-base">Scan Barcode</span>
         </Button>
       </div>
-      
+
       <form onSubmit={handleManualSubmit} className="relative">
         <Input
           type="text"
@@ -102,10 +105,10 @@ const MealLoggingSection = () => {
           onChange={(e) => setManualEntry(e.target.value)}
           className="pr-12 py-6 text-base"
         />
-        <button 
+        <button
           type="button"
           className={`absolute right-3 top-1/2 transform -translate-y-1/2 p-2 rounded-full ${
-            isVoiceActive ? 'text-wellness-bright-green' : 'text-gray-400'
+            isVoiceActive ? "text-wellness-bright-green" : "text-gray-400"
           }`}
           onClick={toggleVoiceInput}
         >
@@ -114,22 +117,28 @@ const MealLoggingSection = () => {
       </form>
 
       {/* Modals */}
-      <ScanMealModal 
-        open={scanMealOpen} 
-        onOpenChange={setScanMealOpen} 
-        onMealDetected={handleMealDetected} 
+      <ScanMealModal
+        open={scanMealOpen}
+        onOpenChange={setScanMealOpen}
+        onMealDetected={handleMealDetected}
       />
-      
-      <ScanBarcodeModal 
-        open={scanBarcodeOpen} 
-        onOpenChange={setScanBarcodeOpen} 
-        onProductDetected={handleProductDetected} 
+
+      <ScanBarcodeModal
+        open={scanBarcodeOpen}
+        onOpenChange={setScanBarcodeOpen}
+        onProductDetected={handleProductDetected}
       />
-      
-      <MealDetailModal 
-        open={mealDetailOpen} 
-        onOpenChange={setMealDetailOpen} 
-        meal={currentMeal} 
+
+      <MealDetailModal
+        open={mealDetailOpen}
+        onOpenChange={setMealDetailOpen}
+        meal={currentMeal}
+      />
+
+      <MealAnalysisModal
+        open={analysisOpen}
+        onOpenChange={setAnalysisOpen}
+        meal={currentMeal}
       />
     </div>
   );

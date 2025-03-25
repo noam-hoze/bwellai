@@ -247,7 +247,7 @@ const SleepSummary: React.FC<SleepSummaryProps> = ({
                 <h3 className="text-sm text-black">Avg Bedtime</h3>
               </div>
               <p className="text-lg font-medium mt-1 text-black">
-                {wearableWeeklyData?.averageBedTime || 0}
+                {wearableWeeklyData?.weeklyAverageBedTime || 0}
               </p>
             </div>
 
@@ -257,7 +257,7 @@ const SleepSummary: React.FC<SleepSummaryProps> = ({
                 <h3 className="text-sm text-black">Avg Wake-up</h3>
               </div>
               <p className="text-lg font-medium mt-1 text-black">
-                {wearableWeeklyData?.averageWakeUp || 0}
+                {wearableWeeklyData?.weeklyAverageWakeUp || 0}
               </p>
             </div>
 
@@ -267,7 +267,7 @@ const SleepSummary: React.FC<SleepSummaryProps> = ({
                 <h3 className="text-sm text-black">Avg Sleep</h3>
               </div>
               <p className="text-lg font-medium mt-1 text-black">
-                {wearableWeeklyData?.averageSleep || 0}
+                {wearableWeeklyData?.weeklyAverageSleep || 0}
               </p>
             </div>
 
@@ -277,7 +277,8 @@ const SleepSummary: React.FC<SleepSummaryProps> = ({
                 <h3 className="text-sm text-black">Avg Wake-up Times</h3>
               </div>
               <p className="text-lg font-medium mt-1 text-black">
-                {wearableWeeklyData?.averageWakeupTimes?.toFixed(1) || 0} times
+                {wearableWeeklyData?.weeklyAverageWakeupTimes?.toFixed(1) || 0}{" "}
+                times
               </p>
             </div>
           </>

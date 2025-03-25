@@ -1,60 +1,41 @@
-
 import { useState } from "react";
-import { X, Edit, Check, Star, Tag, ChartLine, Save, Plus, Utensils } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogClose,
-  DialogFooter,
-} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Switch } from "@/components/ui/switch";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import MealAnalysisModal from "./MealAnalysisModal";
+import { Dialog, DialogContent, DialogClose } from "@/components/ui/dialog";
 import { toast } from "sonner";
+import MealAnalysisModal from "./MealAnalysisModal";
+import EditMealModal from "./EditMeelModal";
+import MealDetailHeader from "./meal-detail/MealDetailHeader";
+import MealNutritionInfo from "./meal-detail/MealNutritionInfo";
+import MealMetadata from "./meal-detail/MealMetadata";
+import MealActionFooter from "./meal-detail/MealActionFooter";
 
 interface MealDetailModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  meal?: {
-    id: number;
-    name: string;
-    type: string;
-    calories: number;
-    protein: number;
-    carbs: number;
-    fat: number;
-    ingredients: string[];
-    notes?: string;
-  };
+  meal?;
 }
 
-const MealDetailModal = ({ open, onOpenChange, meal }: MealDetailModalProps) => {
+const MealDetailModal = ({
+  open,
+  onOpenChange,
+  meal,
+}: MealDetailModalProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [saveAsRecurring, setSaveAsRecurring] = useState(false);
   const [mealType, setMealType] = useState(meal?.type || "Breakfast");
   const [notes, setNotes] = useState(meal?.notes || "");
   const [analysisOpen, setAnalysisOpen] = useState(false);
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [currentMeal, setCurrentMeal] = useState(meal);
 
   const handleSave = () => {
     // TODO: Implement saving logic
     console.log("Saving meal with recurring:", saveAsRecurring);
     console.log("Meal type:", mealType);
     console.log("Notes:", notes);
-    
+
     setIsEditing(false);
+    toast.success(`${meal?.name} saved successfully!`);
     onOpenChange(false);
   };
 
@@ -62,12 +43,28 @@ const MealDetailModal = ({ open, onOpenChange, meal }: MealDetailModalProps) => 
     // TODO: Implement meal logging logic
     toast.success(`${meal?.name} logged successfully!`);
     onOpenChange(false);
-    // Show analysis modal automatically after logging the meal
-    setAnalysisOpen(true);
   };
 
   const handleViewAnalysis = () => {
     setAnalysisOpen(true);
+  };
+
+  const handleOpenEditModal = () => {
+    console.log("Opening edit modal");
+    setEditModalOpen(true);
+  };
+
+  const toggleEditMode = () => {
+    setIsEditing(!isEditing);
+    if (!isEditing) {
+      toast.info("Edit mode activated. Make your changes and save when done.");
+    }
+  };
+
+  const handleSaveMeal = (updatedMeal) => {
+    setCurrentMeal(updatedMeal);
+    // In a real app, you would update the meal in the database
+    console.log("Updated meal:", updatedMeal);
   };
 
   if (!meal) return null;
@@ -76,142 +73,64 @@ const MealDetailModal = ({ open, onOpenChange, meal }: MealDetailModalProps) => 
     <>
       <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle className="flex justify-between items-center">
-              <span>Meal Details</span>
-              <div className="flex gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="flex items-center gap-1"
-                  onClick={handleViewAnalysis}
-                >
-                  <ChartLine className="h-4 w-4" />
-                  <span>Analysis</span>
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => setIsEditing(!isEditing)}
-                >
-                  {isEditing ? (
-                    <Check className="h-4 w-4" />
-                  ) : (
-                    <Edit className="h-4 w-4" />
-                  )}
-                </Button>
-              </div>
-            </DialogTitle>
-          </DialogHeader>
+          <MealDetailHeader
+            isEditing={isEditing}
+            toggleEditMode={toggleEditMode}
+            handleViewAnalysis={handleViewAnalysis}
+            handleOpenEditModal={handleOpenEditModal}
+          />
 
           <div className="space-y-6">
             {isEditing ? (
-              <Input defaultValue={meal.name} className="text-xl font-bold" />
+              <Input
+                defaultValue={currentMeal?.food_name || meal?.food_name}
+                className="text-xl font-bold"
+              />
             ) : (
-              <h2 className="text-xl font-bold">{meal.name}</h2>
+              <h2 className="text-xl font-bold">
+                {currentMeal?.food_name || meal?.food_name}
+              </h2>
             )}
 
-            <div className="grid grid-cols-2 gap-4">
-              <div className="bg-gray-50 p-3 rounded-md">
-                <p className="text-sm text-gray-500">Calories</p>
-                <p className="text-lg font-semibold">{meal.calories} kcal</p>
-              </div>
-              <div className="bg-gray-50 p-3 rounded-md">
-                <p className="text-sm text-gray-500">Protein</p>
-                <p className="text-lg font-semibold">{meal.protein}g</p>
-              </div>
-              <div className="bg-gray-50 p-3 rounded-md">
-                <p className="text-sm text-gray-500">Carbs</p>
-                <p className="text-lg font-semibold">{meal.carbs}g</p>
-              </div>
-              <div className="bg-gray-50 p-3 rounded-md">
-                <p className="text-sm text-gray-500">Fat</p>
-                <p className="text-lg font-semibold">{meal.fat}g</p>
-              </div>
-            </div>
+            <MealNutritionInfo
+              isEditing={isEditing}
+              currentMeal={currentMeal || meal}
+              originalMeal={meal}
+            />
 
-            <div>
-              <Label className="mb-2 block">Meal Type</Label>
-              <Select 
-                value={mealType} 
-                onValueChange={setMealType}
-                disabled={!isEditing}
-              >
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select meal type" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectItem value="Breakfast">Breakfast</SelectItem>
-                    <SelectItem value="Lunch">Lunch</SelectItem>
-                    <SelectItem value="Dinner">Dinner</SelectItem>
-                    <SelectItem value="Snack">Snack</SelectItem>
-                    <SelectItem value="Pre-Workout">Pre-Workout</SelectItem>
-                    <SelectItem value="Post-Workout">Post-Workout</SelectItem>
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div>
-              <Label className="mb-2 block">Ingredients</Label>
-              <ul className="list-disc list-inside space-y-1 text-gray-700">
-                {meal.ingredients.map((ingredient, idx) => (
-                  <li key={idx}>{ingredient}</li>
-                ))}
-              </ul>
-            </div>
-
-            <div>
-              <Label htmlFor="notes" className="mb-2 block">Notes</Label>
-              <Textarea 
-                id="notes" 
-                placeholder="Add notes about this meal..."
-                value={notes}
-                onChange={(e) => setNotes(e.target.value)}
-                disabled={!isEditing}
-                className="resize-none"
-              />
-            </div>
-
-            <div className="flex items-center justify-between">
-              <Label htmlFor="save-recurring" className="flex items-center gap-2">
-                <Tag className="h-4 w-4" />
-                Save as recurring meal
-              </Label>
-              <Switch 
-                id="save-recurring" 
-                checked={saveAsRecurring}
-                onCheckedChange={setSaveAsRecurring} 
-                disabled={!isEditing}
-              />
-            </div>
+            <MealMetadata
+              isEditing={isEditing}
+              mealType={mealType}
+              notes={notes}
+              saveAsRecurring={saveAsRecurring}
+              ingredients={meal.ingredients}
+              setMealType={setMealType}
+              setNotes={setNotes}
+              setSaveAsRecurring={setSaveAsRecurring}
+              handleOpenEditModal={handleOpenEditModal}
+              currentMeal={currentMeal}
+            />
           </div>
 
-          <DialogFooter className="sm:justify-start mt-4">
-            {isEditing ? (
-              <Button type="button" onClick={handleSave} className="w-full">
-                Save Changes
-              </Button>
-            ) : (
-              <Button 
-                variant="default" 
-                size="lg" 
-                className="w-full"
-                onClick={handleLogMeal}
-              >
-                <Utensils className="h-4 w-4" />
-                Log Meal
-              </Button>
-            )}
-          </DialogFooter>
+          <MealActionFooter
+            isEditing={isEditing}
+            handleSave={handleSave}
+            handleLogMeal={handleLogMeal}
+          />
         </DialogContent>
       </Dialog>
 
       <MealAnalysisModal
         open={analysisOpen}
         onOpenChange={setAnalysisOpen}
-        meal={meal}
+        meal={currentMeal || meal}
+      />
+
+      <EditMealModal
+        open={editModalOpen}
+        onOpenChange={setEditModalOpen}
+        meal={currentMeal || meal}
+        onSave={handleSaveMeal}
       />
     </>
   );
