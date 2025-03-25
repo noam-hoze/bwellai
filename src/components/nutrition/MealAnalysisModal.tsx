@@ -1,187 +1,310 @@
-
-import { ArrowLeft, ArrowRight, Star, AlertTriangle, Check, Brain, BarChart, Dumbbell } from "lucide-react";
-import { 
-  Dialog,
-  DialogContent,
-  DialogHeader,
-} from "@/components/ui/dialog";
+import {
+  ChevronLeft,
+  ChevronRight,
+  AlertTriangle,
+  Check,
+  Info,
+  ArrowRight,
+  ArrowUpRight,
+} from "lucide-react";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 
 interface MealAnalysisModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  meal?: {
-    id: number;
-    name: string;
-    type: string;
-    calories: number;
-    protein: number;
-    carbs: number;
-    fat: number;
-    ingredients: string[];
-    notes?: string;
-    image?: string;
-  };
+  meal?;
 }
 
-const MealAnalysisModal = ({ open, onOpenChange, meal }: MealAnalysisModalProps) => {
+const MealAnalysisModal = ({
+  open,
+  onOpenChange,
+  meal,
+}: MealAnalysisModalProps) => {
   if (!meal) return null;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto">
-        <DialogHeader className="flex flex-row items-center justify-between p-4 bg-white sticky top-0 z-10 border-b">
-          <Button variant="ghost" size="icon" onClick={() => onOpenChange(false)}>
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
-          <h2 className="text-xl font-bold">Meal Analysis</h2>
-          <Button variant="ghost" size="icon">
-            <ArrowRight className="h-5 w-5" />
-          </Button>
-        </DialogHeader>
-
-        <div className="space-y-4">
-          {/* Meal Image */}
-          <div className="bg-slate-200 h-56 flex items-center justify-center">
-            {meal.image ? (
-              <img 
-                src={meal.image} 
-                alt={meal.name} 
-                className="max-h-full object-cover"
-              />
-            ) : (
-              <p className="text-xl text-white font-medium">Breakfast Meal Photo</p>
-            )}
-          </div>
-
-          {/* Rating & Summary */}
-          <div className="px-4 py-3 bg-white">
-            <div className="flex justify-between items-center mb-2">
-              <div className="flex items-center">
-                <Star className="w-6 h-6 fill-gray-800 text-gray-800 mr-2" />
-                <span className="text-2xl font-bold">7/10</span>
-              </div>
-              <Badge variant="outline" className="text-base px-3 py-1 bg-gray-100">
-                Moderate
-              </Badge>
-            </div>
-            <p className="text-gray-700">
-              This meal is balanced but has a slightly high sugar content due to syrup.
-            </p>
-          </div>
-
-          <Separator />
-
-          {/* Macronutrients */}
-          <div className="px-4 py-3 bg-white">
-            <h3 className="text-xl font-bold mb-4">Macronutrients</h3>
-            <div className="grid grid-cols-4 gap-3">
-              <div className="bg-gray-50 rounded-lg px-2 py-3 text-center">
-                <p className="text-xl font-bold">350</p>
-                <p className="text-gray-500 text-sm">kcal</p>
-              </div>
-              <div className="bg-gray-50 rounded-lg px-2 py-3 text-center">
-                <p className="text-xl font-bold">15g</p>
-                <p className="text-gray-500 text-sm">Protein</p>
-              </div>
-              <div className="bg-gray-50 rounded-lg px-2 py-3 text-center">
-                <p className="text-xl font-bold">45g</p>
-                <p className="text-gray-500 text-sm">Carbs</p>
-              </div>
-              <div className="bg-gray-50 rounded-lg px-2 py-3 text-center">
-                <p className="text-xl font-bold">10g</p>
-                <p className="text-gray-500 text-sm">Fats</p>
-              </div>
+      <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto p-0">
+        <div className="flex flex-col h-full bg-gray-50">
+          <div className="p-4 border-b border-gray-200">
+            <div className="flex items-center justify-between">
+              <button
+                className="p-2 rounded-full hover:bg-gray-200"
+                onClick={() => onOpenChange(false)}
+              >
+                <ChevronLeft size={24} className="text-gray-700" />
+              </button>
+              <h1 className="text-xl font-semibold text-gray-800">
+                Meal Analysis
+              </h1>
+              <div className="w-10"></div> {/* Empty space for balance */}
             </div>
           </div>
 
-          <Separator />
-
-          {/* Health Impact */}
-          <div className="px-4 py-3 bg-white">
-            <h3 className="text-xl font-bold mb-4">Health Impact</h3>
-            
-            <div className="flex justify-between items-center mb-3">
-              <p className="font-medium">Blood Sugar Impact</p>
-              <Badge variant="outline" className="bg-gray-100">Moderate</Badge>
-            </div>
-            
-            <div className="flex justify-between items-center">
-              <p className="font-medium">Satiety Level</p>
-              <Badge variant="outline" className="bg-gray-100">Medium</Badge>
-            </div>
-          </div>
-
-          <Separator />
-
-          {/* Ingredients Analysis */}
-          <div className="px-4 py-3 bg-white">
-            <h3 className="text-xl font-bold mb-4">Ingredients Analysis</h3>
-            
-            <div className="mb-4 bg-gray-50 p-3 rounded-lg">
-              <div className="flex items-center mb-2">
-                <div className="bg-red-100 p-1 rounded-full mr-2">
-                  <AlertTriangle className="h-5 w-5 text-red-500" />
+          <div className="flex-1 overflow-auto p-4">
+            {/* Meal overview */}
+            <div className="flex items-center mb-4">
+              <div className="mr-3">
+                <div className="w-12 h-12 rounded-full flex items-center justify-center bg-yellow-100 border-2 border-yellow-300">
+                  <span className="text-yellow-800 font-bold">
+                    {meal?.general_food_quality_rating}/10
+                  </span>
                 </div>
-                <h4 className="font-bold">Bad Ingredients</h4>
               </div>
-              <p className="text-gray-700">Syrup (High in added sugar)</p>
-            </div>
-            
-            <div className="mb-4 bg-gray-50 p-3 rounded-lg">
-              <div className="flex items-center mb-2">
-                <div className="bg-gray-200 p-1 rounded-full mr-2">
-                  <span className="flex h-5 w-5 text-gray-500 items-center justify-center font-bold">−</span>
+              <div>
+                <div className="flex items-center">
+                  <h2 className="font-semibold text-gray-800">
+                    {meal?.food_name}
+                  </h2>
+                  <span className="ml-2 px-2 py-1 bg-yellow-100 text-yellow-800 text-xs font-medium rounded">
+                    Moderate
+                  </span>
                 </div>
-                <h4 className="font-bold">Neutral Ingredients</h4>
+                <p className="text-sm text-gray-600">{meal?.general_summary}</p>
               </div>
-              <p className="text-gray-700">Butter (Moderate consumption)</p>
             </div>
-            
-            <div className="bg-gray-50 p-3 rounded-lg">
-              <div className="flex items-center mb-2">
-                <div className="bg-green-100 p-1 rounded-full mr-2">
-                  <Check className="h-5 w-5 text-green-500" />
+
+            {/* Macronutrients */}
+            <div className="bg-white rounded-lg shadow-sm p-4 mb-4">
+              <h2 className="font-medium text-gray-800 mb-3">Macronutrients</h2>
+              <div className="grid grid-cols-4 gap-2 text-center">
+                <div>
+                  <div className="text-xl font-bold">
+                    {meal?.calories?.quantity}
+                  </div>
+                  <div className="text-xs text-gray-500">kcal</div>
                 </div>
-                <h4 className="font-bold">Good Ingredients</h4>
+                <div>
+                  <div className="text-xl font-bold">
+                    {meal?.protein?.quantity}g
+                  </div>
+                  <div className="text-xs text-gray-500">Protein</div>
+                </div>
+                <div>
+                  <div className="text-xl font-bold">
+                    {meal?.carbohydrates?.quantity}g
+                  </div>
+                  <div className="text-xs text-gray-500">Carbs</div>
+                </div>
+                <div>
+                  <div className="text-xl font-bold">
+                    {meal?.fat?.quantity}g
+                  </div>
+                  <div className="text-xs text-gray-500">Fats</div>
+                </div>
               </div>
-              <p className="text-gray-700">Whole Wheat Pancakes, Greek Yogurt</p>
             </div>
-          </div>
 
-          <Separator />
+            {/* Health Impact */}
+            <div className="bg-white rounded-lg shadow-sm p-4 mb-4">
+              <h2 className="font-medium text-gray-800 mb-3">Health Impact</h2>
 
-          {/* Smart Insights */}
-          <div className="px-4 py-3 bg-white">
-            <h3 className="text-xl font-bold mb-4">Smart Insights</h3>
-            
-            <div className="mb-3 bg-gray-50 p-3 rounded-lg">
+              <div className="flex justify-between items-center mb-2">
+                <span className="text-gray-700">Blood Sugar Impact</span>
+                <span className="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs font-medium rounded">
+                  Moderate
+                </span>
+              </div>
+
+              <div className="flex justify-between items-center mb-2">
+                <span className="text-gray-700">Satiety Level</span>
+                <span className="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs font-medium rounded">
+                  Medium
+                </span>
+              </div>
+
+              <div className="flex justify-between items-center">
+                <span className="text-gray-700">Nutritional Density</span>
+                <span className="px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded">
+                  Good
+                </span>
+              </div>
+            </div>
+
+            {/* Macro Distribution */}
+            <div className="bg-white rounded-lg shadow-sm p-4 mb-4">
+              <h2 className="font-medium text-gray-800 mb-3">
+                Macro Distribution
+              </h2>
+
+              <div className="flex items-center mb-4">
+                {/* This would be a chart in a real app */}
+                <div className="w-20 h-20 rounded-full border-8 border-blue-200 relative mr-4">
+                  <div
+                    className="absolute top-0 left-0 w-full h-full rounded-full border-8 border-yellow-300"
+                    style={{ clipPath: "polygon(50% 50%, 100% 0, 100% 100%)" }}
+                  ></div>
+                  <div
+                    className="absolute top-0 left-0 w-full h-full rounded-full border-8 border-green-300"
+                    style={{ clipPath: "polygon(50% 50%, 0 0, 100% 0)" }}
+                  ></div>
+                </div>
+
+                <div className="flex-1">
+                  <div className="flex items-center mb-1">
+                    <div className="w-3 h-3 bg-blue-200 mr-2"></div>
+                    <span className="text-sm text-gray-600">
+                      Protein: {meal?.protein?.percentage}%
+                    </span>
+                  </div>
+                  <div className="flex items-center mb-1">
+                    <div className="w-3 h-3 bg-yellow-300 mr-2"></div>
+                    <span className="text-sm text-gray-600">
+                      Fat: {meal?.fat?.percentage}%
+                    </span>
+                  </div>
+                  <div className="flex items-center">
+                    <div className="w-3 h-3 bg-green-300 mr-2"></div>
+                    <span className="text-sm text-gray-600">
+                      Carbs: {meal?.carbohydrates?.percentage}%
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="text-sm text-gray-600">
+                <Info size={16} className="inline mr-1 text-blue-500" />
+                Recommended range for breakfast: 15-20% protein, 20-30% fat,
+                50-65% carbs
+              </div>
+            </div>
+
+            {/* Daily Goal Impact */}
+            <div className="bg-white rounded-lg shadow-sm p-4 mb-4">
+              <h2 className="font-medium text-gray-800 mb-3">
+                Impact on Daily Goals
+              </h2>
+
+              <div className="mb-3">
+                <div className="flex justify-between items-center mb-1">
+                  <span className="text-sm text-gray-700">Calories</span>
+                  <span className="text-sm text-gray-700">
+                    {meal?.calories?.quantity}/2000
+                  </span>
+                </div>
+                <div className="w-full bg-gray-200 rounded-full h-2">
+                  <div
+                    className="bg-blue-500 h-2 rounded-full"
+                    style={{
+                      width: `${(meal?.calories?.quantity / 2000) * 100}%`,
+                    }}
+                  ></div>
+                </div>
+              </div>
+
+              <div className="mb-3">
+                <div className="flex justify-between items-center mb-1">
+                  <span className="text-sm text-gray-700">Protein</span>
+                  <span className="text-sm text-gray-700">
+                    {meal?.protein?.quantity}/80g
+                  </span>
+                </div>
+                <div className="w-full bg-gray-200 rounded-full h-2">
+                  <div
+                    className="bg-blue-500 h-2 rounded-full"
+                    style={{
+                      width: `${(meal?.protein?.quantity / 80) * 100}%`,
+                    }}
+                  ></div>
+                </div>
+              </div>
+
+              <div>
+                <div className="flex justify-between items-center mb-1">
+                  <span className="text-sm text-gray-700">Sugar</span>
+                  <span className="text-sm text-gray-700">18/50g</span>
+                </div>
+                <div className="w-full bg-gray-200 rounded-full h-2">
+                  <div
+                    className="bg-yellow-500 h-2 rounded-full"
+                    style={{ width: "36%" }}
+                  ></div>
+                </div>
+              </div>
+            </div>
+
+            {/* Improvement Suggestions */}
+            <div className="bg-blue-50 rounded-lg shadow-sm p-4 mb-4 border border-blue-100">
               <div className="flex">
                 <div className="mr-3">
-                  <Brain className="h-5 w-5 text-purple-500" />
+                  <div className="w-8 h-8 rounded-full flex items-center justify-center bg-blue-100">
+                    <Info size={18} className="text-blue-500" />
+                  </div>
                 </div>
-                <p className="text-gray-700">Your sugar intake is consistently high during breakfast.</p>
+                <div>
+                  <h2 className="font-medium text-gray-800 mb-1">
+                    Suggestions for Improvement
+                  </h2>
+
+                  {meal?.suggestion?.map((m) => {
+                    return (
+                      <div className="p-2 bg-white rounded-md mb-2 flex items-center justify-between">
+                        <div>
+                          <p className="font-medium text-gray-800">{m}</p>
+                          {/* <p className="text-sm text-gray-600">
+                            Reduces sugar by 12g
+                          </p> */}
+                        </div>
+                        <ArrowUpRight size={16} className="text-blue-500" />
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
             </div>
-            
-            <div className="mb-3 bg-gray-50 p-3 rounded-lg">
-              <div className="flex">
-                <div className="mr-3">
-                  <BarChart className="h-5 w-5 text-purple-500" />
+
+            {/* Ingredients Analysis */}
+            <div className="bg-white rounded-lg shadow-sm p-4 mb-4">
+              <h2 className="font-medium text-gray-800 mb-3">
+                Ingredients Analysis
+              </h2>
+
+              {meal.ingredients.map((ingredient, idx) => (
+                <div key={idx} className="flex items-center mb-2">
+                  {idx === 0 ? (
+                    <AlertTriangle size={16} className="mr-2 text-yellow-500" />
+                  ) : (
+                    <Check size={16} className="mr-2 text-green-500" />
+                  )}
+                  <span
+                    className={`text-gray-800 ${
+                      idx === 0 ? "font-medium" : ""
+                    }`}
+                  >
+                    {ingredient}
+                  </span>
+                  <span className="ml-auto text-sm text-gray-500">
+                    {idx === 0
+                      ? "High in added sugar"
+                      : idx === 1
+                      ? "Good source of fiber"
+                      : idx === 2
+                      ? "Rich in antioxidants"
+                      : "High in vitamin C"}
+                  </span>
                 </div>
-                <p className="text-gray-700">This meal appears 3 times this week.</p>
-              </div>
+              ))}
             </div>
-            
-            <div className="bg-gray-50 p-3 rounded-lg">
-              <div className="flex">
-                <div className="mr-3">
-                  <Dumbbell className="h-5 w-5 text-purple-500" />
-                </div>
-                <p className="text-gray-700">Add more protein for morning exercises.</p>
-              </div>
+          </div>
+
+          {/* Bottom buttons */}
+          <div className="p-4 border-t border-gray-200">
+            <div className="grid grid-cols-2 gap-3">
+              <Button
+                variant="outline"
+                className="border-blue-500 text-blue-500"
+                onClick={() => onOpenChange(false)}
+              >
+                Edit Meal
+              </Button>
+              <Button
+                className="bg-blue-500 hover:bg-blue-600 text-white"
+                onClick={() => onOpenChange(false)}
+              >
+                Log Meal
+              </Button>
             </div>
           </div>
         </div>

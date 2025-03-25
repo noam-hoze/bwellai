@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Filter, Utensils, ChevronDown, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -27,9 +26,14 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { format } from "date-fns";
+import { useGetUserLoggedMealDataFetcherV4 } from "@/service/hooks/nutrition/useGetFoodReportUpload";
 
 interface MealItemProps {
   type: string;
@@ -53,7 +57,9 @@ const MealItem = ({ type, time, name, calories, protein }: MealItemProps) => {
               <span className="text-gray-500">{time}</span>
             </div>
             <h4 className="text-xl mb-1">{name}</h4>
-            <p className="text-gray-600">{calories} kcal • {protein}g protein</p>
+            <p className="text-gray-600">
+              {calories} kcal • {protein}g protein
+            </p>
           </div>
         </div>
       </CardContent>
@@ -135,22 +141,30 @@ const MealHistorySection = () => {
     },
   ];
 
+  console.log(date);
+
+  const { data: loggedMealData } = useGetUserLoggedMealDataFetcherV4(
+    new Date(date || new Date())?.toISOString()?.split("T")?.[0],
+    true
+  );
+
   // Filter meals by date and type
-  const filteredMeals = allMeals.filter(meal => {
-    const dateMatch = date 
-      ? meal.date.toDateString() === date.toDateString() 
+  const filteredMeals = allMeals.filter((meal) => {
+    const dateMatch = date
+      ? meal.date.toDateString() === date.toDateString()
       : true;
-    
-    const typeMatch = mealTypeFilter 
-      ? meal.type === mealTypeFilter 
-      : true;
-    
+
+    const typeMatch = mealTypeFilter ? meal.type === mealTypeFilter : true;
+
     return dateMatch && typeMatch;
   });
 
   // Get meals for current page
-  const currentMeals = expanded 
-    ? filteredMeals.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+  const currentMeals = expanded
+    ? filteredMeals.slice(
+        (currentPage - 1) * itemsPerPage,
+        currentPage * itemsPerPage
+      )
     : filteredMeals.slice(0, 3); // Default shows only 3 meals
 
   const totalPages = Math.ceil(filteredMeals.length / itemsPerPage);
@@ -203,7 +217,9 @@ const MealHistorySection = () => {
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Filter by Meal Type</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => handleMealTypeFilter("Breakfast")}>
+              <DropdownMenuItem
+                onClick={() => handleMealTypeFilter("Breakfast")}
+              >
                 Breakfast {mealTypeFilter === "Breakfast" && "✓"}
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => handleMealTypeFilter("Lunch")}>
@@ -228,7 +244,26 @@ const MealHistorySection = () => {
       </div>
 
       <div>
-        {currentMeals.map((meal) => (
+        {loggedMealData?.map((meal) => {
+          const date = new Date(meal?.created_at_utc);
+          const formattedTime = new Intl.DateTimeFormat("en-US", {
+            hour: "numeric",
+            minute: "2-digit",
+            hour12: true,
+          }).format(date);
+
+          return (
+            <MealItem
+              key={meal?.ai_response?.id}
+              type={meal?.meal_type}
+              time={formattedTime}
+              name={meal?.ai_response?.food_name}
+              calories={meal?.ai_response?.estimated_calories}
+              protein={0}
+            />
+          );
+        })}
+        {/* {currentMeals.map((meal) => (
           <MealItem
             key={meal.id}
             type={meal.type}
@@ -237,19 +272,19 @@ const MealHistorySection = () => {
             calories={meal.calories}
             protein={meal.protein}
           />
-        ))}
+        ))} */}
 
-        {filteredMeals.length === 0 && (
+        {loggedMealData?.length === 0 && (
           <div className="text-center py-10 text-gray-500">
             No meals found for the selected filters.
           </div>
         )}
       </div>
 
-      {filteredMeals.length > 3 && !expanded && (
-        <Button 
-          variant="ghost" 
-          className="w-full mt-2" 
+      {loggedMealData?.length > 3 && !expanded && (
+        <Button
+          variant="ghost"
+          className="w-full mt-2"
           onClick={() => setExpanded(true)}
         >
           View More <ChevronDown className="ml-2 h-4 w-4" />
@@ -260,16 +295,18 @@ const MealHistorySection = () => {
         <Pagination className="mt-4">
           <PaginationContent>
             <PaginationItem>
-              <PaginationPrevious 
-                onClick={() => setCurrentPage(page => Math.max(1, page - 1))}
+              <PaginationPrevious
+                onClick={() => setCurrentPage((page) => Math.max(1, page - 1))}
                 aria-disabled={currentPage === 1}
-                className={currentPage === 1 ? "pointer-events-none opacity-50" : ""}
+                className={
+                  currentPage === 1 ? "pointer-events-none opacity-50" : ""
+                }
               />
             </PaginationItem>
-            
+
             {Array.from({ length: totalPages }).map((_, i) => (
               <PaginationItem key={i}>
-                <PaginationLink 
+                <PaginationLink
                   isActive={currentPage === i + 1}
                   onClick={() => setCurrentPage(i + 1)}
                 >
@@ -277,12 +314,18 @@ const MealHistorySection = () => {
                 </PaginationLink>
               </PaginationItem>
             ))}
-            
+
             <PaginationItem>
-              <PaginationNext 
-                onClick={() => setCurrentPage(page => Math.min(totalPages, page + 1))}
+              <PaginationNext
+                onClick={() =>
+                  setCurrentPage((page) => Math.min(totalPages, page + 1))
+                }
                 aria-disabled={currentPage === totalPages}
-                className={currentPage === totalPages ? "pointer-events-none opacity-50" : ""}
+                className={
+                  currentPage === totalPages
+                    ? "pointer-events-none opacity-50"
+                    : ""
+                }
               />
             </PaginationItem>
           </PaginationContent>

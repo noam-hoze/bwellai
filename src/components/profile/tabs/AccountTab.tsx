@@ -8,7 +8,15 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { LogOut, AlertTriangle, User, CreditCard } from "lucide-react";
+import {
+  LogOut,
+  AlertTriangle,
+  User,
+  CreditCard,
+  ChevronDown,
+  ChevronUp,
+  Mail,
+} from "lucide-react";
 import {
   Accordion,
   AccordionContent,
@@ -25,11 +33,11 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { useGetUserProfile } from "@/service/hooks/profile/useGetUserProfile";
 
 const AccountTab = ({ getProfileIsData }) => {
   const navigate = useNavigate();
   const [openDeleteDialog, setOpenDeleteDialog] = useState<string | null>(null);
+  const [isAccountExpanded, setIsAccountExpanded] = useState(true);
 
   const handleLogout = () => {
     // Placeholder for logout functionality
@@ -51,56 +59,84 @@ const AccountTab = ({ getProfileIsData }) => {
     setTimeout(() => navigate("/"), 1500);
   };
 
+  const navigateToSubscriptionPlans = () => {
+    console.log("Navigating to subscription plans");
+    navigate("/subscription-plans");
+  };
+
+  const toggleAccount = () => {
+    setIsAccountExpanded(!isAccountExpanded);
+  };
+
   return (
     <div className="space-y-6">
       {/* Profile Management Section */}
-      <Card>
-        <CardHeader>
+      <Card className="rounded-xl overflow-hidden shadow-sm">
+        <CardHeader className="py-4 border-b border-gray-100">
           <CardTitle className="text-xl flex items-center gap-2">
             <User className="h-5 w-5 text-wellness-bright-green" />
             Profile Management
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <Accordion type="single" collapsible className="w-full">
-            <AccordionItem value="account-details">
-              <AccordionTrigger className="font-medium">
-                Account Details
-              </AccordionTrigger>
-              <AccordionContent className="space-y-4 pt-2">
-                <div className="flex items-center space-x-4">
-                  <div className="w-16 h-16 rounded-full overflow-hidden bg-wellness-light-green flex-shrink-0">
-                    <img
-                      src="/lovable-uploads/b53703fa-3d8b-4f5f-9ff3-a4b1773d5701.png"
-                      alt="John Doe"
-                      className="w-full h-full object-cover"
-                    />
+        <CardContent className="p-4">
+          <div
+            className="flex justify-between items-center mb-2 cursor-pointer"
+            onClick={toggleAccount}
+          >
+            <h3 className="text-lg font-medium text-gray-800">
+              Account Details
+            </h3>
+            <button className="text-gray-400">
+              {isAccountExpanded ? (
+                <ChevronUp size={20} />
+              ) : (
+                <ChevronDown size={20} />
+              )}
+            </button>
+          </div>
+
+          {isAccountExpanded && (
+            <div className="mt-3">
+              <div className="flex items-center mb-6">
+                <div className="w-12 h-12 rounded-full overflow-hidden bg-wellness-light-green flex-shrink-0 mr-3">
+                  <img
+                    src="/lovable-uploads/b53703fa-3d8b-4f5f-9ff3-a4b1773d5701.png"
+                    alt="John Doe"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div>
+                  <div className="font-semibold text-gray-800">
+                    {getProfileIsData?.fullName || "john doe"}
                   </div>
-                  <div>
-                    <h3 className="text-xl font-medium">
-                      {getProfileIsData?.fullName || "john doe"}
-                    </h3>
-                    <p className="text-gray-500">
-                      {getProfileIsData?.email || "john doe"}
-                    </p>
+                  <div className="flex items-center text-gray-500">
+                    <Mail size={14} className="mr-1" />
+                    <span> {getProfileIsData?.email || "john doe"}</span>
                   </div>
                 </div>
-              </AccordionContent>
-            </AccordionItem>
-          </Accordion>
-
-          <div className="p-4 border rounded-lg">
-            <div className="flex justify-between items-center">
-              <div className="flex items-center gap-2">
-                <CreditCard className="h-5 w-5 text-wellness-bright-green" />
-                <h3 className="font-medium">Subscription Plan</h3>
               </div>
-              <div className="bg-gray-100 px-3 py-1 rounded-full font-medium">
+            </div>
+          )}
+          {/* Subscription Section */}
+          <div className="mt-4 p-4 bg-white rounded-xl shadow-sm">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center">
+                <CreditCard className="text-gray-600 mr-2" size={20} />
+                <h3 className="text-lg font-medium text-gray-800">
+                  Subscription Plan
+                </h3>
+              </div>
+              <div className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
                 Premium
               </div>
             </div>
-            <div className="mt-4">
-              <Button variant="outline" size="sm">
+
+            <div className="mt-3">
+              <Button
+                variant="outline"
+                className="mt-2 border border-gray-300 rounded-lg px-4 py-2 text-gray-700 hover:bg-gray-50 transition-colors"
+                onClick={navigateToSubscriptionPlans}
+              >
                 View Plan Details
               </Button>
             </div>

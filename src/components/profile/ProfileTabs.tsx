@@ -20,14 +20,23 @@ const ProfileTabs = ({ getProfileIsData }) => {
       onValueChange={setActiveTab}
       className="w-full"
     >
-      <TabsList className="w-full grid grid-cols-3 mb-6">
-        <TabsTrigger value="account" className="text-base">
+      <TabsList className="w-full grid grid-cols-3 h-12 bg-gray-200 p-1.5 rounded-lg">
+        <TabsTrigger
+          value="account"
+          className="text-base h-full data-[state=active]:bg-white data-[state=active]:shadow-sm"
+        >
           Account
         </TabsTrigger>
-        <TabsTrigger value="preferences" className="text-base">
+        <TabsTrigger
+          value="preferences"
+          className="text-base h-full data-[state=active]:bg-white data-[state=active]:shadow-sm"
+        >
           Preferences
         </TabsTrigger>
-        <TabsTrigger value="health-profile" className="text-base">
+        <TabsTrigger
+          value="health-profile"
+          className="text-base h-full data-[state=active]:bg-white data-[state=active]:shadow-sm"
+        >
           Health Profile
         </TabsTrigger>
       </TabsList>
