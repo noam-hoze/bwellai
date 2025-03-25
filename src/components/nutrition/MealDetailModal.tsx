@@ -13,12 +13,14 @@ interface MealDetailModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   meal?;
+  refetchLoggedMeals;
 }
 
 const MealDetailModal = ({
   open,
   onOpenChange,
   meal,
+  refetchLoggedMeals,
 }: MealDetailModalProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [saveAsRecurring, setSaveAsRecurring] = useState(false);
@@ -124,6 +126,7 @@ const MealDetailModal = ({
         open={analysisOpen}
         onOpenChange={setAnalysisOpen}
         meal={currentMeal || meal}
+        refetchLoggedMeals={refetchLoggedMeals}
       />
 
       <EditMealModal
