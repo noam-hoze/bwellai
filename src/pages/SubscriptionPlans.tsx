@@ -120,6 +120,7 @@ const SubscriptionPlans = () => {
       name: plan.name,
       price: plan.price,
       tokenOption: plan.bwellTokenPrice,
+      id: plan.id,
     });
   };
 
@@ -306,6 +307,7 @@ const SubscriptionPlans = () => {
           planName={selectedPlan.name}
           planPrice={selectedPlan.price}
           planTokens={selectedPlan.bwellTokenPrice}
+          selectedPlanId={selectedPlan.id}
           walletBalanceData={walletBalanceData}
           setIsSuccessDialogOpen={setIsSuccessDialogOpen}
         />

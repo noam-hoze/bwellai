@@ -33,11 +33,19 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
+import { useGetUserSelectedSubscription } from "@/service/hooks/subscription/useUserSubscription";
 
 const AccountTab = ({ getProfileIsData }) => {
   const navigate = useNavigate();
   const [openDeleteDialog, setOpenDeleteDialog] = useState<string | null>(null);
   const [isAccountExpanded, setIsAccountExpanded] = useState(true);
+
+  const {
+    data: selectedSubscriptionCatalogData,
+    isSuccess: selectedSubscriptionCatalogIsSuccess,
+    isError: selectedSubscriptionCatalogIsError,
+    refetch: selectedSubscriptionCatalogRefetch,
+  } = useGetUserSelectedSubscription(true);
 
   const handleLogout = () => {
     // Placeholder for logout functionality
@@ -127,7 +135,7 @@ const AccountTab = ({ getProfileIsData }) => {
                 </h3>
               </div>
               <div className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
-                Premium
+                {selectedSubscriptionCatalogData?.name}
               </div>
             </div>
 
