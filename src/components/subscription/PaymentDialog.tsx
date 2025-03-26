@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -11,6 +11,7 @@ import { RadioGroup } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { CreditCard, Tag, Wallet } from "lucide-react";
+import { useGetAddUserSelectedSubscription } from "@/service/hooks/subscription/useUserSubscription";
 
 interface PaymentDialogProps {
   isOpen: boolean;
@@ -20,6 +21,7 @@ interface PaymentDialogProps {
   planTokens?: string;
   walletBalanceData?;
   setIsSuccessDialogOpen?;
+  selectedPlanId?;
 }
 
 const PaymentDialog: React.FC<PaymentDialogProps> = ({
@@ -30,12 +32,54 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({
   planTokens,
   walletBalanceData,
   setIsSuccessDialogOpen,
+  selectedPlanId,
 }) => {
   const [paymentMethod, setPaymentMethod] = useState<string | undefined>(
     undefined
   );
   const [promoCode, setPromoCode] = useState("");
   const [showPromoInput, setShowPromoInput] = useState(false);
+  console.log(
+    planName,
+    planPrice,
+    planTokens,
+    walletBalanceData,
+    selectedPlanId
+  );
+
+  const {
+    data: addSelectedSubscriptionData,
+    isError: addSelectedSubscriptionCatalogIsError,
+    error: addSelectedSubscriptionCatalogError,
+    isSuccess: addSelectedSubscriptionCatalogIsSuccess,
+    mutate: addSelectedSubscriptionCatalogMutate,
+  } = useGetAddUserSelectedSubscription();
+
+  useEffect(() => {
+    if (
+      addSelectedSubscriptionData &&
+      addSelectedSubscriptionCatalogIsSuccess
+    ) {
+      // Close the dialog after payment processing
+      setIsSuccessDialogOpen(true);
+      onClose();
+    }
+  }, [addSelectedSubscriptionData, addSelectedSubscriptionCatalogIsSuccess]);
+
+  const handleSelectSubscription = ({
+    promo_code,
+    subscription_id,
+    currencyType,
+    paymentType,
+  }: any) => {
+    addSelectedSubscriptionCatalogMutate({
+      promo_code,
+      subscription_id,
+      currencyType,
+      paymentType,
+      promoDetails: {},
+    });
+  };
 
   // Mocked available tokens - in a real app, this would come from a user's account
 
@@ -43,9 +87,24 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({
     // Here you would integrate with a payment processor or token system
     console.log("Processing payment with method:", paymentMethod);
     console.log("Promo code:", promoCode);
-    // Close the dialog after payment processing
-    setIsSuccessDialogOpen(true);
-    onClose();
+
+    let payload: any = {
+      subscription_id: selectedPlanId,
+      currencyType: "BWELLAI_TOKEN",
+      promo_code: promoCode,
+    };
+
+    if (paymentMethod === "credit-card") {
+      payload = {
+        subscription_id: selectedPlanId,
+        paymentType: "PG",
+        currencyType: "USD",
+      };
+    }
+
+    console.log(payload);
+
+    handleSelectSubscription(payload);
   };
 
   return (
