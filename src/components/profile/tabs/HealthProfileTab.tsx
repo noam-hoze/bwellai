@@ -77,6 +77,7 @@ const HealthProfileTab = ({
   const [geneVariant, setGeneVariant] = useState<string>("");
 
   const [openAllergy, setOpenAllergy] = useState(false);
+  const [inputValueAllergy, setInputValueAllergy] = useState("");
 
   const {
     mutate: createProfileMutate,
@@ -445,8 +446,10 @@ const HealthProfileTab = ({
               <div className="mt-3 w-full flex items-center space-x-2">
                 <Popover open={openAllergy} onOpenChange={setOpenAllergy}>
                   <PopoverTrigger asChild>
-                    <Input
+                    {/* <Input
                       placeholder="List any other allergies"
+                      value={inputValueAllergy} // Controls input value
+                      onChange={(e) => setInputValueAllergy(e.target.value)}
                       onKeyDown={(e) => {
                         if (e.key === "Enter" && e.currentTarget.value.trim()) {
                           const newAllergy = e.currentTarget.value.trim();
@@ -454,19 +457,38 @@ const HealthProfileTab = ({
                           e.currentTarget.value = "";
                         }
                       }}
+                    /> */}
+                    <Input
+                      id="allergy"
+                      placeholder="List any other allergies"
+                      value={inputValueAllergy} // Bind state
+                      onChange={(e) => {
+                        setInputValueAllergy(e.target.value);
+                        setOpenAllergy(true);
+                      }}
+                      type="text"
+                      onFocus={() => setOpenAllergy(true)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" && inputValueAllergy.trim()) {
+                          handleAllergyChange(inputValueAllergy.trim());
+                        }
+                      }}
+                      className="w-full"
                     />
                   </PopoverTrigger>
 
                   <PopoverContent className="w-full p-2">
-                    {allergiesData?.filter(
-                      (item) => item.label.toLowerCase()
-                      // .includes(inputValue.toLowerCase())
+                    {allergiesData?.filter((item) =>
+                      item.label
+                        .toLowerCase()
+                        .includes(inputValueAllergy.toLowerCase())
                     ).length > 0 ? (
                       <ul className="max-h-48 overflow-auto">
                         {allergiesData
-                          ?.filter(
-                            (item) => item.label.toLowerCase()
-                            // .includes(inputValue.toLowerCase())
+                          ?.filter((item) =>
+                            item.label
+                              .toLowerCase()
+                              .includes(inputValueAllergy.toLowerCase())
                           )
                           ?.map((item) => (
                             <li
