@@ -18,6 +18,7 @@ import SignUp from "./pages/auth/SignUp";
 import Login from "./pages/auth/Login";
 import BodyMetrics from "./pages/BodyMetrics";
 import { AuthProvider } from "./contexts/AuthContext";
+import SubscriptionPlans from "./pages/SubscriptionPlans";
 
 const queryClient = new QueryClient();
 
@@ -45,10 +46,13 @@ const App = () => (
             <Route path="/sleep" element={<Sleep />} />
             <Route path="/activity" element={<Activity />} />
             <Route path="/nutrition" element={<Nutrition />} />
+            {/* <Route path="/meal-analysis" element={<MealAnalysisPage />} />
+            <Route path="/meal-edit" element={<MealEditPage />} /> */}
             <Route path="/risk-score" element={<NotFound />} />
             <Route path="/wallet" element={<NotFound />} />
             <Route path="/settings" element={<Settings />} />
             <Route path="/profile" element={<Profile />} />
+            <Route path="/subscription-plans" element={<SubscriptionPlans />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
