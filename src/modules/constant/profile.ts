@@ -174,3 +174,632 @@ Associated Risks: Affects caffeine metabolism, influencing cardiovascular risks 
 Actions: Adjusting caffeine consumption based on metabolizer status.`,
   },
 ];
+
+export const allergiesData = [
+  {
+    group: "Food Allergies",
+    subgroup: "Dairy",
+    label: "Cheese",
+  },
+  {
+    group: "Food Allergies",
+    subgroup: "Dairy",
+    label: "Yogurt",
+  },
+  {
+    group: "Food Allergies",
+    subgroup: "Dairy",
+    label: "Butter",
+  },
+  {
+    group: "Food Allergies",
+    subgroup: "Dairy",
+    label: "Casein",
+  },
+  {
+    group: "Food Allergies",
+    subgroup: "Dairy",
+    label: "Whey",
+  },
+  {
+    group: "Food Allergies",
+    subgroup: "Eggs",
+    label: "Egg Whites",
+  },
+  {
+    group: "Food Allergies",
+    subgroup: "Eggs",
+    label: "Egg Yolks",
+  },
+  {
+    group: "Food Allergies",
+    subgroup: "Seafood",
+    label: "Shrimp",
+  },
+  {
+    group: "Food Allergies",
+    subgroup: "Seafood",
+    label: "Crab",
+  },
+  {
+    group: "Food Allergies",
+    subgroup: "Seafood",
+    label: "Lobster",
+  },
+  {
+    group: "Food Allergies",
+    subgroup: "Seafood",
+    label: "Crayfish",
+  },
+  {
+    group: "Food Allergies",
+    subgroup: "Seafood",
+    label: "Clams",
+  },
+  {
+    group: "Food Allergies",
+    subgroup: "Seafood",
+    label: "Mussels",
+  },
+  {
+    group: "Food Allergies",
+    subgroup: "Seafood",
+    label: "Oysters",
+  },
+  {
+    group: "Food Allergies",
+    subgroup: "Seafood",
+    label: "Scallops",
+  },
+  {
+    group: "Food Allergies",
+    subgroup: "Seafood",
+    label: "Squid",
+  },
+  {
+    group: "Food Allergies",
+    subgroup: "Seafood",
+    label: "Octopus",
+  },
+  {
+    group: "Food Allergies",
+    subgroup: "Seafood",
+    label: "Abalone",
+  },
+  {
+    group: "Food Allergies",
+    subgroup: "Seafood",
+    label: "Cockles",
+  },
+  {
+    group: "Food Allergies",
+    subgroup: "Seafood",
+    label: "Snails (Escargot)",
+  },
+  {
+    group: "Food Allergies",
+    subgroup: "Seafood",
+    label: "Cuttlefish",
+  },
+  {
+    group: "Food Allergies",
+    subgroup: "Seafood",
+    label: "Periwinkles",
+  },
+  {
+    group: "Food Allergies",
+    subgroup: "Seafood",
+    label: "Whelks",
+  },
+  {
+    group: "Food Allergies",
+    subgroup: "Nuts",
+    label: "Peanuts",
+  },
+  {
+    group: "Food Allergies",
+    subgroup: "Nuts",
+    label: "Almonds",
+  },
+  {
+    group: "Food Allergies",
+    subgroup: "Nuts",
+    label: "Cashews",
+  },
+  {
+    group: "Food Allergies",
+    subgroup: "Nuts",
+    label: "Walnuts",
+  },
+  {
+    group: "Food Allergies",
+    subgroup: "Nuts",
+    label: "Pistachios",
+  },
+  {
+    group: "Food Allergies",
+    subgroup: "Nuts",
+    label: "Pecans",
+  },
+  {
+    group: "Food Allergies",
+    subgroup: "Nuts",
+    label: "Hazelnuts",
+  },
+  {
+    group: "Food Allergies",
+    subgroup: "Nuts",
+    label: "Macadamia Nuts",
+  },
+  {
+    group: "Food Allergies",
+    subgroup: "Nuts",
+    label: "Brazil Nuts",
+  },
+  {
+    group: "Food Allergies",
+    subgroup: "Seeds",
+    label: "Sesame",
+  },
+  {
+    group: "Food Allergies",
+    subgroup: "Seeds",
+    label: "Sunflower",
+  },
+  {
+    group: "Food Allergies",
+    subgroup: "Seeds",
+    label: "Pumpkin",
+  },
+  {
+    group: "Food Allergies",
+    subgroup: "Seeds",
+    label: "Chia",
+  },
+  {
+    group: "Food Allergies",
+    subgroup: "Seeds",
+    label: "Flaxseed",
+  },
+  {
+    group: "Food Allergies",
+    subgroup: "Legumes",
+    label: "Soy",
+  },
+  {
+    group: "Food Allergies",
+    subgroup: "Legumes",
+    label: "Lentils",
+  },
+  {
+    group: "Food Allergies",
+    subgroup: "Legumes",
+    label: "Chickpeas",
+  },
+  {
+    group: "Food Allergies",
+    subgroup: "Legumes",
+    label: "Green Peas",
+  },
+  {
+    group: "Food Allergies",
+    subgroup: "Grains",
+    label: "Wheat",
+  },
+  {
+    group: "Food Allergies",
+    subgroup: "Grains",
+    label: "Barley",
+  },
+  {
+    group: "Food Allergies",
+    subgroup: "Grains",
+    label: "Rye",
+  },
+  {
+    group: "Food Allergies",
+    subgroup: "Grains",
+    label: "Oats",
+  },
+  {
+    group: "Food Allergies",
+    subgroup: "Fruits",
+    label: "Oranges",
+  },
+  {
+    group: "Food Allergies",
+    subgroup: "Fruits",
+    label: "Lemons",
+  },
+  {
+    group: "Food Allergies",
+    subgroup: "Fruits",
+    label: "Limes",
+  },
+  {
+    group: "Food Allergies",
+    subgroup: "Fruits",
+    label: "Grapefruits",
+  },
+  {
+    group: "Food Allergies",
+    subgroup: "Fruits",
+    label: "Apples",
+  },
+  {
+    group: "Food Allergies",
+    subgroup: "Fruits",
+    label: "Bananas",
+  },
+  {
+    group: "Food Allergies",
+    subgroup: "Fruits",
+    label: "Strawberries",
+  },
+  {
+    group: "Food Allergies",
+    subgroup: "Fruits",
+    label: "Kiwi",
+  },
+  {
+    group: "Food Allergies",
+    subgroup: "Fruits",
+    label: "Avocado",
+  },
+  {
+    group: "Food Allergies",
+    subgroup: "Fruits",
+    label: "Peaches",
+  },
+  {
+    group: "Food Allergies",
+    subgroup: "Fruits",
+    label: "Pineapples",
+  },
+  {
+    group: "Food Allergies",
+    subgroup: "Vegetables",
+    label: "Tomatoes",
+  },
+  {
+    group: "Food Allergies",
+    subgroup: "Vegetables",
+    label: "Potatoes",
+  },
+  {
+    group: "Food Allergies",
+    subgroup: "Vegetables",
+    label: "Carrots",
+  },
+  {
+    group: "Food Allergies",
+    subgroup: "Vegetables",
+    label: "Celery",
+  },
+  {
+    group: "Food Allergies",
+    subgroup: "Vegetables",
+    label: "Bell Peppers",
+  },
+  {
+    group: "Food Allergies",
+    subgroup: "Vegetables",
+    label: "Eggplant",
+  },
+  {
+    group: "Food Allergies",
+    subgroup: "Additives",
+    label: "Sulfites",
+  },
+  {
+    group: "Food Allergies",
+    subgroup: "Additives",
+    label: "MSG",
+  },
+  {
+    group: "Food Allergies",
+    subgroup: "Additives",
+    label: "Red Food Dye (Red 40)",
+  },
+  {
+    group: "Food Allergies",
+    subgroup: "Additives",
+    label: "Yellow Food Dye (Yellow 5)",
+  },
+  {
+    group: "Food Allergies",
+    subgroup: "Additives",
+    label: "Blue Food Dye (Blue 1)",
+  },
+  {
+    group: "Environmental Allergies",
+    subgroup: "Pollens",
+    label: "Birch Pollen",
+  },
+  {
+    group: "Environmental Allergies",
+    subgroup: "Pollens",
+    label: "Oak Pollen",
+  },
+  {
+    group: "Environmental Allergies",
+    subgroup: "Pollens",
+    label: "Pine Pollen",
+  },
+  {
+    group: "Environmental Allergies",
+    subgroup: "Pollens",
+    label: "Bermuda Grass Pollen",
+  },
+  {
+    group: "Environmental Allergies",
+    subgroup: "Pollens",
+    label: "Timothy Grass Pollen",
+  },
+  {
+    group: "Environmental Allergies",
+    subgroup: "Pollens",
+    label: "Ragweed Pollen",
+  },
+  {
+    group: "Environmental Allergies",
+    subgroup: "Pollens",
+    label: "Sagebrush Pollen",
+  },
+  {
+    group: "Environmental Allergies",
+    subgroup: "Mold",
+    label: "Aspergillus",
+  },
+  {
+    group: "Environmental Allergies",
+    subgroup: "Mold",
+    label: "Cladosporium",
+  },
+  {
+    group: "Environmental Allergies",
+    subgroup: "Mold",
+    label: "Penicillium",
+  },
+  {
+    group: "Environmental Allergies",
+    subgroup: "Mold",
+    label: "Alternaria",
+  },
+  {
+    group: "Environmental Allergies",
+    subgroup: "Dust",
+    label: "Dust Mites",
+  },
+  {
+    group: "Environmental Allergies",
+    subgroup: "Animal Dander",
+    label: "Cat Dander",
+  },
+  {
+    group: "Environmental Allergies",
+    subgroup: "Animal Dander",
+    label: "Dog Dander",
+  },
+  {
+    group: "Environmental Allergies",
+    subgroup: "Animal Dander",
+    label: "Horse Dander",
+  },
+  {
+    group: "Environmental Allergies",
+    subgroup: "Animal Dander",
+    label: "Rabbit Dander",
+  },
+  {
+    group: "Environmental Allergies",
+    subgroup: "Animal Dander",
+    label: "Rodent Dander",
+  },
+  {
+    group: "Environmental Allergies",
+    subgroup: "Insect Stings",
+    label: "Bee Stings",
+  },
+  {
+    group: "Environmental Allergies",
+    subgroup: "Insect Stings",
+    label: "Wasp Stings",
+  },
+  {
+    group: "Environmental Allergies",
+    subgroup: "Insect Stings",
+    label: "Hornet Stings",
+  },
+  {
+    group: "Environmental Allergies",
+    subgroup: "Insect Stings",
+    label: "Fire Ant Stings",
+  },
+  {
+    group: "Environmental Allergies",
+    subgroup: "Other Environmental Triggers",
+    label: "Feathers",
+  },
+  {
+    group: "Environmental Allergies",
+    subgroup: "Other Environmental Triggers",
+    label: "Smoke (Cigarette)",
+  },
+  {
+    group: "Environmental Allergies",
+    subgroup: "Other Environmental Triggers",
+    label: "Smoke (Wood)",
+  },
+  {
+    group: "Environmental Allergies",
+    subgroup: "Other Environmental Triggers",
+    label: "Latex",
+  },
+  {
+    group: "Drug Allergies",
+    subgroup: "Antibiotics",
+    label: "Penicillin",
+  },
+  {
+    group: "Drug Allergies",
+    subgroup: "Antibiotics",
+    label: "Amoxicillin",
+  },
+  {
+    group: "Drug Allergies",
+    subgroup: "Antibiotics",
+    label: "Cephalosporins",
+  },
+  {
+    group: "Drug Allergies",
+    subgroup: "Antibiotics",
+    label: "Sulfa Drugs",
+  },
+  {
+    group: "Drug Allergies",
+    subgroup: "Pain Relievers",
+    label: "Aspirin",
+  },
+  {
+    group: "Drug Allergies",
+    subgroup: "Pain Relievers",
+    label: "Ibuprofen",
+  },
+  {
+    group: "Drug Allergies",
+    subgroup: "Pain Relievers",
+    label: "Acetaminophen",
+  },
+  {
+    group: "Drug Allergies",
+    subgroup: "Pain Relievers",
+    label: "NSAIDs",
+  },
+  {
+    group: "Drug Allergies",
+    subgroup: "Anesthetics",
+    label: "Lidocaine",
+  },
+  {
+    group: "Drug Allergies",
+    subgroup: "Anesthetics",
+    label: "General Anesthesia Agents",
+  },
+  {
+    group: "Drug Allergies",
+    subgroup: "Vaccines",
+    label: "Egg-based Vaccines",
+  },
+  {
+    group: "Drug Allergies",
+    subgroup: "Vaccines",
+    label: "Gelatin-based Vaccines",
+  },
+  {
+    group: "Drug Allergies",
+    subgroup: "Other Drugs",
+    label: "Contrast Dyes",
+  },
+  {
+    group: "Drug Allergies",
+    subgroup: "Other Drugs",
+    label: "Chlorhexidine",
+  },
+  {
+    group: "Skin Allergies",
+    subgroup: "Nickel",
+    label: "Nickel",
+  },
+  {
+    group: "Skin Allergies",
+    subgroup: "Nickel",
+    label: "Chromium",
+  },
+  {
+    group: "Skin Allergies",
+    subgroup: "Nickel",
+    label: "Cobalt",
+  },
+  {
+    group: "Skin Allergies",
+    subgroup: "Perfumes",
+    label: "Scented Lotions",
+  },
+  {
+    group: "Skin Allergies",
+    subgroup: "Wool",
+    label: "Synthetic Fibers",
+  },
+  {
+    group: "Skin Allergies",
+    subgroup: "Poison Ivy",
+    label: "Poison Oak",
+  },
+  {
+    group: "Skin Allergies",
+    subgroup: "Poison Ivy",
+    label: "Poison Sumac",
+  },
+  {
+    group: "Skin Allergies",
+    subgroup: "Cosmetics",
+    label: "Lipsticks",
+  },
+  {
+    group: "Skin Allergies",
+    subgroup: "Cosmetics",
+    label: "Foundations",
+  },
+  {
+    group: "Skin Allergies",
+    subgroup: "Cosmetics",
+    label: "Eyeliners",
+  },
+  {
+    group: "Skin Allergies",
+    subgroup: "Soaps",
+    label: "Detergents",
+  },
+  {
+    group: "Skin Allergies",
+    subgroup: "Soaps",
+    label: "Cleaning Products",
+  },
+  {
+    group: "Skin Allergies",
+    subgroup: "Soaps",
+    label: "Paint Fumes",
+  },
+
+  {
+    group: "Rare Allergies",
+    subgroup: "",
+    label: "Sunlight (Photosensitivity)",
+  },
+  {
+    group: "Rare Allergies",
+    subgroup: "",
+    label: "Water (Aquagenic Urticaria)",
+  },
+  {
+    group: "Rare Allergies",
+    subgroup: "",
+    label: "Cold Temperatures (Cold Urticaria)",
+  },
+  {
+    group: "Rare Allergies",
+    subgroup: "",
+    label: "Exercise-induced Anaphylaxis",
+  },
+  {
+    group: "Rare Allergies",
+    subgroup: "",
+    label: "Alpha-Gal Syndrome (Red Meat)",
+  },
+  {
+    group: "Rare Allergies",
+    subgroup: "",
+    label: "Tick Bites",
+  },
+];
