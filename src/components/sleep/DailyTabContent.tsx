@@ -15,12 +15,64 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { convertUnderscoresToCapitalizeHeading } from "@/utils/utils";
+import { useGetUserProfile } from "@/service/hooks/profile/useGetUserProfile";
 
 interface DailyTabContentProps {
   selectedDate: Date;
   wearableDailyRecommendationData;
   wearableDailyData;
 }
+
+const ageGroupToSleepMap = {
+  "18-25": {
+    light: 52.5,
+    deep: 22.5,
+    rem: 22.5,
+  },
+  "26-40": {
+    light: 55,
+    deep: 17.5,
+    rem: 22.5,
+  },
+  "41-60": {
+    light: 57.5,
+    deep: 15,
+    rem: 21,
+  },
+  "61-80": {
+    light: 62.5,
+    deep: 12.5,
+    rem: 20,
+  },
+};
+
+const calculatedSleepPercentage = ({
+  totalSleep,
+  age = 20,
+  actualSleepHr,
+  sleepType,
+}: {
+  totalSleep: number;
+  age: number;
+  actualSleepHr: number;
+  sleepType: "light" | "rem" | "deep";
+}) => {
+  let ageGroup = "";
+
+  if (age >= 18 && age <= 25) {
+    ageGroup = "18-25";
+  } else if (age >= 26 && age <= 40) {
+    ageGroup = "26-40";
+  } else if (age >= 41 && age <= 60) {
+    ageGroup = "41-60";
+  } else if (age >= 61 && age <= 80) {
+    ageGroup = "61-80";
+  }
+
+  const calculatedSleepRequired =
+    (totalSleep * ageGroupToSleepMap?.[ageGroup]?.[sleepType]) / 100;
+  return (actualSleepHr / calculatedSleepRequired) * 100;
+};
 
 const DailyTabContent = ({
   selectedDate,
@@ -43,6 +95,8 @@ const DailyTabContent = ({
   };
 
   const isMobile = useIsMobile();
+
+  const { data: getProfileIsData } = useGetUserProfile();
 
   return (
     <div className="space-y-6">
@@ -73,24 +127,33 @@ const DailyTabContent = ({
               </CarouselItem>
               <CarouselItem>
                 <SleepDistributionCard
-                  lightSleep={
-                    (wearableDailyData?.finalDailySpikeSleepDataV4?.light /
+                  lightSleep={calculatedSleepPercentage({
+                    totalSleep:
                       wearableDailyData?.finalDailySpikeSleepDataV4
-                        ?.bedtime_duration) *
-                    100
-                  }
-                  deepSleep={
-                    (wearableDailyData?.finalDailySpikeSleepDataV4?.deep /
+                        ?.bedtime_duration,
+                    age: getProfileIsData?.age,
+                    actualSleepHr:
+                      wearableDailyData?.finalDailySpikeSleepDataV4?.light,
+                    sleepType: "light",
+                  })}
+                  deepSleep={calculatedSleepPercentage({
+                    totalSleep:
                       wearableDailyData?.finalDailySpikeSleepDataV4
-                        ?.bedtime_duration) *
-                    100
-                  }
-                  remSleep={
-                    (wearableDailyData?.finalDailySpikeSleepDataV4?.rem /
+                        ?.bedtime_duration,
+                    age: getProfileIsData?.age,
+                    actualSleepHr:
+                      wearableDailyData?.finalDailySpikeSleepDataV4?.deep,
+                    sleepType: "deep",
+                  })}
+                  remSleep={calculatedSleepPercentage({
+                    totalSleep:
                       wearableDailyData?.finalDailySpikeSleepDataV4
-                        ?.bedtime_duration) *
-                    100
-                  }
+                        ?.bedtime_duration,
+                    age: getProfileIsData?.age,
+                    actualSleepHr:
+                      wearableDailyData?.finalDailySpikeSleepDataV4?.rem,
+                    sleepType: "rem",
+                  })}
                   awake={
                     (wearableDailyData?.finalDailySpikeSleepDataV4?.awake /
                       wearableDailyData?.finalDailySpikeSleepDataV4
@@ -101,24 +164,33 @@ const DailyTabContent = ({
               </CarouselItem>
               <CarouselItem>
                 <SleepQualityCard
-                  lightSleep={
-                    (wearableDailyData?.finalDailySpikeSleepDataV4?.light /
+                  lightSleep={calculatedSleepPercentage({
+                    totalSleep:
                       wearableDailyData?.finalDailySpikeSleepDataV4
-                        ?.bedtime_duration) *
-                    100
-                  }
-                  deepSleep={
-                    (wearableDailyData?.finalDailySpikeSleepDataV4?.deep /
+                        ?.bedtime_duration,
+                    age: getProfileIsData?.age,
+                    actualSleepHr:
+                      wearableDailyData?.finalDailySpikeSleepDataV4?.light,
+                    sleepType: "light",
+                  })}
+                  deepSleep={calculatedSleepPercentage({
+                    totalSleep:
                       wearableDailyData?.finalDailySpikeSleepDataV4
-                        ?.bedtime_duration) *
-                    100
-                  }
-                  remSleep={
-                    (wearableDailyData?.finalDailySpikeSleepDataV4?.rem /
+                        ?.bedtime_duration,
+                    age: getProfileIsData?.age,
+                    actualSleepHr:
+                      wearableDailyData?.finalDailySpikeSleepDataV4?.deep,
+                    sleepType: "deep",
+                  })}
+                  remSleep={calculatedSleepPercentage({
+                    totalSleep:
                       wearableDailyData?.finalDailySpikeSleepDataV4
-                        ?.bedtime_duration) *
-                    100
-                  }
+                        ?.bedtime_duration,
+                    age: getProfileIsData?.age,
+                    actualSleepHr:
+                      wearableDailyData?.finalDailySpikeSleepDataV4?.rem,
+                    sleepType: "rem",
+                  })}
                   awake={
                     (wearableDailyData?.finalDailySpikeSleepDataV4?.awake /
                       wearableDailyData?.finalDailySpikeSleepDataV4
@@ -153,24 +225,29 @@ const DailyTabContent = ({
             wakeupCount={wearableDailyData?.wakeUpTimes}
           />
           <SleepDistributionCard
-            lightSleep={
-              (wearableDailyData?.finalDailySpikeSleepDataV4?.light /
-                wearableDailyData?.finalDailySpikeSleepDataV4
-                  ?.bedtime_duration) *
-              100
-            }
-            deepSleep={
-              (wearableDailyData?.finalDailySpikeSleepDataV4?.deep /
-                wearableDailyData?.finalDailySpikeSleepDataV4
-                  ?.bedtime_duration) *
-              100
-            }
-            remSleep={
-              (wearableDailyData?.finalDailySpikeSleepDataV4?.rem /
-                wearableDailyData?.finalDailySpikeSleepDataV4
-                  ?.bedtime_duration) *
-              100
-            }
+            lightSleep={calculatedSleepPercentage({
+              totalSleep:
+                wearableDailyData?.finalDailySpikeSleepDataV4?.bedtime_duration,
+              age: getProfileIsData?.age,
+              actualSleepHr:
+                wearableDailyData?.finalDailySpikeSleepDataV4?.light,
+              sleepType: "light",
+            })}
+            deepSleep={calculatedSleepPercentage({
+              totalSleep:
+                wearableDailyData?.finalDailySpikeSleepDataV4?.bedtime_duration,
+              age: getProfileIsData?.age,
+              actualSleepHr:
+                wearableDailyData?.finalDailySpikeSleepDataV4?.deep,
+              sleepType: "deep",
+            })}
+            remSleep={calculatedSleepPercentage({
+              totalSleep:
+                wearableDailyData?.finalDailySpikeSleepDataV4?.bedtime_duration,
+              age: getProfileIsData?.age,
+              actualSleepHr: wearableDailyData?.finalDailySpikeSleepDataV4?.rem,
+              sleepType: "rem",
+            })}
             awake={
               (wearableDailyData?.finalDailySpikeSleepDataV4?.awake /
                 wearableDailyData?.finalDailySpikeSleepDataV4
@@ -179,24 +256,29 @@ const DailyTabContent = ({
             }
           />
           <SleepQualityCard
-            lightSleep={
-              (wearableDailyData?.finalDailySpikeSleepDataV4?.light /
-                wearableDailyData?.finalDailySpikeSleepDataV4
-                  ?.bedtime_duration) *
-              100
-            }
-            deepSleep={
-              (wearableDailyData?.finalDailySpikeSleepDataV4?.deep /
-                wearableDailyData?.finalDailySpikeSleepDataV4
-                  ?.bedtime_duration) *
-              100
-            }
-            remSleep={
-              (wearableDailyData?.finalDailySpikeSleepDataV4?.rem /
-                wearableDailyData?.finalDailySpikeSleepDataV4
-                  ?.bedtime_duration) *
-              100
-            }
+            lightSleep={calculatedSleepPercentage({
+              totalSleep:
+                wearableDailyData?.finalDailySpikeSleepDataV4?.bedtime_duration,
+              age: getProfileIsData?.age,
+              actualSleepHr:
+                wearableDailyData?.finalDailySpikeSleepDataV4?.light,
+              sleepType: "light",
+            })}
+            deepSleep={calculatedSleepPercentage({
+              totalSleep:
+                wearableDailyData?.finalDailySpikeSleepDataV4?.bedtime_duration,
+              age: getProfileIsData?.age,
+              actualSleepHr:
+                wearableDailyData?.finalDailySpikeSleepDataV4?.deep,
+              sleepType: "deep",
+            })}
+            remSleep={calculatedSleepPercentage({
+              totalSleep:
+                wearableDailyData?.finalDailySpikeSleepDataV4?.bedtime_duration,
+              age: getProfileIsData?.age,
+              actualSleepHr: wearableDailyData?.finalDailySpikeSleepDataV4?.rem,
+              sleepType: "rem",
+            })}
             awake={
               (wearableDailyData?.finalDailySpikeSleepDataV4?.awake /
                 wearableDailyData?.finalDailySpikeSleepDataV4
