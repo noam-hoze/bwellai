@@ -74,7 +74,7 @@ const planToExtraDetails = {
     buttonText: "Go Pro",
     developmentStage: "Innovation Phase",
   },
-  freePremium: {
+  Beta: {
     name: "Beta Tester Plan",
     price: "Free",
     subtitle: "in exchange for feedback",
@@ -200,7 +200,7 @@ const SubscriptionPlans = () => {
                     {plan?.name}
                   </h2>
                   <div className="mt-4 mb-2">
-                    {plan?.bwellTokenPrice ? (
+                    {plan?.bwellTokenPrice && plan?.name !== "Beta" ? (
                       <>
                         <div
                           className="text-3xl font-bold"
@@ -216,7 +216,7 @@ const SubscriptionPlans = () => {
                       </>
                     ) : (
                       <div className="text-3xl font-bold text-gray-800">
-                        ${plan.price}
+                        {plan?.name !== "Beta" ? `"$"${plan.price}` : "Free"}
                       </div>
                     )}
                     {plan.description && (
