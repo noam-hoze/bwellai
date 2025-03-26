@@ -28,6 +28,23 @@ import {
 } from "@/modules/constant/profile";
 import { useGetCreateProfile } from "@/service/hooks/profile/useGetCreateProfile";
 
+const commonConditions = [
+  { id: "hypertension", label: "Hypertension (High Blood Pressure)" },
+  { id: "diabetes", label: "Diabetes" },
+  { id: "depression", label: "Depression/Anxiety" },
+  { id: "arthritis", label: "Arthritis" },
+  { id: "asthma", label: "Asthma" },
+];
+
+const commonAllergies = [
+  { id: "peanuts", label: "Peanuts" },
+  { id: "milk", label: "Milk" },
+  { id: "eggs", label: "Eggs" },
+  { id: "shellfish", label: "Shellfish" },
+  { id: "tree-nuts", label: "Tree Nuts" },
+];
+const commonMedication = [{ id: "", label: "" }];
+
 const HealthProfileTab = ({
   getProfileIsData,
   weightUnit,
@@ -45,10 +62,12 @@ const HealthProfileTab = ({
   const [alcohol, setAlcohol] = useState<string>("occasionally");
   const [exercise, setExercise] = useState<string>("weekly");
   const [exerciseTypes, setExerciseTypes] = useState<string[]>([]);
-  const [commonCondition, setCommonCondition] = useState<string[]>([
-    "Asthma",
-    "Diabetes",
-  ]);
+
+  const [selectedConditions, setSelectedConditions] = useState<string[]>([]);
+  const [selectedAllergies, setSelectedAllergies] = useState<string[]>([]);
+  const [bloodType, setBloodType] = useState<string>("");
+  const [medications, setMedications] = useState<string[]>([]);
+
   const [geneVariant, setGeneVariant] = useState<string>("");
 
   const {
@@ -102,10 +121,24 @@ const HealthProfileTab = ({
           "Do you smoke or use tobacco products?"
         ]?.answersArray?.[0] || ""
       );
-      setCommonCondition(
+      setSelectedConditions(
         getProfileIsData?.additionalDetails?.[
           "Have you been diagnosed with any chronic health conditions?"
         ]?.answersArray || []
+      );
+      setSelectedAllergies(
+        getProfileIsData?.additionalDetails?.[
+          "Do you have any known allergies?"
+        ]?.answersArray || []
+      );
+      setMedications(
+        getProfileIsData?.additionalDetails?.[
+          "Are you currently taking any medications?"
+        ]?.answersArray || []
+      );
+      setBloodType(
+        getProfileIsData?.additionalDetails?.["What is your blood type?"]
+          ?.answersArray || []
       );
     }
   }, [
@@ -151,7 +184,19 @@ const HealthProfileTab = ({
           include_in_interpretation: true,
         },
         "Have you been diagnosed with any chronic health conditions?": {
-          answersArray: commonCondition,
+          answersArray: selectedConditions,
+          include_in_interpretation: true,
+        },
+        "Do you have any known allergies?": {
+          answersArray: selectedAllergies,
+          include_in_interpretation: true,
+        },
+        "Are you currently taking any medications?": {
+          answersArray: medications,
+          include_in_interpretation: true,
+        },
+        "What is your blood type?": {
+          answersArray: [bloodType],
           include_in_interpretation: true,
         },
       },
@@ -168,12 +213,41 @@ const HealthProfileTab = ({
     toast.success("Health profile updated successfully");
   };
 
-  const handleCheckboxChange = (condition: string) => {
-    setCommonCondition((prev) =>
-      prev?.includes(condition)
-        ? prev?.filter((item) => item !== condition)
-        : [...prev, condition]
+  const handleConditionChange = (conditionId: string) => {
+    setSelectedConditions((prev) =>
+      prev.includes(conditionId)
+        ? prev.filter((id) => id !== conditionId)
+        : [...prev, conditionId]
     );
+  };
+
+  const handleAllergyChange = (allergyId: string) => {
+    setSelectedAllergies((prev) =>
+      prev.includes(allergyId)
+        ? prev.filter((id) => id !== allergyId)
+        : [...prev, allergyId]
+    );
+  };
+  const handleMedicationChange = (allergyId: string) => {
+    setMedications((prev) =>
+      prev.includes(allergyId)
+        ? prev.filter((id) => id !== allergyId)
+        : [...prev, allergyId]
+    );
+  };
+
+  const getBmiBackgroundColor = (bmi: number) => {
+    if (bmi < 18.5) return "bg-yellow-100";
+    if (bmi < 25) return "bg-wellness-light-green";
+    if (bmi < 30) return "bg-orange-100";
+    return "bg-red-100";
+  };
+
+  const getBmiTextColor = (bmi: number) => {
+    if (bmi < 18.5) return "text-yellow-800";
+    if (bmi < 25) return "text-wellness-bright-green";
+    if (bmi < 30) return "text-orange-800";
+    return "text-red-800";
   };
 
   return (
@@ -248,12 +322,14 @@ const HealthProfileTab = ({
                 />
               </div>
 
-              <div className="p-4 bg-wellness-light-green rounded-lg">
+              <div className={`p-4 rounded-lg ${getBmiBackgroundColor(bmi)}`}>
                 <div className="flex items-center justify-between">
                   <span className="font-medium">BMI</span>
-                  <span className="text-xl font-bold">{bmi}</span>
+                  <span className={`text-xl font-bold ${getBmiTextColor(bmi)}`}>
+                    {bmi}
+                  </span>
                 </div>
-                <div className="text-xs text-wellness-muted-black mt-1">
+                <div className={`text-xs ${getBmiTextColor(bmi)} mt-1`}>
                   {bmi < 18.5
                     ? "Underweight"
                     : bmi < 25
@@ -280,41 +356,180 @@ const HealthProfileTab = ({
           <div className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="conditions">Common Conditions</Label>
-              <div className="flex flex-wrap gap-2 mt-2">
-                {[
-                  "Asthma",
-                  "Diabetes",
-                  "Hypertension",
-                  "Heart Disease",
-                  "Arthritis",
-                ].map((condition) => (
-                  <div key={condition} className="flex items-center space-x-2">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-2">
+                {commonConditions.map((condition) => (
+                  <div
+                    key={condition.label}
+                    className="flex items-center space-x-2"
+                  >
                     <Checkbox
-                      id={condition.toLowerCase()}
-                      checked={commonCondition?.includes(condition)}
-                      onCheckedChange={() => handleCheckboxChange(condition)}
+                      id={condition.label}
+                      checked={selectedConditions.includes(condition.label)}
+                      onCheckedChange={() =>
+                        handleConditionChange(condition.label)
+                      }
                     />
-                    <Label htmlFor={condition.toLowerCase()}>{condition}</Label>
+                    <Label htmlFor={condition.label}>{condition.label}</Label>
                   </div>
                 ))}
               </div>
+              <div className="mt-4">
+                <Label htmlFor="other-conditions">
+                  List any other conditions
+                </Label>
+                <Input
+                  id="other-conditions"
+                  placeholder="Enter any other medical conditions you have"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && e.currentTarget.value.trim()) {
+                      const newAllergy = e.currentTarget.value.trim();
+                      handleConditionChange(newAllergy);
+                      e.currentTarget.value = "";
+                    }
+                  }}
+                />
+              </div>
+
+              {selectedConditions.length > 0 && (
+                <div className="mt-3">
+                  <div className="flex flex-wrap gap-2">
+                    {selectedConditions.map((condition) => (
+                      <div
+                        key={condition}
+                        className="flex items-center gap-1 bg-wellness-light-green py-1 px-2 rounded-full text-sm"
+                      >
+                        <span>
+                          {commonConditions.find((a) => a.id === condition)
+                            ?.label || condition}
+                        </span>
+                        <button
+                          onClick={() => handleConditionChange(condition)}
+                          className="text-wellness-muted-black hover:text-wellness-bright-green transition-colors"
+                        >
+                          ×
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
 
-            <div className="mt-4">
-              <Button variant="outline" className="flex items-center gap-2">
-                <Upload className="h-4 w-4" />
-                Upload Medical Documents
-              </Button>
-            </div>
-
-            <div className="space-y-2 mt-4">
-              <Label htmlFor="additional-conditions">
-                Additional Conditions
+            <div className="space-y-2">
+              <Label htmlFor="allergies">
+                Do you have any known allergies?
               </Label>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mt-2">
+                {commonAllergies?.map((allergy) => (
+                  <div key={allergy.id} className="flex items-center space-x-2">
+                    <Checkbox
+                      id={`allergy-${allergy.id}`}
+                      checked={selectedAllergies.includes(allergy.id)}
+                      onCheckedChange={() => handleAllergyChange(allergy.id)}
+                    />
+                    <Label htmlFor={`allergy-${allergy.id}`}>
+                      {allergy.label}
+                    </Label>
+                  </div>
+                ))}
+              </div>
+              <div className="mt-3 flex items-center space-x-2">
+                <Input
+                  placeholder="List any other allergies"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && e.currentTarget.value.trim()) {
+                      const newAllergy = e.currentTarget.value.trim();
+                      handleAllergyChange(newAllergy);
+                      e.currentTarget.value = "";
+                    }
+                  }}
+                />
+              </div>
+              {selectedAllergies?.length > 0 && (
+                <div className="mt-3">
+                  <div className="flex flex-wrap gap-2">
+                    {selectedAllergies?.map((allergy) => (
+                      <div
+                        key={allergy}
+                        className="flex items-center gap-1 bg-wellness-light-green py-1 px-2 rounded-full text-sm"
+                      >
+                        <span>
+                          {commonAllergies.find((a) => a.id === allergy)
+                            ?.label || allergy}
+                        </span>
+                        <button
+                          onClick={() => handleAllergyChange(allergy)}
+                          className="text-wellness-muted-black hover:text-wellness-bright-green transition-colors"
+                        >
+                          ×
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="medications">
+                Are you currently taking any medications?
+              </Label>
+
               <Input
-                id="additional-conditions"
-                placeholder="Enter any other conditions"
+                id="medications"
+                placeholder="List any medications, supplements, or vitamins you are currently taking"
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && e.currentTarget.value.trim()) {
+                    const newMedication = e.currentTarget.value.trim();
+                    handleMedicationChange(newMedication);
+                    e.currentTarget.value = "";
+                  }
+                }}
               />
+
+              {medications?.length > 0 && (
+                <div className="mt-3">
+                  <div className="flex flex-wrap gap-2">
+                    {medications?.map((allergy) => (
+                      <div
+                        key={allergy}
+                        className="flex items-center gap-1 bg-wellness-light-green py-1 px-2 rounded-full text-sm"
+                      >
+                        <span>
+                          {commonMedication?.find((a) => a.id === allergy)
+                            ?.label || allergy}
+                        </span>
+                        <button
+                          onClick={() => handleMedicationChange(allergy)}
+                          className="text-wellness-muted-black hover:text-wellness-bright-green transition-colors"
+                        >
+                          ×
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="blood-type">Blood Type</Label>
+              <Select value={bloodType} onValueChange={setBloodType}>
+                <SelectTrigger id="blood-type">
+                  <SelectValue placeholder="Select your blood type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="a-positive">A+</SelectItem>
+                  <SelectItem value="a-negative">A-</SelectItem>
+                  <SelectItem value="b-positive">B+</SelectItem>
+                  <SelectItem value="b-negative">B-</SelectItem>
+                  <SelectItem value="ab-positive">AB+</SelectItem>
+                  <SelectItem value="ab-negative">AB-</SelectItem>
+                  <SelectItem value="o-positive">O+</SelectItem>
+                  <SelectItem value="o-negative">O-</SelectItem>
+                  <SelectItem value="unknown">Unknown</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </div>
         </CardContent>
@@ -340,6 +555,13 @@ const HealthProfileTab = ({
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="yes" id="smoke-yes" />
                   <Label htmlFor="smoke-yes">Yes</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem
+                    value="occasionally"
+                    id="smoke-occasionally"
+                  />
+                  <Label htmlFor="smoke-occasionally">Occasionally</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="no" id="smoke-no" />
@@ -413,7 +635,7 @@ const HealthProfileTab = ({
                   { id: "swimming", label: "🏊 Swimming" },
                   { id: "yoga", label: "🧘 Yoga" },
                   { id: "team-sports", label: "⚽ Team Sports" },
-                  { id: "Hiking", label: "⛰️ Hiking" },
+                  { id: "other", label: "🔄 Other" },
                 ].map((type) => (
                   <div
                     key={type.id}
@@ -459,13 +681,6 @@ const HealthProfileTab = ({
                   })}
                 </SelectContent>
               </Select>
-            </div>
-
-            <div className="mt-4">
-              <Button variant="outline" className="flex items-center gap-2">
-                <Upload className="h-4 w-4" />
-                Upload Genetic Test Results
-              </Button>
             </div>
 
             {geneVariant && (
