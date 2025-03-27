@@ -12,7 +12,7 @@ const NutrientProgress = ({ label, value, grams }: NutrientProgressProps) => {
       <div className="relative h-24 w-24 mb-2">
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="h-20 w-20 rounded-full border-4 border-gray-200 flex flex-col items-center justify-center">
-            <span className="text-2xl font-bold">{value}%</span>
+            <span className="text-xl font-bold">{value}%</span>
             <span className="text-sm">{grams}g</span>
           </div>
         </div>
