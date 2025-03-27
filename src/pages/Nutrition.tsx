@@ -21,7 +21,11 @@ const Nutrition = () => {
 
   const { data: loggedMealData, refetch: refetchLoggedMeals } =
     useGetUserLoggedMealDataFetcherV4(
-      new Date(date || new Date())?.toISOString()?.split("T")?.[0],
+      new Intl.DateTimeFormat("en-CA", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+      }).format(new Date(date || new Date())),
       true
     );
 

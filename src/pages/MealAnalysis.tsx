@@ -22,6 +22,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import DualProgressBar from "@/components/nutrition/DualProgressBar";
+import { useGetLogFoodDataV4Fetcher } from "@/service/hooks/nutrition/useGetFoodReportUpload";
 
 interface MealData {
   id: number;
@@ -52,6 +53,19 @@ const MealAnalysisPage = () => {
     sugar: { current: 18, max: 50 },
   };
 
+  const {
+    data: logMealData,
+    isSuccess: logMealIsSuccess,
+    mutate: logMealMutate,
+  } = useGetLogFoodDataV4Fetcher();
+
+  useEffect(() => {
+    if (logMealIsSuccess && logMealData) {
+      toast.success(`${meal?.name} logged successfully!`);
+      navigate("/nutrition");
+    }
+  }, [logMealIsSuccess, logMealData]);
+
   useEffect(() => {
     if (location.state?.meal) {
       const mealData = location.state.meal;
@@ -80,9 +94,9 @@ const MealAnalysisPage = () => {
         }
       : null;
 
+    logMealMutate({ es_id: meal?.id, meal_type: mealType });
+
     console.log("Logging meal with type:", mealType);
-    toast.success(`${meal?.name} logged successfully!`);
-    navigate("/nutrition");
   };
 
   const handleBack = () => {
@@ -90,6 +104,7 @@ const MealAnalysisPage = () => {
   };
 
   const handleToggleFavorite = () => {
+    logMealMutate({ es_id: meal?.id, meal_type: mealType, is_favourite: true });
     setIsFavorite(!isFavorite);
     toast.success(
       !isFavorite ? "Added to favorites!" : "Removed from favorites"

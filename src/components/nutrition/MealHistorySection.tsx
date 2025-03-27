@@ -259,6 +259,8 @@ const MealHistorySection = ({
   const totalPages = Math.ceil(filteredMeals.length / itemsPerPage);
 
   const handleDateSelect = (newDate: Date | undefined) => {
+    console.log(newDate);
+
     setDate(newDate);
     setCurrentPage(1);
   };
