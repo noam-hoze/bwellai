@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { Camera, X } from "lucide-react";
+import { Camera, X, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -9,6 +9,8 @@ import {
   DialogClose,
 } from "@/components/ui/dialog";
 import { useGetUserFoodReportUpload } from "@/service/hooks/nutrition/useGetFoodReportUpload";
+import { Input } from "@/components/ui/input";
+import { useNavigate } from "react-router-dom";
 
 interface ScanMealModalProps {
   open: boolean;
@@ -21,10 +23,15 @@ const ScanMealModal = ({
   onOpenChange,
   onMealDetected,
 }: ScanMealModalProps) => {
+  const navigate = useNavigate();
   const [isScanning, setIsScanning] = useState(false);
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
+  const [uploadMode, setUploadMode] = useState<boolean>(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const [selectFile, setSelectedFile] = useState<any>(null);
 
   const [canvasElement, setCanvasElement] = useState<HTMLCanvasElement | null>(
     null
@@ -64,6 +71,7 @@ const ScanMealModal = ({
   };
 
   const captureMeal = () => {
+    setSelectedFile(null);
     if (videoRef.current && canvasRef.current) {
       const context = canvasRef.current.getContext("2d");
       if (context) {
@@ -81,12 +89,16 @@ const ScanMealModal = ({
 
   const retakePhoto = () => {
     setCapturedImage(null);
+    if (uploadMode) {
+      setUploadMode(false);
+    }
     startCamera();
   };
 
   const handleClose = () => {
     stopCamera();
     setCapturedImage(null);
+    setUploadMode(false);
     onOpenChange(false);
   };
 
@@ -102,6 +114,10 @@ const ScanMealModal = ({
     //   fat: 8,
     //   ingredients: ["Honey", "Oats", "Blueberries", "Strawberries"],
     // };
+
+    if (selectFile) {
+      foodReportMutate({ PdfFile: selectFile, language: "English" });
+    }
 
     if (!canvasElement) return;
 
@@ -119,9 +135,39 @@ const ScanMealModal = ({
     }, "image/png");
   };
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setSelectedFile(file);
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        setCapturedImage(event.target?.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const openFileDialog = () => {
+    setUploadMode(true);
+    if (isScanning) {
+      stopCamera();
+    }
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+
   useEffect(() => {
     if (foodReportData && foodReportSuccess) {
       console.log(foodReportData);
+      // navigate("/meal-analysis", {
+      //   state: {
+      //     meal: {
+      //       es_id: foodReportData?.es_id,
+      //       ai_response: foodReportData?.jsonNode,
+      //     },
+      //   },
+      // });
       onMealDetected(foodReportData);
       onOpenChange(false);
     }
@@ -190,18 +236,41 @@ const ScanMealModal = ({
               className="w-full h-full object-cover"
             />
           )}
+
+          <input
+            type="file"
+            ref={fileInputRef}
+            className="hidden"
+            accept="image/*"
+            onChange={handleFileChange}
+          />
         </div>
 
-        <div className="p-4 flex justify-center">
+        <div className="p-4 flex flex-col items-center gap-2">
           {!capturedImage ? (
-            <Button
-              variant="default"
-              size="lg"
-              className="rounded-full w-16 h-16 p-0"
-              onClick={captureMeal}
-            >
-              <Camera className="h-8 w-8" />
-            </Button>
+            <>
+              <div className="flex gap-4 w-full justify-center mb-2">
+                <Button
+                  variant="default"
+                  size="lg"
+                  className="rounded-full w-16 h-16 p-0"
+                  onClick={captureMeal}
+                >
+                  <Camera className="h-8 w-8" />
+                </Button>
+                <Button
+                  variant="outline"
+                  size="lg"
+                  className="rounded-full w-16 h-16 p-0 border-2"
+                  onClick={openFileDialog}
+                >
+                  <Upload className="h-8 w-8" />
+                </Button>
+              </div>
+              <div className="text-center text-gray-500 text-sm">
+                <p>Take a photo or upload an image of your meal</p>
+              </div>
+            </>
           ) : (
             <div className="flex gap-4">
               <Button variant="outline" onClick={retakePhoto}>
