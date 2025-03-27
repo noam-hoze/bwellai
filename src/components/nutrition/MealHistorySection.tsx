@@ -351,7 +351,7 @@ const MealHistorySection = ({
       </div>
 
       {/* Favorites Section */}
-      {loggedMealData?.filter((meal) => meal.isFavorite)?.length > 0 && (
+      {loggedMealData?.filter((meal) => meal.is_favourite)?.length > 0 && (
         <div className="mb-6">
           <div className="flex items-center mb-3">
             <Star className="h-5 w-5 text-yellow-500 fill-current mr-2" />
@@ -360,7 +360,7 @@ const MealHistorySection = ({
           <Carousel className="w-full">
             <CarouselContent className="-ml-2 md:-ml-4">
               {loggedMealData
-                ?.filter((meal) => meal.isFavorite)
+                ?.filter((meal) => meal.is_favourite)
                 ?.map((meal) => (
                   <CarouselItem
                     key={`fav-${meal.id}`}
@@ -400,7 +400,7 @@ const MealHistorySection = ({
               calories={meal?.ai_response?.calories?.quantity}
               protein={meal?.ai_response?.protein?.quantity}
               meal={meal}
-              isFavorite={meal.isFavorite}
+              isFavorite={meal.is_favourite}
               onMealClick={handleMealClick}
               setCurrentMeal={setCurrentMeal}
               setAnalysisOpen={setAnalysisOpen}
