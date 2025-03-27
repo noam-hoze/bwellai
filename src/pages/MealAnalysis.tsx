@@ -48,9 +48,10 @@ const MealAnalysisPage = () => {
   const isMobile = useIsMobile();
 
   const dailyGoals = {
-    calories: { current: 1000, max: 2000 },
-    protein: { current: 35, max: 80 },
+    calories: { current: 1000, max: 2200 },
+    protein: { current: 35, max: 100 },
     sugar: { current: 18, max: 50 },
+    carbs: { current: 18, max: 1000 },
   };
 
   const {
@@ -262,11 +263,11 @@ const MealAnalysisPage = () => {
                 />
 
                 <DualProgressBar
-                  currentValue={dailyGoals.sugar.current}
-                  addedValue={12}
-                  maxValue={dailyGoals.sugar.max}
+                  currentValue={meal.totalDailyCarbs}
+                  addedValue={meal?.ai_response?.carbohydrates?.quantity}
+                  maxValue={dailyGoals.carbs.max}
                   unit="g"
-                  label="Sugar"
+                  label="Carbs"
                 />
               </div>
             </div>

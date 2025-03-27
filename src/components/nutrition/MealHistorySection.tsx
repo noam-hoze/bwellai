@@ -151,6 +151,7 @@ const MealHistorySection = ({
   refetchLoggedMeals,
   totalDailyCalories,
   totalDailyProtein,
+  totalDailyCarbs,
 }) => {
   const navigate = useNavigate();
   const [expanded, setExpanded] = useState(false);
@@ -284,6 +285,7 @@ const MealHistorySection = ({
       ...meal,
       totalDailyCalories,
       totalDailyProtein,
+      totalDailyCarbs,
       carbs: meal?.ai_response?.carbohydrates?.quantity,
       fat: meal?.ai_response?.fats?.quantity,
       ingredients: meal?.ingredients?.map((ingredient) => ingredient?.name),
