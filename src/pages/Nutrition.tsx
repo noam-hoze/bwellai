@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { useNavigate } from "react-router-dom";
 
@@ -25,18 +25,56 @@ const Nutrition = () => {
       true
     );
 
+  const [totalDailyCalories, setTotalDailyCalories] = useState(0);
+  const [totalDailyProtein, setTotalDailyProtein] = useState(0);
+  const [totalDailyFats, setTotalDailyFats] = useState(0);
+  const [totalDailyCarbs, setTotalDailyCarbs] = useState(0);
+
+  useEffect(() => {
+    if (loggedMealData) {
+      let tc = 0;
+      let pc = 0;
+      let fc = 0;
+      let cc = 0;
+
+      loggedMealData?.forEach((d) => {
+        tc += d.ai_response?.calories?.quantity;
+      });
+      loggedMealData?.forEach((d) => {
+        pc += d.ai_response?.protein?.quantity;
+      });
+      loggedMealData?.forEach((d) => {
+        fc += d.ai_response?.fats?.quantity;
+      });
+      loggedMealData?.forEach((d) => {
+        cc += d.ai_response?.carbohydrates?.quantity;
+      });
+      setTotalDailyCalories(tc);
+      setTotalDailyProtein(pc);
+      setTotalDailyFats(fc);
+      setTotalDailyCarbs(cc);
+    }
+  }, [loggedMealData]);
+
   return (
     <Layout>
       <div className="container mx-auto px-4 py-6 bg-gray-50">
         <NutritionHeader />
         <div className="space-y-8">
           <MealLoggingSection refetchLoggedMeals={refetchLoggedMeals} />
-          <DailyIntakeSection />
+          <DailyIntakeSection
+            totalDailyCalories={totalDailyCalories}
+            totalDailyProtein={totalDailyProtein}
+            totalDailyFats={totalDailyFats}
+            totalDailyCarbs={totalDailyCarbs}
+          />
           <MealHistorySection
             date={date}
             setDate={setDate}
             loggedMealData={loggedMealData}
             refetchLoggedMeals={refetchLoggedMeals}
+            totalDailyCalories={totalDailyCalories}
+            totalDailyProtein={totalDailyProtein}
           />
           {activeTab === "trends" && <TrendsInsightsSection />}
         </div>

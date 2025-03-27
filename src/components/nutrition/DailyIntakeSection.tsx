@@ -49,16 +49,23 @@ const getCalorieProgressColor = (percentage: number): string => {
   return "from-green-500 to-red-500"; // Over 100% - green to red
 };
 
-const DailyIntakeSection = () => {
+const DailyIntakeSection = ({
+  totalDailyCalories,
+  totalDailyProtein,
+  totalDailyFats,
+  totalDailyCarbs,
+}) => {
   // Calorie intake data (simulated)
-  const calorieIntake = 1800; // Current calories consumed
+  // const calorieIntake = 1800; // Current calories consumed
   const calorieGoal = 2200; // Daily calorie goal
-  const caloriePercentage = Math.round((calorieIntake / calorieGoal) * 100);
+  const caloriePercentage = Math.round(
+    (totalDailyCalories / calorieGoal) * 100
+  );
   const colorGradient = getCalorieProgressColor(caloriePercentage);
 
   // Calculate if over target
-  const isOverTarget = calorieIntake > calorieGoal;
-  const overAmount = isOverTarget ? calorieIntake - calorieGoal : 0;
+  const isOverTarget = totalDailyCalories > calorieGoal;
+  const overAmount = isOverTarget ? totalDailyCalories - calorieGoal : 0;
 
   // Maximum displayed value (150% of goal)
   const maxDisplayValue = calorieGoal * 1.5;
@@ -67,20 +74,35 @@ const DailyIntakeSection = () => {
   const targetPosition = Math.min((calorieGoal / maxDisplayValue) * 100, 100);
 
   // Calculate width of the progress bar (capped at maxDisplayValue)
-  const progressWidth = Math.min((calorieIntake / maxDisplayValue) * 100, 100);
+  const progressWidth = Math.min(
+    (totalDailyCalories / maxDisplayValue) * 100,
+    100
+  );
 
   // Nutrient data (simulated) - added gram values
-  const fatGrams = 56;
-  const proteinGrams = 84;
-  const carbsGrams = 195;
+  const fatGrams = 100;
+  const proteinGrams = 100;
+  const carbsGrams = 1000;
 
   return (
     <section className="mb-10">
       <h2 className="text-2xl font-bold mb-6">Today's Intake</h2>
       <div className="flex justify-between items-center gap-4">
-        <NutrientProgress label="Fat" value={65} grams={fatGrams} />
-        <NutrientProgress label="Protein" value={42} grams={proteinGrams} />
-        <NutrientProgress label="Carbs" value={78} grams={carbsGrams} />
+        <NutrientProgress
+          label="Fat"
+          value={(totalDailyFats / fatGrams) * 100}
+          grams={fatGrams}
+        />
+        <NutrientProgress
+          label="Protein"
+          value={(totalDailyProtein / proteinGrams) * 100}
+          grams={proteinGrams}
+        />
+        <NutrientProgress
+          label="Carbs"
+          value={(totalDailyCarbs / carbsGrams) * 100}
+          grams={carbsGrams}
+        />
       </div>
 
       {/* Enhanced calorie progress bar with calorie info next to title */}
@@ -88,7 +110,7 @@ const DailyIntakeSection = () => {
         <div className="flex justify-between items-center mb-2">
           <h3 className="text-lg font-semibold">Calorie Consumption</h3>
           <span className="text-sm font-medium">
-            {calorieIntake}/{calorieGoal} kcal
+            {totalDailyCalories}/{calorieGoal} kcal
           </span>
         </div>
 

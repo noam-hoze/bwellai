@@ -148,30 +148,14 @@ const MealHistorySection = ({
   date,
   setDate,
   refetchLoggedMeals,
+  totalDailyCalories,
+  totalDailyProtein,
 }) => {
   const navigate = useNavigate();
   const [expanded, setExpanded] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [analysisOpen, setAnalysisOpen] = useState(false);
   const [currentMeal, setCurrentMeal] = useState(null);
-
-  const [totalDailyCalories, setTotalDailyCalories] = useState(0);
-  const [totalDailyProtein, setTotalDailyProtein] = useState(0);
-
-  useEffect(() => {
-    if (loggedMealData) {
-      let tc = 0;
-      let pc = 0;
-      loggedMealData?.forEach((d) => {
-        tc += d.ai_response?.calories?.quantity;
-      });
-      loggedMealData?.forEach((d) => {
-        pc += d.ai_response?.protein?.quantity;
-      });
-      setTotalDailyCalories(tc);
-      setTotalDailyProtein(pc);
-    }
-  }, [loggedMealData]);
 
   const [mealTypeFilter, setMealTypeFilter] = useState<string | null>(null);
   const itemsPerPage = 5;
