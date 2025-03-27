@@ -18,14 +18,20 @@ const DualProgressBar = ({
   label,
   className,
 }: DualProgressBarProps) => {
-  console.log({ currentValue, addedValue, maxValue });
-
   // Calculate percentages for the progress bars
   const currentPercentage = Math.min((currentValue / maxValue) * 100, 100);
   const combinedPercentage = Math.min(
     ((currentValue + addedValue) / maxValue) * 100,
     100
   );
+
+  console.log({
+    currentValue,
+    addedValue,
+    maxValue,
+    currentPercentage,
+    combinedPercentage,
+  });
 
   // Format the display values
   const formattedCurrent = currentValue.toFixed(0);
@@ -43,21 +49,38 @@ const DualProgressBar = ({
 
       <div className="relative w-full">
         {/* Base progress bar - shows total goal */}
-        <Progress className="h-2 bg-gray-200" value={100} />
+        {/* <Progress className="h-2 bg-gray-200" value={100} /> */}
+
+        <div className="relative w-full h-2 bg-gray-200 rounded-md overflow-hidden">
+          {/* Blue: Current Value */}
+          <div
+            className="absolute left-0 top-0 h-full bg-[#3B82F6]"
+            style={{ width: `${currentPercentage}%` }}
+          />
+
+          {/* Green: Added Value (Starts where blue ends) */}
+          <div
+            className="absolute top-0 h-full bg-green-400"
+            style={{
+              width: `${addedValue ? (addedValue / maxValue) * 100 : 0}%`,
+              left: `${currentPercentage}%`, // Moves the green bar to start after the blue
+            }}
+          />
+        </div>
 
         {/* Current progress bar */}
-        <Progress
+        {/* <Progress
           className="h-2 absolute top-0 left-0"
           value={currentPercentage}
           indicatorColor="#3B82F6" // Blue color
-        />
+        /> */}
 
         {/* Addition from this meal - shown as different color */}
-        <Progress
+        {/* <Progress
           className="h-2 absolute top-0 left-0"
           value={combinedPercentage}
           indicatorColor="rgba(59, 130, 246, 0.5)" // Semi-transparent blue
-        />
+        /> */}
       </div>
 
       <div className="text-xs text-gray-500 pt-1">
