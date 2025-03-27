@@ -18,8 +18,8 @@ const getSaveUserFoodProfileData = (reportId) =>
   `/food/profile?report_id=${reportId}`;
 const getFoodTrackerUpload = () => `/food/tracker/upload`;
 const getLogFoodDataV4 = ({ es_id, meal_type, is_favourite }) =>
-  `/food/update/v4?es_id=${es_id}&meal_type=${meal_type}&is_favourite=${
-    is_favourite || false
+  `/food/update/v4?es_id=${es_id}&meal_type=${meal_type}&type=${
+    is_favourite ? "favourite" : "logged"
   }`;
 const getUserFoodProfileList = () => `/food/list`;
 const getUserFoodGraphDetails = () => `/food/tracker/detail`;
