@@ -79,6 +79,7 @@ const Nutrition = () => {
             refetchLoggedMeals={refetchLoggedMeals}
             totalDailyCalories={totalDailyCalories}
             totalDailyProtein={totalDailyProtein}
+            totalDailyCarbs={totalDailyCarbs}
           />
           {activeTab === "trends" && <TrendsInsightsSection />}
         </div>
