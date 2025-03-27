@@ -78,6 +78,7 @@ const HealthProfileTab = ({
 
   const [openAllergy, setOpenAllergy] = useState(false);
   const [inputValueAllergy, setInputValueAllergy] = useState("");
+  const [inputValueCondition, setInputValueCondition] = useState("");
 
   const {
     mutate: createProfileMutate,
@@ -387,17 +388,50 @@ const HealthProfileTab = ({
                 <Label htmlFor="other-conditions">
                   List any other conditions
                 </Label>
-                <Input
-                  id="other-conditions"
-                  placeholder="Enter any other medical conditions you have"
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" && e.currentTarget.value.trim()) {
-                      const newAllergy = e.currentTarget.value.trim();
-                      handleConditionChange(newAllergy);
-                      e.currentTarget.value = "";
-                    }
-                  }}
-                />
+
+                <Popover open={openAllergy} onOpenChange={setOpenAllergy}>
+                  <PopoverTrigger asChild>
+                    <Input
+                      id="other-conditions"
+                      placeholder="Enter any other medical conditions you have"
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" && e.currentTarget.value.trim()) {
+                          const newAllergy = e.currentTarget.value.trim();
+                          handleConditionChange(newAllergy);
+                          e.currentTarget.value = "";
+                        }
+                      }}
+                    />
+                  </PopoverTrigger>
+
+                  <PopoverContent className="w-full p-2">
+                    {allergiesData?.filter((item) =>
+                      item.label
+                        .toLowerCase()
+                        .includes(inputValueAllergy.toLowerCase())
+                    ).length > 0 ? (
+                      <ul className="max-h-48 overflow-auto">
+                        {allergiesData
+                          ?.filter((item) =>
+                            item.label
+                              .toLowerCase()
+                              .includes(inputValueAllergy.toLowerCase())
+                          )
+                          ?.map((item) => (
+                            <li
+                              key={item.label}
+                              onClick={() => handleConditionChange(item.label)}
+                              className="p-2 cursor-pointer hover:bg-gray-200"
+                            >
+                              {item.label}
+                            </li>
+                          ))}
+                      </ul>
+                    ) : (
+                      <div className="p-2 text-gray-500">No results found</div>
+                    )}
+                  </PopoverContent>
+                </Popover>
               </div>
 
               {selectedConditions.length > 0 && (
