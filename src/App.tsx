@@ -19,6 +19,9 @@ import Login from "./pages/auth/Login";
 import BodyMetrics from "./pages/BodyMetrics";
 import { AuthProvider } from "./contexts/AuthContext";
 import SubscriptionPlans from "./pages/SubscriptionPlans";
+import MealAnalysisPage from "./pages/MealAnalysis";
+import MealEditPage from "./pages/MealEdit";
+import FoodScanAnalysis from "./pages/FoodScanAnalysis";
 
 const queryClient = new QueryClient();
 
@@ -46,8 +49,9 @@ const App = () => (
             <Route path="/sleep" element={<Sleep />} />
             <Route path="/activity" element={<Activity />} />
             <Route path="/nutrition" element={<Nutrition />} />
-            {/* <Route path="/meal-analysis" element={<MealAnalysisPage />} />
-            <Route path="/meal-edit" element={<MealEditPage />} /> */}
+            <Route path="/meal-analysis" element={<MealAnalysisPage />} />
+            <Route path="/meal-edit" element={<MealEditPage />} />
+            <Route path="/food-scan-analysis" element={<FoodScanAnalysis />} />
             <Route path="/risk-score" element={<NotFound />} />
             <Route path="/wallet" element={<NotFound />} />
             <Route path="/settings" element={<Settings />} />

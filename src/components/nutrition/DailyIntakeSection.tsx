@@ -43,15 +43,10 @@ const NutrientProgress = ({ label, value, grams }: NutrientProgressProps) => {
 
 // Function to determine color based on percentage of calorie goal
 const getCalorieProgressColor = (percentage: number): string => {
-  if (percentage < 50) return "from-red-500 to-yellow-500"; // Under 50% - red to yellow
+  if (percentage < 50) return "from-yellow-400 to-green-400"; // Under 50% - yellow to green
   if (percentage >= 50 && percentage < 100)
-    return "from-yellow-500 to-green-500"; // 50-100% - yellow to green
-  if (percentage === 100) return "bg-green-500"; // At 100% - solid green
-  if (percentage > 100 && percentage <= 125)
-    return "from-green-500 to-yellow-500"; // 100-125% - green to yellow
-  if (percentage > 125 && percentage <= 150)
-    return "from-yellow-500 to-orange-500"; // 125-150% - yellow to orange
-  return "from-orange-500 to-red-500"; // Over 150% - orange to red
+    return "from-green-400 to-green-500"; // 50-100% - green gradient
+  return "from-green-500 to-red-500"; // Over 100% - green to red
 };
 
 const DailyIntakeSection = () => {
@@ -60,6 +55,19 @@ const DailyIntakeSection = () => {
   const calorieGoal = 2200; // Daily calorie goal
   const caloriePercentage = Math.round((calorieIntake / calorieGoal) * 100);
   const colorGradient = getCalorieProgressColor(caloriePercentage);
+
+  // Calculate if over target
+  const isOverTarget = calorieIntake > calorieGoal;
+  const overAmount = isOverTarget ? calorieIntake - calorieGoal : 0;
+
+  // Maximum displayed value (150% of goal)
+  const maxDisplayValue = calorieGoal * 1.5;
+
+  // Calculate the position of the target indicator (as percentage of the bar)
+  const targetPosition = Math.min((calorieGoal / maxDisplayValue) * 100, 100);
+
+  // Calculate width of the progress bar (capped at maxDisplayValue)
+  const progressWidth = Math.min((calorieIntake / maxDisplayValue) * 100, 100);
 
   // Nutrient data (simulated) - added gram values
   const fatGrams = 56;
@@ -75,29 +83,72 @@ const DailyIntakeSection = () => {
         <NutrientProgress label="Carbs" value={78} grams={carbsGrams} />
       </div>
 
-      {/* Calorie progress bar */}
+      {/* Enhanced calorie progress bar with calorie info next to title */}
       <div className="mt-8">
-        <div className="flex justify-between mb-2">
-          <span className="text-sm font-medium">Calories</span>
+        <div className="flex justify-between items-center mb-2">
+          <h3 className="text-lg font-semibold">Calorie Consumption</h3>
           <span className="text-sm font-medium">
-            {calorieIntake} / {calorieGoal} kcal
+            {calorieIntake}/{calorieGoal} kcal
           </span>
         </div>
-        <div className="relative h-4 w-full bg-gray-200 rounded-full overflow-hidden">
-          <div
-            className={`h-full ${
-              caloriePercentage === 100 ? "" : "bg-gradient-to-r"
-            } ${colorGradient} transition-all duration-500 ease-in-out`}
-            style={{ width: `${Math.min(caloriePercentage, 150)}%` }}
-          />
+
+        <div className="flex justify-between mb-2">
+          {isOverTarget && (
+            <span className="text-sm font-medium text-red-500">
+              +{overAmount} kcal
+            </span>
+          )}
         </div>
+
+        <div className="relative h-6 w-full bg-gray-200 rounded-full overflow-hidden">
+          {/* Progress fill */}
+          <div
+            className={`h-full bg-gradient-to-r ${colorGradient} transition-all duration-500 ease-in-out rounded-l-full`}
+            style={{ width: `${progressWidth}%` }}
+          />
+
+          {/* Target indicator line */}
+          <div
+            className="absolute top-0 bottom-0 w-0.5 border-r-2 border-dashed border-black z-10"
+            style={{ left: `${targetPosition}%` }}
+          >
+            <div className="absolute -top-5 left-1/2 transform -translate-x-1/2 text-xs font-medium">
+              Target
+            </div>
+          </div>
+
+          {/* Over amount indicator */}
+          {isOverTarget && (
+            <div
+              className="absolute top-0 h-full flex items-center justify-center text-white font-bold"
+              style={{
+                left: `${targetPosition}%`,
+                width: `${Math.min(
+                  (overAmount / maxDisplayValue) * 100,
+                  100 - targetPosition
+                )}%`,
+                backgroundColor: "rgba(239, 68, 68, 0.6)",
+              }}
+            >
+              +{overAmount}
+            </div>
+          )}
+        </div>
+
         <div className="flex justify-between mt-1 text-xs text-gray-500">
           <span>0</span>
-          <div className="flex flex-col items-center">
+          {/* Target goal text positioned under the target line */}
+          <div
+            className="absolute flex flex-col items-center"
+            style={{
+              left: `${targetPosition}%`,
+              transform: "translateX(-50%)",
+            }}
+          >
             <span className="text-sm font-medium">{calorieGoal}</span>
             <span>Goal</span>
           </div>
-          <span>+50%</span>
+          <span>{Math.round(maxDisplayValue)} (+50%)</span>
         </div>
       </div>
     </section>
