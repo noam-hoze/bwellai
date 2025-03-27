@@ -61,12 +61,13 @@ const FavoriteMealCard = ({
   id,
   name,
   type,
+  meal,
   onMealClick,
 }: Omit<MealItemProps, "time" | "calories" | "protein"> & {
   name: string;
   type: string;
 }) => {
-  const meal = { id, type, name, calories: 0, protein: 0 };
+  // const meal = { id, type, name, calories: 0, protein: 0 };
 
   return (
     <Card
@@ -368,6 +369,7 @@ const MealHistorySection = ({
                   >
                     <FavoriteMealCard
                       id={meal.id}
+                      meal={meal}
                       name={meal?.ai_response?.food_name}
                       type={meal?.meal_type}
                       onMealClick={handleMealClick}

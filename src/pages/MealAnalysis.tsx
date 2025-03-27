@@ -214,26 +214,29 @@ const MealAnalysisPage = () => {
             <div className="bg-white rounded-lg shadow-sm p-4 mb-4">
               <h2 className="text-xl font-semibold mb-3">Health Impact</h2>
 
-              <div className="flex justify-between items-center mb-2">
-                <span className="text-gray-700">Blood Sugar Impact</span>
-                <span className="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs font-medium rounded">
+              <div className="flex justify-between flex-col  mb-2">
+                {meal?.ai_response?.health_impact?.map((p) => {
+                  return <span className="text-gray-700">{p}</span>;
+                })}
+
+                {/* <span className="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs font-medium rounded">
                   Moderate
-                </span>
+                </span> */}
               </div>
 
-              <div className="flex justify-between items-center mb-2">
+              {/* <div className="flex justify-between items-center mb-2">
                 <span className="text-gray-700">Satiety Level</span>
                 <span className="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs font-medium rounded">
                   Medium
                 </span>
-              </div>
+              </div> */}
 
-              <div className="flex justify-between items-center">
+              {/* <div className="flex justify-between items-center">
                 <span className="text-gray-700">Nutritional Density</span>
                 <span className="px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded">
                   Good
                 </span>
-              </div>
+              </div> */}
             </div>
 
             <div className="bg-white rounded-lg shadow-sm p-4 mb-4">
