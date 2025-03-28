@@ -8,9 +8,11 @@ interface SleepSummaryProps {
   date: Date;
   viewType: "day" | "week" | "month";
   wearableWeeklyData;
+  score;
 }
 
 const SleepSummary: React.FC<SleepSummaryProps> = ({
+  score,
   date,
   viewType,
   wearableWeeklyData,
@@ -23,7 +25,7 @@ const SleepSummary: React.FC<SleepSummaryProps> = ({
         deepSleep: "15.5%",
         remSleep: "17.8%",
         awakeTime: "6.8%",
-        sleepScore: 82,
+        sleepScore: Number(score),
         bedtime: "11:30 PM",
         wakeup: "7:03 AM",
         respiratoryRate: "15.4 breaths/min",
@@ -36,7 +38,7 @@ const SleepSummary: React.FC<SleepSummaryProps> = ({
         avgDeepSleep: "1 hour 5 minutes (15.1%)",
         avgRemSleep: "1 hour 17 minutes (17.8%)",
         avgAwakeTime: "32 minutes (7.0%)",
-        avgSleepScore: 79,
+        avgSleepScore: Number(score),
         consistentBedtime: "11:45 PM (±28 min)",
         consistentWakeup: "7:10 AM (±15 min)",
         avgWakeupCount: 2.4,
@@ -48,7 +50,7 @@ const SleepSummary: React.FC<SleepSummaryProps> = ({
         avgDeepSleep: "1 hour 8 minutes (15.3%)",
         avgRemSleep: "1 hour 18 minutes (17.7%)",
         avgAwakeTime: "31 minutes (7.1%)",
-        avgSleepScore: 80,
+        avgSleepScore: Number(score),
         lowestDay: "April 12 (5h 45m)",
         highestDay: "April 26 (8h 30m)",
         consistencyScore: "76%",
