@@ -23,9 +23,9 @@ const Welcome = () => {
           </div>
 
           <div className="space-y-4 pt-8">
-            <Button className="w-full py-6 text-lg" size="lg" asChild>
+            {/* <Button className="w-full py-6 text-lg" size="lg" asChild>
               <Link to="/onboarding/1">Get Started</Link>
-            </Button>
+            </Button> */}
 
             <Button
               variant="outline"

@@ -65,12 +65,17 @@ const Nutrition = () => {
       <div className="container mx-auto px-4 py-6 bg-gray-50">
         <NutritionHeader />
         <div className="space-y-8">
-          <MealLoggingSection refetchLoggedMeals={refetchLoggedMeals} />
+          <MealLoggingSection
+            refetchLoggedMeals={refetchLoggedMeals}
+            totalDailyCalories={totalDailyCalories}
+            totalDailyProtein={totalDailyProtein}
+            totalDailyCarbs={totalDailyCarbs}
+          />
           <DailyIntakeSection
             totalDailyCalories={totalDailyCalories}
             totalDailyProtein={totalDailyProtein}
-            totalDailyFats={totalDailyFats}
             totalDailyCarbs={totalDailyCarbs}
+            totalDailyFats={totalDailyFats}
           />
           <MealHistorySection
             date={date}

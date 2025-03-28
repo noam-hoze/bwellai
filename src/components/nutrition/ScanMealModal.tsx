@@ -16,12 +16,18 @@ interface ScanMealModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onMealDetected: (mealData) => void;
+  totalDailyCalories?;
+  totalDailyProtein?;
+  totalDailyCarbs?;
 }
 
 const ScanMealModal = ({
   open,
   onOpenChange,
   onMealDetected,
+  totalDailyCalories,
+  totalDailyProtein,
+  totalDailyCarbs,
 }: ScanMealModalProps) => {
   const navigate = useNavigate();
   const [isScanning, setIsScanning] = useState(false);
@@ -160,15 +166,25 @@ const ScanMealModal = ({
   useEffect(() => {
     if (foodReportData && foodReportSuccess) {
       console.log(foodReportData);
-      // navigate("/meal-analysis", {
-      //   state: {
-      //     meal: {
-      //       es_id: foodReportData?.es_id,
-      //       ai_response: foodReportData?.jsonNode,
-      //     },
-      //   },
-      // });
-      onMealDetected(foodReportData);
+      navigate("/meal-analysis", {
+        state: {
+          meal: {
+            ai_response: foodReportData?.jsonNode,
+            id: foodReportData?.es_id,
+            is_favourite: false,
+            meal_type: "Breakfast",
+            totalDailyCalories,
+            totalDailyProtein,
+            totalDailyCarbs,
+            carbs: foodReportData?.jsonNode?.carbohydrates?.quantity,
+            fat: foodReportData?.jsonNode?.fats?.quantity,
+            ingredients: foodReportData?.jsonNode?.ingredients?.map(
+              (ingredient) => ingredient?.name
+            ),
+          },
+        },
+      });
+      // onMealDetected(foodReportData);
       onOpenChange(false);
     }
   }, [foodReportData, foodReportSuccess]);
@@ -196,7 +212,7 @@ const ScanMealModal = ({
       //   }
       //   onOpenChange(open);
       // }}
-      onOpenChange={onOpenChange}
+      onOpenChange={handleClose}
     >
       <DialogContent className="sm:max-w-md p-0 overflow-hidden">
         <DialogHeader className="p-4 bg-gray-900 text-white">

@@ -7,7 +7,12 @@ import ScanMealModal from "./ScanMealModal";
 import ScanBarcodeModal from "./ScanBarcodeModal";
 import MealDetailModal from "./MealDetailModal";
 import MealAnalysisModal from "./MealAnalysisModal";
-const MealLoggingSection = ({ refetchLoggedMeals }) => {
+const MealLoggingSection = ({
+  refetchLoggedMeals,
+  totalDailyCalories,
+  totalDailyProtein,
+  totalDailyCarbs,
+}) => {
   const [manualEntry, setManualEntry] = useState("");
   const [isVoiceActive, setIsVoiceActive] = useState(false);
 
@@ -119,6 +124,9 @@ const MealLoggingSection = ({ refetchLoggedMeals }) => {
         open={scanMealOpen}
         onOpenChange={setScanMealOpen}
         onMealDetected={handleMealDetected}
+        totalDailyCalories={totalDailyCalories}
+        totalDailyProtein={totalDailyProtein}
+        totalDailyCarbs={totalDailyCarbs}
       />
 
       <ScanBarcodeModal
