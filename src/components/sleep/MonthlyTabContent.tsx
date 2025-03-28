@@ -51,6 +51,7 @@ const MonthlyTabContent = ({
                       date={selectedDate}
                       viewType="month"
                       wearableWeeklyData={wearableMonthlyData}
+                      score={wearableMonthlyData?.monthlySleepEfficiency}
                     />
                   </CardContent>
                 </Card>
@@ -209,6 +210,7 @@ const MonthlyTabContent = ({
                 date={selectedDate}
                 viewType="month"
                 wearableWeeklyData={wearableMonthlyData}
+                score={wearableMonthlyData?.monthlySleepEfficiency}
               />
             </CardContent>
           </Card>

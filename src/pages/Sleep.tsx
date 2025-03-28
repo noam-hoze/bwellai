@@ -171,6 +171,7 @@ const Sleep = () => {
                     wearableWeeklyRecommendationData?.ai_response?.insights
                   }
                   wearableWeeklyData={wearableWeeklyData}
+                  getProfileIsData={getProfileIsData}
                 />
               </TabsContent>
 
