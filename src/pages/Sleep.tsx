@@ -22,6 +22,7 @@ import {
   useGetWearableWeeklyDataV4,
   useGetWearableWeeklyRecommendationDataV4,
 } from "@/service/hooks/wearable/terra/useGetUserInfo";
+import { useGetUserProfile } from "@/service/hooks/profile/useGetUserProfile";
 
 type ViewType = "day" | "week" | "month";
 
@@ -94,6 +95,8 @@ const Sleep = () => {
     startDate: formatDate(selectedDate),
   });
 
+  const { data: getProfileIsData } = useGetUserProfile();
+
   const handlePrevious = () => {
     setSelectedDate((prev) => goToPreviousDate(prev, viewType));
   };
@@ -157,6 +160,7 @@ const Sleep = () => {
                     wearableDailyRecommendationData?.ai_response?.insights
                   }
                   wearableDailyData={wearableDailyData}
+                  getProfileIsData={getProfileIsData}
                 />
               </TabsContent>
 
@@ -177,6 +181,7 @@ const Sleep = () => {
                     wearableMonthlyRecommendationData?.ai_response?.insights
                   }
                   wearableMonthlyData={wearableMonthlyData}
+                  getProfileIsData={getProfileIsData}
                 />
               </TabsContent>
             </Tabs>
