@@ -11,6 +11,7 @@ import {
 import { useGetUserFoodReportUpload } from "@/service/hooks/nutrition/useGetFoodReportUpload";
 import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
+import MealScanLoader from "./MealScanLoader";
 
 interface ScanMealModalProps {
   open: boolean;
@@ -164,30 +165,12 @@ const ScanMealModal = ({
   };
 
   useEffect(() => {
-    if (foodReportData && foodReportSuccess) {
-      console.log(foodReportData);
-      navigate("/meal-analysis", {
-        state: {
-          meal: {
-            ai_response: foodReportData?.jsonNode,
-            id: foodReportData?.es_id,
-            is_favourite: false,
-            meal_type: "Breakfast",
-            totalDailyCalories,
-            totalDailyProtein,
-            totalDailyCarbs,
-            carbs: foodReportData?.jsonNode?.carbohydrates?.quantity,
-            fat: foodReportData?.jsonNode?.fats?.quantity,
-            ingredients: foodReportData?.jsonNode?.ingredients?.map(
-              (ingredient) => ingredient?.name
-            ),
-          },
-        },
-      });
+    if (foodReportPending) {
       // onMealDetected(foodReportData);
-      onOpenChange(false);
+      // onOpenChange(false);
+      handleClose();
     }
-  }, [foodReportData, foodReportSuccess]);
+  }, [foodReportPending]);
 
   // ✅ Automatically start the camera when the modal opens
   useEffect(() => {
@@ -198,106 +181,149 @@ const ScanMealModal = ({
     }
   }, [open]);
 
+  const handleAnalysisComplete = (mealData: any) => {
+    navigate("/meal-analysis", {
+      state: {
+        meal: {
+          ai_response: foodReportData?.jsonNode,
+          id: foodReportData?.es_id,
+          is_favourite: false,
+          meal_type: "Breakfast",
+          totalDailyCalories,
+          totalDailyProtein,
+          totalDailyCarbs,
+          carbs: foodReportData?.jsonNode?.carbohydrates?.quantity,
+          fat: foodReportData?.jsonNode?.fats?.quantity,
+          ingredients: foodReportData?.jsonNode?.ingredients?.map(
+            (ingredient) => ingredient?.name
+          ),
+        },
+      },
+    });
+
+    // Close the modal after navigation
+    // onOpenChange(false);
+  };
+
+  useEffect(() => {
+    if (foodReportSuccess && foodReportData) {
+      handleAnalysisComplete({});
+    }
+  }, [foodReportSuccess, foodReportData]);
+
   return (
-    <Dialog
-      open={open}
-      // onOpenChange={(open) => {
-      //   if (!open) {
-      //     console.log("direct open");
+    <>
+      <Dialog open={foodReportPending}>
+        <DialogContent className="sm:max-w-md p-0 overflow-hidden">
+          <DialogHeader>
+            <MealScanLoader
+              onAnalysisComplete={handleAnalysisComplete}
+              // imageData={capturedImage}
+            />
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
 
-      //     stopCamera();
-      //     setCapturedImage(null);
-      //   } else if (!isScanning && !capturedImage) {
-      //     startCamera();
-      //   }
-      //   onOpenChange(open);
-      // }}
-      onOpenChange={handleClose}
-    >
-      <DialogContent className="sm:max-w-md p-0 overflow-hidden">
-        <DialogHeader className="p-4 bg-gray-900 text-white">
-          <DialogTitle className="flex justify-between items-center">
-            <span>Scan Your Meal</span>
-            <DialogClose asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="text-white"
-                onClick={handleClose}
-              >
-                <X className="h-4 w-4" />
-              </Button>
-            </DialogClose>
-          </DialogTitle>
-        </DialogHeader>
+      <Dialog
+        open={open}
+        // onOpenChange={(open) => {
+        //   if (!open) {
+        //     console.log("direct open");
 
-        <div className="relative aspect-square bg-black">
-          {!capturedImage ? (
-            <>
-              <video
-                ref={videoRef}
-                autoPlay
-                playsInline
+        //     stopCamera();
+        //     setCapturedImage(null);
+        //   } else if (!isScanning && !capturedImage) {
+        //     startCamera();
+        //   }
+        //   onOpenChange(open);
+        // }}
+        onOpenChange={handleClose}
+      >
+        <DialogContent className="sm:max-w-md p-0 overflow-hidden">
+          <DialogHeader className="p-4 bg-gray-900 text-white">
+            <DialogTitle className="flex justify-between items-center">
+              <span>Scan Your Meal</span>
+              <DialogClose asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="text-white"
+                  onClick={handleClose}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </DialogClose>
+            </DialogTitle>
+          </DialogHeader>
+
+          <div className="relative aspect-square bg-black">
+            {!capturedImage ? (
+              <>
+                <video
+                  ref={videoRef}
+                  autoPlay
+                  playsInline
+                  className="w-full h-full object-cover"
+                />
+                <canvas
+                  ref={canvasRef}
+                  className="absolute top-0 left-0 w-full h-full"
+                />
+              </>
+            ) : (
+              <img
+                src={capturedImage}
+                alt="Captured meal"
                 className="w-full h-full object-cover"
               />
-              <canvas
-                ref={canvasRef}
-                className="absolute top-0 left-0 w-full h-full"
-              />
-            </>
-          ) : (
-            <img
-              src={capturedImage}
-              alt="Captured meal"
-              className="w-full h-full object-cover"
+            )}
+
+            <input
+              type="file"
+              ref={fileInputRef}
+              className="hidden"
+              accept="image/*"
+              onChange={handleFileChange}
             />
-          )}
+          </div>
 
-          <input
-            type="file"
-            ref={fileInputRef}
-            className="hidden"
-            accept="image/*"
-            onChange={handleFileChange}
-          />
-        </div>
-
-        <div className="p-4 flex flex-col items-center gap-2">
-          {!capturedImage ? (
-            <>
-              <div className="flex gap-4 w-full justify-center mb-2">
-                <Button
-                  variant="default"
-                  size="lg"
-                  className="rounded-full w-16 h-16 p-0"
-                  onClick={captureMeal}
-                >
-                  <Camera className="h-8 w-8" />
+          <div className="p-4 flex flex-col items-center gap-2">
+            {!capturedImage ? (
+              <>
+                <div className="flex gap-4 w-full justify-center mb-2">
+                  <Button
+                    variant="default"
+                    size="lg"
+                    className="rounded-full w-16 h-16 p-0"
+                    onClick={captureMeal}
+                  >
+                    <Camera className="h-8 w-8" />
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    className="rounded-full w-16 h-16 p-0 border-2"
+                    onClick={openFileDialog}
+                  >
+                    <Upload className="h-8 w-8" />
+                  </Button>
+                </div>
+                <div className="text-center text-gray-500 text-sm">
+                  <p>Take a photo or upload an image of your meal</p>
+                </div>
+              </>
+            ) : (
+              <div className="flex gap-4">
+                <Button variant="outline" onClick={retakePhoto}>
+                  Retake
                 </Button>
-                <Button
-                  variant="outline"
-                  size="lg"
-                  className="rounded-full w-16 h-16 p-0 border-2"
-                  onClick={openFileDialog}
-                >
-                  <Upload className="h-8 w-8" />
-                </Button>
+                <Button onClick={handleUsePhoto}>Use Photo</Button>
               </div>
-              <div className="text-center text-gray-500 text-sm">
-                <p>Take a photo or upload an image of your meal</p>
-              </div>
-            </>
-          ) : (
-            <div className="flex gap-4">
-              <Button variant="outline" onClick={retakePhoto}>
-                Retake
-              </Button>
-              <Button onClick={handleUsePhoto}>Use Photo</Button>
-            </div>
-          )}
-        </div>
-      </DialogContent>
-    </Dialog>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 };
 
