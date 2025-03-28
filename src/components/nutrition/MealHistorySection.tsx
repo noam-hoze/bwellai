@@ -55,6 +55,7 @@ interface MealItemProps {
   isFavorite?: boolean;
   setCurrentMeal?;
   setAnalysisOpen?;
+  key?;
 }
 
 const FavoriteMealCard = ({
@@ -98,9 +99,11 @@ const MealItem = ({
   isFavorite,
   setCurrentMeal,
   setAnalysisOpen,
+  key,
 }: MealItemProps) => {
   return (
     <Card
+      key={key}
       className={`mb-4 hover:shadow-md transition-shadow border-gray-100 cursor-pointer ${
         isFavorite ? "border-l-4 border-l-yellow-400" : ""
       }`}
@@ -261,8 +264,6 @@ const MealHistorySection = ({
   const totalPages = Math.ceil(filteredMeals.length / itemsPerPage);
 
   const handleDateSelect = (newDate: Date | undefined) => {
-    console.log(newDate);
-
     setDate(newDate);
     setCurrentPage(1);
   };
@@ -279,7 +280,7 @@ const MealHistorySection = ({
   };
 
   const handleMealClick = (meal: any) => {
-    console.log(meal);
+    console.log("this is all meal data", meal);
 
     const completeMeal = {
       ...meal,

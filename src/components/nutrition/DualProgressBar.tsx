@@ -25,14 +25,6 @@ const DualProgressBar = ({
     100
   );
 
-  console.log({
-    currentValue,
-    addedValue,
-    maxValue,
-    currentPercentage,
-    combinedPercentage,
-  });
-
   // Format the display values
   const formattedCurrent = currentValue.toFixed(0);
   const formattedAfterLog = (currentValue + addedValue).toFixed(0);

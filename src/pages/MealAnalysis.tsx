@@ -157,8 +157,8 @@ const MealAnalysisPage = () => {
                 <h2 className="font-semibold text-gray-800 text-xl">
                   {meal?.ai_response?.food_name}
                 </h2>
-                <div className="w-10 h-10 rounded-full flex items-center justify-center bg-yellow-100 border-2 border-yellow-300">
-                  <span className="text-yellow-800 font-bold">
+                <div className="w-14 h-14 rounded-full flex items-center justify-center bg-yellow-100 border-2 border-yellow-300">
+                  <span className="text-yellow-800 ">
                     {meal?.ai_response?.general_food_quality_rating}/10
                   </span>
                 </div>
@@ -405,16 +405,16 @@ const MealAnalysisPage = () => {
                 variant="outline"
                 size={isMobile ? "icon" : "default"}
                 className={`${isMobile ? "flex-none" : "flex-1"} ${
-                  isFavorite ? "text-yellow-500" : ""
+                  meal.is_favourite ? "text-yellow-500" : ""
                 }`}
                 onClick={handleToggleFavorite}
               >
                 <Star
                   className={`h-4 w-4 ${!isMobile && "mr-1"} ${
-                    isFavorite ? "fill-current" : ""
+                    meal.is_favourite ? "fill-current" : ""
                   }`}
                 />
-                {!isMobile && (isFavorite ? "Favorited" : "Favorites")}
+                {!isMobile && (meal.is_favourite ? "Favorited" : "Favorites")}
               </Button>
               <Button
                 variant="outline"
