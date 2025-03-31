@@ -267,7 +267,7 @@ const SleepChart: React.FC<SleepChartProps> = ({ date, viewType, apiData }) => {
           <YAxis tickFormatter={(value) => `${value}h`} domain={[0, "auto"]} />
           <Tooltip
             formatter={(value, name) => {
-              return [`${value} hours`, name];
+              return [`${Number(value)?.toFixed(1)} hours`, name];
             }}
           />
           <Legend />

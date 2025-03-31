@@ -96,8 +96,6 @@ const MealAnalysisPage = () => {
       : null;
 
     logMealMutate({ es_id: meal?.id, meal_type: mealType });
-
-    console.log("Logging meal with type:", mealType);
   };
 
   const handleBack = () => {

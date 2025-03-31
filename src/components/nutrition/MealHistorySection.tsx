@@ -280,8 +280,6 @@ const MealHistorySection = ({
   };
 
   const handleMealClick = (meal: any) => {
-    console.log("this is all meal data", meal);
-
     const completeMeal = {
       ...meal,
       totalDailyCalories,

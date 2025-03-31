@@ -13,14 +13,18 @@ const getUserFoodReportByBarCode = ({ bar_code }) =>
 
 const getUserFoodReportBarCodeDataByReportId = ({ report_id, language }) =>
   `/food/v2/detail?report_id=${report_id}&language=${language}`;
+const getUserFoodReportBarCodeDataByReportIdv4 = ({ report_id, language }) =>
+  `/food/v4/detail?report_id=${report_id}&language=${language}`;
 
 const getSaveUserFoodProfileData = (reportId) =>
   `/food/profile?report_id=${reportId}`;
 const getFoodTrackerUpload = () => `/food/tracker/upload`;
-const getLogFoodDataV4 = ({ es_id, meal_type, is_favourite }) =>
+
+const getLogFoodDataV4 = ({ es_id, meal_type, is_favourite, is_saved }) =>
   `/food/update/v4?es_id=${es_id}&meal_type=${meal_type}&type=${
-    is_favourite ? "favourite" : "logged"
+    is_favourite ? "favourite" : is_saved ? "saved" : "logged"
   }`;
+
 const getUserFoodProfileList = () => `/food/list`;
 const getUserFoodGraphDetails = () => `/food/tracker/detail`;
 const getDeleteUserFoodProfileData = (reportId) =>
@@ -46,6 +50,14 @@ export const getUserFoodReportBarCodeDataByReportIdFetcher = ({
 }) => {
   return Client.get(
     getUserFoodReportBarCodeDataByReportId({ report_id, language })
+  );
+};
+export const getUserFoodReportBarCodeDataByReportIdV4Fetcher = ({
+  report_id,
+  language,
+}) => {
+  return Client.get(
+    getUserFoodReportBarCodeDataByReportIdv4({ report_id, language })
   );
 };
 export const getUserLatestFoodReportUploadFetcher = () => {
@@ -90,16 +102,19 @@ export const getLogFoodDataV4Fetcher = ({
   meal_type,
   es_id,
   is_favourite,
+  is_saved,
 }: {
   meal_type: string;
   es_id: string;
   is_favourite?: boolean;
+  is_saved?: boolean;
 }) => {
   return Client.post(
     getLogFoodDataV4({
       meal_type,
       es_id,
       is_favourite,
+      is_saved,
     }),
     {}
   );
