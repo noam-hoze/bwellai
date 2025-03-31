@@ -1,7 +1,15 @@
 import { Client } from "../../api.client";
 
-const getUserFoodReportUpload = (language: string) =>
-  `/food/upload/v4?language=${language}`;
+const getUserFoodReportUpload = ({
+  language,
+  portionAmount,
+  portionUnit,
+}: {
+  language: string;
+  portionAmount: string;
+  portionUnit: string;
+}) =>
+  `/food/upload/v4?language=${language}&amount=${portionAmount}&portion=${portionUnit}`;
 const getUserLatestFoodReportUpload = () => `/food/upload/latest`;
 const getUserDefaultFoodReportUpload = () => `/food/upload/default`;
 const getUserLoggedMealDataV4 = (date: string) =>
@@ -30,9 +38,14 @@ const getUserFoodGraphDetails = () => `/food/tracker/detail`;
 const getDeleteUserFoodProfileData = (reportId) =>
   `/food/profile/remove?report_id=${reportId}`;
 
-export const getUserFoodReportUploadFetcher = ({ PdfFile, language }) => {
+export const getUserFoodReportUploadFetcher = ({
+  PdfFile,
+  language,
+  portionAmount,
+  portionUnit,
+}) => {
   return Client.post(
-    getUserFoodReportUpload(language),
+    getUserFoodReportUpload({ language, portionAmount, portionUnit }),
     { PdfFile },
     {
       headers: {

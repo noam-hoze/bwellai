@@ -13,6 +13,14 @@ import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
 import MealScanLoader from "./MealScanLoader";
 
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
 interface ScanMealModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -31,6 +39,10 @@ const ScanMealModal = ({
   totalDailyCarbs,
 }: ScanMealModalProps) => {
   const navigate = useNavigate();
+  const [portionAmount, setPortionAmount] = useState<number>(1);
+  const [portionUnit, setPortionUnit] = useState<string>("portion");
+  const [showConfirmPortion, setShowConfirmPortion] = useState<boolean>(false);
+
   const [isScanning, setIsScanning] = useState(false);
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
   const [uploadMode, setUploadMode] = useState<boolean>(false);
@@ -96,6 +108,7 @@ const ScanMealModal = ({
 
   const retakePhoto = () => {
     setCapturedImage(null);
+    setShowConfirmPortion(false);
     if (uploadMode) {
       setUploadMode(false);
     }
@@ -107,23 +120,21 @@ const ScanMealModal = ({
     setCapturedImage(null);
     setUploadMode(false);
     onOpenChange(false);
+    setShowConfirmPortion(false);
   };
 
   const handleUsePhoto = () => {
-    // Mock meal detection result
-    // const detectedMeal = {
-    //   id: Math.random(),
-    //   name: "Oatmeal with Berries",
-    //   type: "Breakfast",
-    //   calories: 320,
-    //   protein: 12,
-    //   carbs: 45,
-    //   fat: 8,
-    //   ingredients: ["Honey", "Oats", "Blueberries", "Strawberries"],
-    // };
+    setShowConfirmPortion(true);
+  };
 
+  const handleConfirmMeal = () => {
     if (selectFile) {
-      foodReportMutate({ PdfFile: selectFile, language: "English" });
+      foodReportMutate({
+        PdfFile: selectFile,
+        language: "English",
+        portionAmount,
+        portionUnit,
+      });
     }
 
     if (!canvasElement) return;
@@ -136,7 +147,12 @@ const ScanMealModal = ({
         type: "image/png",
       });
 
-      foodReportMutate({ PdfFile: imageFile, language: "English" });
+      foodReportMutate({
+        PdfFile: imageFile,
+        language: "English",
+        portionAmount,
+        portionUnit,
+      });
       // onMealDetected(detectedMeal);
       // onOpenChange(false);
     }, "image/png");
@@ -205,11 +221,104 @@ const ScanMealModal = ({
     // onOpenChange(false);
   };
 
+  const handlePortionUnitChange = (value: string) => {
+    setPortionUnit(value);
+    if (value === "cup") {
+      setPortionAmount(1);
+    } else if (value === "bowl") {
+      setPortionAmount(1);
+    } else {
+      setPortionAmount(1);
+    }
+  };
+
   useEffect(() => {
     if (foodReportSuccess && foodReportData) {
       handleAnalysisComplete({});
     }
   }, [foodReportSuccess, foodReportData]);
+
+  const renderPortionSelector = () => {
+    return (
+      <div className="flex flex-col justify-between h-full">
+        <div className="bg-white p-4 border-t">
+          <div className="flex flex-col gap-3">
+            <div className="w-full">
+              <p className="text-sm mb-1">Amount:</p>
+              <div className="flex items-center gap-2">
+                <Input
+                  type="number"
+                  value={portionAmount}
+                  onChange={(e) => setPortionAmount(Number(e.target.value))}
+                  className="w-20"
+                  min={0.25}
+                  max={10}
+                  step={0.25}
+                />
+                <Select
+                  value={portionUnit}
+                  onValueChange={handlePortionUnitChange}
+                >
+                  <SelectTrigger className="w-28">
+                    <SelectValue placeholder="Unit" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="portion">portion</SelectItem>
+                    <SelectItem value="cup">cup</SelectItem>
+                    <SelectItem value="bowl">bowl</SelectItem>
+                    <SelectItem value="plate">plate</SelectItem>
+                    <SelectItem value="serving">serving</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div>
+              <p className="text-xs text-gray-500 mb-1">Quick select:</p>
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className={
+                    portionAmount === 0.5 ? "bg-wellness-light-green" : ""
+                  }
+                  onClick={() => setPortionAmount(0.5)}
+                >
+                  1/2
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className={
+                    portionAmount === 1 ? "bg-wellness-light-green" : ""
+                  }
+                  onClick={() => setPortionAmount(1)}
+                >
+                  1
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className={
+                    portionAmount === 2 ? "bg-wellness-light-green" : ""
+                  }
+                  onClick={() => setPortionAmount(2)}
+                >
+                  2
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="p-4 border-t mt-auto">
+          <Button className="w-full" onClick={handleConfirmMeal}>
+            Confirm
+          </Button>
+        </div>
+      </div>
+    );
+  };
 
   return (
     <>
@@ -287,40 +396,44 @@ const ScanMealModal = ({
             />
           </div>
 
-          <div className="p-4 flex flex-col items-center gap-2">
-            {!capturedImage ? (
-              <>
-                <div className="flex gap-4 w-full justify-center mb-2">
-                  <Button
-                    variant="default"
-                    size="lg"
-                    className="rounded-full w-16 h-16 p-0"
-                    onClick={captureMeal}
-                  >
-                    <Camera className="h-8 w-8" />
+          {showConfirmPortion ? (
+            renderPortionSelector()
+          ) : (
+            <div className="p-4 flex flex-col items-center gap-2">
+              {!capturedImage ? (
+                <>
+                  <div className="flex gap-4 w-full justify-center mb-2">
+                    <Button
+                      variant="default"
+                      size="lg"
+                      className="rounded-full w-16 h-16 p-0"
+                      onClick={captureMeal}
+                    >
+                      <Camera className="h-8 w-8" />
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="lg"
+                      className="rounded-full w-16 h-16 p-0 border-2"
+                      onClick={openFileDialog}
+                    >
+                      <Upload className="h-8 w-8" />
+                    </Button>
+                  </div>
+                  <div className="text-center text-gray-500 text-sm">
+                    <p>Take a photo or upload an image of your meal</p>
+                  </div>
+                </>
+              ) : (
+                <div className="flex gap-4">
+                  <Button variant="outline" onClick={retakePhoto}>
+                    Retake
                   </Button>
-                  <Button
-                    variant="outline"
-                    size="lg"
-                    className="rounded-full w-16 h-16 p-0 border-2"
-                    onClick={openFileDialog}
-                  >
-                    <Upload className="h-8 w-8" />
-                  </Button>
+                  <Button onClick={handleUsePhoto}>Use Photo</Button>
                 </div>
-                <div className="text-center text-gray-500 text-sm">
-                  <p>Take a photo or upload an image of your meal</p>
-                </div>
-              </>
-            ) : (
-              <div className="flex gap-4">
-                <Button variant="outline" onClick={retakePhoto}>
-                  Retake
-                </Button>
-                <Button onClick={handleUsePhoto}>Use Photo</Button>
-              </div>
-            )}
-          </div>
+              )}
+            </div>
+          )}
         </DialogContent>
       </Dialog>
     </>
