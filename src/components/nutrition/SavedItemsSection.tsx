@@ -38,7 +38,7 @@ const SavedItemsSection = ({ loggedMealData }) => {
       state: {
         productData: {
           id: item?.id,
-          name: item?.ai_response?.foodName,
+          name: item?.ai_response?.food_name,
           brand: "",
           category: item?.ai_response?.categoryOfFood,
           image: "",
