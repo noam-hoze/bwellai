@@ -121,7 +121,7 @@ const ScanBarcodeModal = ({
     const productData = {
       is_saved: foodReportBarCodeAIData?.is_saved || false,
       id: foodReportBarCodeAIData?.es_id,
-      name: foodReportBarCodeAIData?.jsonNode?.foodName,
+      name: foodReportBarCodeAIData?.jsonNode?.food_name,
       brand: "",
       category: foodReportBarCodeAIData?.jsonNode?.categoryOfFood,
       image: "",
