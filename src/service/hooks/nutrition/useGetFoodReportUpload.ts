@@ -8,6 +8,7 @@ import {
   getUserFoodGraphDetailsFetcher,
   getUserFoodProfileListFetcher,
   getUserFoodReportBarCodeDataByReportIdFetcher,
+  getUserFoodReportBarCodeDataByReportIdV4Fetcher,
   getUserFoodReportUploadByBarCodeFetcher,
   getUserFoodReportUploadFetcher,
   getUserLatestFoodReportUploadFetcher,
@@ -202,6 +203,31 @@ export const useGetUserFoodReportBarCodeDataByReportId = ({
     queryKey: ["get-user-food-barcode-data-by-report-id", reportId],
     queryFn: () =>
       getUserFoodReportBarCodeDataByReportIdFetcher({
+        report_id: reportId,
+        language,
+      }),
+    enabled: isAuthenticated && reportId ? true : false,
+    retry: 0,
+  });
+
+  return {
+    data: data?.data,
+    error: error,
+    isError,
+    isLoading,
+    isSuccess,
+    refetch,
+  };
+};
+export const useGetUserFoodReportBarCodeDataByReportIdV4 = ({
+  isAuthenticated,
+  reportId,
+  language,
+}) => {
+  const { data, error, isError, isLoading, isSuccess, refetch } = useQuery({
+    queryKey: ["get-user-food-barcode-data-by-report-id-v4", reportId],
+    queryFn: () =>
+      getUserFoodReportBarCodeDataByReportIdV4Fetcher({
         report_id: reportId,
         language,
       }),

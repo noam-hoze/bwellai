@@ -90,17 +90,17 @@ const DailyIntakeSection = ({
       <div className="flex justify-between items-center gap-4">
         <NutrientProgress
           label="Fat"
-          value={(totalDailyFats / fatGrams) * 100}
+          value={Number(((totalDailyFats / fatGrams) * 100)?.toFixed(0))}
           grams={fatGrams}
         />
         <NutrientProgress
           label="Protein"
-          value={(totalDailyProtein / proteinGrams) * 100}
+          value={Number(((totalDailyProtein / proteinGrams) * 100)?.toFixed(0))}
           grams={proteinGrams}
         />
         <NutrientProgress
           label="Carbs"
-          value={(totalDailyCarbs / carbsGrams) * 100}
+          value={Number(((totalDailyCarbs / carbsGrams) * 100)?.toFixed(0))}
           grams={carbsGrams}
         />
       </div>

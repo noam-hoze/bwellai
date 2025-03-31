@@ -8,13 +8,16 @@ import MealLoggingSection from "@/components/nutrition/MealLoggingSection";
 import DailyIntakeSection from "@/components/nutrition/DailyIntakeSection";
 import MealHistorySection from "@/components/nutrition/MealHistorySection";
 import TrendsInsightsSection from "@/components/nutrition/TrendsInsightsSection";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import {
   useGetUserFoodReportUpload,
   useGetUserLoggedMealDataFetcherV4,
 } from "@/service/hooks/nutrition/useGetFoodReportUpload";
+import SavedItemsSection from "@/components/nutrition/SavedItemsSection";
 
 const Nutrition = () => {
   const [activeTab, setActiveTab] = useState<"daily" | "trends">("daily");
+  const [activeView, setActiveView] = useState<"meals" | "savedItems">("meals");
   const [date, setDate] = useState<Date | undefined>(new Date());
 
   const navigate = useNavigate();
@@ -64,7 +67,7 @@ const Nutrition = () => {
     <Layout>
       <div className="container mx-auto px-4 py-6 bg-gray-50">
         <NutritionHeader />
-        <div className="space-y-8">
+        <div className="mb-6">
           <MealLoggingSection
             refetchLoggedMeals={refetchLoggedMeals}
             totalDailyCalories={totalDailyCalories}
@@ -77,16 +80,37 @@ const Nutrition = () => {
             totalDailyCarbs={totalDailyCarbs}
             totalDailyFats={totalDailyFats}
           />
-          <MealHistorySection
-            date={date}
-            setDate={setDate}
-            loggedMealData={loggedMealData}
-            refetchLoggedMeals={refetchLoggedMeals}
-            totalDailyCalories={totalDailyCalories}
-            totalDailyProtein={totalDailyProtein}
-            totalDailyCarbs={totalDailyCarbs}
-          />
-          {activeTab === "trends" && <TrendsInsightsSection />}
+
+          <Tabs
+            defaultValue="meals"
+            value={activeView}
+            onValueChange={(value) =>
+              setActiveView(value as "meals" | "savedItems")
+            }
+            className="w-full mt-8"
+          >
+            <TabsList className="grid w-full grid-cols-2 mb-2">
+              <TabsTrigger value="meals">Meals</TabsTrigger>
+              <TabsTrigger value="savedItems">Saved Items</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="meals" className="space-y-8">
+              <MealHistorySection
+                date={date}
+                setDate={setDate}
+                loggedMealData={loggedMealData}
+                refetchLoggedMeals={refetchLoggedMeals}
+                totalDailyCalories={totalDailyCalories}
+                totalDailyProtein={totalDailyProtein}
+                totalDailyCarbs={totalDailyCarbs}
+              />
+              {activeTab === "trends" && <TrendsInsightsSection />}
+            </TabsContent>
+
+            <TabsContent value="savedItems">
+              <SavedItemsSection loggedMealData={loggedMealData} />
+            </TabsContent>
+          </Tabs>
         </div>
       </div>
     </Layout>
