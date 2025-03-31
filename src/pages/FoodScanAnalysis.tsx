@@ -138,6 +138,7 @@ const FoodScanAnalysis = () => {
       //   },
       // });
       logMealMutate({ es_id: product?.id, meal_type: "Breakfast" });
+      toast.success("Meal Logged succesfully!");
     }
   };
 
