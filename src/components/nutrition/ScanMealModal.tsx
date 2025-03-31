@@ -263,18 +263,18 @@ const ScanMealModal = ({
                     <SelectValue placeholder="Unit" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="portion">portion</SelectItem>
-                    <SelectItem value="cup">cup</SelectItem>
-                    <SelectItem value="bowl">bowl</SelectItem>
-                    <SelectItem value="plate">plate</SelectItem>
-                    <SelectItem value="serving">serving</SelectItem>
+                    <SelectItem value="portion">Portion</SelectItem>
+                    <SelectItem value="cup">Cup</SelectItem>
+                    <SelectItem value="bowl">Bowl</SelectItem>
+                    <SelectItem value="plate">Plate</SelectItem>
+                    <SelectItem value="serving">Serving</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
             </div>
 
             <div>
-              <p className="text-xs text-gray-500 mb-1">Quick select:</p>
+              <p className="text-xs text-gray-500 mb-1">Quick Select:</p>
               <div className="flex gap-2">
                 <Button
                   variant="outline"
