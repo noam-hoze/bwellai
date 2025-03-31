@@ -138,7 +138,9 @@ const FoodScanAnalysis = () => {
       //   },
       // });
       logMealMutate({ es_id: product?.id, meal_type: "Breakfast" });
-      toast.success("Meal Logged succesfully!");
+      toast.success("Meal Logged succesfully!", {
+        position: "top-center",
+      });
     }
   };
 
@@ -150,7 +152,10 @@ const FoodScanAnalysis = () => {
     });
     setIsFavorite(!isFavorite);
     toast.success(
-      !isFavorite ? "Added to favorites!" : "Removed from favorites"
+      !isFavorite ? "Added to favorites!" : "Removed from favorites",
+      {
+        position: "top-center",
+      }
     );
   };
 
@@ -165,7 +170,10 @@ const FoodScanAnalysis = () => {
     toast.success(
       !isSaved
         ? "Item saved to your collection!"
-        : "Item removed from your collection"
+        : "Item removed from your collection",
+      {
+        position: "top-center",
+      }
     );
   };
 
