@@ -11,11 +11,20 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Navigate } from "react-router-dom";
 import { useState } from "react";
 import FaceScanModal from "@/components/face-scan/FaceScanModal";
+import { X } from "lucide-react";
+
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 const Index = () => {
   const { toast } = useToast();
   const { isAuthenticated, loading } = useAuth();
   const [isFaceScanOpen, setIsFaceScanOpen] = useState(false);
+  const [iframeModal, setIframeModal] = useState(false);
 
   // Redirect to welcome page if not authenticated
   if (!loading && !localStorage.getItem("token")) {
@@ -44,7 +53,12 @@ const Index = () => {
   };
 
   const handleScanFace = () => {
-    setIsFaceScanOpen(true);
+    // setIsFaceScanOpen(true);
+    setIframeModal(true);
+  };
+
+  const handleIFrameModalClose = () => {
+    setIframeModal(false);
   };
 
   // Show loading state
@@ -105,10 +119,35 @@ const Index = () => {
         © 2024 Wellness App. All rights reserved.
       </footer>
 
-      <FaceScanModal
+      {/* <FaceScanModal
         isOpen={isFaceScanOpen}
         onClose={() => setIsFaceScanOpen(false)}
-      />
+      /> */}
+
+      <Dialog open={iframeModal} onOpenChange={handleIFrameModalClose}>
+        <DialogHeader className="p-4 bg-gray-900 text-white">
+          <DialogTitle className="flex justify-between items-center">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="text-white"
+              onClick={handleIFrameModalClose}
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          </DialogTitle>
+        </DialogHeader>
+
+        <DialogContent className="sm:max-w-md h-[40em] p-0 overflow-hidden">
+          <DialogHeader>
+            <iframe
+              src="https://app-dev.bwellai.com/facescan"
+              allow="cross-origin-isolated"
+              style={{ width: "100%", height: "100%" }}
+            ></iframe>
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
