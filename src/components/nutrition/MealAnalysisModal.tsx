@@ -318,7 +318,11 @@ const MealAnalysisModal = ({
               <Button
                 className="bg-blue-500 hover:bg-blue-600 text-white"
                 onClick={() => {
-                  logMealMutate({ es_id: meal?.id, meal_type: meal?.type });
+                  logMealMutate({
+                    es_id: meal?.id,
+                    meal_type: meal?.type,
+                    type: "logged",
+                  });
                   onOpenChange(false);
                 }}
               >

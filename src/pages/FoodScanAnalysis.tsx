@@ -137,7 +137,11 @@ const FoodScanAnalysis = () => {
       //     },
       //   },
       // });
-      logMealMutate({ es_id: product?.id, meal_type: "Breakfast" });
+      logMealMutate({
+        es_id: product?.id,
+        meal_type: "Breakfast",
+        type: "logged",
+      });
       toast.success("Meal Logged succesfully!", {
         position: "top-center",
       });
@@ -148,7 +152,7 @@ const FoodScanAnalysis = () => {
     logMealMutate({
       es_id: product?.id,
       meal_type: "Breakfast",
-      is_favourite: true,
+      type: "favourite",
     });
     setIsFavorite(!isFavorite);
     toast.success(
@@ -163,8 +167,7 @@ const FoodScanAnalysis = () => {
     logMealMutate({
       es_id: product?.id,
       meal_type: "Breakfast",
-      is_favourite: isFavorite || false,
-      is_saved: true,
+      type: "saved",
     });
     setIsSaved(!isSaved);
     toast.success(
