@@ -116,8 +116,6 @@ const ScanBarcodeModal = ({
 
   // Simulate barcode detection
   const simulateBarcodeDetection = () => {
-    console.log(foodReportBarCodeAIData);
-
     const productData = {
       is_saved: foodReportBarCodeAIData?.is_saved || false,
       id: foodReportBarCodeAIData?.es_id,
