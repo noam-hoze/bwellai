@@ -398,16 +398,12 @@ const FoodScanAnalysis = () => {
               Your Health Impact
             </h2>
             <div className="space-y-3">
-              {product?.healthImpact?.map(() => {
+              {product?.healthImpact?.map((d) => {
                 return (
                   <div className="p-3 border rounded-lg">
                     <div className="flex items-start gap-3">
                       <Info className="h-5 w-5 text-blue-500 mt-0.5 flex-shrink-0" />
-                      <p className="text-gray-700">
-                        Based on your blood glucose levels, this product's high
-                        sugar content (12g per serving) may cause spikes.
-                        Consider alternatives with less added sugar.
-                      </p>
+                      <p className="text-gray-700">{d}</p>
                     </div>
                   </div>
                 );

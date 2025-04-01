@@ -21,6 +21,10 @@ interface SleepDistributionCardProps {
   remSleep: number;
   awake: number;
   className?: string;
+  lightHR?;
+  deepHR?;
+  remHR?;
+  awakeHR?;
 }
 
 const SleepDistributionCard = ({
@@ -29,16 +33,33 @@ const SleepDistributionCard = ({
   remSleep,
   awake,
   className,
+  lightHR,
+  deepHR,
+  remHR,
+  awakeHR,
 }: SleepDistributionCardProps) => {
   // Calculate total sleep time
   const totalSleep = lightSleep + deepSleep + remSleep + awake;
 
+  // Get corresponding HR value based on stage name
+  const hrValues = {
+    "Light Sleep": lightHR,
+    "Deep Sleep": deepHR,
+    "REM Sleep": remHR,
+    Awake: awakeHR,
+  };
+
   // Prepare data for the pie chart
   const data = [
-    { name: "Light Sleep", value: lightSleep, color: "#FEDF89", ideal: 55 }, // 50-60%
-    { name: "Deep Sleep", value: deepSleep, color: "#53A15E", ideal: 20 }, // 15-25%
-    { name: "REM Sleep", value: remSleep, color: "#0EA5E9", ideal: 20 }, // 20-25%
-    { name: "Awake", value: awake, color: "#F97316", ideal: 5 }, // <10%
+    {
+      name: "Light Sleep",
+      value: lightSleep || 0,
+      color: "#FEDF89",
+      ideal: 55,
+    }, // 50-60%
+    { name: "Deep Sleep", value: deepSleep || 0, color: "#53A15E", ideal: 20 }, // 15-25%
+    { name: "REM Sleep", value: remSleep || 0, color: "#0EA5E9", ideal: 20 }, // 20-25%
+    { name: "Awake", value: awake || 0, color: "#F97316", ideal: 5 }, // <10%
   ];
 
   // Find the dominant sleep stage (excluding awake time)
@@ -123,9 +144,14 @@ const SleepDistributionCard = ({
                   layout="horizontal"
                   verticalAlign="bottom"
                   align="center"
-                  formatter={(value) => (
-                    <span className="text-xs">{value}</span>
-                  )}
+                  formatter={(value) => {
+                    return (
+                      <>
+                        <span className="text-xs">{value}</span>
+                        <p className="text-xs">{hrValues[value]} H</p>
+                      </>
+                    );
+                  }}
                 />
               </RechartsPieChart>
             </ResponsiveContainer>

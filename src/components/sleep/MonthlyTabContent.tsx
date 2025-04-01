@@ -58,6 +58,10 @@ const MonthlyTabContent = ({
               </CarouselItem>
               <CarouselItem>
                 <SleepDistributionCard
+                  lightHR={wearableMonthlyData?.monthlyAverageLightSleep}
+                  deepHR={wearableMonthlyData?.monthlyAverageDeepSleep}
+                  remHR={wearableMonthlyData?.monthlyAverageRemSleep}
+                  awakeHR={wearableMonthlyData?.monthlyAverageAwake}
                   lightSleep={calculatedSleepPercentage({
                     totalSleep: Number(
                       wearableMonthlyData?.monthlyAverageSleep?.replace(
@@ -108,7 +112,7 @@ const MonthlyTabContent = ({
                   })}
                   awake={
                     (Number(
-                      wearableMonthlyData?.monthlyAverageWakeUp?.replace(
+                      wearableMonthlyData?.monthlyAverageAwake?.replace(
                         ":",
                         "."
                       )
@@ -126,6 +130,10 @@ const MonthlyTabContent = ({
               </CarouselItem>
               <CarouselItem>
                 <SleepQualityCard
+                  lightHR={wearableMonthlyData?.monthlyAverageLightSleep}
+                  deepHR={wearableMonthlyData?.monthlyAverageDeepSleep}
+                  remHR={wearableMonthlyData?.monthlyAverageRemSleep}
+                  awakeHR={wearableMonthlyData?.monthlyAverageAwake}
                   lightSleep={calculatedSleepPercentage({
                     totalSleep: Number(
                       wearableMonthlyData?.monthlyAverageSleep?.replace(
@@ -176,7 +184,7 @@ const MonthlyTabContent = ({
                   })}
                   awake={
                     (Number(
-                      wearableMonthlyData?.monthlyAverageWakeUp?.replace(
+                      wearableMonthlyData?.monthlyAverageAwake?.replace(
                         ":",
                         "."
                       )
@@ -216,6 +224,10 @@ const MonthlyTabContent = ({
           </Card>
 
           <SleepDistributionCard
+            lightHR={wearableMonthlyData?.monthlyAverageLightSleep}
+            deepHR={wearableMonthlyData?.monthlyAverageDeepSleep}
+            remHR={wearableMonthlyData?.monthlyAverageRemSleep}
+            awakeHR={wearableMonthlyData?.monthlyAverageAwake}
             lightSleep={calculatedSleepPercentage({
               totalSleep: Number(
                 wearableMonthlyData?.monthlyAverageSleep?.replace(":", ".")
@@ -248,7 +260,7 @@ const MonthlyTabContent = ({
             })}
             awake={
               (Number(
-                wearableMonthlyData?.monthlyAverageWakeUp?.replace(":", ".")
+                wearableMonthlyData?.monthlyAverageAwake?.replace(":", ".")
               ) /
                 Number(
                   wearableMonthlyData?.monthlyAverageSleep?.replace(":", ".")
@@ -259,6 +271,10 @@ const MonthlyTabContent = ({
           />
 
           <SleepQualityCard
+            lightHR={wearableMonthlyData?.monthlyAverageLightSleep}
+            deepHR={wearableMonthlyData?.monthlyAverageDeepSleep}
+            remHR={wearableMonthlyData?.monthlyAverageRemSleep}
+            awakeHR={wearableMonthlyData?.monthlyAverageAwake}
             lightSleep={calculatedSleepPercentage({
               totalSleep: Number(
                 wearableMonthlyData?.monthlyAverageSleep?.replace(":", ".")
@@ -291,7 +307,7 @@ const MonthlyTabContent = ({
             })}
             awake={
               (Number(
-                wearableMonthlyData?.monthlyAverageWakeUp?.replace(":", ".")
+                wearableMonthlyData?.monthlyAverageAwake?.replace(":", ".")
               ) /
                 Number(
                   wearableMonthlyData?.monthlyAverageSleep?.replace(":", ".")

@@ -14,6 +14,10 @@ interface SleepQualityCardProps {
   deepSleep: number;
   remSleep: number;
   awake: number;
+  lightHR?;
+  deepHR?;
+  remHR?;
+  awakeHR?;
 }
 
 const SleepQualityCard = ({
@@ -21,6 +25,10 @@ const SleepQualityCard = ({
   deepSleep,
   remSleep,
   awake,
+  lightHR,
+  deepHR,
+  remHR,
+  awakeHR,
 }: SleepQualityCardProps) => {
   return (
     <Card className="wellness-card border-l-4 border-l-wellness-deep-orange h-full bg-white rounded-xl shadow-sm">
@@ -72,6 +80,10 @@ const SleepQualityCard = ({
           deepSleep={deepSleep > 100 ? 100 : deepSleep || 0}
           remSleep={remSleep > 100 ? 100 : remSleep || 0}
           awake={awake > 100 ? 100 : awake || 0}
+          lightHR={lightHR}
+          deepHR={deepHR}
+          remHR={remHR}
+          awakeHR={awakeHR}
         />
       </CardContent>
     </Card>

@@ -57,6 +57,10 @@ const WeeklyTabContent = ({
               </CarouselItem>
               <CarouselItem>
                 <SleepDistributionCard
+                  lightHR={wearableWeeklyData?.weeklyAverageLightSleep}
+                  deepHR={wearableWeeklyData?.weeklyAverageDeepSleep}
+                  remHR={wearableWeeklyData?.weeklyAverageRemSleep}
+                  awakeHR={wearableWeeklyData?.weeklyAverageAwake}
                   lightSleep={calculatedSleepPercentage({
                     totalSleep: Number(
                       wearableWeeklyData?.weeklyAverageSleep?.replace(":", ".")
@@ -98,7 +102,7 @@ const WeeklyTabContent = ({
                   })}
                   awake={
                     (Number(
-                      wearableWeeklyData?.weeklyAverageWakeUp?.replace(":", ".")
+                      wearableWeeklyData?.weeklyAverageAwake?.replace(":", ".")
                     ) /
                       Number(
                         wearableWeeklyData?.weeklyAverageSleep?.replace(
@@ -113,6 +117,10 @@ const WeeklyTabContent = ({
               </CarouselItem>
               <CarouselItem>
                 <SleepQualityCard
+                  lightHR={wearableWeeklyData?.weeklyAverageLightSleep}
+                  deepHR={wearableWeeklyData?.weeklyAverageDeepSleep}
+                  remHR={wearableWeeklyData?.weeklyAverageRemSleep}
+                  awakeHR={wearableWeeklyData?.weeklyAverageAwake}
                   lightSleep={calculatedSleepPercentage({
                     totalSleep: Number(
                       wearableWeeklyData?.weeklyAverageSleep?.replace(":", ".")
@@ -154,7 +162,7 @@ const WeeklyTabContent = ({
                   })}
                   awake={
                     (Number(
-                      wearableWeeklyData?.weeklyAverageWakeUp?.replace(":", ".")
+                      wearableWeeklyData?.weeklyAverageAwake?.replace(":", ".")
                     ) /
                       Number(
                         wearableWeeklyData?.weeklyAverageSleep?.replace(
@@ -191,6 +199,10 @@ const WeeklyTabContent = ({
           </Card>
 
           <SleepDistributionCard
+            lightHR={wearableWeeklyData?.weeklyAverageLightSleep}
+            deepHR={wearableWeeklyData?.weeklyAverageDeepSleep}
+            remHR={wearableWeeklyData?.weeklyAverageRemSleep}
+            awakeHR={wearableWeeklyData?.weeklyAverageAwake}
             lightSleep={calculatedSleepPercentage({
               totalSleep: Number(
                 wearableWeeklyData?.weeklyAverageSleep?.replace(":", ".")
@@ -223,7 +235,7 @@ const WeeklyTabContent = ({
             })}
             awake={
               (Number(
-                wearableWeeklyData?.weeklyAverageWakeUp?.replace(":", ".")
+                wearableWeeklyData?.weeklyAverageAwake?.replace(":", ".")
               ) /
                 Number(
                   wearableWeeklyData?.weeklyAverageSleep?.replace(":", ".")
@@ -234,6 +246,10 @@ const WeeklyTabContent = ({
           />
 
           <SleepQualityCard
+            lightHR={wearableWeeklyData?.weeklyAverageLightSleep}
+            deepHR={wearableWeeklyData?.weeklyAverageDeepSleep}
+            remHR={wearableWeeklyData?.weeklyAverageRemSleep}
+            awakeHR={wearableWeeklyData?.weeklyAverageAwake}
             lightSleep={calculatedSleepPercentage({
               totalSleep: Number(
                 wearableWeeklyData?.weeklyAverageSleep?.replace(":", ".")
@@ -266,7 +282,7 @@ const WeeklyTabContent = ({
             })}
             awake={
               (Number(
-                wearableWeeklyData?.weeklyAverageWakeUp?.replace(":", ".")
+                wearableWeeklyData?.weeklyAverageAwake?.replace(":", ".")
               ) /
                 Number(
                   wearableWeeklyData?.weeklyAverageSleep?.replace(":", ".")
