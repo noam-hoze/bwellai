@@ -209,6 +209,15 @@ const MacroDistributionRing: React.FC<MacroDistributionRingProps> = ({
           {/* <text x={centerX} y={centerY - 5} textAnchor="middle" fontSize="14" fontWeight="bold" fill={isBalanced ? "#53A15E" : "#ea384c"}>
             {isBalanced ? "Balanced" : "Unbalanced"}
           </text> */}
+          <text
+            x={centerX}
+            y={centerY}
+            textAnchor="middle"
+            fontSize="14"
+            fill={"#6B7B90"}
+          >
+            Macro Distribution
+          </text>
           {/* <text x={centerX} y={centerY + 12} textAnchor="middle" fontSize="10" fill={isBalanced ? "#53A15E" : "#ea384c"}>
             {isBalanced ? "Good Balance" : "Needs Adjustment"}
           </text> */}
@@ -233,7 +242,8 @@ const MacroDistributionRing: React.FC<MacroDistributionRingProps> = ({
               proteinStatus === "In Range" ? "text-green-600" : "text-red-500"
             )}
           >
-            {protein}% ({proteinStatus})
+            {/* {protein}% ({proteinStatus}) */}
+            {protein}%
           </span>
         </div>
         <div className="flex flex-col items-center">
@@ -247,7 +257,7 @@ const MacroDistributionRing: React.FC<MacroDistributionRingProps> = ({
               fatStatus === "In Range" ? "text-green-600" : "text-red-500"
             )}
           >
-            {fat}% ({fatStatus})
+            {fat}%
           </span>
         </div>
         <div className="flex flex-col items-center">
@@ -261,17 +271,17 @@ const MacroDistributionRing: React.FC<MacroDistributionRingProps> = ({
               carbsStatus === "In Range" ? "text-green-600" : "text-red-500"
             )}
           >
-            {carbs}% ({carbsStatus})
+            {carbs}%
           </span>
         </div>
       </div>
 
       {/* Recommended ranges */}
-      <div className="text-sm text-gray-600 mt-4 text-center">
+      {/* <div className="text-sm text-gray-600 mt-4 text-center">
         <Info size={16} className="inline mr-1 text-blue-500" />
         Recommended ranges: Protein {idealProtein.min}-{idealProtein.max}%, Fat{" "}
         {idealFat.min}-{idealFat.max}%, Carbs {idealCarbs.min}-{idealCarbs.max}%
-      </div>
+      </div> */}
     </div>
   );
 };

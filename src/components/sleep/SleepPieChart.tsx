@@ -5,6 +5,10 @@ interface SleepPieChartProps {
   deepSleep: number;
   remSleep: number;
   awake: number;
+  lightHR?;
+  deepHR?;
+  remHR?;
+  awakeHR?;
 }
 
 const SleepPieChart: React.FC<SleepPieChartProps> = ({
@@ -12,7 +16,13 @@ const SleepPieChart: React.FC<SleepPieChartProps> = ({
   deepSleep,
   remSleep,
   awake,
+  lightHR,
+  deepHR,
+  remHR,
+  awakeHR,
 }) => {
+  console.log("this is number", lightHR);
+
   // Ideal percentages for comparison
   const idealLightSleep = 55; // 50-60%
   const idealDeepSleep = 20; // 15-25%
@@ -141,7 +151,7 @@ const SleepPieChart: React.FC<SleepPieChartProps> = ({
           <span className="text-sm text-gray-700">
             Light
             <br />
-            {lightSleep?.toFixed(0)}%
+            {lightSleep?.toFixed(0)}%<p>{lightHR} H</p>
           </span>
         </div>
         <div className="flex items-center gap-2">
@@ -149,7 +159,7 @@ const SleepPieChart: React.FC<SleepPieChartProps> = ({
           <span className="text-sm text-gray-700">
             Deep
             <br />
-            {deepSleep?.toFixed(0)}%
+            {deepSleep?.toFixed(0)}% <p>{deepHR} H</p>
           </span>
         </div>
         <div className="flex items-center gap-2">
@@ -157,7 +167,7 @@ const SleepPieChart: React.FC<SleepPieChartProps> = ({
           <span className="text-sm text-gray-700">
             REM
             <br />
-            {remSleep?.toFixed(0)}%
+            {remSleep?.toFixed(0)}% <p>{remHR} H</p>
           </span>
         </div>
       </div>

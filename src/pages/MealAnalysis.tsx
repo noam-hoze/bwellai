@@ -270,13 +270,13 @@ const MealAnalysisPage = () => {
               </div>
             </div>
 
-            {ingredients.length > 0 && (
+            {ingredients?.length > 0 && (
               <div className="bg-white rounded-lg shadow-sm p-4 mb-4">
                 <h2 className="text-xl font-semibold mb-3">
                   Ingredients Analysis
                 </h2>
 
-                {ingredients.map((ingredient, idx) => (
+                {ingredients?.map((ingredient, idx) => (
                   <div key={idx} className="flex items-center mb-2">
                     {idx === 0 ? (
                       <AlertTriangle
@@ -432,7 +432,7 @@ const MealAnalysisPage = () => {
                 onClick={handleLogMeal}
               >
                 <Utensils className="h-4 w-4 mr-1" />
-                Log Meal
+                {meal?.save_type === "logged" ? "Log Again" : "Log Meal"}
               </Button>
             </div>
           </div>
