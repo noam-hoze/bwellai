@@ -21,8 +21,6 @@ const SleepPieChart: React.FC<SleepPieChartProps> = ({
   remHR,
   awakeHR,
 }) => {
-  console.log("this is number", lightHR);
-
   // Ideal percentages for comparison
   const idealLightSleep = 55; // 50-60%
   const idealDeepSleep = 20; // 15-25%

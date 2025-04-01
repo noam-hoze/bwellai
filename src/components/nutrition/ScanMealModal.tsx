@@ -337,8 +337,6 @@ const ScanMealModal = ({
         open={open}
         // onOpenChange={(open) => {
         //   if (!open) {
-        //     console.log("direct open");
-
         //     stopCamera();
         //     setCapturedImage(null);
         //   } else if (!isScanning && !capturedImage) {
