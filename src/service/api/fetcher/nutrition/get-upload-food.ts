@@ -28,10 +28,8 @@ const getSaveUserFoodProfileData = (reportId) =>
   `/food/profile?report_id=${reportId}`;
 const getFoodTrackerUpload = () => `/food/tracker/upload`;
 
-const getLogFoodDataV4 = ({ es_id, meal_type, is_favourite, is_saved }) =>
-  `/food/update/v4?es_id=${es_id}&meal_type=${meal_type}&type=${
-    is_favourite ? "favourite" : is_saved ? "saved" : "logged"
-  }`;
+const getLogFoodDataV4 = ({ es_id, meal_type, type, date }) =>
+  `/food/update/v4?es_id=${es_id}&meal_type=${meal_type}&type=${type}&date=${date}`;
 
 const getUserFoodProfileList = () => `/food/list`;
 const getUserFoodGraphDetails = () => `/food/tracker/detail`;
@@ -114,20 +112,20 @@ export const getFoodTrackerUploadFetcher = ({
 export const getLogFoodDataV4Fetcher = ({
   meal_type,
   es_id,
-  is_favourite,
-  is_saved,
+  type,
+  date,
 }: {
   meal_type: string;
   es_id: string;
-  is_favourite?: boolean;
-  is_saved?: boolean;
+  type: string;
+  date?: string;
 }) => {
   return Client.post(
     getLogFoodDataV4({
       meal_type,
       es_id,
-      is_favourite,
-      is_saved,
+      type,
+      date,
     }),
     {}
   );

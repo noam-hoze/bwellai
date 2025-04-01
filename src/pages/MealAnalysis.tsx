@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { Calendar } from "lucide-react";
 import {
   ChevronLeft,
   AlertTriangle,
@@ -12,6 +13,13 @@ import {
   Edit,
   Utensils,
 } from "lucide-react";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { format } from "date-fns";
+import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import Layout from "@/components/layout/Layout";
@@ -42,7 +50,7 @@ const MealAnalysisPage = () => {
   const location = useLocation();
   const [meal, setMeal] = useState<any>(null);
   const [score, setScore] = useState(7);
-  const [selectedDate, setSelectedDate] = useState("today");
+  const [date, setDate] = useState<Date | undefined>(new Date());
   const [mealType, setMealType] = useState("");
   const [isFavorite, setIsFavorite] = useState(false);
   const isMobile = useIsMobile();
@@ -95,15 +103,32 @@ const MealAnalysisPage = () => {
         }
       : null;
 
-    logMealMutate({ es_id: meal?.id, meal_type: mealType });
+    if (meal?.save_type === "logged" || meal?.save_type === "re_logged") {
+      logMealMutate({
+        es_id: meal?.id,
+        meal_type: mealType,
+        type: "re_logged",
+        date: new Intl.DateTimeFormat("en-CA", {
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+        }).format(new Date(date || new Date())),
+      });
+    } else {
+      logMealMutate({ es_id: meal?.id, meal_type: mealType, type: "logged" });
+    }
   };
 
   const handleBack = () => {
     navigate("/nutrition");
   };
 
+  const handleDateSelect = (newDate: Date | undefined) => {
+    setDate(newDate);
+  };
+
   const handleToggleFavorite = () => {
-    logMealMutate({ es_id: meal?.id, meal_type: mealType, is_favourite: true });
+    logMealMutate({ es_id: meal?.id, meal_type: mealType, type: "favourite" });
     setIsFavorite(!isFavorite);
     toast.success(
       !isFavorite ? "Added to favorites!" : "Removed from favorites"
@@ -363,10 +388,26 @@ const MealAnalysisPage = () => {
 
             <div className="bg-white rounded-lg shadow-sm p-4 mb-4">
               <div className="mb-4">
-                <MealDateSelector
+                {/* <MealDateSelector
                   selectedDate={selectedDate}
                   onDateSelect={setSelectedDate}
-                />
+                /> */}
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button variant="outline" size="sm" className="gap-2">
+                      <Calendar className="h-4 w-4" />
+                      {date ? format(date, "PP") : "Select date"}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="end">
+                    <CalendarComponent
+                      mode="single"
+                      selected={date}
+                      onSelect={handleDateSelect}
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
               </div>
 
               <div>
