@@ -148,7 +148,7 @@ const HealthProfileTab = ({
       );
       setBloodType(
         getProfileIsData?.additionalDetails?.["What is your blood type?"]
-          ?.answersArray || []
+          ?.answersArray?.[0] || []
       );
     }
   }, [

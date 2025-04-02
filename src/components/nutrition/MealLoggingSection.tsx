@@ -12,6 +12,7 @@ const MealLoggingSection = ({
   totalDailyCalories,
   totalDailyProtein,
   totalDailyCarbs,
+  totalDailyRequiredCalories,
 }) => {
   const [manualEntry, setManualEntry] = useState("");
   const [isVoiceActive, setIsVoiceActive] = useState(false);
@@ -82,22 +83,26 @@ const MealLoggingSection = ({
   return (
     <div className="mb-8">
       <div className="grid grid-cols-2 gap-4 mb-4">
-        <Button
-          variant="default"
-          className="h-24 bg-gray-900 hover:bg-gray-800 flex flex-col items-center justify-center gap-2 py-6"
+        <div
+          className="bg-gray-900 hover:bg-gray-800 text-white rounded-xl p-6 cursor-pointer transition-colors flex flex-col items-center justify-center"
           onClick={handleScanMeal}
         >
           <Camera className="h-8 w-8" />
-          <span className="text-base">Scan Meal</span>
-        </Button>
-        <Button
-          variant="default"
-          className="h-24 bg-gray-900 hover:bg-gray-800 flex flex-col items-center justify-center gap-2 py-6"
+          <h3 className="text-xl font-semibold text-center">Scan Meal</h3>
+          <p className="text-sm text-gray-300 text-center mt-2">
+            Track what I'm eating now
+          </p>
+        </div>
+        <div
+          className="bg-gray-900 hover:bg-gray-800 text-white rounded-xl p-6 cursor-pointer transition-colors flex flex-col items-center justify-center"
           onClick={handleScanBarcode}
         >
           <Barcode className="h-8 w-8" />
-          <span className="text-base">Scan Barcode</span>
-        </Button>
+          <h3 className="text-xl font-semibold text-center">Scan Barcode</h3>
+          <p className="text-sm text-gray-300 text-center mt-2">
+            Check nutrition before buying/eating
+          </p>
+        </div>
       </div>
 
       <form onSubmit={handleManualSubmit} className="relative">
@@ -127,12 +132,17 @@ const MealLoggingSection = ({
         totalDailyCalories={totalDailyCalories}
         totalDailyProtein={totalDailyProtein}
         totalDailyCarbs={totalDailyCarbs}
+        totalDailyRequiredCalories={totalDailyRequiredCalories}
       />
 
       <ScanBarcodeModal
         open={scanBarcodeOpen}
         onOpenChange={setScanBarcodeOpen}
         onProductDetected={handleProductDetected}
+        totalDailyCalories={totalDailyCalories}
+        totalDailyProtein={totalDailyProtein}
+        totalDailyCarbs={totalDailyCarbs}
+        totalDailyRequiredCalories={totalDailyRequiredCalories}
       />
 
       <MealDetailModal

@@ -68,3 +68,42 @@ export const calculatedSleepPercentage = ({
     (totalSleep * ageGroupToSleepMap?.[ageGroup]?.[sleepType]) / 100;
   return (actualSleepHr / calculatedSleepRequired) * 100;
 };
+
+const calorieNumberMultiplier = {
+  never: 1.2,
+  rarely: 1.3,
+  weekly: 1.5,
+  daily: 1.7,
+  intensDeaily: 1.9,
+};
+
+export const calorieNumberDisplayed = ({
+  gender,
+  weight,
+  height,
+  age,
+  frequency,
+}: {
+  gender: "male" | "female";
+  weight: number;
+  height: number;
+  age: number;
+  frequency?: string;
+}) => {
+  let bmr = 0;
+  let multiplier = 1.5;
+
+  console.log(gender, weight, height, age, frequency);
+
+  if (gender === "male") {
+    bmr = 10 * weight + 6.25 * height - 5 * age + 5;
+  } else {
+    bmr = 10 * weight + 6.25 * height - 5 * age - 161;
+  }
+
+  if (frequency) {
+    multiplier = calorieNumberMultiplier[frequency];
+  }
+
+  return bmr * multiplier;
+};

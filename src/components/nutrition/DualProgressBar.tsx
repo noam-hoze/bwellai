@@ -18,6 +18,8 @@ const DualProgressBar = ({
   label,
   className,
 }: DualProgressBarProps) => {
+  console.log({ currentValue, addedValue, maxValue });
+
   // Calculate percentages for the progress bars
   const currentPercentage = Math.min((currentValue / maxValue) * 100, 100);
   const combinedPercentage = Math.min(

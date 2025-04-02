@@ -155,6 +155,7 @@ const MealHistorySection = ({
   totalDailyCalories,
   totalDailyProtein,
   totalDailyCarbs,
+  totalDailyRequiredCalories,
 }) => {
   const navigate = useNavigate();
   const [expanded, setExpanded] = useState(false);
@@ -289,6 +290,7 @@ const MealHistorySection = ({
       fat: meal?.ai_response?.fats?.quantity,
       ingredients: meal?.ingredients?.map((ingredient) => ingredient?.name),
       notes: "Quick breakfast option",
+      totalDailyRequiredCalories,
     };
 
     navigate("/meal-analysis", { state: { meal: completeMeal } });
