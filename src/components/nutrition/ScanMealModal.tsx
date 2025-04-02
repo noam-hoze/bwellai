@@ -28,6 +28,7 @@ interface ScanMealModalProps {
   totalDailyCalories?;
   totalDailyProtein?;
   totalDailyCarbs?;
+  totalDailyRequiredCalories?;
 }
 
 const ScanMealModal = ({
@@ -37,6 +38,7 @@ const ScanMealModal = ({
   totalDailyCalories,
   totalDailyProtein,
   totalDailyCarbs,
+  totalDailyRequiredCalories,
 }: ScanMealModalProps) => {
   const navigate = useNavigate();
   const [portionAmount, setPortionAmount] = useState<number>(1);
@@ -213,6 +215,7 @@ const ScanMealModal = ({
           ingredients: foodReportData?.jsonNode?.ingredients?.map(
             (ingredient) => ingredient?.name
           ),
+          totalDailyRequiredCalories: totalDailyRequiredCalories,
         },
       },
     });

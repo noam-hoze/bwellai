@@ -272,7 +272,7 @@ const MealAnalysisPage = () => {
                 <DualProgressBar
                   currentValue={meal?.totalDailyCalories}
                   addedValue={meal?.ai_response?.calories?.quantity}
-                  maxValue={dailyGoals.calories.max}
+                  maxValue={meal?.totalDailyRequiredCalories}
                   unit="kcal"
                   label="Calories"
                 />

@@ -14,6 +14,8 @@ import {
   useGetUserLoggedMealDataFetcherV4,
 } from "@/service/hooks/nutrition/useGetFoodReportUpload";
 import SavedItemsSection from "@/components/nutrition/SavedItemsSection";
+import { useGetUserProfile } from "@/service/hooks/profile/useGetUserProfile";
+import { calorieNumberDisplayed } from "@/utils/utils";
 
 const Nutrition = () => {
   const [activeTab, setActiveTab] = useState<"daily" | "trends">("daily");
@@ -21,6 +23,12 @@ const Nutrition = () => {
   const [date, setDate] = useState<Date | undefined>(new Date());
 
   const navigate = useNavigate();
+
+  const {
+    data: getProfileIsData,
+    isSuccess: getProfileIsSuccess,
+    refetch: getUserProfileRefetch,
+  } = useGetUserProfile();
 
   const { data: loggedMealData, refetch: refetchLoggedMeals } =
     useGetUserLoggedMealDataFetcherV4(
@@ -36,6 +44,24 @@ const Nutrition = () => {
   const [totalDailyProtein, setTotalDailyProtein] = useState(0);
   const [totalDailyFats, setTotalDailyFats] = useState(0);
   const [totalDailyCarbs, setTotalDailyCarbs] = useState(0);
+
+  const [totalDailyRequiredCalories, setTotalDailyRequiredCalories] =
+    useState(0);
+
+  useEffect(() => {
+    const requiredCalories = calorieNumberDisplayed({
+      age: getProfileIsData?.age,
+      gender: getProfileIsData?.gender,
+      height: getProfileIsData?.height,
+      weight: getProfileIsData?.weight,
+      frequency:
+        getProfileIsData?.additionalDetails?.[
+          "How often do you exercise in a week?"
+        ]?.answersArray?.[0],
+    });
+
+    setTotalDailyRequiredCalories(requiredCalories);
+  }, [getProfileIsData]);
 
   useEffect(() => {
     if (loggedMealData) {
@@ -73,6 +99,7 @@ const Nutrition = () => {
             totalDailyCalories={totalDailyCalories}
             totalDailyProtein={totalDailyProtein}
             totalDailyCarbs={totalDailyCarbs}
+            totalDailyRequiredCalories={totalDailyRequiredCalories}
           />
           <DailyIntakeSection
             totalDailyCalories={totalDailyCalories}
@@ -103,12 +130,19 @@ const Nutrition = () => {
                 totalDailyCalories={totalDailyCalories}
                 totalDailyProtein={totalDailyProtein}
                 totalDailyCarbs={totalDailyCarbs}
+                totalDailyRequiredCalories={totalDailyRequiredCalories}
               />
               {activeTab === "trends" && <TrendsInsightsSection />}
             </TabsContent>
 
             <TabsContent value="savedItems">
-              <SavedItemsSection loggedMealData={loggedMealData} />
+              <SavedItemsSection
+                loggedMealData={loggedMealData}
+                totalDailyCalories={totalDailyCalories}
+                totalDailyProtein={totalDailyProtein}
+                totalDailyCarbs={totalDailyCarbs}
+                totalDailyRequiredCalories={totalDailyRequiredCalories}
+              />
             </TabsContent>
           </Tabs>
         </div>

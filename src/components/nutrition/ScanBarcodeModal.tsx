@@ -19,12 +19,20 @@ interface ScanBarcodeModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onProductDetected?: (productData: any) => void;
+  totalDailyCalories?;
+  totalDailyProtein?;
+  totalDailyCarbs?;
+  totalDailyRequiredCalories?;
 }
 
 const ScanBarcodeModal = ({
   open,
   onOpenChange,
   onProductDetected,
+  totalDailyCalories,
+  totalDailyProtein,
+  totalDailyCarbs,
+  totalDailyRequiredCalories,
 }: ScanBarcodeModalProps) => {
   const navigate = useNavigate();
   const [isScanning, setIsScanning] = useState(false);
@@ -150,6 +158,15 @@ const ScanBarcodeModal = ({
       allergens: [],
       alternatives: [],
       healthImpact: foodReportBarCodeAIData?.jsonNode?.health_impact,
+
+      totalDailyCalories,
+      totalDailyProtein,
+      totalDailyCarbs,
+      calories: foodReportBarCodeAIData?.jsonNode?.calories,
+      carbohydrates: foodReportBarCodeAIData?.jsonNode?.carbohydrates,
+      fats: foodReportBarCodeAIData?.jsonNode?.fats,
+      protein: foodReportBarCodeAIData?.jsonNode?.protein,
+      totalDailyRequiredCalories: totalDailyRequiredCalories,
     };
 
     navigate("/food-scan-analysis", { state: { productData } });
