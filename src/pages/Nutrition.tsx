@@ -106,6 +106,7 @@ const Nutrition = () => {
             totalDailyProtein={totalDailyProtein}
             totalDailyCarbs={totalDailyCarbs}
             totalDailyFats={totalDailyFats}
+            totalDailyRequiredCalories={totalDailyRequiredCalories}
           />
 
           <Tabs
