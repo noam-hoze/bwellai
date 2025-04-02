@@ -55,8 +55,8 @@ const Index = () => {
   };
 
   const handleScanFace = () => {
-    // setIsFaceScanOpen(true);
-    setIframeModal(true);
+    setIsFaceScanOpen(true);
+    // setIframeModal(true);
   };
 
   const handleIFrameModalClose = () => {
