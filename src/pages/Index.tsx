@@ -19,6 +19,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import BodyModelEnhanced from "@/components/dashboard/BodyModelEnhanced";
+import EnhancedFaceScanModal from "@/components/face-scan/EnhancedFaceScanModal";
 
 const Index = () => {
   const { toast } = useToast();
@@ -53,8 +55,8 @@ const Index = () => {
   };
 
   const handleScanFace = () => {
-    // setIsFaceScanOpen(true);
-    setIframeModal(true);
+    setIsFaceScanOpen(true);
+    // setIframeModal(true);
   };
 
   const handleIFrameModalClose = () => {
@@ -85,7 +87,7 @@ const Index = () => {
         <div className="flex justify-between items-center mb-6 animate-fade-in">
           <Button
             onClick={handleScanFace}
-            className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white shadow-md"
+            className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white shadow-md"
           >
             <ScanFace className="mr-2 h-4 w-4" />
             Scan Face for Vitals
@@ -102,27 +104,22 @@ const Index = () => {
         <HealthOverview />
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-          <div className="lg:col-span-2">
+          <div className="lg:col-span-3">
             <BodyHealthMap />
           </div>
-          <div className="space-y-6">
-            <DailyCheckin />
-            <div className="wellness-card p-6">
-              <h3 className="text-lg font-semibold mb-4">Health Alerts</h3>
-              <HealthAlerts />
-            </div>
-          </div>
         </div>
+
+        <BodyModelEnhanced />
       </main>
 
       <footer className="py-6 text-center text-sm text-gray-500 border-t border-gray-100">
         © 2024 Wellness App. All rights reserved.
       </footer>
 
-      {/* <FaceScanModal
+      <EnhancedFaceScanModal
         isOpen={isFaceScanOpen}
         onClose={() => setIsFaceScanOpen(false)}
-      /> */}
+      />
 
       <Dialog open={iframeModal} onOpenChange={handleIFrameModalClose}>
         <DialogHeader className="p-4 bg-gray-900 text-white">
