@@ -54,24 +54,30 @@ const DailyIntakeSection = ({
   totalDailyProtein,
   totalDailyFats,
   totalDailyCarbs,
+  totalDailyRequiredCalories,
 }) => {
   // Calorie intake data (simulated)
   // const calorieIntake = 1800; // Current calories consumed
   const calorieGoal = 2200; // Daily calorie goal
   const caloriePercentage = Math.round(
-    (totalDailyCalories / calorieGoal) * 100
+    (totalDailyCalories / totalDailyRequiredCalories) * 100
   );
   const colorGradient = getCalorieProgressColor(caloriePercentage);
 
   // Calculate if over target
-  const isOverTarget = totalDailyCalories > calorieGoal;
-  const overAmount = isOverTarget ? totalDailyCalories - calorieGoal : 0;
+  const isOverTarget = totalDailyCalories > totalDailyRequiredCalories;
+  const overAmount = isOverTarget
+    ? totalDailyCalories - totalDailyRequiredCalories
+    : 0;
 
   // Maximum displayed value (150% of goal)
-  const maxDisplayValue = calorieGoal * 1.5;
+  const maxDisplayValue = totalDailyRequiredCalories * 1.5;
 
   // Calculate the position of the target indicator (as percentage of the bar)
-  const targetPosition = Math.min((calorieGoal / maxDisplayValue) * 100, 100);
+  const targetPosition = Math.min(
+    (totalDailyRequiredCalories / maxDisplayValue) * 100,
+    100
+  );
 
   // Calculate width of the progress bar (capped at maxDisplayValue)
   const progressWidth = Math.min(
@@ -110,7 +116,7 @@ const DailyIntakeSection = ({
         <div className="flex justify-between items-center mb-2">
           <h3 className="text-lg font-semibold">Calorie Consumption</h3>
           <span className="text-sm font-medium">
-            {totalDailyCalories}/{calorieGoal} kcal
+            {totalDailyCalories}/{totalDailyRequiredCalories} kcal
           </span>
         </div>
 
@@ -167,7 +173,9 @@ const DailyIntakeSection = ({
               transform: "translateX(-50%)",
             }}
           >
-            <span className="text-sm font-medium">{calorieGoal}</span>
+            <span className="text-sm font-medium">
+              {totalDailyRequiredCalories}
+            </span>
             <span>Goal</span>
           </div>
           <span>{Math.round(maxDisplayValue)} (+50%)</span>
