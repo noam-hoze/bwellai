@@ -139,7 +139,7 @@ const Index = () => {
           <DialogHeader>
             <iframe
               src="https://app-dev.bwellai.com/facescan"
-              allow="cross-origin-isolated"
+              sandbox="allow-scripts allow-same-origin"
               style={{ width: "100%", height: "100%" }}
             ></iframe>
           </DialogHeader>
