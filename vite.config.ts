@@ -9,7 +9,7 @@ export default defineConfig(({ mode }) => ({
     host: "::",
     port: 8080,
     headers: {
-      "Cross-Origin-Opener-Policy": "same-origin",
+      "Cross-Origin-Opener-Policy": "cross-origin",
       "Cross-Origin-Embedder-Policy": "require-corp",
     },
   },
