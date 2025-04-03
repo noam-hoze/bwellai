@@ -259,30 +259,28 @@ const FaceScan = () => {
 
     if (step === "capture") {
       // Simulate scan progress and update vitals in real-time
-      interval = window.setInterval(() => {
-        setScanProgress((prev) => {
-          const newProgress = prev + 2;
-
-          // Update vitals based on scan progress
-          if (newProgress > 20 && !heartRate) {
-            setHeartRate(65);
-          }
-          if (newProgress > 40 && !bloodPressure) {
-            setBloodPressure("121/77");
-          }
-          if (newProgress > 60 && !o2Sat) {
-            setO2Sat(98);
-          }
-
-          if (newProgress >= 100) {
-            clearInterval(interval as number);
-            setStep("processing");
-            // Reset scan progress for next time
-            return 0;
-          }
-          return newProgress;
-        });
-      }, 100);
+      // interval = window.setInterval(() => {
+      //   setScanProgress((prev) => {
+      //     const newProgress = prev + 2;
+      //     // Update vitals based on scan progress
+      //     if (newProgress > 20 && !heartRate) {
+      //       setHeartRate(65);
+      //     }
+      //     if (newProgress > 40 && !bloodPressure) {
+      //       setBloodPressure("121/77");
+      //     }
+      //     if (newProgress > 60 && !o2Sat) {
+      //       setO2Sat(98);
+      //     }
+      //     if (newProgress >= 100) {
+      //       clearInterval(interval as number);
+      //       setStep("processing");
+      //       // Reset scan progress for next time
+      //       return 0;
+      //     }
+      //     return newProgress;
+      //   });
+      // }, 100);
     } else if (step === "processing") {
       // Simulate processing progress
       interval = window.setInterval(() => {
