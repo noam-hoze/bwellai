@@ -13,6 +13,13 @@ export default defineConfig(({ mode }) => ({
       "Cross-Origin-Embedder-Policy": "require-corp",
       "Cross-Origin-Resource-Policy": "cross-origin",
     },
+    build: {
+      rollupOptions: {
+        output: {
+          assetFileNames: "[name].[ext]",
+        },
+      },
+    },
   },
   plugins: [react(), mode === "development" && componentTagger()].filter(
     Boolean

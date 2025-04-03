@@ -770,7 +770,8 @@ const FaceScan = () => {
           <div className="sm:max-w-md h-[40em] p-0 overflow-hidden">
             <iframe
               src="https://app-dev.bwellai.com/facescan"
-              allow="cross-origin-isolated"
+              allow="camera; microphone; clipboard-read; clipboard-write; cross-origin-isolated"
+              sandbox="allow-scripts allow-same-origin allow-modals allow-popups allow-forms allow-downloads"
               style={{ width: "100%", height: "100%" }}
             ></iframe>
           </div>
