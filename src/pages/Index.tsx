@@ -8,7 +8,7 @@ import HealthOverview from "@/components/dashboard/HealthOverview";
 import { Button } from "@/components/ui/button";
 import { ScanFace } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import FaceScanModal from "@/components/face-scan/FaceScanModal";
 import { X } from "lucide-react";
@@ -24,6 +24,7 @@ import EnhancedFaceScanModal from "@/components/face-scan/EnhancedFaceScanModal"
 
 const Index = () => {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const { isAuthenticated, loading } = useAuth();
   const [isFaceScanOpen, setIsFaceScanOpen] = useState(false);
   const [iframeModal, setIframeModal] = useState(false);
@@ -56,7 +57,8 @@ const Index = () => {
 
   const handleScanFace = () => {
     // setIsFaceScanOpen(true);
-    setIframeModal(true);
+    // setIframeModal(true);
+    navigate("/face-scan");
   };
 
   const handleIFrameModalClose = () => {
