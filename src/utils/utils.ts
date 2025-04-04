@@ -116,3 +116,14 @@ export function convertSecondsToHHMM(seconds: number): string {
     "0"
   )}`;
 }
+
+export const handleCopyToClipboard = (text) => {
+  navigator.clipboard
+    .writeText(text)
+    .then(() => {
+      return true;
+    })
+    .catch(() => {
+      return false;
+    });
+};
