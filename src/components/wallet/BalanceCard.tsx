@@ -2,7 +2,10 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Calendar, Coins } from "lucide-react";
 
-import { useGetUserWalletBalance } from "@/service/hooks/wallet/useGetUserWalletData";
+import {
+  useGetUserWalletBalance,
+  useGetUserWalletMonthlyBalance,
+} from "@/service/hooks/wallet/useGetUserWalletData";
 import { getNextGoalValue } from "@/utils/utils";
 
 const BalanceCard = () => {
@@ -11,6 +14,8 @@ const BalanceCard = () => {
     refetchIntervalInBackground: true,
     isAuthenticated: true,
   });
+
+  const { data: walletMothlyBalanceData } = useGetUserWalletMonthlyBalance();
 
   return (
     <div>
@@ -70,7 +75,9 @@ const BalanceCard = () => {
                 <p className="text-sm font-medium text-muted-foreground">
                   THIS MONTH
                 </p>
-                <p className="text-xl font-semibold">+225 Coins earned</p>
+                <p className="text-xl font-semibold">
+                  +{walletMothlyBalanceData} Coins earned
+                </p>
               </div>
               <Calendar className="text-wellness-bright-green h-5 w-5" />
             </div>
