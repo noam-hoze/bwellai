@@ -80,6 +80,19 @@ const Wallet = () => {
     }
   };
 
+  const transactionIconMap = {
+    "login bonus": <Award className="text-wellness-bright-green" />,
+    "label scanned bonus": <Coins className="text-wellness-bright-green" />,
+    "selected date bonus": (
+      <ArrowUpRight className="text-wellness-bright-green" />
+    ),
+    "uploaded bonus": <Coins className="text-wellness-bright-green" />,
+    "Inactivity Penalty Charge": (
+      <ArrowDownRight className="text-wellness-deep-orange" />
+    ),
+    "Gift to Friend": <Send className="text-wellness-deep-orange" />,
+  };
+
   // Mock data for transactions with enhanced information
   const transactions = [
     {
@@ -186,6 +199,12 @@ const Wallet = () => {
       return transaction.actionType === activeTab;
     }
   );
+  const filteredTransactionstyp = walletTransactionData?.content.filter(
+    (transaction) => {
+      return transaction.actionType !== "ADD_MONEY";
+    }
+  );
+  console.log(filteredTransactionstyp);
 
   // Format date to a readable string
   const formatDate = (date: Date) => {
@@ -372,7 +391,7 @@ const Wallet = () => {
             <TabsList className="mb-4">
               <TabsTrigger value="all">All</TabsTrigger>
               <TabsTrigger value="ADD_MONEY">Earned</TabsTrigger>
-              <TabsTrigger value="spent">Spent</TabsTrigger>
+              <TabsTrigger value="BURN">Spent</TabsTrigger>
             </TabsList>
 
             <TabsContent value={activeTab} className="space-y-4">
@@ -383,8 +402,7 @@ const Wallet = () => {
                       <div className="flex items-center justify-between">
                         <div className="flex items-start space-x-4">
                           <div className="bg-muted rounded-full p-2">
-                            {/* {transaction.icon} */}
-                            <ArrowUpRight className="text-wellness-bright-green" />
+                            {transactionIconMap?.[transaction?.description]}
                           </div>
                           <div>
                             <h4 className="font-medium">
