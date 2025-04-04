@@ -1,36 +1,20 @@
 import { useToast } from "@/hooks/use-toast";
 import Header from "@/components/layout/Header";
 import AddDataDropdown from "@/components/dashboard/AddDataDropdown";
-import BodyHealthMap from "@/components/dashboard/BodyHealthMap";
-import HealthAlerts from "@/components/dashboard/HealthAlerts";
-import DailyCheckin from "@/components/dashboard/DailyCheckin";
 import HealthOverview from "@/components/dashboard/HealthOverview";
+import BodyHealthInterface from "@/components/dashboard/BodyHealthInterface";
 import { Button } from "@/components/ui/button";
 import { ScanFace } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Navigate, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import FaceScanModal from "@/components/face-scan/FaceScanModal";
-import { X } from "lucide-react";
-
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import BodyModelEnhanced from "@/components/dashboard/BodyModelEnhanced";
-import EnhancedFaceScanModal from "@/components/face-scan/EnhancedFaceScanModal";
 
 const Index = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const { isAuthenticated, loading } = useAuth();
-  const [isFaceScanOpen, setIsFaceScanOpen] = useState(false);
-  const [iframeModal, setIframeModal] = useState(false);
 
-  // Redirect to welcome page if not authenticated
-  if (!loading && !localStorage.getItem("token")) {
+  if (!loading && !isAuthenticated) {
     return <Navigate to="/welcome" replace />;
   }
 
@@ -50,22 +34,15 @@ const Index = () => {
 
   const handleConnectWearable = () => {
     toast({
-      title: "Coming Soon",
-      description: "Wearable connections will be available in the next update.",
+      title: "Connecting Wearable",
+      description: "Taking you to the Connections Hub...",
     });
   };
 
   const handleScanFace = () => {
-    // setIsFaceScanOpen(true);
-    // setIframeModal(true);
     navigate("/face-scan");
   };
 
-  const handleIFrameModalClose = () => {
-    setIframeModal(false);
-  };
-
-  // Show loading state
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -105,48 +82,12 @@ const Index = () => {
 
         <HealthOverview />
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-          <div className="lg:col-span-3">
-            <BodyHealthMap />
-          </div>
-        </div>
-
-        <BodyModelEnhanced />
+        <BodyHealthInterface />
       </main>
 
       <footer className="py-6 text-center text-sm text-gray-500 border-t border-gray-100">
         © 2024 Wellness App. All rights reserved.
       </footer>
-
-      <EnhancedFaceScanModal
-        isOpen={isFaceScanOpen}
-        onClose={() => setIsFaceScanOpen(false)}
-      />
-
-      <Dialog open={iframeModal} onOpenChange={handleIFrameModalClose}>
-        <DialogHeader className="p-4 bg-gray-900 text-white">
-          <DialogTitle className="flex justify-between items-center">
-            <Button
-              variant="ghost"
-              size="icon"
-              className="text-white"
-              onClick={handleIFrameModalClose}
-            >
-              <X className="h-4 w-4" />
-            </Button>
-          </DialogTitle>
-        </DialogHeader>
-
-        <DialogContent className="sm:max-w-md h-[40em] p-0 overflow-hidden">
-          <DialogHeader>
-            <iframe
-              src="https://app-dev.bwellai.com/facescan"
-              allow="cross-origin-isolated"
-              style={{ width: "100%", height: "100%" }}
-            ></iframe>
-          </DialogHeader>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 };
