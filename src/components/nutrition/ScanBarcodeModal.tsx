@@ -22,7 +22,9 @@ interface ScanBarcodeModalProps {
   totalDailyCalories?;
   totalDailyProtein?;
   totalDailyCarbs?;
+  totalDailyFats?;
   totalDailyRequiredCalories?;
+  requiredMicronutrientsBalance?;
 }
 
 const ScanBarcodeModal = ({
@@ -32,7 +34,9 @@ const ScanBarcodeModal = ({
   totalDailyCalories,
   totalDailyProtein,
   totalDailyCarbs,
+  totalDailyFats,
   totalDailyRequiredCalories,
+  requiredMicronutrientsBalance,
 }: ScanBarcodeModalProps) => {
   const navigate = useNavigate();
   const [isScanning, setIsScanning] = useState(false);
@@ -162,11 +166,13 @@ const ScanBarcodeModal = ({
       totalDailyCalories,
       totalDailyProtein,
       totalDailyCarbs,
+      totalDailyFats,
       calories: foodReportBarCodeAIData?.jsonNode?.calories,
       carbohydrates: foodReportBarCodeAIData?.jsonNode?.carbohydrates,
       fats: foodReportBarCodeAIData?.jsonNode?.fats,
       protein: foodReportBarCodeAIData?.jsonNode?.protein,
       totalDailyRequiredCalories: totalDailyRequiredCalories,
+      requiredMicronutrientsBalance: requiredMicronutrientsBalance,
     };
 
     navigate("/food-scan-analysis", { state: { productData } });

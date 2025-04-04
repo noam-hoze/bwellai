@@ -12,7 +12,9 @@ const MealLoggingSection = ({
   totalDailyCalories,
   totalDailyProtein,
   totalDailyCarbs,
+  totalDailyFats,
   totalDailyRequiredCalories,
+  requiredMicronutrientsBalance,
 }) => {
   const [manualEntry, setManualEntry] = useState("");
   const [isVoiceActive, setIsVoiceActive] = useState(false);
@@ -132,7 +134,9 @@ const MealLoggingSection = ({
         totalDailyCalories={totalDailyCalories}
         totalDailyProtein={totalDailyProtein}
         totalDailyCarbs={totalDailyCarbs}
+        totalDailyFats={totalDailyFats}
         totalDailyRequiredCalories={totalDailyRequiredCalories}
+        requiredMicronutrientsBalance={requiredMicronutrientsBalance}
       />
 
       <ScanBarcodeModal
@@ -142,7 +146,9 @@ const MealLoggingSection = ({
         totalDailyCalories={totalDailyCalories}
         totalDailyProtein={totalDailyProtein}
         totalDailyCarbs={totalDailyCarbs}
+        totalDailyFats={totalDailyFats}
         totalDailyRequiredCalories={totalDailyRequiredCalories}
+        requiredMicronutrientsBalance={requiredMicronutrientsBalance}
       />
 
       <MealDetailModal

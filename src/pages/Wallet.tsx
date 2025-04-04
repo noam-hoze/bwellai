@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import Layout from "@/components/layout/Layout";
 import {
   Card,
@@ -10,17 +10,14 @@ import {
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import {
   Copy,
   Coins,
   Send,
-  CreditCard,
   Gift,
   Plus,
   Award,
-  Calendar,
   ArrowUpRight,
   ArrowDownRight,
   ExternalLink,
@@ -30,12 +27,12 @@ import {
 import { cn } from "@/lib/utils";
 import {
   useGetCreateUserWalletData,
-  useGetUserWalletBalance,
   useGetUserWalletData,
   useGetUserWalletTransaction,
 } from "@/service/hooks/wallet/useGetUserWalletData";
 import { useNavigate } from "react-router-dom";
 import { handleCopyToClipboard } from "@/utils/utils";
+import BalanceCard from "@/components/wallet/BalanceCard";
 
 const Wallet = () => {
   const size = 10;
@@ -45,11 +42,6 @@ const Wallet = () => {
   const [expandedTransaction, setExpandedTransaction] = useState<number | null>(
     null
   );
-
-  const { data: walletBalanceData } = useGetUserWalletBalance({
-    refetchIntervalInBackground: true,
-    isAuthenticated: true,
-  });
 
   const {
     data: userWalletData,
@@ -199,12 +191,6 @@ const Wallet = () => {
       return transaction.actionType === activeTab;
     }
   );
-  const filteredTransactionstyp = walletTransactionData?.content.filter(
-    (transaction) => {
-      return transaction.actionType !== "ADD_MONEY";
-    }
-  );
-  console.log(filteredTransactionstyp);
 
   // Format date to a readable string
   const formatDate = (date: Date) => {
@@ -241,49 +227,7 @@ const Wallet = () => {
         <h1 className="text-3xl font-bold mb-6">Wellness Wallet</h1>
 
         {/* Balance Card */}
-        <Card className="mb-6">
-          <CardContent className="pt-6">
-            <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center">
-                <div className="bg-wellness-bright-green w-12 h-12 rounded-full flex items-center justify-center mr-3">
-                  <Coins className="text-white h-6 w-6" />
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">YOUR BALANCE</p>
-                  <h2 className="text-3xl font-bold">
-                    {walletBalanceData?.balances?.[0]?.balance} Coins
-                  </h2>
-                </div>
-              </div>
-              <div className="text-right">
-                <p className="text-sm text-muted-foreground">NEXT REWARD AT</p>
-                <p className="font-medium">500 Coins</p>
-              </div>
-            </div>
-
-            <div className="space-y-1.5">
-              <div className="flex justify-between text-xs">
-                <span>
-                  Current: {walletBalanceData?.balances?.[0]?.balance}
-                </span>
-                <span>Goal: 500</span>
-              </div>
-              <Progress value={95} className="h-2" />
-            </div>
-
-            <div className="bg-wellness-light-green/50 rounded-lg p-4 mt-4">
-              <div className="flex justify-between items-center">
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">
-                    THIS MONTH
-                  </p>
-                  <p className="text-xl font-semibold">+225 Coins earned</p>
-                </div>
-                <Calendar className="text-wellness-bright-green h-5 w-5" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        <BalanceCard />
 
         {/* Action Buttons */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">

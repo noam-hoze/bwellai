@@ -19,7 +19,9 @@ const SavedItemsSection = ({
   totalDailyCalories,
   totalDailyProtein,
   totalDailyCarbs,
+  totalDailyFats,
   totalDailyRequiredCalories,
+  requiredMicronutrientsBalance,
 }) => {
   const navigate = useNavigate();
   const [items, setItems] = useState([]);
@@ -73,7 +75,9 @@ const SavedItemsSection = ({
           totalDailyCalories,
           totalDailyProtein,
           totalDailyCarbs,
+          totalDailyFats: totalDailyFats,
           totalDailyRequiredCalories: totalDailyRequiredCalories,
+          requiredMicronutrientsBalance: requiredMicronutrientsBalance,
         },
       },
     });
