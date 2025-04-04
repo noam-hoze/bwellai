@@ -1,17 +1,12 @@
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Calendar, Coins } from "lucide-react";
 
 import { useGetUserWalletBalance } from "@/service/hooks/wallet/useGetUserWalletData";
+import { getNextGoalValue } from "@/utils/utils";
 
 const BalanceCard = () => {
+  const priceStepper = 500;
   const { data: walletBalanceData } = useGetUserWalletBalance({
     refetchIntervalInBackground: true,
     isAuthenticated: true,
@@ -35,16 +30,38 @@ const BalanceCard = () => {
             </div>
             <div className="text-right">
               <p className="text-sm text-muted-foreground">NEXT REWARD AT</p>
-              <p className="font-medium">500 Coins</p>
+              <p className="font-medium">
+                {getNextGoalValue({
+                  current: walletBalanceData?.balances?.[0]?.balance,
+                  skipValue: priceStepper,
+                })}
+                Coins
+              </p>
             </div>
           </div>
 
           <div className="space-y-1.5">
             <div className="flex justify-between text-xs">
               <span>Current: {walletBalanceData?.balances?.[0]?.balance}</span>
-              <span>Goal: 500</span>
+              <span>
+                Goal:{" "}
+                {getNextGoalValue({
+                  current: walletBalanceData?.balances?.[0]?.balance,
+                  skipValue: priceStepper,
+                })}
+              </span>
             </div>
-            <Progress value={95} className="h-2" />
+            <Progress
+              value={
+                (walletBalanceData?.balances?.[0]?.balance /
+                  getNextGoalValue({
+                    current: walletBalanceData?.balances?.[0]?.balance,
+                    skipValue: priceStepper,
+                  })) *
+                100
+              }
+              className="h-2"
+            />
           </div>
 
           <div className="bg-wellness-light-green/50 rounded-lg p-4 mt-4">
