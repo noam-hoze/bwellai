@@ -180,10 +180,12 @@ const Wallet = () => {
     page + 1 >= Math.ceil(walletTransactionData?.page?.totalItemCount / size);
 
   // Filter transactions based on the active tab
-  const filteredTransactions = transactions.filter((transaction) => {
-    if (activeTab === "all") return true;
-    return transaction.type === activeTab;
-  });
+  const filteredTransactions = walletTransactionData?.content.filter(
+    (transaction) => {
+      if (activeTab === "all") return true;
+      return transaction.actionType === activeTab;
+    }
+  );
 
   // Format date to a readable string
   const formatDate = (date: Date) => {
@@ -369,20 +371,21 @@ const Wallet = () => {
           <Tabs defaultValue="all" onValueChange={setActiveTab}>
             <TabsList className="mb-4">
               <TabsTrigger value="all">All</TabsTrigger>
-              <TabsTrigger value="earned">Earned</TabsTrigger>
+              <TabsTrigger value="ADD_MONEY">Earned</TabsTrigger>
               <TabsTrigger value="spent">Spent</TabsTrigger>
             </TabsList>
 
             <TabsContent value={activeTab} className="space-y-4">
-              {walletTransactionData?.content?.length > 0 ? (
-                walletTransactionData?.content?.map((transaction) => (
+              {filteredTransactions?.length > 0 ? (
+                filteredTransactions?.map((transaction) => (
                   <Card key={transaction?.id} className="overflow-hidden">
                     <div className="p-4">
                       <div className="flex items-center justify-between">
                         <div className="flex items-start space-x-4">
-                          {/* <div className="bg-muted rounded-full p-2">
-                            {transaction.icon}
-                          </div> */}
+                          <div className="bg-muted rounded-full p-2">
+                            {/* {transaction.icon} */}
+                            <ArrowUpRight className="text-wellness-bright-green" />
+                          </div>
                           <div>
                             <h4 className="font-medium">
                               {transaction?.actionType}
@@ -442,9 +445,9 @@ const Wallet = () => {
                       {/* Expanded details */}
                       {expandedTransaction === transaction.id && (
                         <div className="mt-4 pt-4 border-t border-muted-foreground/10 animate-fade-in">
-                          {/* <p className="text-sm mb-3">
+                          <p className="text-sm mb-3">
                             {transaction.detailedDescription}
-                          </p> */}
+                          </p>
                           <div className="grid grid-cols-2 gap-y-2 text-sm">
                             <div className="text-muted-foreground">
                               Category:
