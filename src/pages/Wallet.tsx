@@ -34,6 +34,17 @@ import { useNavigate } from "react-router-dom";
 import { handleCopyToClipboard } from "@/utils/utils";
 import BalanceCard from "@/components/wallet/BalanceCard";
 
+const actionMap = {
+  ADD_MONEY: "Earned",
+  BURN: "Spent",
+};
+
+function toTitleCase(str) {
+  return str.replace(/\w\S*/g, function (txt) {
+    return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+  });
+}
+
 const Wallet = () => {
   const size = 10;
   const [page, setPage] = useState<number>(0);
@@ -297,30 +308,27 @@ const Wallet = () => {
               <code className="text-sm font-mono">
                 {userWalletData?.ethAddress}
               </code>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() =>
-                  handleCopyToClipboard(userWalletData?.ethAddress)
-                }
-              >
-                <Copy size={16} />
-              </Button>
-            </div>
-            <div>
-              <a
-                href={`https://amoy.polygonscan.com/address/${userWalletData?.ethAddress}`}
-                target="_blank"
-                className="bg-muted p-3 rounded-md flex items-center justify-between mt-5"
-              >
-                <code className="text-sm font-mono">
-                  https://amoy.polygonscan.com/address/
-                  {userWalletData?.ethAddress}
-                </code>
-                <Button variant="ghost" size="sm">
-                  <ExternalLink size={16} />
+              <div className="flex items-center justify-between">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() =>
+                    handleCopyToClipboard(userWalletData?.ethAddress)
+                  }
+                >
+                  <Copy size={16} />
                 </Button>
-              </a>
+
+                <a
+                  href={`https://amoy.polygonscan.com/address/${userWalletData?.ethAddress}`}
+                  target="_blank"
+                  className="bg-muted rounded-md flex items-center justify-between"
+                >
+                  <Button variant="ghost" size="sm">
+                    <ExternalLink size={16} />
+                  </Button>
+                </a>
+              </div>
             </div>
           </CardContent>
         </Card>
@@ -350,10 +358,10 @@ const Wallet = () => {
                           </div>
                           <div>
                             <h4 className="font-medium">
-                              {transaction?.actionType}
+                              {toTitleCase(transaction?.description)}
                             </h4>
                             <p className="text-sm text-muted-foreground">
-                              {transaction?.description}
+                              {actionMap?.[transaction?.actionType]}
                             </p>
                             <div className="flex items-center space-x-2 mt-1">
                               <p className="text-xs text-muted-foreground">

@@ -189,3 +189,13 @@ export const handleCopyToClipboard = (text) => {
       return false;
     });
 };
+
+export const getNextGoalValue = ({
+  current,
+  skipValue,
+}: {
+  current: number;
+  skipValue: number;
+}) => {
+  return (Math.floor(current / skipValue) + 1) * skipValue;
+};
