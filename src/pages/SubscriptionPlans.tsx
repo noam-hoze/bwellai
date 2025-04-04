@@ -217,7 +217,7 @@ const SubscriptionPlans = () => {
                       </>
                     ) : (
                       <div className="text-3xl font-bold text-gray-800">
-                        {plan?.name !== "Beta" ? `"$"${plan.price}` : "Free"}
+                        {plan?.name !== "Beta" ? `$${plan.price}` : "Free"}
                       </div>
                     )}
                     {plan.description && (

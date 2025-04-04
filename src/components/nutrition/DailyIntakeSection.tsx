@@ -55,6 +55,7 @@ const DailyIntakeSection = ({
   totalDailyFats,
   totalDailyCarbs,
   totalDailyRequiredCalories,
+  requiredMicronutrientsBalance,
 }) => {
   // Calorie intake data (simulated)
   // const calorieIntake = 1800; // Current calories consumed
@@ -96,18 +97,33 @@ const DailyIntakeSection = ({
       <div className="flex justify-between items-center gap-4">
         <NutrientProgress
           label="Fat"
-          value={Number(((totalDailyFats / fatGrams) * 100)?.toFixed(0))}
-          grams={fatGrams}
+          value={Number(
+            (
+              (totalDailyFats / requiredMicronutrientsBalance?.fat) *
+              100
+            )?.toFixed(0)
+          )}
+          grams={requiredMicronutrientsBalance?.fat}
         />
         <NutrientProgress
           label="Protein"
-          value={Number(((totalDailyProtein / proteinGrams) * 100)?.toFixed(0))}
-          grams={proteinGrams}
+          value={Number(
+            (
+              (totalDailyProtein / requiredMicronutrientsBalance?.protein) *
+              100
+            )?.toFixed(0)
+          )}
+          grams={requiredMicronutrientsBalance?.protein}
         />
         <NutrientProgress
           label="Carbs"
-          value={Number(((totalDailyCarbs / carbsGrams) * 100)?.toFixed(0))}
-          grams={carbsGrams}
+          value={Number(
+            (
+              (totalDailyCarbs / requiredMicronutrientsBalance?.carbs) *
+              100
+            )?.toFixed(0)
+          )}
+          grams={requiredMicronutrientsBalance?.carbs}
         />
       </div>
 

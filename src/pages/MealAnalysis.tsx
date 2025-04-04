@@ -280,7 +280,7 @@ const MealAnalysisPage = () => {
                 <DualProgressBar
                   currentValue={meal?.totalDailyProtein}
                   addedValue={meal?.ai_response?.protein?.quantity}
-                  maxValue={dailyGoals.protein.max}
+                  maxValue={meal?.requiredMicronutrientsBalance?.protein}
                   unit="g"
                   label="Protein"
                 />
@@ -288,9 +288,16 @@ const MealAnalysisPage = () => {
                 <DualProgressBar
                   currentValue={meal.totalDailyCarbs}
                   addedValue={meal?.ai_response?.carbohydrates?.quantity}
-                  maxValue={dailyGoals.carbs.max}
+                  maxValue={meal?.requiredMicronutrientsBalance?.carbs}
                   unit="g"
                   label="Carbs"
+                />
+                <DualProgressBar
+                  currentValue={meal.totalDailyFats || 0}
+                  addedValue={meal?.ai_response?.fats?.quantity || 0}
+                  maxValue={meal?.requiredMicronutrientsBalance?.fat || 0}
+                  unit="g"
+                  label="fat"
                 />
               </div>
             </div>

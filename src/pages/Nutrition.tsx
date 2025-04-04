@@ -15,7 +15,10 @@ import {
 } from "@/service/hooks/nutrition/useGetFoodReportUpload";
 import SavedItemsSection from "@/components/nutrition/SavedItemsSection";
 import { useGetUserProfile } from "@/service/hooks/profile/useGetUserProfile";
-import { calorieNumberDisplayed } from "@/utils/utils";
+import {
+  calorieNumberDisplayed,
+  requiredMicronutrientsBalanceDisplayed,
+} from "@/utils/utils";
 
 const Nutrition = () => {
   const [activeTab, setActiveTab] = useState<"daily" | "trends">("daily");
@@ -47,6 +50,8 @@ const Nutrition = () => {
 
   const [totalDailyRequiredCalories, setTotalDailyRequiredCalories] =
     useState(0);
+  const [requiredMicronutrientsBalance, setRequiredMicronutrientsBalance] =
+    useState({ fat: 0, protein: 0, carbs: 0 });
 
   useEffect(() => {
     const requiredCalories = calorieNumberDisplayed({
@@ -60,7 +65,19 @@ const Nutrition = () => {
         ]?.answersArray?.[0],
     });
 
+    const micronutrition = requiredMicronutrientsBalanceDisplayed({
+      age: getProfileIsData?.age,
+      BMI: Number(
+        getProfileIsData?.additionalDetails?.[
+          "What is your Body Mass Index (BMI)?"
+        ]?.answersArray?.[0]
+      ),
+      calorie: requiredCalories,
+      weight: getProfileIsData?.weight,
+    });
+
     setTotalDailyRequiredCalories(requiredCalories);
+    setRequiredMicronutrientsBalance(micronutrition);
   }, [getProfileIsData]);
 
   useEffect(() => {
@@ -99,7 +116,9 @@ const Nutrition = () => {
             totalDailyCalories={totalDailyCalories}
             totalDailyProtein={totalDailyProtein}
             totalDailyCarbs={totalDailyCarbs}
+            totalDailyFats={totalDailyFats}
             totalDailyRequiredCalories={totalDailyRequiredCalories}
+            requiredMicronutrientsBalance={requiredMicronutrientsBalance}
           />
           <DailyIntakeSection
             totalDailyCalories={totalDailyCalories}
@@ -107,6 +126,7 @@ const Nutrition = () => {
             totalDailyCarbs={totalDailyCarbs}
             totalDailyFats={totalDailyFats}
             totalDailyRequiredCalories={totalDailyRequiredCalories}
+            requiredMicronutrientsBalance={requiredMicronutrientsBalance}
           />
 
           <Tabs
@@ -131,7 +151,9 @@ const Nutrition = () => {
                 totalDailyCalories={totalDailyCalories}
                 totalDailyProtein={totalDailyProtein}
                 totalDailyCarbs={totalDailyCarbs}
+                totalDailyFats={totalDailyFats}
                 totalDailyRequiredCalories={totalDailyRequiredCalories}
+                requiredMicronutrientsBalance={requiredMicronutrientsBalance}
               />
               {activeTab === "trends" && <TrendsInsightsSection />}
             </TabsContent>
@@ -142,7 +164,9 @@ const Nutrition = () => {
                 totalDailyCalories={totalDailyCalories}
                 totalDailyProtein={totalDailyProtein}
                 totalDailyCarbs={totalDailyCarbs}
+                totalDailyFats={totalDailyFats}
                 totalDailyRequiredCalories={totalDailyRequiredCalories}
+                requiredMicronutrientsBalance={requiredMicronutrientsBalance}
               />
             </TabsContent>
           </Tabs>
