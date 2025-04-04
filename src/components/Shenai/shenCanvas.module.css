@@ -1,0 +1,25 @@
+.wrapper {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+#mxcanvas {
+  aspect-ratio: 480/894;
+  max-width: 10em;
+  max-height: 10em;
+}
+@media (max-aspect-ratio: 480/894) {
+  #mxcanvas {
+    width: 10em;
+    height: auto;
+  }
+}
+@media (min-aspect-ratio: 480/894) {
+  #mxcanvas {
+    height: 10em;
+    width: auto;
+  }
+}

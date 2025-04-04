@@ -67,6 +67,7 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
+import ShenaiApp from "@/components/Shenai/ShenaiApp";
 
 // Define all possible scan steps
 type ScanStep =
@@ -759,7 +760,7 @@ const FaceScan = () => {
             </div>
           </div>
 
-          <div className="w-full">
+          <div className="w-[10em]">
             <div className="flex justify-between text-sm mb-1">
               <span>Scanning in progress...</span>
               <span>{scanProgress}%</span>
@@ -767,13 +768,15 @@ const FaceScan = () => {
             <Progress value={scanProgress} className="h-2" />
           </div>
 
-          <div className="sm:max-w-md h-[40em] p-0 overflow-hidden">
-            <iframe
+          <div className="sw-[10em] h-[40em] p-0 overflow-hidden">
+            {/* <iframe
               src="https://app-dev.bwellai.com/facescan"
               allow="camera; microphone; clipboard-read; clipboard-write; cross-origin-isolated"
               sandbox="allow-scripts allow-same-origin allow-modals allow-popups allow-forms allow-downloads"
               style={{ width: "100%", height: "100%" }}
-            ></iframe>
+            ></iframe>  */}
+
+            <ShenaiApp />
           </div>
 
           <Button
