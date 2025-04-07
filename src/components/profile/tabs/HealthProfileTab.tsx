@@ -696,26 +696,43 @@ const HealthProfileTab = ({
 
             <div className="space-y-3">
               <Label>Exercise frequency</Label>
-              <RadioGroup
-                value={exercise}
-                onValueChange={setExercise}
-                className="flex flex-wrap gap-4"
-              >
+              <RadioGroup value={exercise} onValueChange={setExercise}>
                 <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="daily" id="exercise-daily" />
-                  <Label htmlFor="exercise-daily">Daily</Label>
+                  <RadioGroupItem
+                    value="sedentary_adult"
+                    id="sedentary-adult"
+                  />
+                  <Label htmlFor="sedentary-adult">
+                    Sedentary Adult: Little or no exercise
+                  </Label>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="weekly" id="exercise-weekly" />
-                  <Label htmlFor="exercise-weekly">Weekly</Label>
+                  <RadioGroupItem value="lightly_active" id="lightly-active" />
+                  <Label htmlFor="lightly-active">
+                    Lightly Active: Light exercise/sports 1-3 days/week
+                  </Label>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="rarely" id="exercise-rarely" />
-                  <Label htmlFor="exercise-rarely">Rarely</Label>
+                  <RadioGroupItem
+                    value="moderately_active"
+                    id="moderately-active"
+                  />
+                  <Label htmlFor="moderately-active">
+                    Moderately Active: Moderate exercise/sports 3-5 days/week
+                  </Label>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="never" id="exercise-never" />
-                  <Label htmlFor="exercise-never">Never</Label>
+                  <RadioGroupItem value="very_active" id="very-active" />
+                  <Label htmlFor="very-active">
+                    Very Active: Hard exercise/physical job/sports 6-7 days/week
+                  </Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="super_active" id="super-active" />
+                  <Label htmlFor="super-active">
+                    Super Active: Very hard exercise/physical job & exercise
+                    2x/day
+                  </Label>
                 </div>
               </RadioGroup>
             </div>
