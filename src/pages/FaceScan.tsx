@@ -67,6 +67,7 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
+import ShenaiApp from "@/components/Shenai/ShenaiApp";
 
 // Define all possible scan steps
 type ScanStep =
@@ -768,12 +769,14 @@ const FaceScan = () => {
           </div>
 
           <div className="sm:max-w-md h-[40em] p-0 overflow-hidden">
-            <iframe
+            {/* <iframe
               src="https://app-dev.bwellai.com/facescan"
               allow="camera; microphone; clipboard-read; clipboard-write; cross-origin-isolated"
               sandbox="allow-scripts allow-same-origin allow-modals allow-popups allow-forms allow-downloads"
               style={{ width: "100%", height: "100%" }}
-            ></iframe>
+            ></iframe>  */}
+
+            {/* <ShenaiApp /> */}
           </div>
 
           <Button
@@ -1932,6 +1935,8 @@ const FaceScan = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
+
+      <ShenaiApp />
 
       <main className="py-6">
         <div className="container mx-auto px-4 mb-6">
