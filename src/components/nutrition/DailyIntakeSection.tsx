@@ -1,22 +1,120 @@
 import { Progress } from "@/components/ui/progress";
+import { useState } from "react";
 
 interface NutrientProgressProps {
   label: string;
   value: number;
   grams: number;
+  currentValue: number;
 }
 
-const NutrientProgress = ({ label, value, grams }: NutrientProgressProps) => {
+const NutrientProgressv2 = ({
+  percentage,
+  currentAmount,
+  goalAmount,
+  unit,
+  title,
+}) => {
+  const [showCalories, setShowCalories] = useState(false);
+
+  // Calculate percentage of goal reached
+  // const percentage = Math.round((currentAmount / goalAmount) * 100);
+
+  const toggleUnit = () => {
+    setShowCalories(!showCalories);
+  };
   return (
-    <div className="flex flex-col items-center">
-      <div className="relative h-24 w-24 mb-2">
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="h-20 w-20 rounded-full border-4 border-gray-200 flex flex-col items-center justify-center">
-            <span className="text-xl font-bold">{value}%</span>
-            <span className="text-sm">{grams}g</span>
+    <div
+      className="relative flex h-44 w-44 items-center justify-center cursor-pointer"
+      onClick={toggleUnit}
+    >
+      {/* Circular progress indicator */}
+      <svg className="h-full w-full" viewBox="0 0 100 100">
+        {/* Background circle */}
+        <circle
+          cx="50"
+          cy="50"
+          r="42"
+          stroke="#e2e8f0"
+          strokeWidth="8"
+          fill="none"
+        />
+        {/* Define the gradient */}
+        <defs>
+          <linearGradient
+            id="progressGradient"
+            gradientUnits="userSpaceOnUse"
+            x1="0"
+            y1="0"
+            x2="0"
+            y2="1"
+          >
+            <stop offset="0.5" stop-color="#FEDF89" /> {/* Yellow at 50% */}
+            <stop offset="0.5" stop-color="#53A15E" /> {/* Green at 50% */}
+          </linearGradient>
+        </defs>
+        {/* Progress arc */}
+        <circle
+          cx="50"
+          cy="50"
+          r="42"
+          stroke={percentage <= 50 ? "#FEDF89" : "url(#progressGradient)"}
+          strokeWidth="8"
+          fill="none"
+          strokeLinecap="round"
+          strokeDasharray={`${percentage * 2.64}px 264px`}
+          transform="rotate(-90 50 50)"
+        />
+      </svg>
+
+      {/* Content inside the circle */}
+      <div className="absolute flex flex-col items-center justify-center w-full px-2">
+        <span className="text-3xl font-bold mb-1">{percentage}%</span>
+        <div className="text-sm text-muted-foreground w-full h-6 overflow-hidden">
+          {/* {showCalories ? (
+            <div className="text-center">
+              {currentCalories} / {goalCalories} kcal
+            </div>
+          ) : (
+            <div className="text-center">
+              {currentAmount}
+              {unit} / {goalAmount}
+              {unit}
+            </div>
+          )} */}
+          <div className="text-center">
+            {currentAmount}
+            {unit} / {goalAmount}
+            {unit}
           </div>
         </div>
-        <svg className="h-24 w-24 transform -rotate-90" viewBox="0 0 100 100">
+      </div>
+
+      <div className="mt-4 text-center">
+        <div className="text-xl font-medium">{title}</div>
+      </div>
+    </div>
+  );
+};
+
+const NutrientProgress = ({
+  label,
+  value,
+  grams,
+  currentValue,
+}: NutrientProgressProps) => {
+  return (
+    <div className="flex flex-col items-center">
+      <div className="relative h-32 w-32 mb-2">
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="h-32 w-32 rounded-full border-4 border-gray-200 flex flex-col items-center justify-center">
+            <span className="text-xl font-bold">{value}%</span>
+            <span className="text-sm">
+              {currentValue}/{grams}g
+            </span>
+          </div>
+        </div>
+        <svg className="h-32 w-32 transform -rotate-90" viewBox="0 0 100 100">
           <circle
             cx="50"
             cy="50"
@@ -104,6 +202,7 @@ const DailyIntakeSection = ({
             )?.toFixed(0)
           )}
           grams={requiredMicronutrientsBalance?.fat}
+          currentValue={totalDailyFats?.toFixed(0)}
         />
         <NutrientProgress
           label="Protein"
@@ -114,6 +213,7 @@ const DailyIntakeSection = ({
             )?.toFixed(0)
           )}
           grams={requiredMicronutrientsBalance?.protein}
+          currentValue={totalDailyProtein?.toFixed(0)}
         />
         <NutrientProgress
           label="Carbs"
@@ -124,6 +224,7 @@ const DailyIntakeSection = ({
             )?.toFixed(0)
           )}
           grams={requiredMicronutrientsBalance?.carbs}
+          currentValue={totalDailyCarbs?.toFixed(0)}
         />
       </div>
 
@@ -132,14 +233,15 @@ const DailyIntakeSection = ({
         <div className="flex justify-between items-center mb-2">
           <h3 className="text-lg font-semibold">Calorie Consumption</h3>
           <span className="text-sm font-medium">
-            {totalDailyCalories}/{totalDailyRequiredCalories?.toFixed(0)} kcal
+            {totalDailyCalories?.toFixed(0)}/
+            {totalDailyRequiredCalories?.toFixed(0)} kcal
           </span>
         </div>
 
         <div className="flex justify-between mb-2">
           {isOverTarget && (
             <span className="text-sm font-medium text-red-500">
-              +{overAmount} kcal
+              +{overAmount?.toFixed(0)} kcal
             </span>
           )}
         </div>
@@ -174,7 +276,7 @@ const DailyIntakeSection = ({
                 backgroundColor: "rgba(239, 68, 68, 0.6)",
               }}
             >
-              +{overAmount}
+              +{overAmount?.toFixed(0)}
             </div>
           )}
         </div>
