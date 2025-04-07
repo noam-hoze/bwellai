@@ -20,12 +20,87 @@ import {
   convertUnderscoresToCapitalizeHeading,
 } from "@/utils/utils";
 import { useGetUserProfile } from "@/service/hooks/profile/useGetUserProfile";
+import SleepCycleAnimated from "./SleepCycleAnimated";
+import SleepCycleClock from "./SleepCycleClock";
+import { SleepStage } from "./SleepCycleRing";
 
 interface DailyTabContentProps {
   selectedDate: Date;
   wearableDailyRecommendationData;
   wearableDailyData;
   getProfileIsData;
+}
+
+interface APISleepEntry {
+  date_time: string;
+  level: string;
+  seconds: number;
+}
+
+interface ComponentSleepEntry {
+  stage: SleepStage;
+  duration: number;
+  isWakeEvent?: boolean;
+}
+
+// Sample sleep data
+const sleepData = [
+  { stage: "AWAKE" as SleepStage, duration: 15, isWakeEvent: false }, // Initial falling asleep
+  { stage: "LIGHT" as SleepStage, duration: 90 },
+  { stage: "DEEP" as SleepStage, duration: 45 },
+  { stage: "REM" as SleepStage, duration: 30 },
+  { stage: "LIGHT" as SleepStage, duration: 60 },
+  { stage: "AWAKE" as SleepStage, duration: 5, isWakeEvent: true }, // Brief awakening
+  { stage: "LIGHT" as SleepStage, duration: 75 },
+  { stage: "DEEP" as SleepStage, duration: 35 },
+  { stage: "AWAKE" as SleepStage, duration: 3, isWakeEvent: true }, // Another brief awakening
+  { stage: "REM" as SleepStage, duration: 45 },
+  { stage: "LIGHT" as SleepStage, duration: 60 },
+  { stage: "AWAKE" as SleepStage, duration: 4, isWakeEvent: true }, // Brief awakening
+  { stage: "REM" as SleepStage, duration: 30 },
+  { stage: "AWAKE" as SleepStage, duration: 7, isWakeEvent: true }, // Brief awakening
+  { stage: "LIGHT" as SleepStage, duration: 40 },
+  { stage: "AWAKE" as SleepStage, duration: 10, isWakeEvent: false }, // Final wake up
+];
+
+function convertAndGroupSleepData(
+  apiData: APISleepEntry[]
+): ComponentSleepEntry[] {
+  const result: ComponentSleepEntry[] = [];
+
+  let currentStage = apiData?.[0]?.level?.toUpperCase() as SleepStage;
+  let totalSeconds = apiData?.[0]?.seconds;
+  const isWake = currentStage === "AWAKE";
+
+  for (let i = 1; i < apiData?.length; i++) {
+    const entry = apiData?.[i];
+    const stage = entry?.level?.toUpperCase() as SleepStage;
+
+    if (stage === currentStage) {
+      totalSeconds += entry?.seconds;
+    } else {
+      result?.push({
+        stage: currentStage,
+        duration: Math.round(totalSeconds / 60),
+        ...(currentStage === "AWAKE"
+          ? { isWakeEvent: isWake && result?.length > 0 }
+          : {}),
+      });
+
+      // Reset for new stage
+      currentStage = stage;
+      totalSeconds = entry?.seconds;
+    }
+  }
+
+  // Push the final group
+  result?.push({
+    stage: currentStage,
+    duration: Math.round(totalSeconds / 60),
+    ...(currentStage === "AWAKE" ? { isWakeEvent: result?.length > 0 } : {}),
+  });
+
+  return result;
 }
 
 const DailyTabContent = ({
@@ -48,6 +123,10 @@ const DailyTabContent = ({
     remSleep: 18,
     awake: 6,
   };
+
+  const formattedSleepData = convertAndGroupSleepData(
+    wearableDailyData?.finalDailySpikeSleepDataV4?.levels
+  );
 
   const isMobile = useIsMobile();
 
@@ -292,6 +371,20 @@ const DailyTabContent = ({
           />
         </div>
       )}
+
+      <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 py-8 px-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-1">
+            <SleepCycleAnimated
+              sleepData={formattedSleepData || []}
+              title="Sleep Cycle Animation"
+            />
+          </div>
+          <div className="lg:col-span-1">
+            <SleepCycleClock sleepData={formattedSleepData || []} />
+          </div>
+        </div>
+      </div>
 
       {/* Combined Insights & Suggestions Card */}
       <Card className="wellness-card border-l-4 border-l-wellness-deep-orange">
