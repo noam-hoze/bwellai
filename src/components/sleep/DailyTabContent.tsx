@@ -24,6 +24,20 @@ import SleepCycleAnimated from "./SleepCycleAnimated";
 import SleepCycleClock from "./SleepCycleClock";
 import { SleepStage } from "./SleepCycleRing";
 
+function formatTo12Hour(timeString: string): string {
+  const date = new Date(timeString);
+
+  const hours = date?.getHours();
+  const minutes = date?.getMinutes();
+
+  const formattedHours = ((hours + 11) % 12) + 1; // Convert to 1-12
+  const ampm = hours >= 12 ? "PM" : "AM";
+
+  const formattedMinutes = minutes?.toString().padStart(2, "0");
+
+  return `${formattedHours}:${formattedMinutes} ${ampm}`;
+}
+
 interface DailyTabContentProps {
   selectedDate: Date;
   wearableDailyRecommendationData;
@@ -378,10 +392,28 @@ const DailyTabContent = ({
             <SleepCycleAnimated
               sleepData={formattedSleepData || []}
               title="Sleep Cycle Animation"
+              startTime={formatTo12Hour(
+                wearableDailyData?.finalDailySpikeSleepDataV4?.bedtime_start ||
+                  new Date()
+              )}
+              endTime={formatTo12Hour(
+                wearableDailyData?.finalDailySpikeSleepDataV4?.bedtime_end ||
+                  new Date()
+              )}
             />
           </div>
           <div className="lg:col-span-1">
-            <SleepCycleClock sleepData={formattedSleepData || []} />
+            <SleepCycleClock
+              sleepData={formattedSleepData || []}
+              startTime={formatTo12Hour(
+                wearableDailyData?.finalDailySpikeSleepDataV4?.bedtime_start ||
+                  new Date()
+              )}
+              endTime={formatTo12Hour(
+                wearableDailyData?.finalDailySpikeSleepDataV4?.bedtime_end ||
+                  new Date()
+              )}
+            />
           </div>
         </div>
       </div>
