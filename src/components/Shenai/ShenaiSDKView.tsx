@@ -1,4 +1,5 @@
 import { useRealtimeHeartRate } from "./ShenaiContext";
+import style from "./shenCanvas.module.css";
 
 export const ShenaiSDKView = () => {
   const hr = useRealtimeHeartRate();
@@ -6,30 +7,15 @@ export const ShenaiSDKView = () => {
   console.log({ hr: "s" });
 
   return (
-    <div
-      className="first-dioce"
-      style={{
-        width: "100%",
-        height: "100vh",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "start",
-        padding: "1em",
-      }}
-    >
-      <canvas
-        id="mxcanvas"
-        style={{
-          aspectRatio: 7 / 12,
-          maxWidth: "100%",
-          maxHeight: "85%",
-          border: "1px solid black",
-        }}
-      ></canvas>
-      <div className="hr-tile">
+    <div className="wrapper">
+      <div className={style.title}>
+        <h1>Shen.AI SDK</h1>
+        <h2>React + Vite example</h2>
+      </div>
+      <canvas id="mxcanvas"></canvas>
+      <div className={style["hr-tile"]}>
         Current Heart Rate: <br />
-        {/* <strong>{hr ? `${hr} BPM` : "0"}</strong> */}
+        <strong>{hr ? `${hr} BPM` : "-"}</strong>
       </div>
     </div>
   );

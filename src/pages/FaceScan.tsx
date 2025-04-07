@@ -776,7 +776,7 @@ const FaceScan = () => {
               style={{ width: "100%", height: "100%" }}
             ></iframe>  */}
 
-            <ShenaiApp />
+            {/* <ShenaiApp /> */}
           </div>
 
           <Button
@@ -1935,6 +1935,8 @@ const FaceScan = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
+
+      <ShenaiApp />
 
       <main className="py-6">
         <div className="container mx-auto px-4 mb-6">

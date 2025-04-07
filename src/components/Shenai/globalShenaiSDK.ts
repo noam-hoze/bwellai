@@ -4,21 +4,6 @@ let sdkPromise: Promise<ShenaiSDK> | null = null;
 let sdkInstance: ShenaiSDK | null = null;
 
 const API_KEY = "54b5be95e558424984258cac146a1fbf";
-const initializationSettings = {
-  showUserInterface: true,
-  showFacePositioningOverlay: true,
-  showVisualWarnings: true,
-  enableCameraSwap: true,
-  showFaceMask: true,
-  showBloodFlow: true,
-  hideShenaiLogo: true,
-  enableStartAfterSuccess: true,
-  enableSummaryScreen: false,
-  enableHealthRisks: true,
-  showOutOfRangeResultIndicators: true,
-  showTrialMetricLabels: true,
-  enableFullFrameProcessing: false,
-};
 
 // This function returns the same Promise every time
 export function getShenaiSDK() {
@@ -30,7 +15,7 @@ export function getShenaiSDK() {
     }).then((shenai) => {
       // Initialize once loaded
       return new Promise<ShenaiSDK>((resolve, reject) => {
-        shenai.initialize(API_KEY, "", initializationSettings, (result) => {
+        shenai.initialize(API_KEY, "", {}, (result) => {
           if (result === shenai.InitializationResult.OK) {
             console.log("Shen.AI initialized (license activated)");
             sdkInstance = shenai;

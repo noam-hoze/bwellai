@@ -2,7 +2,6 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { ShenaiSDK } from "../../../public/shenai-sdk";
 import { getShenaiSDK, destroyShenaiSDK } from "./globalShenaiSDK";
-import { getEnumName } from "../../utils/shenaiHelper";
 
 const ShenaiContext = createContext<ShenaiSDK | null>(null);
 
@@ -47,21 +46,6 @@ export function useRealtimeHeartRate() {
 
     const intervalId = setInterval(() => {
       const rate = sdk.getHeartRate10s();
-      // const measurementState = sdk.getMeasurementState();
-      // const measurementProgressPercentage =
-      //   sdk.getMeasurementProgressPercentage();
-
-      // console.log(
-      //   getEnumName(sdk?.MeasurementState, measurementState, "UNKNOWN")
-      // );
-
-      // if ( getEnumName(
-      //   sdk?.MeasurementState,
-      //   measurementState,
-      //   "UNKNOWN"
-      // ) === "FINISHED") {
-
-      // }
       if (rate !== null) {
         setHeartRate(rate);
       }
