@@ -3,6 +3,7 @@ import {
   getCreateUserWalletFetcher,
   getUserWalletBalanceFetcher,
   getUserWalletFetcher,
+  getUserWalletMonthlyBalanceFetcher,
   getUserWalletTransactionFetcher,
 } from "../../api/fetcher/wallet/user-wallet";
 
@@ -53,6 +54,25 @@ export const useGetUserWalletBalance = ({
 
   return {
     data: data?.data?.payload,
+    error,
+    isError,
+    isLoading,
+    isSuccess,
+    refetch,
+  };
+};
+export const useGetUserWalletMonthlyBalance = () => {
+  const { data, error, isError, isLoading, isSuccess, refetch } = useQuery({
+    queryKey: ["get-user-wallet-balance-monthly-v4"],
+    queryFn: () => getUserWalletMonthlyBalanceFetcher(),
+    //Keep refetching every 5 seconds while we don't stop it
+    // refetchInterval: refetchIntervalInBackground ? 5000 : false,
+    // refetchIntervalInBackground: refetchIntervalInBackground,
+    // enabled: isAuthenticated,
+  });
+
+  return {
+    data: data?.data,
     error,
     isError,
     isLoading,

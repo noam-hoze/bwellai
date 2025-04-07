@@ -79,7 +79,7 @@ interface ProductData {
 const FoodScanAnalysis = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const [product, setProduct] = useState<ProductData | null>(null);
+  const [product, setProduct] = useState(null);
   const [expandedConcerns, setExpandedConcerns] = useState<
     Record<number, boolean>
   >({});
@@ -440,7 +440,7 @@ const FoodScanAnalysis = () => {
               <DualProgressBar
                 currentValue={product.totalDailyProtein}
                 addedValue={product?.protein?.quantity}
-                maxValue={dailyGoals.protein.max}
+                maxValue={product?.requiredMicronutrientsBalance?.protein}
                 unit="g"
                 label="Protein"
               />
@@ -448,9 +448,16 @@ const FoodScanAnalysis = () => {
               <DualProgressBar
                 currentValue={product.totalDailyCarbs}
                 addedValue={product?.carbohydrates?.quantity}
-                maxValue={dailyGoals.sugar.max}
+                maxValue={product.requiredMicronutrientsBalance?.carbs}
                 unit="g"
-                label="Sugar"
+                label="carbs"
+              />
+              <DualProgressBar
+                currentValue={product.totalDailyFats}
+                addedValue={product?.fats?.quantity}
+                maxValue={product.requiredMicronutrientsBalance?.fat}
+                unit="g"
+                label="Fat"
               />
             </div>
           </div>

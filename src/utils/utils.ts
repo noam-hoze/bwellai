@@ -70,11 +70,22 @@ export const calculatedSleepPercentage = ({
 };
 
 const calorieNumberMultiplier = {
-  never: 1.2,
-  rarely: 1.3,
-  weekly: 1.5,
-  daily: 1.7,
-  intensDeaily: 1.9,
+  sedentary_adult: 1.2,
+  lightly_active: 1.375,
+  moderately_active: 1.55,
+  very_active: 1.725,
+  super_active: 1.9,
+};
+
+const calculateBMR = ({ weight, height, age, gender }) => {
+  let bmr = 0;
+  if (gender === "male") {
+    bmr = 10 * weight + 6.25 * height - 5 * age + 5;
+  } else {
+    bmr = 10 * weight + 6.25 * height - 5 * age - 161;
+  }
+
+  return bmr;
 };
 
 export const calorieNumberDisplayed = ({
@@ -93,19 +104,79 @@ export const calorieNumberDisplayed = ({
   let bmr = 0;
   let multiplier = 1.5;
 
-  console.log(gender, weight, height, age, frequency);
+  bmr = calculateBMR({ weight, height, age, gender });
 
-  if (gender === "male") {
-    bmr = 10 * weight + 6.25 * height - 5 * age + 5;
-  } else {
-    bmr = 10 * weight + 6.25 * height - 5 * age - 161;
-  }
-
-  if (frequency) {
+  if (frequency && calorieNumberMultiplier[frequency]) {
     multiplier = calorieNumberMultiplier[frequency];
   }
 
   return bmr * multiplier;
+};
+
+const MicronutrientsBalanceMap = {
+  ObeseBMI: {
+    fat: 45, // 45
+    protein: 2.2, // 2.2
+    carbs: 25, // 50%
+  },
+  aging: {
+    fat: 40, // 40
+    protein: 1.9, // 1.9
+    carbs: 40, // 40%
+  },
+  GeneralHealthyAdult: {
+    fat: 40, // 40%
+    protein: 1.4, // 1.4
+    carbs: 45, // 45%
+  },
+};
+
+export const requiredMicronutrientsBalanceDisplayed = ({
+  weight,
+  calorie,
+  BMI,
+  age,
+}: {
+  weight: number;
+  calorie: number;
+  BMI: number;
+  age: number;
+}) => {
+  if (BMI >= 30) {
+    return {
+      protein: Math.round(MicronutrientsBalanceMap?.ObeseBMI?.protein * weight),
+      fat: Math.round(
+        (MicronutrientsBalanceMap?.ObeseBMI?.fat * calorie) / 100 / 9
+      ),
+      carbs: Math.round(
+        (MicronutrientsBalanceMap?.ObeseBMI?.carbs * calorie) / 100 / 4
+      ),
+    };
+  } else if (age >= 60) {
+    return {
+      protein: Math.round(MicronutrientsBalanceMap?.aging?.protein * weight),
+      fat: Math.round(
+        (MicronutrientsBalanceMap?.aging?.fat * calorie) / 100 / 9
+      ),
+      carbs: Math.round(
+        (MicronutrientsBalanceMap?.aging?.carbs * calorie) / 100 / 4
+      ),
+    };
+  } else {
+    return {
+      protein: Math.round(
+        MicronutrientsBalanceMap?.GeneralHealthyAdult?.protein * weight
+      ),
+      fat: Math.round(
+        (MicronutrientsBalanceMap?.GeneralHealthyAdult?.fat * calorie) / 100 / 9
+      ),
+      carbs: Math.round(
+        (MicronutrientsBalanceMap?.GeneralHealthyAdult?.carbs * calorie) /
+          100 /
+          4
+      ),
+    };
+  }
 };
 
 export function convertSecondsToHHMM(seconds: number): string {
@@ -116,3 +187,24 @@ export function convertSecondsToHHMM(seconds: number): string {
     "0"
   )}`;
 }
+
+export const handleCopyToClipboard = (text) => {
+  navigator.clipboard
+    .writeText(text)
+    .then(() => {
+      return true;
+    })
+    .catch(() => {
+      return false;
+    });
+};
+
+export const getNextGoalValue = ({
+  current,
+  skipValue,
+}: {
+  current: number;
+  skipValue: number;
+}) => {
+  return (Math.floor(current / skipValue) + 1) * skipValue;
+};

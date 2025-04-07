@@ -24,6 +24,7 @@ import MealEditPage from "./pages/MealEdit";
 import FoodScanAnalysis from "./pages/FoodScanAnalysis";
 import FaceScan from "./pages/FaceScan";
 import Connections from "./pages/Connections";
+import Wallet from "./pages/Wallet";
 
 const queryClient = new QueryClient();
 
@@ -56,7 +57,7 @@ const App = () => (
             <Route path="/food-scan-analysis" element={<FoodScanAnalysis />} />
             <Route path="/risk-score" element={<NotFound />} />
             <Route path="/connections" element={<Connections />} />
-            <Route path="/wallet" element={<NotFound />} />
+            <Route path="/wallet" element={<Wallet />} />
             <Route path="/settings" element={<Settings />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/face-scan" element={<FaceScan />} />
