@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, lazy } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -67,7 +67,8 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import ShenaiApp from "@/components/Shenai/ShenaiApp";
+
+const ShenaiApp = lazy(() => import("@/components/Shenai/ShenaiApp"));
 
 // Define all possible scan steps
 type ScanStep =
