@@ -271,6 +271,34 @@ const DailyTabContent = ({
                   }
                 />
               </CarouselItem>
+
+              <CarouselItem>
+                <SleepCycleAnimated
+                  sleepData={formattedSleepData || []}
+                  title="Sleep Cycle Animation"
+                  startTime={formatTo12Hour(
+                    wearableDailyData?.finalDailySpikeSleepDataV4
+                      ?.bedtime_start || new Date()
+                  )}
+                  endTime={formatTo12Hour(
+                    wearableDailyData?.finalDailySpikeSleepDataV4
+                      ?.bedtime_end || new Date()
+                  )}
+                />
+              </CarouselItem>
+              <CarouselItem>
+                <SleepCycleClock
+                  sleepData={formattedSleepData || []}
+                  startTime={formatTo12Hour(
+                    wearableDailyData?.finalDailySpikeSleepDataV4
+                      ?.bedtime_start || new Date()
+                  )}
+                  endTime={formatTo12Hour(
+                    wearableDailyData?.finalDailySpikeSleepDataV4
+                      ?.bedtime_end || new Date()
+                  )}
+                />
+              </CarouselItem>
             </CarouselContent>
             <CarouselPrevious className="left-1" />
             <CarouselNext className="right-1" />

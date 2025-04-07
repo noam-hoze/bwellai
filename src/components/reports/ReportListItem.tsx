@@ -1,22 +1,44 @@
-
 import React from "react";
 import { Link } from "react-router-dom";
-import { Eye, File, FileText, FileImage, FileIcon } from "lucide-react";
+import {
+  Eye,
+  File,
+  FileText,
+  FileImage,
+  FileIcon,
+  AlertCircle,
+  Trash2,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 interface Report {
   id: number;
   title: string;
-  date: string;
+  dateUploaded: string;
+  testDate: string;
   fileType: string;
   fileSize: string;
   url: string;
+  concernCount?: number;
 }
 
 interface ReportListItemProps {
   report: Report;
+  onDelete?: (id: number) => void;
 }
 
-const ReportListItem = ({ report }: ReportListItemProps) => {
+const ReportListItem = ({ report, onDelete }: ReportListItemProps) => {
   // Choose icon based on file type
   const getFileIcon = () => {
     switch (report.fileType) {
@@ -32,22 +54,74 @@ const ReportListItem = ({ report }: ReportListItemProps) => {
     }
   };
 
+  const handleDelete = () => {
+    if (onDelete) {
+      onDelete(report.id);
+    }
+  };
+
   return (
-    <Link to={report.url} className="block hover:bg-gray-50 transition-colors">
+    <div className="hover:bg-gray-50 transition-colors">
       <div className="p-5 flex justify-between items-center">
-        <div className="flex-1">
-          <h3 className="text-lg font-semibold text-gray-800">{report.title}</h3>
-          <p className="text-gray-500 mt-1">{report.date}</p>
-          <div className="flex items-center mt-2 text-gray-500 text-sm">
-            {getFileIcon()}
-            <span className="ml-1">{report.fileType} • {report.fileSize}</span>
+        <Link to={report.url} className="flex-1">
+          <div className="flex items-center gap-2">
+            <h3 className="text-lg font-semibold text-gray-800">
+              {report.title}
+            </h3>
+            {report.concernCount > 0 && (
+              <div className="px-2 py-0.5 bg-red-50 text-red-600 text-xs font-medium rounded-full flex items-center">
+                <AlertCircle className="h-3 w-3 mr-1" />
+                {report.concernCount}{" "}
+                {report.concernCount === 1 ? "concern" : "concerns"}
+              </div>
+            )}
           </div>
-        </div>
-        <div className="ml-4">
-          <Eye className="h-6 w-6 text-gray-500" />
+          <div className="flex flex-col sm:flex-row sm:gap-6 mt-1">
+            <p className="text-gray-500">
+              <span className="text-gray-400 text-sm">Date uploaded:</span>{" "}
+              {report.dateUploaded}
+            </p>
+            <p className="text-gray-500">
+              <span className="text-gray-400 text-sm">Test date:</span>{" "}
+              {report.testDate}
+            </p>
+          </div>
+        </Link>
+        <div className="flex items-center gap-2">
+          <Link to={report.url}>
+            <Button variant="ghost" size="icon" aria-label="View report">
+              <Eye className="h-5 w-5 text-gray-500" />
+            </Button>
+          </Link>
+
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button variant="ghost" size="icon" aria-label="Delete report">
+                <Trash2 className="h-5 w-5 text-gray-500 hover:text-red-500" />
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Delete Report</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Are you sure you want to delete "{report.title}"? This action
+                  cannot be undone.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={handleDelete}
+                  className="bg-red-500 hover:bg-red-600"
+                >
+                  Delete
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
       </div>
-    </Link>
+    </div>
   );
 };
 
