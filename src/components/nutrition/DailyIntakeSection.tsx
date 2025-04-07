@@ -6,92 +6,98 @@ interface NutrientProgressProps {
   value: number;
   grams: number;
   currentValue: number;
+  caloriesMultiplier?: number;
 }
 
 const NutrientProgressv2 = ({
-  percentage,
   currentAmount,
   goalAmount,
   unit,
   title,
+  caloriesMultiplier,
 }) => {
   const [showCalories, setShowCalories] = useState(false);
 
   // Calculate percentage of goal reached
-  // const percentage = Math.round((currentAmount / goalAmount) * 100);
+  const percentage = Math.round((currentAmount / goalAmount) * 100);
+
+  // Calculate calories (1g of fat = 9 kcal)
+  // const caloriesMultiplier = 9;
+  const currentCalories = Math.round(currentAmount * caloriesMultiplier);
+  const goalCalories = Math.round(goalAmount * caloriesMultiplier);
 
   const toggleUnit = () => {
     setShowCalories(!showCalories);
   };
   return (
-    <div
-      className="relative flex h-44 w-44 items-center justify-center cursor-pointer"
-      onClick={toggleUnit}
-    >
-      {/* Circular progress indicator */}
-      <svg className="h-full w-full" viewBox="0 0 100 100">
-        {/* Background circle */}
-        <circle
-          cx="50"
-          cy="50"
-          r="42"
-          stroke="#e2e8f0"
-          strokeWidth="8"
-          fill="none"
-        />
-        {/* Define the gradient */}
-        <defs>
-          <linearGradient
-            id="progressGradient"
-            gradientUnits="userSpaceOnUse"
-            x1="0"
-            y1="0"
-            x2="0"
-            y2="1"
-          >
-            <stop offset="0.5" stop-color="#FEDF89" /> {/* Yellow at 50% */}
-            <stop offset="0.5" stop-color="#53A15E" /> {/* Green at 50% */}
-          </linearGradient>
-        </defs>
-        {/* Progress arc */}
-        <circle
-          cx="50"
-          cy="50"
-          r="42"
-          stroke={percentage <= 50 ? "#FEDF89" : "url(#progressGradient)"}
-          strokeWidth="8"
-          fill="none"
-          strokeLinecap="round"
-          strokeDasharray={`${percentage * 2.64}px 264px`}
-          transform="rotate(-90 50 50)"
-        />
-      </svg>
+    <div className="flex flex-col items-center justify-center py-6">
+      <div
+        className="relative flex h-44 w-44 items-center justify-center cursor-pointer"
+        onClick={toggleUnit}
+      >
+        {/* Circular progress indicator */}
+        <svg className="h-full w-full" viewBox="0 0 100 100">
+          {/* Background circle */}
+          <circle
+            cx="50"
+            cy="50"
+            r="42"
+            stroke="#e2e8f0"
+            strokeWidth="8"
+            fill="none"
+          />
+          {/* Define the gradient */}
+          <defs>
+            <linearGradient
+              id="progressGradient"
+              gradientUnits="userSpaceOnUse"
+              x1="0"
+              y1="0"
+              x2="0"
+              y2="1"
+            >
+              <stop offset="0.5" stop-color="#FEDF89" /> {/* Yellow at 50% */}
+              <stop offset="0.5" stop-color="#53A15E" /> {/* Green at 50% */}
+            </linearGradient>
+          </defs>
+          {/* Progress arc */}
+          <circle
+            cx="50"
+            cy="50"
+            r="42"
+            stroke={percentage <= 50 ? "#FEDF89" : "url(#progressGradient)"}
+            strokeWidth="8"
+            fill="none"
+            strokeLinecap="round"
+            strokeDasharray={`${percentage * 2.64}px 264px`}
+            transform="rotate(-90 50 50)"
+          />
+        </svg>
 
-      {/* Content inside the circle */}
-      <div className="absolute flex flex-col items-center justify-center w-full px-2">
-        <span className="text-3xl font-bold mb-1">{percentage}%</span>
-        <div className="text-sm text-muted-foreground w-full h-6 overflow-hidden">
-          {/* {showCalories ? (
-            <div className="text-center">
-              {currentCalories} / {goalCalories} kcal
-            </div>
-          ) : (
-            <div className="text-center">
-              {currentAmount}
-              {unit} / {goalAmount}
-              {unit}
-            </div>
-          )} */}
-          <div className="text-center">
-            {currentAmount}
-            {unit} / {goalAmount}
-            {unit}
+        {/* Content inside the circle */}
+        <div className="absolute flex flex-col items-center justify-center w-full px-2">
+          <span className="text-3xl font-bold mb-1">{percentage}%</span>
+          <div className="text-sm text-muted-foreground w-full h-6 overflow-hidden">
+            {showCalories ? (
+              <div className="text-center">
+                {currentCalories} / {goalCalories} kcal
+              </div>
+            ) : (
+              <div className="text-center">
+                {currentAmount}
+                {unit} / {goalAmount}
+                {unit}
+              </div>
+            )}
           </div>
         </div>
       </div>
 
       <div className="mt-4 text-center">
         <div className="text-xl font-medium">{title}</div>
+        <div className="text-sm text-muted-foreground mt-2">
+          Click to {showCalories ? "show grams" : "show calories"}
+        </div>
       </div>
     </div>
   );
@@ -193,7 +199,7 @@ const DailyIntakeSection = ({
     <section className="mb-10">
       <h2 className="text-2xl font-bold mb-6">Today's Intake</h2>
       <div className="flex justify-between items-center gap-4">
-        <NutrientProgress
+        {/* <NutrientProgress
           label="Fat"
           value={Number(
             (
@@ -225,6 +231,30 @@ const DailyIntakeSection = ({
           )}
           grams={requiredMicronutrientsBalance?.carbs}
           currentValue={totalDailyCarbs?.toFixed(0)}
+        /> */}
+
+        <NutrientProgressv2
+          currentAmount={totalDailyFats}
+          goalAmount={requiredMicronutrientsBalance?.fat}
+          unit="g"
+          title="Fat"
+          caloriesMultiplier={9}
+        />
+
+        <NutrientProgressv2
+          currentAmount={totalDailyProtein}
+          goalAmount={requiredMicronutrientsBalance?.protein}
+          unit="g"
+          title="Protein"
+          caloriesMultiplier={4}
+        />
+
+        <NutrientProgressv2
+          currentAmount={totalDailyCarbs}
+          goalAmount={requiredMicronutrientsBalance?.carbs}
+          unit="g"
+          title="Carbs"
+          caloriesMultiplier={4}
         />
       </div>
 
