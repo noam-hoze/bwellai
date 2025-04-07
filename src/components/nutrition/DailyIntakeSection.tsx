@@ -132,7 +132,7 @@ const DailyIntakeSection = ({
         <div className="flex justify-between items-center mb-2">
           <h3 className="text-lg font-semibold">Calorie Consumption</h3>
           <span className="text-sm font-medium">
-            {totalDailyCalories}/{totalDailyRequiredCalories} kcal
+            {totalDailyCalories}/{totalDailyRequiredCalories?.toFixed(0)} kcal
           </span>
         </div>
 
@@ -190,7 +190,7 @@ const DailyIntakeSection = ({
             }}
           >
             <span className="text-sm font-medium">
-              {totalDailyRequiredCalories}
+              {totalDailyRequiredCalories?.toFixed(0)}
             </span>
             <span>Goal</span>
           </div>
