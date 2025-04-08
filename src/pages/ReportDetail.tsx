@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import Header from "@/components/layout/Header";
 import { Card, CardContent } from "@/components/ui/card";
@@ -15,11 +15,36 @@ import BloodTestReport from "@/components/reports/BloodTestReport";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import PerspectiveSelector from "@/components/reports/PerspectiveSelector";
 import AIDisclaimer from "@/components/reports/AIDisclaimer";
+import { useGetUserPreviousReportData } from "@/service/hooks/ocr/useGetReportById";
+import { formatDateToShortMonth } from "@/utils/utils";
+import {
+  useGetUserBiomarkerReportData,
+  useGetUserPanelAnalysisReportData,
+} from "@/service/hooks/ocr/useFileUpload";
 
 const ReportDetail = () => {
   const { id } = useParams();
   const [activeTab, setActiveTab] = useState("report");
-  const [perspective, setPerspective] = useState("conventional");
+  const [perspective, setPerspective] = useState("MODERN_MEDICINE");
+
+  const [processingReport, setProcessingReport] = useState(false);
+  const [biomarkerResponses, setBiomarkerResponses] = useState({});
+  const [panelAnalysisResponses, setPanelAnalysisResponses] = useState({});
+
+  const [biomarkerDataStatus, setBiomarkerDataStatus] = useState({
+    isLoading: false,
+    isSuccess: false,
+    isError: false,
+  });
+  const [panelAnalysisDataStatus, setPanelAnalysisDataStatus] = useState({
+    isLoading: false,
+    isSuccess: false,
+    isError: false,
+  });
+
+  const [chunkApiStatus, setChunkApiStatus] = useState(false);
+  const [chunkPanelAnalysisApiStatus, setChunkPanelAnalysisApiStatus] =
+    useState(false);
 
   // This would be replaced with actual data fetching logic
   const report = {
@@ -34,6 +59,194 @@ const ReportDetail = () => {
     collectionDate: "January 10, 2025",
   };
 
+  const {
+    data: userPreviousData,
+    isError: userPreviousIsError,
+    isSuccess: userPreviousIsSuccess,
+    isLoading: userPreviousIsLoading,
+    // status: userPreviousIsStatus,
+  } = useGetUserPreviousReportData(perspective, id, true, "English");
+
+  const { mutateAsync: userBiomarkerReportMutate } =
+    useGetUserBiomarkerReportData();
+
+  const { mutateAsync: userPanelAnalysisReportMutate } =
+    useGetUserPanelAnalysisReportData();
+
+  useEffect(() => {
+    const processBiomarkers = async () => {
+      if (biomarkerDataStatus?.isLoading) return; // Prevent duplicate calls
+
+      setBiomarkerDataStatus({
+        isLoading: true,
+        isSuccess: false,
+        isError: false,
+      });
+
+      try {
+        const chunkArray = (array: any[], size: number) =>
+          Array.from({ length: Math.ceil(array?.length / size) }, (_, index) =>
+            array.slice(index * size, index * size + size)
+          );
+
+        const responseMap: Record<string, any> = {};
+        const processedTests = new Set<string>(); // Track processed test names
+
+        for (const batch of chunkArray(
+          userPreviousData?.data?.resultData?.flatMap((data) => {
+            return [...data.biomarker];
+          }),
+          5
+        )) {
+          const filteredBatch = batch.filter(
+            (biomarker) => !processedTests?.has(biomarker.testName)
+          );
+
+          const responses = await Promise.all(
+            filteredBatch?.map((biomarker) =>
+              userBiomarkerReportMutate({
+                // prompt: biomarker,
+                prompt: {
+                  testName: biomarker?.testName,
+                  testResultValue: biomarker?.testResultValue,
+                  testMeasuringUnit: biomarker?.testMeasuringUnit,
+                  minParameterValue: biomarker?.minParameterValue,
+                  maxParameterValue: biomarker?.maxParameterValue,
+                  // text: biomarker?.text,
+                },
+                language: "English",
+                reportId: userPreviousData?.reportId,
+                testName: biomarker?.testName,
+                userId: userPreviousData?.userid,
+                perspective: "MODERN_MEDICINE",
+              })
+            )
+          );
+
+          responses.forEach((res) => {
+            const testName = res?.data?.testName;
+            if (testName) {
+              responseMap[testName] = res?.data;
+              processedTests.add(testName); // Mark this test name as processed
+            }
+          });
+        }
+
+        setBiomarkerResponses(responseMap); // Store mapped responses in state
+        setProcessingReport(false);
+        setChunkApiStatus(false);
+        setBiomarkerDataStatus({
+          isLoading: false,
+          isSuccess: true,
+          isError: false,
+        });
+      } catch (error) {
+        setBiomarkerDataStatus({
+          isLoading: false,
+          isSuccess: false,
+          isError: true,
+        });
+      }
+    };
+
+    console.log(userPreviousData?.data?.resultData?.length > 0, chunkApiStatus);
+
+    if (userPreviousData?.data?.resultData?.length > 0 && chunkApiStatus) {
+      processBiomarkers();
+    }
+  }, [userPreviousData?.data?.resultData, chunkApiStatus]);
+
+  useEffect(() => {
+    const processBiomarkers = async () => {
+      if (panelAnalysisDataStatus?.isLoading) return; // Prevent duplicate calls
+      setPanelAnalysisDataStatus({
+        isLoading: true,
+        isSuccess: false,
+        isError: false,
+      });
+
+      try {
+        const chunkArray = (array: any[], size: number) =>
+          Array.from({ length: Math.ceil(array?.length / size) }, (_, index) =>
+            array.slice(index * size, index * size + size)
+          );
+
+        const responseMap: Record<string, any> = {};
+        const processedTests = new Set<string>(); // Track processed test names
+
+        for (const batch of chunkArray(
+          userPreviousData?.data?.resultData?.flatMap((data) => {
+            return {
+              panel: data?.profile?.name,
+              test: [...data.biomarker],
+            };
+          }),
+          3
+        )) {
+          const responses = await Promise.all(
+            batch?.map((d) =>
+              userPanelAnalysisReportMutate({
+                panel: d?.panel,
+                test: d?.test?.map((p) => {
+                  return {
+                    testName: p?.testName,
+                    testResultValue: p?.testResultValue,
+                    testMeasuringUnit: p?.testMeasuringUnit,
+                    minParameterValue: p?.minParameterValue,
+                    maxParameterValue: p?.maxParameterValue,
+                    result_status: p?.result_status,
+                    text: p?.text,
+                  };
+                }),
+                reportId: userPreviousData?.reportId,
+                language: "English",
+                perspective: "MODERN_MEDICINE",
+              })
+            )
+          );
+
+          responses.forEach((res) => {
+            const panel = res?.data?.panel;
+            if (panel) {
+              responseMap[panel] = res?.data;
+              processedTests.add(panel); // Mark this test name as processed
+            }
+          });
+        }
+
+        setPanelAnalysisResponses(responseMap); // Store mapped responses in state
+        setChunkPanelAnalysisApiStatus(false);
+        setPanelAnalysisDataStatus({
+          isLoading: false,
+          isSuccess: true,
+          isError: false,
+        });
+      } catch (error) {
+        setPanelAnalysisDataStatus({
+          isLoading: false,
+          isSuccess: false,
+          isError: true,
+        });
+      }
+    };
+
+    if (
+      userPreviousData?.data?.resultData?.length > 0 &&
+      chunkPanelAnalysisApiStatus
+    ) {
+      processBiomarkers();
+    }
+  }, [userPreviousData?.data?.resultData, chunkPanelAnalysisApiStatus]);
+
+  useEffect(() => {
+    if (userPreviousData && userPreviousIsSuccess) {
+      if (userPreviousData?.data?.resultData?.length > 0) {
+        setChunkApiStatus(true);
+        setChunkPanelAnalysisApiStatus(true);
+      }
+    }
+  }, [userPreviousData, userPreviousIsSuccess]);
+
   return (
     <div className="min-h-screen bg-white">
       <Header />
@@ -47,19 +260,26 @@ const ReportDetail = () => {
                 <ArrowLeft className="h-5 w-5" />
               </Button>
             </Link>
-            <h1 className="text-3xl font-bold">{report.title}</h1>
+            <h1 className="text-3xl font-bold">
+              {userPreviousData?.reportName}
+            </h1>
           </div>
 
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
             <div>
               <div className="flex items-center">
-                <p className="text-gray-500 mr-3">Date: {report.date}</p>
+                <p className="text-gray-500 mr-3">
+                  Date:{" "}
+                  {formatDateToShortMonth(
+                    userPreviousData?.uploadTime || new Date()
+                  )}
+                </p>
                 <span className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">
                   Verified
                 </span>
               </div>
               <p className="text-gray-500 text-sm mt-1">
-                Order #: {report.orderNumber}
+                Order #: {userPreviousData?.reportId}
               </p>
             </div>
             <div className="flex gap-2">
@@ -103,8 +323,11 @@ const ReportDetail = () => {
               </TabsList>
 
               <TabsContent value="report">
-                {report.type === "blood-test" ? (
-                  <BloodTestReport perspective={perspective} />
+                {/* {report.type === "blood-test" ? (
+                  <BloodTestReport
+                    perspective={perspective}
+                    panelAnalysisResponses={panelAnalysisResponses}
+                  />
                 ) : (
                   <div className="p-4 min-h-[400px]">
                     <p>{report.content}</p>
@@ -114,7 +337,11 @@ const ReportDetail = () => {
                       </p>
                     </div>
                   </div>
-                )}
+                )} */}
+                <BloodTestReport
+                  perspective={perspective}
+                  panelAnalysisResponses={panelAnalysisResponses}
+                />
               </TabsContent>
 
               <TabsContent value="details">
@@ -129,7 +356,7 @@ const ReportDetail = () => {
                           <tr>
                             <td className="py-2 text-gray-600">Lab Name:</td>
                             <td className="py-2 font-medium">
-                              {report.labName}
+                              {userPreviousData.reportName}
                             </td>
                           </tr>
                           <tr>
@@ -150,7 +377,11 @@ const ReportDetail = () => {
                           </tr>
                           <tr>
                             <td className="py-2 text-gray-600">Report Date:</td>
-                            <td className="py-2 font-medium">{report.date}</td>
+                            <td className="py-2 font-medium">
+                              {formatDateToShortMonth(
+                                userPreviousData?.uploadTime || new Date()
+                              )}
+                            </td>
                           </tr>
                         </tbody>
                       </table>
@@ -169,7 +400,7 @@ const ReportDetail = () => {
                           <tr>
                             <td className="py-2 text-gray-600">Sample ID:</td>
                             <td className="py-2 font-medium">
-                              SAMPLE-{id === "1" ? "54321" : "12345"}
+                              {userPreviousData?.reportId}
                             </td>
                           </tr>
                           <tr>
