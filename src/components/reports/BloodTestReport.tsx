@@ -38,6 +38,7 @@ import {
 import { AnimatePresence, motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import TestInformationTooltip from "./TestInformationTooltip";
+import ReportSpectrum from "../ui/ReportSpectrum/ReportSpectrum";
 
 interface BloodTestResult {
   id: string;
@@ -1488,7 +1489,32 @@ const BloodTestReport = ({
                                       </div>
 
                                       {/* Enhanced range bar */}
-                                      {renderEnhancedRangeBar(result)}
+                                      {/* {renderEnhancedRangeBar(result)} */}
+
+                                      <div
+                                        style={{
+                                          width: "100%",
+                                          display: "flex",
+                                          alignItems: "center",
+                                          justifyContent: "center",
+                                          marginTop: "1.5em",
+                                          marginBottom: "2em",
+                                        }}
+                                      >
+                                        <ReportSpectrum
+                                          spectrum={
+                                            biomarkerResponses?.[
+                                              result?.testName
+                                            ]?.spectrumRange
+                                          }
+                                          rangeObj={result?.rangeObj}
+                                          max={result?.maxParameterValue}
+                                          min={result?.minParameterValue}
+                                          testResultValue={
+                                            result?.testResultValue
+                                          }
+                                        />
+                                      </div>
 
                                       <div className="text-sm px-4 py-3 rounded-lg bg-gray-50 border border-gray-100">
                                         {result?.signalText === "normal" ? (
