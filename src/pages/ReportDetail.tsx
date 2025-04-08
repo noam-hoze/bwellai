@@ -341,6 +341,7 @@ const ReportDetail = () => {
                 <BloodTestReport
                   perspective={perspective}
                   userPreviousData={userPreviousData}
+                  biomarkerResponses={biomarkerResponses}
                   panelAnalysisResponses={panelAnalysisResponses}
                 />
               </TabsContent>
