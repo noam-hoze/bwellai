@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Header from "@/components/layout/Header";
 import { Card } from "@/components/ui/card";
 import { Upload, Eye, FileText, Shield } from "lucide-react";
@@ -25,6 +25,11 @@ import PrivacyBanner from "@/components/reports/PrivacyBanner";
 import PrivacyIndicator from "@/components/reports/PrivacyIndicator";
 import ReportProcessingAnimation from "@/components/reports/ReportProcessingAnimation";
 import { useGetUserLastReportIDsData } from "@/service/hooks/ocr/useGetReportById";
+import {
+  useGetUserBiomarkerReportData,
+  useGetUserPanelAnalysisReportData,
+  useUserReportFileUpload,
+} from "@/service/hooks/ocr/useFileUpload";
 
 // Sample report data
 const initialReports = [
@@ -87,23 +92,296 @@ const Reports = () => {
   const [sortOrder, setSortOrder] = useState("newest");
   const [showPrivacyBanner, setShowPrivacyBanner] = useState(true);
   const [processingReport, setProcessingReport] = useState(false);
+
+  const [capturedImage, setCapturedImage] = useState<string | null>(null);
+  const [selectFile, setSelectedFile] = useState<any>(null);
+
+  const [biomarkerResponses, setBiomarkerResponses] = useState({});
+  const [panelAnalysisResponses, setPanelAnalysisResponses] = useState({});
+
+  const [chunkApiStatus, setChunkApiStatus] = useState(false);
+  const [chunkPanelAnalysisApiStatus, setChunkPanelAnalysisApiStatus] =
+    useState(false);
+
+  const [fileUploadStatus, setFileUploadStatus] = useState({
+    isLoading: false,
+    isSuccess: false,
+    isError: false,
+  });
+  const [biomarkerDataStatus, setBiomarkerDataStatus] = useState({
+    isLoading: false,
+    isSuccess: false,
+    isError: false,
+  });
+  const [panelAnalysisDataStatus, setPanelAnalysisDataStatus] = useState({
+    isLoading: false,
+    isSuccess: false,
+    isError: false,
+  });
+
   const { toast } = useToast();
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const {
+    data: userReportFileUploadData,
+    error: userReportFileUploadError,
+    isPending: userReportFileUploadPending,
+    isSuccess: userReportFileUploadSuccess,
+    isError: userReportFileUploadIsError,
+    mutate: userReportFileUploadMutate,
+  } = useUserReportFileUpload();
 
   const {
     data: userLastReportIDsData,
-    // isError: userLastReportIDsError,
     isSuccess: userLastReportIDsSuccess,
-    // isLoading: userLastReportIDsLoading,
-    // status: userPreviousIsStatus,
     refetch: userPreviousIsRefetch,
   } = useGetUserLastReportIDsData(true);
 
+  const { mutateAsync: userBiomarkerReportMutate } =
+    useGetUserBiomarkerReportData();
+
+  const { mutateAsync: userPanelAnalysisReportMutate } =
+    useGetUserPanelAnalysisReportData();
+
+  useEffect(() => {
+    const processBiomarkers = async () => {
+      if (biomarkerDataStatus?.isLoading) return; // Prevent duplicate calls
+
+      setBiomarkerDataStatus({
+        isLoading: true,
+        isSuccess: false,
+        isError: false,
+      });
+
+      try {
+        const chunkArray = (array: any[], size: number) =>
+          Array.from({ length: Math.ceil(array?.length / size) }, (_, index) =>
+            array.slice(index * size, index * size + size)
+          );
+
+        const responseMap: Record<string, any> = {};
+        const processedTests = new Set<string>(); // Track processed test names
+
+        for (const batch of chunkArray(
+          userReportFileUploadData?.labReportResponse?.data?.resultData?.flatMap(
+            (data) => {
+              return [...data.biomarker];
+            }
+          ),
+          5
+        )) {
+          const filteredBatch = batch.filter(
+            (biomarker) => !processedTests?.has(biomarker.testName)
+          );
+
+          const responses = await Promise.all(
+            filteredBatch?.map((biomarker) =>
+              userBiomarkerReportMutate({
+                // prompt: biomarker,
+                prompt: {
+                  testName: biomarker?.testName,
+                  testResultValue: biomarker?.testResultValue,
+                  testMeasuringUnit: biomarker?.testMeasuringUnit,
+                  minParameterValue: biomarker?.minParameterValue,
+                  maxParameterValue: biomarker?.maxParameterValue,
+                  // text: biomarker?.text,
+                },
+                language: "English",
+                reportId: userReportFileUploadData?.reportId,
+                testName: biomarker?.testName,
+                userId: userReportFileUploadData?.labReportResponse?.userid,
+                perspective: "MODERN_MEDICINE",
+              })
+            )
+          );
+
+          responses.forEach((res) => {
+            const testName = res?.data?.testName;
+            if (testName) {
+              responseMap[testName] = res?.data;
+              processedTests.add(testName); // Mark this test name as processed
+            }
+          });
+        }
+
+        setBiomarkerResponses(responseMap); // Store mapped responses in state
+        setProcessingReport(false);
+        setChunkApiStatus(false);
+        userPreviousIsRefetch();
+        setBiomarkerDataStatus({
+          isLoading: false,
+          isSuccess: true,
+          isError: false,
+        });
+      } catch (error) {
+        setBiomarkerDataStatus({
+          isLoading: false,
+          isSuccess: false,
+          isError: true,
+        });
+      }
+    };
+
+    if (
+      userReportFileUploadData?.labReportResponse?.data?.resultData?.length >
+        0 &&
+      chunkApiStatus
+    ) {
+      processBiomarkers();
+    }
+  }, [
+    userReportFileUploadData?.labReportResponse?.data?.resultData,
+    chunkApiStatus,
+  ]);
+
+  useEffect(() => {
+    if (
+      userReportFileUploadSuccess &&
+      biomarkerDataStatus?.isSuccess &&
+      panelAnalysisDataStatus?.isSuccess
+    ) {
+      setFileUploadStatus({
+        isLoading: true,
+        isSuccess: true,
+        isError: false,
+      });
+
+      const timeoutId = setTimeout(() => {
+        setBiomarkerDataStatus({
+          isSuccess: false,
+          isError: false,
+          isLoading: false,
+        });
+        setPanelAnalysisDataStatus({
+          isSuccess: false,
+          isError: false,
+          isLoading: false,
+        });
+      }, 1500);
+      return () => clearTimeout(timeoutId);
+    }
+  }, [
+    userReportFileUploadSuccess,
+    biomarkerDataStatus?.isSuccess,
+    panelAnalysisDataStatus?.isSuccess,
+  ]);
+
+  useEffect(() => {
+    const processBiomarkers = async () => {
+      if (panelAnalysisDataStatus?.isLoading) return; // Prevent duplicate calls
+      setPanelAnalysisDataStatus({
+        isLoading: true,
+        isSuccess: false,
+        isError: false,
+      });
+
+      try {
+        const chunkArray = (array: any[], size: number) =>
+          Array.from({ length: Math.ceil(array?.length / size) }, (_, index) =>
+            array.slice(index * size, index * size + size)
+          );
+
+        const responseMap: Record<string, any> = {};
+        const processedTests = new Set<string>(); // Track processed test names
+
+        for (const batch of chunkArray(
+          userReportFileUploadData?.labReportResponse?.data?.resultData?.flatMap(
+            (data) => {
+              console.log(data);
+
+              return {
+                panel: data?.profile?.name,
+                test: [...data.biomarker],
+              };
+            }
+          ),
+          3
+        )) {
+          const responses = await Promise.all(
+            batch?.map((d) =>
+              userPanelAnalysisReportMutate({
+                panel: d?.panel,
+                test: d?.test?.map((p) => {
+                  return {
+                    testName: p?.testName,
+                    testResultValue: p?.testResultValue,
+                    testMeasuringUnit: p?.testMeasuringUnit,
+                    minParameterValue: p?.minParameterValue,
+                    maxParameterValue: p?.maxParameterValue,
+                    result_status: p?.result_status,
+                    text: p?.text,
+                  };
+                }),
+                reportId: userReportFileUploadData?.reportId,
+                language: "English",
+                perspective: "MODERN_MEDICINE",
+              })
+            )
+          );
+
+          responses.forEach((res) => {
+            const panel = res?.data?.panel;
+            if (panel) {
+              responseMap[panel] = res?.data;
+              processedTests.add(panel); // Mark this test name as processed
+            }
+          });
+        }
+
+        setPanelAnalysisResponses(responseMap); // Store mapped responses in state
+        setChunkPanelAnalysisApiStatus(false);
+        setPanelAnalysisDataStatus({
+          isLoading: false,
+          isSuccess: true,
+          isError: false,
+        });
+      } catch (error) {
+        setPanelAnalysisDataStatus({
+          isLoading: false,
+          isSuccess: false,
+          isError: true,
+        });
+      }
+    };
+
+    if (
+      userReportFileUploadData?.labReportResponse?.data?.resultData?.length >
+        0 &&
+      chunkPanelAnalysisApiStatus
+    ) {
+      processBiomarkers();
+    }
+  }, [
+    userReportFileUploadData?.labReportResponse?.data?.resultData,
+    chunkPanelAnalysisApiStatus,
+  ]);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      userReportFileUploadMutate({ PdfFile: file, language: "English" });
+      setSelectedFile(file);
+    }
+  };
+
   const handleUpload = () => {
-    setProcessingReport(true);
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+
+  const handleFileClick = (e) => {
+    e.target.value = "";
   };
 
   const handleProcessingComplete = () => {
-    setProcessingReport(false);
+    // setProcessingReport(false);
+    setFileUploadStatus({
+      isLoading: false,
+      isSuccess: false,
+      isError: false,
+    });
     // This would be implemented with actual file upload functionality
     console.log("Report processing completed");
   };
@@ -115,6 +393,24 @@ const Reports = () => {
       description: "The report has been deleted successfully.",
     });
   };
+
+  useEffect(() => {
+    if (userReportFileUploadPending) {
+      setProcessingReport(true);
+    }
+  }, [userReportFileUploadPending]);
+
+  useEffect(() => {
+    if (userReportFileUploadData && userReportFileUploadSuccess) {
+      if (
+        userReportFileUploadData?.labReportResponse?.data?.resultData?.length >
+        0
+      ) {
+        setChunkApiStatus(true);
+        setChunkPanelAnalysisApiStatus(true);
+      }
+    }
+  }, [userReportFileUploadData, userReportFileUploadSuccess]);
 
   return (
     <div className="min-h-screen bg-white">
@@ -132,12 +428,23 @@ const Reports = () => {
         {showPrivacyBanner && <PrivacyBanner />}
 
         <div className="mt-6 mb-10">
-          <Button
-            onClick={handleUpload}
-            className="w-full py-6 text-base bg-gray-800 hover:bg-gray-700 text-white rounded-xl"
-          >
-            <Upload className="mr-2 h-5 w-5" /> Upload New Report
-          </Button>
+          <div className="relative">
+            <Button
+              onClick={handleUpload}
+              className="w-full py-6 text-base bg-gray-800 hover:bg-gray-700 text-white rounded-xl"
+            >
+              <Upload className="mr-2 h-5 w-5" /> Upload New Report
+            </Button>
+
+            <input
+              type="file"
+              ref={fileInputRef}
+              className="hidden"
+              accept="*/*"
+              onChange={handleFileChange}
+              onClick={handleFileClick}
+            />
+          </div>
           <p className="text-center text-gray-500 mt-3">
             <Shield className="inline h-3.5 w-3.5 mr-1.5 text-green-600" />
             Accepted formats: PDF, JPEG, PNG, DOC. All data is encrypted.
@@ -211,9 +518,9 @@ const Reports = () => {
             <ScrollArea className="h-[550px]">
               <div className="divide-y">
                 {userLastReportIDsData?.length > 0 ? (
-                  userLastReportIDsData?.map((report) => (
+                  userLastReportIDsData?.map((report, index: number) => (
                     <ReportListItem
-                      key={report?.reportId}
+                      key={index}
                       report={report}
                       onDelete={handleDeleteReport}
                     />
