@@ -425,11 +425,13 @@ const getAbnormalResults = (results: BloodTestResult[]): BloodTestResult[] => {
 interface BloodTestReportProps {
   perspective: string;
   panelAnalysisResponses?: any;
+  userPreviousData?: any;
 }
 
 const BloodTestReport = ({
   perspective = "conventional",
   panelAnalysisResponses,
+  userPreviousData,
 }: BloodTestReportProps) => {
   const [activeTab, setActiveTab] = useState("key-findings");
   const [expandedTests, setExpandedTests] = useState<string[]>([]);
@@ -673,12 +675,6 @@ const BloodTestReport = ({
       </div>
     );
   };
-
-  console.log(panelAnalysisResponses);
-
-  Object.entries(panelAnalysisResponses)?.map(([key, panelData]) => {
-    console.log(panelData);
-  });
 
   return (
     <div className="animate-fade-in">
@@ -1333,19 +1329,24 @@ const BloodTestReport = ({
 
         <TabsContent value="all-tests" className="mt-4">
           <div className="space-y-4">
-            {Object.entries(resultsCategories).map(([category, results]) => (
+            {userPreviousData?.data?.resultData?.map((biomarkerData) => (
               <Accordion
-                key={category}
+                key={biomarkerData?.profile?.name}
                 type="single"
                 collapsible
                 className="bg-white rounded-lg border shadow-sm"
               >
-                <AccordionItem value={category} className="border-b-0">
+                <AccordionItem
+                  value={biomarkerData?.profile?.name}
+                  className="border-b-0"
+                >
                   <AccordionTrigger className="px-4 py-3 hover:bg-gray-50">
                     <div className="flex items-center">
-                      <span className="font-medium">{category}</span>
+                      <span className="font-medium">
+                        {biomarkerData?.profile?.name}
+                      </span>
                       <span className="ml-2 text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded-full">
-                        {results.length} tests
+                        {biomarkerData?.biomarker?.length} tests
                       </span>
                     </div>
                   </AccordionTrigger>
@@ -1360,18 +1361,20 @@ const BloodTestReport = ({
                         </TableRow>
                       </TableHeader>
                       <TableBody>
-                        {results.map((result, index) => (
+                        {biomarkerData?.biomarker?.map((result, index) => (
                           <>
                             <TableRow
                               className="cursor-pointer hover:bg-gray-50"
-                              onClick={() => toggleTestExpansion(result.id)}
+                              onClick={() =>
+                                toggleTestExpansion(result?.testName)
+                              }
                             >
                               <TableCell>
                                 <div className="flex items-center">
                                   <span className="font-medium">
-                                    {result.name}
+                                    {result?.testName}
                                   </span>
-                                  {expandedTests.includes(result.id) ? (
+                                  {expandedTests.includes(result?.testName) ? (
                                     <ChevronUp className="ml-1 h-4 w-4 text-gray-400" />
                                   ) : (
                                     <ChevronDown className="ml-1 h-4 w-4 text-gray-400" />
@@ -1380,28 +1383,31 @@ const BloodTestReport = ({
                               </TableCell>
                               <TableCell>
                                 <span className="font-medium">
-                                  {result.value} {result.unit}
+                                  {result?.testResultValue}{" "}
+                                  {result?.testMeasuringUnit}
                                 </span>
                               </TableCell>
                               <TableCell>
-                                {result.min} - {result.max} {result.unit}
+                                {result?.minParameterValue} -{" "}
+                                {result?.maxParameterValue}{" "}
+                                {result?.testMeasuringUnit}
                               </TableCell>
                               <TableCell>
                                 <div
                                   className="px-2 py-1 rounded-full text-xs font-medium inline-block"
                                   style={{
                                     backgroundColor: `${getStatusColor(
-                                      result.status
+                                      result?.signalText
                                     )}20`,
-                                    color: getStatusColor(result.status),
+                                    color: getStatusColor(result?.signalText),
                                   }}
                                 >
-                                  {getStatusLabel(result.status)}
+                                  {getStatusLabel(result?.signalText)}
                                 </div>
                               </TableCell>
                             </TableRow>
 
-                            {expandedTests.includes(result.id) && (
+                            {expandedTests.includes(result.testName) && (
                               <TableRow className="bg-gray-50">
                                 <TableCell colSpan={4} className="p-0">
                                   <div className="p-4">
@@ -1411,7 +1417,7 @@ const BloodTestReport = ({
                                           Where your result falls
                                         </h4>
 
-                                        {result.trendData && (
+                                        {/* {result.trendData && (
                                           <div className="flex items-center gap-4">
                                             {renderSparkline(
                                               result.trendData,
@@ -1444,22 +1450,23 @@ const BloodTestReport = ({
                                               </div>
                                             </div>
                                           </div>
-                                        )}
+                                        )} */}
                                       </div>
 
                                       {/* Enhanced range bar */}
                                       {renderEnhancedRangeBar(result)}
 
                                       <div className="text-sm px-4 py-3 rounded-lg bg-gray-50 border border-gray-100">
-                                        {result.status === "normal" ? (
+                                        {result?.signalText === "normal" ? (
                                           <p className="text-green-700">
                                             Your result is within the normal
                                             range.
                                           </p>
-                                        ) : result.status === "warning" ? (
+                                        ) : result?.signalText === "high" ? (
                                           <p className="text-yellow-700">
                                             Your result is slightly{" "}
-                                            {result.value > result.max
+                                            {result?.testResultValue >
+                                            result?.maxParameterValue
                                               ? "above"
                                               : "below"}{" "}
                                             the normal range.
@@ -1467,7 +1474,8 @@ const BloodTestReport = ({
                                         ) : (
                                           <p className="text-red-700">
                                             Your result is significantly{" "}
-                                            {result.value > result.max
+                                            {result?.testResultValue >
+                                            result?.maxParameterValue
                                               ? "above"
                                               : "below"}{" "}
                                             the normal range.
@@ -1477,19 +1485,17 @@ const BloodTestReport = ({
                                     </div>
 
                                     <div className="grid md:grid-cols-2 gap-4 mb-4">
-                                      {result.whatIs && (
-                                        <div className="bg-blue-50 rounded-lg p-4">
-                                          <h4 className="text-sm font-medium flex items-center text-blue-700 mb-2">
-                                            <Info className="h-4 w-4 mr-1" />{" "}
-                                            What is {result.name}?
-                                          </h4>
-                                          <p className="text-sm text-gray-700">
-                                            {result.whatIs}
-                                          </p>
-                                        </div>
-                                      )}
+                                      <div className="bg-blue-50 rounded-lg p-4">
+                                        <h4 className="text-sm font-medium flex items-center text-blue-700 mb-2">
+                                          <Info className="h-4 w-4 mr-1" /> What
+                                          is {result?.testName}?
+                                        </h4>
+                                        <p className="text-sm text-gray-700">
+                                          {/* {result.whatIs} */}
+                                        </p>
+                                      </div>
 
-                                      {result.whatAffects && (
+                                      {/* {result.whatAffects && (
                                         <div className="bg-purple-50 rounded-lg p-4">
                                           <h4 className="text-sm font-medium flex items-center text-purple-700 mb-2">
                                             <Brain className="h-4 w-4 mr-1" />{" "}
@@ -1499,7 +1505,7 @@ const BloodTestReport = ({
                                             {result.whatAffects}
                                           </p>
                                         </div>
-                                      )}
+                                      )} */}
                                     </div>
 
                                     {result.whatMeans && (
@@ -1509,7 +1515,7 @@ const BloodTestReport = ({
                                           What does your result mean?
                                         </h4>
                                         <p className="text-sm text-gray-700">
-                                          {result.whatMeans}
+                                          {/* {result.whatMeans} */}
                                         </p>
                                       </div>
                                     )}

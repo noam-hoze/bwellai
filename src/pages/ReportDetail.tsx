@@ -340,6 +340,7 @@ const ReportDetail = () => {
                 )} */}
                 <BloodTestReport
                   perspective={perspective}
+                  userPreviousData={userPreviousData}
                   panelAnalysisResponses={panelAnalysisResponses}
                 />
               </TabsContent>
@@ -356,7 +357,7 @@ const ReportDetail = () => {
                           <tr>
                             <td className="py-2 text-gray-600">Lab Name:</td>
                             <td className="py-2 font-medium">
-                              {userPreviousData.reportName}
+                              {userPreviousData?.reportName}
                             </td>
                           </tr>
                           <tr>
