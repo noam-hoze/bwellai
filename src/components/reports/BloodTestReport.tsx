@@ -418,8 +418,21 @@ const calculateHealthScore = (results: BloodTestResult[]): number => {
   return Math.max(0, score);
 };
 
-const getAbnormalResults = (results: BloodTestResult[]): BloodTestResult[] => {
-  return results.filter((result) => result.status !== "normal");
+const getAbnormalResults = (results: any): any[] => {
+  const abnormalResults = [];
+  results?.data?.resultData?.forEach((data) => {
+    data?.biomarker?.forEach((r) => {
+      if (r?.signalText !== "normal") {
+        abnormalResults?.push(r);
+      }
+    });
+  });
+
+  return abnormalResults;
+
+  // return result?.data?.resultData?.filter(
+  //   (result) => result?.signalText !== "normal"
+  // );
 };
 
 interface BloodTestReportProps {
@@ -441,7 +454,7 @@ const BloodTestReport = ({
   const [showCompareDialog, setShowCompareDialog] = useState(false);
   const [comparePerspectives, setComparePerspectives] = useState<string[]>([]);
   const healthScore = calculateHealthScore(bloodTestResults);
-  const abnormalResults = getAbnormalResults(bloodTestResults);
+  const abnormalResults = getAbnormalResults(userPreviousData);
 
   const resultsCategories = bloodTestResults.reduce((acc, result) => {
     if (!acc[result.category]) {
@@ -474,7 +487,7 @@ const BloodTestReport = ({
     switch (status) {
       case "high":
         return "#ea384c";
-      case "warning":
+      case "low":
         return "#F97316";
       case "normal":
         return "#22c55e";
@@ -487,7 +500,7 @@ const BloodTestReport = ({
     switch (status) {
       case "high":
         return "High Risk";
-      case "warning":
+      case "low":
         return "Moderate Risk";
       case "normal":
         return "Normal";
@@ -1046,7 +1059,7 @@ const BloodTestReport = ({
 
         <TabsContent value="key-findings" className="mt-4">
           <div className="space-y-4">
-            {abnormalResults.length === 0 ? (
+            {abnormalResults?.length === 0 ? (
               <Card>
                 <CardContent className="pt-6">
                   <div className="text-center py-6">
@@ -1061,270 +1074,289 @@ const BloodTestReport = ({
                 </CardContent>
               </Card>
             ) : (
-              abnormalResults.map((result) => (
-                <Card key={result.id} className="overflow-hidden">
-                  <div
-                    className="h-2"
-                    style={{ backgroundColor: getStatusColor(result.status) }}
-                  ></div>
-                  <CardContent className="pt-4">
-                    <div className="flex justify-between items-start mb-2">
-                      <div>
-                        <h3 className="text-lg font-medium">{result.name}</h3>
-                        <p className="text-sm text-gray-500">
-                          {result.description}
-                        </p>
-                      </div>
-                      <div
-                        className="px-2 py-1 rounded-full text-xs font-medium"
-                        style={{
-                          backgroundColor: `${getStatusColor(result.status)}20`,
-                          color: getStatusColor(result.status),
-                        }}
-                      >
-                        {getStatusLabel(result.status)}
-                      </div>
-                    </div>
-
-                    <div className="mt-4">
-                      <div className="flex justify-between text-sm mb-1">
-                        <span>
-                          Your result:{" "}
-                          <strong>
-                            {result.value} {result.unit}
-                          </strong>
-                        </span>
-                        <span className="text-gray-500">
-                          Normal range: {result.min} - {result.max}{" "}
-                          {result.unit}
-                        </span>
-                      </div>
-
-                      <div className="relative pt-1">
-                        <div className="flex mb-2 items-center justify-between">
-                          <div className="flex-1">
-                            <div className="h-2 bg-gray-200 rounded-full">
-                              <div className="absolute w-full h-2 flex items-center justify-between px-1">
-                                <div
-                                  className="h-4 w-px bg-gray-400"
-                                  style={{
-                                    marginLeft: `${
-                                      (result.min / (result.max * 1.5)) * 100
-                                    }%`,
-                                  }}
-                                ></div>
-                                <div
-                                  className="h-4 w-px bg-gray-400"
-                                  style={{
-                                    marginRight: `${
-                                      100 -
-                                      (result.max / (result.max * 1.5)) * 100
-                                    }%`,
-                                  }}
-                                ></div>
-                              </div>
-                              <div
-                                className="h-2 rounded-full"
-                                style={{
-                                  width: `${Math.min(
-                                    100,
-                                    (result.value / (result.max * 1.5)) * 100
-                                  )}%`,
-                                  backgroundColor: getStatusColor(
-                                    result.status
-                                  ),
-                                }}
-                              ></div>
-                            </div>
-                          </div>
+              abnormalResults?.map((result, index) => {
+                return (
+                  <Card key={index} className="overflow-hidden">
+                    <div
+                      className="h-2"
+                      style={{
+                        backgroundColor: getStatusColor(result?.signalText),
+                      }}
+                    ></div>
+                    <CardContent className="pt-4">
+                      <div className="flex justify-between items-start mb-2">
+                        <div>
+                          <h3 className="text-lg font-medium">
+                            {result?.testName}
+                          </h3>
+                          <p className="text-sm text-gray-500">
+                            {result?.description}
+                          </p>
+                        </div>
+                        <div
+                          className="px-2 py-1 rounded-full text-xs font-medium"
+                          style={{
+                            backgroundColor: `${getStatusColor(
+                              result?.signalText
+                            )}20`,
+                            color: getStatusColor(result?.signalText),
+                          }}
+                        >
+                          {getStatusLabel(result?.signalText)}
                         </div>
                       </div>
 
-                      <AnimatePresence mode="wait">
-                        <motion.div
-                          key={`${perspective}-${result.id}`}
-                          initial={{ opacity: 0, y: 5 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, y: -5 }}
-                          transition={{ duration: 0.3 }}
-                          className="mt-4"
-                        >
-                          <h4 className="text-sm font-medium mb-2">
-                            What this means:
-                          </h4>
-                          <p className="text-sm text-gray-600">
-                            {perspective === "conventional" &&
-                              (result.status === "high" ? (
-                                <>
-                                  Your {result.name.toLowerCase()} level is
-                                  significantly{" "}
-                                  {result.value > result.max
-                                    ? "above"
-                                    : "below"}{" "}
-                                  the recommended range, which may affect your
-                                  health.
-                                </>
-                              ) : (
-                                <>
-                                  Your {result.name.toLowerCase()} level is
-                                  slightly{" "}
-                                  {result.value > result.max
-                                    ? "above"
-                                    : "below"}{" "}
-                                  the recommended range. This may require
-                                  attention.
-                                </>
-                              ))}
+                      <div className="mt-4">
+                        <div className="flex justify-between text-sm mb-1">
+                          <span>
+                            Your result:{" "}
+                            <strong>
+                              {result?.testResultValue}{" "}
+                              {result?.testMeasuringUnit}
+                            </strong>
+                          </span>
+                          <span className="text-gray-500">
+                            Normal range: {result?.minParameterValue} -{" "}
+                            {result?.maxParameterValue}{" "}
+                            {result?.testMeasuringUnit}
+                          </span>
+                        </div>
 
-                            {perspective === "naturopathic" &&
-                              (result.id === "glucose" ||
-                              result.id === "a1c" ? (
-                                <>
-                                  From a naturopathic perspective, your elevated
-                                  blood sugar suggests potential metabolic
-                                  stress. This could be related to diet, stress,
-                                  sleep quality, or environmental factors
-                                  affecting your body's regulation systems.
-                                </>
-                              ) : result.id === "cholesterol" ||
-                                result.id === "ldl" ? (
-                                <>
-                                  Naturopathically, cholesterol elevations often
-                                  indicate inflammation, hormonal imbalances, or
-                                  digestive issues rather than just dietary
-                                  factors. Your body may be producing more
-                                  cholesterol in response to cellular repair
-                                  needs.
-                                </>
-                              ) : (
-                                <>
-                                  While conventional medicine focuses on
-                                  reference ranges, naturopathic medicine looks
-                                  at optimal functioning. Your results suggest
-                                  room for optimization through natural
-                                  approaches.
-                                </>
-                              ))}
+                        <div className="relative pt-1">
+                          <div className="flex mb-2 items-center justify-between">
+                            <div className="flex-1">
+                              <div className="h-2 bg-gray-200 rounded-full">
+                                <div className="absolute w-full h-2 flex items-center justify-between px-1">
+                                  <div
+                                    className="h-4 w-px bg-gray-400"
+                                    style={{
+                                      marginLeft: `${
+                                        (result?.minParameterValue /
+                                          (result?.maxParameterValue * 1.5)) *
+                                        100
+                                      }%`,
+                                    }}
+                                  ></div>
+                                  <div
+                                    className="h-4 w-px bg-gray-400"
+                                    style={{
+                                      marginRight: `${
+                                        100 -
+                                        (result?.maxParameterValue /
+                                          (result?.maxParameterValue * 1.5)) *
+                                          100
+                                      }%`,
+                                    }}
+                                  ></div>
+                                </div>
+                                <div
+                                  className="h-2 rounded-full"
+                                  style={{
+                                    width: `${Math.min(
+                                      100,
+                                      (result?.testResultValue /
+                                        (result?.maxParameterValue * 1.5)) *
+                                        100
+                                    )}%`,
+                                    backgroundColor: getStatusColor(
+                                      result?.signalText
+                                    ),
+                                  }}
+                                ></div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
 
-                            {perspective === "dietitian" &&
-                              (result.id === "glucose" ||
-                              result.id === "a1c" ? (
-                                <>
-                                  From a nutritional standpoint, your glucose
-                                  values suggest a need to evaluate your
-                                  carbohydrate intake, meal timing, and glycemic
-                                  load. Consider more fiber, protein, and
-                                  healthy fats with each meal.
-                                </>
-                              ) : result.id === "cholesterol" ||
-                                result.id === "ldl" ? (
-                                <>
-                                  Dietary factors significantly impact your
-                                  lipid profile. Increasing soluble fiber (oats,
-                                  beans, fruits) and plant sterols while
-                                  reducing saturated fat can naturally improve
-                                  these numbers.
-                                </>
-                              ) : (
-                                <>
-                                  A nutrition-focused approach to these levels
-                                  would include strategic food choices and
-                                  eating patterns rather than just elimination
-                                  diets.
-                                </>
-                              ))}
+                        <AnimatePresence mode="wait">
+                          <motion.div
+                            key={`${perspective}-${result?.testName}`}
+                            initial={{ opacity: 0, y: 5 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -5 }}
+                            transition={{ duration: 0.3 }}
+                            className="mt-4"
+                          >
+                            <h4 className="text-sm font-medium mb-2">
+                              What this means:
+                            </h4>
+                            <p className="text-sm text-gray-600">
+                              {perspective === "MODERN_MEDICE" &&
+                                (result?.signalText === "high" ? (
+                                  <>
+                                    Your {result?.name.toLowerCase()} level is
+                                    significantly{" "}
+                                    {result?.value > result?.max
+                                      ? "above"
+                                      : "below"}{" "}
+                                    the recommended range, which may affect your
+                                    health.
+                                  </>
+                                ) : (
+                                  <>
+                                    Your {result?.name.toLowerCase()} level is
+                                    slightly{" "}
+                                    {result?.value > result?.max
+                                      ? "above"
+                                      : "below"}{" "}
+                                    the recommended range. This may require
+                                    attention.
+                                  </>
+                                ))}
 
-                            {perspective === "tcm" &&
-                              (result.id === "glucose" ||
-                              result.id === "a1c" ? (
-                                <>
-                                  In Traditional Chinese Medicine, elevated
-                                  blood sugar often reflects disharmony between
-                                  the Spleen and Pancreas energies. This may
-                                  create Dampness and Heat that disrupts normal
-                                  Qi flow.
-                                </>
-                              ) : result.id === "cholesterol" ||
-                                result.id === "ldl" ? (
-                                <>
-                                  TCM views cholesterol imbalances as potential
-                                  signs of Liver Qi stagnation and Blood stasis.
-                                  Harmonizing Liver Qi and moving stagnation are
-                                  key priorities.
-                                </>
-                              ) : (
-                                <>
-                                  From a Chinese Medicine perspective, these
-                                  values reflect patterns of disharmony that may
-                                  be addressed through acupuncture, herbs, and
-                                  lifestyle adjustments.
-                                </>
-                              ))}
+                              {perspective === "naturopathic" &&
+                                (result?.id === "glucose" ||
+                                result?.id === "a1c" ? (
+                                  <>
+                                    From a naturopathic perspective, your
+                                    elevated blood sugar suggests potential
+                                    metabolic stress. This could be related to
+                                    diet, stress, sleep quality, or
+                                    environmental factors affecting your body's
+                                    regulation systems.
+                                  </>
+                                ) : result?.id === "cholesterol" ||
+                                  result?.id === "ldl" ? (
+                                  <>
+                                    Naturopathically, cholesterol elevations
+                                    often indicate inflammation, hormonal
+                                    imbalances, or digestive issues rather than
+                                    just dietary factors. Your body may be
+                                    producing more cholesterol in response to
+                                    cellular repair needs.
+                                  </>
+                                ) : (
+                                  <>
+                                    While conventional medicine focuses on
+                                    reference ranges, naturopathic medicine
+                                    looks at optimal functioning. Your results
+                                    suggest room for optimization through
+                                    natural approaches.
+                                  </>
+                                ))}
 
-                            {perspective === "mental-health" &&
-                              (result.id === "glucose" ||
-                              result.id === "a1c" ? (
-                                <>
-                                  Blood sugar fluctuations can significantly
-                                  impact mood, energy, and cognitive function.
-                                  Chronic stress can also raise blood sugar
-                                  through cortisol pathways, creating a
-                                  bidirectional relationship.
-                                </>
-                              ) : result.id === "cholesterol" ||
-                                result.id === "ldl" ? (
-                                <>
-                                  There are established connections between
-                                  lipid profiles and mental wellbeing. Both can
-                                  be influenced by lifestyle factors like
-                                  exercise, sleep quality, and stress management
-                                  techniques.
-                                </>
-                              ) : (
-                                <>
-                                  From a mental health perspective, biological
-                                  markers often correlate with psychological
-                                  states. Addressing both physiological
-                                  imbalances and emotional wellbeing creates
-                                  more sustainable health.
-                                </>
-                              ))}
+                              {perspective === "dietitian" &&
+                                (result?.id === "glucose" ||
+                                result?.id === "a1c" ? (
+                                  <>
+                                    From a nutritional standpoint, your glucose
+                                    values suggest a need to evaluate your
+                                    carbohydrate intake, meal timing, and
+                                    glycemic load. Consider more fiber, protein,
+                                    and healthy fats with each meal.
+                                  </>
+                                ) : result?.id === "cholesterol" ||
+                                  result?.id === "ldl" ? (
+                                  <>
+                                    Dietary factors significantly impact your
+                                    lipid profile. Increasing soluble fiber
+                                    (oats, beans, fruits) and plant sterols
+                                    while reducing saturated fat can naturally
+                                    improve these numbers.
+                                  </>
+                                ) : (
+                                  <>
+                                    A nutrition-focused approach to these levels
+                                    would include strategic food choices and
+                                    eating patterns rather than just elimination
+                                    diets.
+                                  </>
+                                ))}
 
-                            {perspective === "functional" &&
-                              (result.id === "glucose" ||
-                              result.id === "a1c" ? (
-                                <>
-                                  Functional medicine views glucose
-                                  dysregulation as a spectrum rather than a
-                                  binary normal/abnormal status. Your results
-                                  suggest early metabolic adaptations that can
-                                  be addressed through personalized lifestyle
-                                  modifications.
-                                </>
-                              ) : result.id === "cholesterol" ||
-                                result.id === "ldl" ? (
-                                <>
-                                  Beyond the numbers themselves, functional
-                                  medicine assesses the quality of lipoproteins,
-                                  particle size, and inflammatory context. Your
-                                  pattern suggests potential for optimization
-                                  through targeted interventions.
-                                </>
-                              ) : (
-                                <>
-                                  From a systems biology perspective, these
-                                  markers represent downstream effects of
-                                  underlying imbalances in multiple body systems
-                                  that can be addressed at their root causes.
-                                </>
-                              ))}
-                          </p>
-                        </motion.div>
-                      </AnimatePresence>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))
+                              {perspective === "tcm" &&
+                                (result?.id === "glucose" ||
+                                result?.id === "a1c" ? (
+                                  <>
+                                    In Traditional Chinese Medicine, elevated
+                                    blood sugar often reflects disharmony
+                                    between the Spleen and Pancreas energies.
+                                    This may create Dampness and Heat that
+                                    disrupts normal Qi flow.
+                                  </>
+                                ) : result?.id === "cholesterol" ||
+                                  result?.id === "ldl" ? (
+                                  <>
+                                    TCM views cholesterol imbalances as
+                                    potential signs of Liver Qi stagnation and
+                                    Blood stasis. Harmonizing Liver Qi and
+                                    moving stagnation are key priorities.
+                                  </>
+                                ) : (
+                                  <>
+                                    From a Chinese Medicine perspective, these
+                                    values reflect patterns of disharmony that
+                                    may be addressed through acupuncture, herbs,
+                                    and lifestyle adjustments.
+                                  </>
+                                ))}
+
+                              {perspective === "mental-health" &&
+                                (result?.id === "glucose" ||
+                                result?.id === "a1c" ? (
+                                  <>
+                                    Blood sugar fluctuations can significantly
+                                    impact mood, energy, and cognitive function.
+                                    Chronic stress can also raise blood sugar
+                                    through cortisol pathways, creating a
+                                    bidirectional relationship.
+                                  </>
+                                ) : result?.id === "cholesterol" ||
+                                  result?.id === "ldl" ? (
+                                  <>
+                                    There are established connections between
+                                    lipid profiles and mental wellbeing. Both
+                                    can be influenced by lifestyle factors like
+                                    exercise, sleep quality, and stress
+                                    management techniques.
+                                  </>
+                                ) : (
+                                  <>
+                                    From a mental health perspective, biological
+                                    markers often correlate with psychological
+                                    states. Addressing both physiological
+                                    imbalances and emotional wellbeing creates
+                                    more sustainable health.
+                                  </>
+                                ))}
+
+                              {perspective === "functional" &&
+                                (result?.id === "glucose" ||
+                                result?.id === "a1c" ? (
+                                  <>
+                                    Functional medicine views glucose
+                                    dysregulation as a spectrum rather than a
+                                    binary normal/abnormal status. Your results
+                                    suggest early metabolic adaptations that can
+                                    be addressed through personalized lifestyle
+                                    modifications.
+                                  </>
+                                ) : result?.id === "cholesterol" ||
+                                  result?.id === "ldl" ? (
+                                  <>
+                                    Beyond the numbers themselves, functional
+                                    medicine assesses the quality of
+                                    lipoproteins, particle size, and
+                                    inflammatory context. Your pattern suggests
+                                    potential for optimization through targeted
+                                    interventions.
+                                  </>
+                                ) : (
+                                  <>
+                                    From a systems biology perspective, these
+                                    markers represent downstream effects of
+                                    underlying imbalances in multiple body
+                                    systems that can be addressed at their root
+                                    causes.
+                                  </>
+                                ))}
+                            </p>
+                          </motion.div>
+                        </AnimatePresence>
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              })
             )}
           </div>
         </TabsContent>
