@@ -1,0 +1,54 @@
+.gradientScale {
+  width: 300;
+  height: 10px;
+  background: linear-gradient(
+    to right,
+    red 0%,
+    /* 0 - 10, Low */ orange 30%,
+    /* 10 - 30, Borderline */ green 35%,
+    /* 30 - 50, Normal */ blue 40%,
+    /* 50 - 70, Normal */ green 50%,
+    /* 70 - 90, Borderline */ orange 60%,
+    /* 70 - 90, Borderline */ red 100% /* 90 - 100, Low */
+  );
+  position: relative;
+}
+
+.labels {
+  position: relative;
+  width: 100%;
+  margin-top: 5px;
+  font-size: 14px;
+  color: black;
+  font-weight: bold;
+  display: flex;
+}
+
+.label {
+  position: absolute;
+  text-align: center;
+  transform: translateX(-50%);
+}
+
+/* Position each label based on the gradient stops */
+.label-low-start {
+  left: 10%;
+}
+.label-borderline-start {
+  left: 40%;
+}
+.label-normal-start {
+  left: 45%;
+}
+.label-optimal {
+  left: 50%;
+}
+.label-normal-start {
+  right: 65%;
+}
+.label-borderline-start {
+  right: 85%;
+}
+.label-low-start {
+  right: 95%;
+}
