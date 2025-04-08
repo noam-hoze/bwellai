@@ -46,7 +46,7 @@ interface BloodTestResult {
   unit: string;
   min: number;
   max: number;
-  status: "normal" | "warning" | "critical";
+  status: "normal" | "warning" | "high";
   category: string;
   description: string;
   whatIs?: string;
@@ -133,7 +133,7 @@ const bloodTestResults: BloodTestResult[] = [
     unit: "mg/dL",
     min: 0,
     max: 100,
-    status: "critical",
+    status: "high",
     category: "Lipids",
     description: "The 'bad' cholesterol that can build up in arteries",
     whatIs:
@@ -413,7 +413,7 @@ const calculateHealthScore = (results: BloodTestResult[]): number => {
   let score = 100;
   results.forEach((result) => {
     if (result.status === "warning") score -= 5;
-    if (result.status === "critical") score -= 10;
+    if (result.status === "high") score -= 10;
   });
   return Math.max(0, score);
 };
@@ -426,12 +426,14 @@ interface BloodTestReportProps {
   perspective: string;
   panelAnalysisResponses?: any;
   userPreviousData?: any;
+  biomarkerResponses?: any;
 }
 
 const BloodTestReport = ({
   perspective = "conventional",
   panelAnalysisResponses,
   userPreviousData,
+  biomarkerResponses,
 }: BloodTestReportProps) => {
   const [activeTab, setActiveTab] = useState("key-findings");
   const [expandedTests, setExpandedTests] = useState<string[]>([]);
@@ -470,7 +472,7 @@ const BloodTestReport = ({
 
   const getStatusColor = (status: string): string => {
     switch (status) {
-      case "critical":
+      case "high":
         return "#ea384c";
       case "warning":
         return "#F97316";
@@ -483,7 +485,7 @@ const BloodTestReport = ({
 
   const getStatusLabel = (status: string): string => {
     switch (status) {
-      case "critical":
+      case "high":
         return "High Risk";
       case "warning":
         return "Moderate Risk";
@@ -1152,7 +1154,7 @@ const BloodTestReport = ({
                           </h4>
                           <p className="text-sm text-gray-600">
                             {perspective === "conventional" &&
-                              (result.status === "critical" ? (
+                              (result.status === "high" ? (
                                 <>
                                   Your {result.name.toLowerCase()} level is
                                   significantly{" "}
@@ -1465,8 +1467,8 @@ const BloodTestReport = ({
                                         ) : result?.signalText === "high" ? (
                                           <p className="text-yellow-700">
                                             Your result is slightly{" "}
-                                            {result?.testResultValue >
-                                            result?.maxParameterValue
+                                            {Number(result?.testResultValue) >
+                                            Number(result?.maxParameterValue)
                                               ? "above"
                                               : "below"}{" "}
                                             the normal range.
@@ -1474,8 +1476,8 @@ const BloodTestReport = ({
                                         ) : (
                                           <p className="text-red-700">
                                             Your result is significantly{" "}
-                                            {result?.testResultValue >
-                                            result?.maxParameterValue
+                                            {Number(result?.testResultValue) >
+                                            Number(result?.maxParameterValue)
                                               ? "above"
                                               : "below"}{" "}
                                             the normal range.
@@ -1491,7 +1493,12 @@ const BloodTestReport = ({
                                           is {result?.testName}?
                                         </h4>
                                         <p className="text-sm text-gray-700">
-                                          {/* {result.whatIs} */}
+                                          {
+                                            biomarkerResponses?.[
+                                              result?.testName
+                                            ]?.englishLanguageAnalysisData
+                                              ?.testInformation
+                                          }
                                         </p>
                                       </div>
 
@@ -1508,17 +1515,20 @@ const BloodTestReport = ({
                                       )} */}
                                     </div>
 
-                                    {result.whatMeans && (
-                                      <div className="bg-amber-50 rounded-lg p-4 mb-4">
-                                        <h4 className="text-sm font-medium flex items-center text-amber-700 mb-2">
-                                          <AlertCircle className="h-4 w-4 mr-1" />{" "}
-                                          What does your result mean?
-                                        </h4>
-                                        <p className="text-sm text-gray-700">
-                                          {/* {result.whatMeans} */}
-                                        </p>
-                                      </div>
-                                    )}
+                                    <div className="bg-amber-50 rounded-lg p-4 mb-4">
+                                      <h4 className="text-sm font-medium flex items-center text-amber-700 mb-2">
+                                        <AlertCircle className="h-4 w-4 mr-1" />{" "}
+                                        What does your result mean?
+                                      </h4>
+                                      <p className="text-sm text-gray-700">
+                                        {/* {result.whatMeans} */}
+                                        {
+                                          biomarkerResponses?.[result?.testName]
+                                            ?.englishLanguageAnalysisData
+                                            ?.insightsRemarks
+                                        }
+                                      </p>
+                                    </div>
                                   </div>
                                 </TableCell>
                               </TableRow>
