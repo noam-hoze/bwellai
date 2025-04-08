@@ -149,8 +149,6 @@ const ReportDetail = () => {
       }
     };
 
-    console.log(userPreviousData?.data?.resultData?.length > 0, chunkApiStatus);
-
     if (userPreviousData?.data?.resultData?.length > 0 && chunkApiStatus) {
       processBiomarkers();
     }
