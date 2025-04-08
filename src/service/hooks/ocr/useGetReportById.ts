@@ -27,7 +27,6 @@ export const useGetUserReportData = (
 export const useGetUserPreviousReportData = (
   perspectives: string,
   previousReportId: string,
-  isReportFileUploaded: boolean,
   isAuthenticated: boolean,
   reportLanguage: string
 ) => {
@@ -53,7 +52,7 @@ export const useGetUserPreviousReportData = (
         previousReportId,
         reportLanguage
       ),
-    enabled: !isReportFileUploaded && isAuthenticated,
+    enabled: isAuthenticated,
     refetchOnWindowFocus: false,
   });
 
