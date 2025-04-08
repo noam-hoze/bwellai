@@ -411,40 +411,33 @@ const DailyTabContent = ({
               100
             }
           />
+
+          <SleepCycleClock
+            sleepData={formattedSleepData || []}
+            startTime={formatTo12Hour(
+              wearableDailyData?.finalDailySpikeSleepDataV4?.bedtime_start ||
+                new Date()
+            )}
+            endTime={formatTo12Hour(
+              wearableDailyData?.finalDailySpikeSleepDataV4?.bedtime_end ||
+                new Date()
+            )}
+          />
+
+          <SleepCycleAnimated
+            sleepData={formattedSleepData || []}
+            title="Sleep Cycle Animation"
+            startTime={formatTo12Hour(
+              wearableDailyData?.finalDailySpikeSleepDataV4?.bedtime_start ||
+                new Date()
+            )}
+            endTime={formatTo12Hour(
+              wearableDailyData?.finalDailySpikeSleepDataV4?.bedtime_end ||
+                new Date()
+            )}
+          />
         </div>
       )}
-
-      <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 py-8 px-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-1">
-            <SleepCycleAnimated
-              sleepData={formattedSleepData || []}
-              title="Sleep Cycle Animation"
-              startTime={formatTo12Hour(
-                wearableDailyData?.finalDailySpikeSleepDataV4?.bedtime_start ||
-                  new Date()
-              )}
-              endTime={formatTo12Hour(
-                wearableDailyData?.finalDailySpikeSleepDataV4?.bedtime_end ||
-                  new Date()
-              )}
-            />
-          </div>
-          <div className="lg:col-span-1">
-            <SleepCycleClock
-              sleepData={formattedSleepData || []}
-              startTime={formatTo12Hour(
-                wearableDailyData?.finalDailySpikeSleepDataV4?.bedtime_start ||
-                  new Date()
-              )}
-              endTime={formatTo12Hour(
-                wearableDailyData?.finalDailySpikeSleepDataV4?.bedtime_end ||
-                  new Date()
-              )}
-            />
-          </div>
-        </div>
-      </div>
 
       {/* Combined Insights & Suggestions Card */}
       <Card className="wellness-card border-l-4 border-l-wellness-deep-orange">

@@ -238,7 +238,7 @@ const SleepCycleClock: React.FC<SleepCycleClockProps> = ({
 
   return (
     <TooltipProvider delayDuration={0}>
-      <Card className="w-full max-w-sm mx-auto">
+      <Card className="wellness-card border-l-4 border-l-wellness-deep-orange h-full bg-white rounded-xl shadow-sm">
         <CardHeader className="pb-2">
           <CardTitle className="text-xl text-center flex items-center justify-between">
             {title}
