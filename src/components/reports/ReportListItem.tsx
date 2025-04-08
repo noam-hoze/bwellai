@@ -21,11 +21,12 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { formatDateToShortMonth } from "@/utils/utils";
 
 interface Report {
-  id: number;
-  title: string;
-  dateUploaded: string;
+  reportId: number;
+  reportName: string;
+  createdAt: string;
   testDate: string;
   fileType: string;
   fileSize: string;
@@ -56,39 +57,39 @@ const ReportListItem = ({ report, onDelete }: ReportListItemProps) => {
 
   const handleDelete = () => {
     if (onDelete) {
-      onDelete(report.id);
+      onDelete(report?.reportId);
     }
   };
 
   return (
     <div className="hover:bg-gray-50 transition-colors">
       <div className="p-5 flex justify-between items-center">
-        <Link to={report.url} className="flex-1">
+        <Link to={`/report/${report?.reportId}`} className="flex-1">
           <div className="flex items-center gap-2">
             <h3 className="text-lg font-semibold text-gray-800">
-              {report.title}
+              {report?.reportName}
             </h3>
-            {report.concernCount > 0 && (
+            {report?.concernCount > 0 && (
               <div className="px-2 py-0.5 bg-red-50 text-red-600 text-xs font-medium rounded-full flex items-center">
                 <AlertCircle className="h-3 w-3 mr-1" />
-                {report.concernCount}{" "}
-                {report.concernCount === 1 ? "concern" : "concerns"}
+                {report?.concernCount}{" "}
+                {report?.concernCount === 1 ? "concern" : "concerns"}
               </div>
             )}
           </div>
           <div className="flex flex-col sm:flex-row sm:gap-6 mt-1">
             <p className="text-gray-500">
               <span className="text-gray-400 text-sm">Date uploaded:</span>{" "}
-              {report.dateUploaded}
+              {formatDateToShortMonth(report?.createdAt)}
             </p>
-            <p className="text-gray-500">
+            {/* <p className="text-gray-500">
               <span className="text-gray-400 text-sm">Test date:</span>{" "}
               {report.testDate}
-            </p>
+            </p> */}
           </div>
         </Link>
         <div className="flex items-center gap-2">
-          <Link to={report.url}>
+          <Link to={`/report/${report?.reportId}`}>
             <Button variant="ghost" size="icon" aria-label="View report">
               <Eye className="h-5 w-5 text-gray-500" />
             </Button>
@@ -104,8 +105,8 @@ const ReportListItem = ({ report, onDelete }: ReportListItemProps) => {
               <AlertDialogHeader>
                 <AlertDialogTitle>Delete Report</AlertDialogTitle>
                 <AlertDialogDescription>
-                  Are you sure you want to delete "{report.title}"? This action
-                  cannot be undone.
+                  Are you sure you want to delete "{report?.reportName}"? This
+                  action cannot be undone.
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>

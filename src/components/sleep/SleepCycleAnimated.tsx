@@ -197,10 +197,9 @@ const SleepCycleAnimated: React.FC<SleepCycleAnimatedProps> = ({
       ?.slice(1)
       ?.toLowerCase()} Sleep`;
   };
-
   return (
     <TooltipProvider delayDuration={0}>
-      <Card className="w-full max-w-sm mx-auto">
+      <Card className="wellness-card border-l-4 border-l-wellness-deep-orange h-full bg-white rounded-xl shadow-sm">
         <CardHeader className="pb-2">
           <CardTitle className="text-xl text-center flex items-center justify-between">
             {title}
@@ -210,7 +209,7 @@ const SleepCycleAnimated: React.FC<SleepCycleAnimatedProps> = ({
                   <Info className="h-5 w-5 text-muted-foreground" />
                 </button>
               </HoverCardTrigger>
-              <HoverCardContent className="w-80">
+              <HoverCardContent className="w-full">
                 <div className="space-y-2">
                   <h4 className="text-sm font-semibold">
                     Sleep Cycle Visualization

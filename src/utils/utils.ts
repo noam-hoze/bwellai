@@ -18,6 +18,18 @@ export const convertUTCToLocalTime = (utcTime) => {
   );
 };
 
+export function formatDateToShortMonth(dateString: string): string {
+  const date = new Date(dateString);
+
+  const options: Intl.DateTimeFormatOptions = {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  };
+
+  return date.toLocaleDateString("en-US", options);
+}
+
 const ageGroupToSleepMap = {
   "18-25": {
     light: 52.5,

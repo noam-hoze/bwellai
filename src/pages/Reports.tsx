@@ -24,6 +24,7 @@ import ReportListItem from "@/components/reports/ReportListItem";
 import PrivacyBanner from "@/components/reports/PrivacyBanner";
 import PrivacyIndicator from "@/components/reports/PrivacyIndicator";
 import ReportProcessingAnimation from "@/components/reports/ReportProcessingAnimation";
+import { useGetUserLastReportIDsData } from "@/service/hooks/ocr/useGetReportById";
 
 // Sample report data
 const initialReports = [
@@ -87,6 +88,15 @@ const Reports = () => {
   const [showPrivacyBanner, setShowPrivacyBanner] = useState(true);
   const [processingReport, setProcessingReport] = useState(false);
   const { toast } = useToast();
+
+  const {
+    data: userLastReportIDsData,
+    // isError: userLastReportIDsError,
+    isSuccess: userLastReportIDsSuccess,
+    // isLoading: userLastReportIDsLoading,
+    // status: userPreviousIsStatus,
+    refetch: userPreviousIsRefetch,
+  } = useGetUserLastReportIDsData(true);
 
   const handleUpload = () => {
     setProcessingReport(true);
@@ -200,10 +210,10 @@ const Reports = () => {
           <Card className="wellness-card overflow-hidden">
             <ScrollArea className="h-[550px]">
               <div className="divide-y">
-                {reports.length > 0 ? (
-                  reports.map((report) => (
+                {userLastReportIDsData?.length > 0 ? (
+                  userLastReportIDsData?.map((report) => (
                     <ReportListItem
-                      key={report.id}
+                      key={report?.reportId}
                       report={report}
                       onDelete={handleDeleteReport}
                     />
