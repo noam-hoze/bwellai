@@ -39,6 +39,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import TestInformationTooltip from "./TestInformationTooltip";
 import ReportSpectrum from "../ui/ReportSpectrum/ReportSpectrum";
+import TestResultTrendHistory from "./components/test-result/TestResultTrendHistory";
 
 interface BloodTestResult {
   id: string;
@@ -430,10 +431,6 @@ const getAbnormalResults = (results: any): any[] => {
   });
 
   return abnormalResults;
-
-  // return result?.data?.resultData?.filter(
-  //   (result) => result?.signalText !== "normal"
-  // );
 };
 
 interface BloodTestReportProps {
@@ -444,7 +441,7 @@ interface BloodTestReportProps {
 }
 
 const BloodTestReport = ({
-  perspective = "MODERN_MEDICE",
+  perspective = "MODERN_MEDICINE",
   panelAnalysisResponses,
   userPreviousData,
   biomarkerResponses,
@@ -456,6 +453,8 @@ const BloodTestReport = ({
   const [comparePerspectives, setComparePerspectives] = useState<string[]>([]);
   const healthScore = calculateHealthScore(bloodTestResults);
   const abnormalResults = getAbnormalResults(userPreviousData);
+
+  console.log(perspective);
 
   const resultsCategories = bloodTestResults.reduce((acc, result) => {
     if (!acc[result.category]) {
@@ -770,7 +769,7 @@ const BloodTestReport = ({
               transition={{ duration: 0.3 }}
             >
               <ul className="space-y-4">
-                {perspective === "conventional" && (
+                {perspective === "MODERN_MEDICINE" && (
                   <>
                     <li className="flex items-start">
                       <div className="h-8 w-8 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0 mt-0.5 mr-3">
@@ -1182,10 +1181,10 @@ const BloodTestReport = ({
                               What this means:
                             </h4>
                             <p className="text-sm text-gray-600">
-                              {perspective === "MODERN_MEDICE" &&
+                              {perspective === "MODERN_MEDICINE" &&
                                 (result?.signalText === "high" ? (
                                   <>
-                                    Your {result?.name.toLowerCase()} level is
+                                    Your {result?.name?.toLowerCase()} level is
                                     significantly{" "}
                                     {result?.value > result?.max
                                       ? "above"
@@ -1195,7 +1194,7 @@ const BloodTestReport = ({
                                   </>
                                 ) : (
                                   <>
-                                    Your {result?.name.toLowerCase()} level is
+                                    Your {result?.name?.toLowerCase()} level is
                                     slightly{" "}
                                     {result?.value > result?.max
                                       ? "above"
@@ -1452,45 +1451,42 @@ const BloodTestReport = ({
                                           Where your result falls
                                         </h4>
 
-                                        {/* {result.trendData && (
-                                          <div className="flex items-center gap-4">
-                                            {renderSparkline(
-                                              result.trendData,
-                                              getStatusColor(result.status)
-                                            )}
-                                            <div className="flex flex-col">
-                                              <div className="text-sm text-gray-500">
-                                                Previous
-                                              </div>
-                                              <div className="flex items-center">
-                                                <span className="font-medium mr-2">
-                                                  {result.previousValue}{" "}
-                                                  {result.unit}
+                                        <div className="flex items-center gap-4">
+                                          {renderSparkline(
+                                            result?.trendData,
+                                            getStatusColor(result?.status)
+                                          )}
+                                          <div className="flex flex-col">
+                                            <div className="text-sm text-gray-500">
+                                              Previous
+                                            </div>
+                                            <div className="flex items-center">
+                                              <span className="font-medium mr-2">
+                                                {result?.previousValue}{" "}
+                                                {result?.unit}
+                                              </span>
+                                              {result?.changePercentage > 0 ? (
+                                                <span className="text-red-500 flex items-center text-sm">
+                                                  <TrendingUp className="h-3.5 w-3.5 mr-0.5" />
+                                                  {result?.changePercentage}%
                                                 </span>
-                                                {result.changePercentage > 0 ? (
-                                                  <span className="text-red-500 flex items-center text-sm">
-                                                    <TrendingUp className="h-3.5 w-3.5 mr-0.5" />
-                                                    {result.changePercentage}%
-                                                  </span>
-                                                ) : (
-                                                  <span className="text-green-500 flex items-center text-sm">
-                                                    <TrendingDown className="h-3.5 w-3.5 mr-0.5" />
-                                                    {Math.abs(
-                                                      result.changePercentage ||
-                                                        0
-                                                    )}
-                                                    %
-                                                  </span>
-                                                )}
-                                              </div>
+                                              ) : (
+                                                <span className="text-green-500 flex items-center text-sm">
+                                                  <TrendingDown className="h-3.5 w-3.5 mr-0.5" />
+                                                  {Math.abs(
+                                                    result?.changePercentage ||
+                                                      0
+                                                  )}
+                                                  %
+                                                </span>
+                                              )}
                                             </div>
                                           </div>
-                                        )} */}
+                                        </div>
                                       </div>
 
                                       {/* Enhanced range bar */}
                                       {/* {renderEnhancedRangeBar(result)} */}
-
                                       <div
                                         style={{
                                           width: "100%",
@@ -1515,6 +1511,8 @@ const BloodTestReport = ({
                                           }
                                         />
                                       </div>
+
+                                      <TestResultTrendHistory result={result} />
 
                                       <div className="text-sm px-4 py-3 rounded-lg bg-gray-50 border border-gray-100">
                                         {result?.signalText === "normal" ? (

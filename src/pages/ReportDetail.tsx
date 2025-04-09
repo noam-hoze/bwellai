@@ -21,6 +21,7 @@ import {
   useGetUserBiomarkerReportData,
   useGetUserPanelAnalysisReportData,
 } from "@/service/hooks/ocr/useFileUpload";
+import ReportProcessingAnimation from "@/components/reports/ReportProcessingAnimation";
 
 const ReportDetail = () => {
   const { id } = useParams();
@@ -64,8 +65,17 @@ const ReportDetail = () => {
     isError: userPreviousIsError,
     isSuccess: userPreviousIsSuccess,
     isLoading: userPreviousIsLoading,
-    // status: userPreviousIsStatus,
   } = useGetUserPreviousReportData(perspective, id, true, "English");
+
+  useEffect(() => {
+    console.log(userPreviousIsLoading, userPreviousData);
+
+    if (userPreviousIsLoading) {
+      console.log("user previous");
+
+      setProcessingReport(true);
+    }
+  }, [userPreviousIsLoading]);
 
   const { mutateAsync: userBiomarkerReportMutate } =
     useGetUserBiomarkerReportData();
@@ -242,8 +252,19 @@ const ReportDetail = () => {
         setChunkApiStatus(true);
         setChunkPanelAnalysisApiStatus(true);
       }
+      if (
+        !userPreviousData?.data ||
+        userPreviousData?.data?.resultData?.length === 0
+      ) {
+        setProcessingReport(false);
+      }
     }
   }, [userPreviousData, userPreviousIsSuccess]);
+
+  const handleProcessingComplete = () => {
+    // setProcessingReport(false);
+    console.log("Report processing completed");
+  };
 
   return (
     <div className="min-h-screen bg-white">
@@ -295,6 +316,13 @@ const ReportDetail = () => {
             activePerspective={perspective}
             onChange={setPerspective}
           />
+
+          {processingReport && (
+            <ReportProcessingAnimation
+              isProcessing={processingReport}
+              onProcessingComplete={handleProcessingComplete}
+            />
+          )}
 
           <Card className="wellness-card p-6 mb-6">
             <Tabs
