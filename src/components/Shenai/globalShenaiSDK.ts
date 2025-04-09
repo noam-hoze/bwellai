@@ -3,7 +3,7 @@ import CreateShenaiSDK, { ShenaiSDK } from "../../../public/shenai-sdk";
 let sdkPromise: Promise<ShenaiSDK> | null = null;
 let sdkInstance: ShenaiSDK | null = null;
 
-const API_KEY = "54b5be95e558424984258cac146a1fbf";
+const API_KEY = import.meta.env.VITE_SHENAI_KEY;
 
 // This function returns the same Promise every time
 export function getShenaiSDK() {
