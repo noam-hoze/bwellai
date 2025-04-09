@@ -288,8 +288,6 @@ const Reports = () => {
         for (const batch of chunkArray(
           userReportFileUploadData?.labReportResponse?.data?.resultData?.flatMap(
             (data) => {
-              console.log(data);
-
               return {
                 panel: data?.profile?.name,
                 test: [...data.biomarker],

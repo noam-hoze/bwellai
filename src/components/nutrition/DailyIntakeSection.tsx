@@ -33,8 +33,6 @@ const NutrientProgressv2 = ({
 
   const getcolor = getCalorieColor(percentage);
 
-  console.log(getcolor);
-
   // Calculate calories (1g of fat = 9 kcal)
   // const caloriesMultiplier = 9;
   const currentCalories = Math.round(currentAmount * caloriesMultiplier);
