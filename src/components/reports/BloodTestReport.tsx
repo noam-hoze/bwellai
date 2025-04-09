@@ -770,7 +770,14 @@ const BloodTestReport = ({
 
       <Card className="wellness-card mb-6">
         <CardHeader className="pb-1">
-          <CardTitle className="text-xl">Recommended Actions</CardTitle>
+          <CardTitle className="text-xl">
+            <p className="flex gap-2">
+              Recommended Actions
+              <span className="text-xs font-light border border-1 p-1 rounded-full">
+                Coming Soon
+              </span>
+            </p>
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <AnimatePresence mode="wait">
