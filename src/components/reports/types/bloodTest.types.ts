@@ -1,4 +1,3 @@
-
 import { format, subMonths } from "date-fns";
 
 export interface BloodTestResult {
@@ -27,9 +26,18 @@ export interface PerspectiveInsight {
   content: string;
 }
 
-export type BloodTestPerspective = "conventional" | "naturopathic" | "dietitian" | "tcm" | "mental-health" | "functional";
+export type BloodTestPerspective =
+  | "conventional"
+  | "naturopathic"
+  | "dietitian"
+  | "tcm"
+  | "mental-health"
+  | "functional";
 
-export const generateTrendDataDates = (values: number[], startMonthsBack = 6) => {
+export const generateTrendDataDates = (
+  values: number[],
+  startMonthsBack = 6
+) => {
   const dates = [];
   const now = new Date();
   for (let i = 0; i < values.length; i++) {
@@ -41,22 +49,24 @@ export const generateTrendDataDates = (values: number[], startMonthsBack = 6) =>
 
 export const calculateHealthScore = (results: BloodTestResult[]): number => {
   let score = 100;
-  results.forEach(result => {
+  results.forEach((result) => {
     if (result.status === "warning") score -= 5;
     if (result.status === "critical") score -= 10;
   });
   return Math.max(0, score);
 };
 
-export const getAbnormalResults = (results: BloodTestResult[]): BloodTestResult[] => {
-  return results.filter(result => result.status !== "normal");
+export const getAbnormalResults = (
+  results: BloodTestResult[]
+): BloodTestResult[] => {
+  return results.filter((result) => result.status !== "normal");
 };
 
 export const getStatusColor = (status: string): string => {
   switch (status) {
-    case "critical":
+    case "high":
       return "#ea384c";
-    case "warning":
+    case "low":
       return "#F97316";
     case "normal":
       return "#22c55e";
@@ -67,9 +77,9 @@ export const getStatusColor = (status: string): string => {
 
 export const getStatusLabel = (status: string): string => {
   switch (status) {
-    case "critical":
+    case "high":
       return "High Risk";
-    case "warning":
+    case "low":
       return "Moderate Risk";
     case "normal":
       return "Normal";

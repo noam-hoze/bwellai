@@ -68,11 +68,7 @@ const ReportDetail = () => {
   } = useGetUserPreviousReportData(perspective, id, true, "English");
 
   useEffect(() => {
-    console.log(userPreviousIsLoading, userPreviousData);
-
     if (userPreviousIsLoading) {
-      console.log("user previous");
-
       setProcessingReport(true);
     }
   }, [userPreviousIsLoading]);
