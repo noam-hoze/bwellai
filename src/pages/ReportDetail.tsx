@@ -10,18 +10,27 @@ import {
   FileText,
   Microscope,
   Info,
+  X,
+  ExternalLink,
+  Copy,
 } from "lucide-react";
 import BloodTestReport from "@/components/reports/BloodTestReport";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import PerspectiveSelector from "@/components/reports/PerspectiveSelector";
 import AIDisclaimer from "@/components/reports/AIDisclaimer";
 import { useGetUserPreviousReportData } from "@/service/hooks/ocr/useGetReportById";
-import { formatDateToShortMonth } from "@/utils/utils";
+import { formatDateToShortMonth, handleCopyToClipboard } from "@/utils/utils";
 import {
   useGetUserBiomarkerReportData,
   useGetUserPanelAnalysisReportData,
 } from "@/service/hooks/ocr/useFileUpload";
 import ReportProcessingAnimation from "@/components/reports/ReportProcessingAnimation";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogHeader,
+} from "@/components/ui/dialog";
 
 const ReportDetail = () => {
   const { id } = useParams();
@@ -31,6 +40,7 @@ const ReportDetail = () => {
   const [processingReport, setProcessingReport] = useState(false);
   const [biomarkerResponses, setBiomarkerResponses] = useState({});
   const [panelAnalysisResponses, setPanelAnalysisResponses] = useState({});
+  const [shareModalOpen, setShareModalOpen] = useState(false);
 
   const [biomarkerDataStatus, setBiomarkerDataStatus] = useState({
     isLoading: false,
@@ -301,11 +311,60 @@ const ReportDetail = () => {
               <Button variant="outline" size="sm">
                 <Download className="h-4 w-4 mr-1" /> Download
               </Button>
-              <Button variant="outline" size="sm">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setShareModalOpen(true)}
+              >
                 <Share2 className="h-4 w-4 mr-1" /> Share
               </Button>
             </div>
           </div>
+
+          <Dialog
+            open={shareModalOpen}
+            onOpenChange={() => setShareModalOpen(false)}
+          >
+            <DialogContent className="sm:max-w-md p-0 overflow-hidden">
+              <DialogHeader>
+                <div className="bg-muted p-3 m-3 mt-10 rounded-md flex items-center justify-between">
+                  <code className="text-sm font-mono">
+                    https://app-dev2.bwellai.com/report/{id}
+                  </code>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() =>
+                      handleCopyToClipboard(
+                        `https://app-dev2.bwellai.com/report/${id}`
+                      )
+                    }
+                  >
+                    <Copy size={16} />
+                  </Button>
+                  <a
+                    href={`https://api.whatsapp.com/send?text=${"https://app-dev2.bwellai.com"}/report/${id}`}
+                    target="_blank"
+                    className="bg-muted rounded-md flex items-center justify-between"
+                  >
+                    <Button variant="ghost" size="sm">
+                      <ExternalLink size={16} />
+                    </Button>
+                  </a>
+                </div>
+                <DialogClose asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="text-white"
+                    onClick={() => setShareModalOpen(false)}
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                </DialogClose>
+              </DialogHeader>
+            </DialogContent>
+          </Dialog>
 
           {/* Perspective Selector */}
           <PerspectiveSelector

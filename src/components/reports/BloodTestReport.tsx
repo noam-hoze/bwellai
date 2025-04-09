@@ -469,8 +469,6 @@ const BloodTestReport = ({
   const healthScore = calculateHealthScore(bloodTestResults);
   const abnormalResults = getAbnormalResults(userPreviousData);
 
-  console.log(abnormalResults);
-
   const resultsCategories = bloodTestResults.reduce((acc, result) => {
     if (!acc[result.category]) {
       acc[result.category] = [];
