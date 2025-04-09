@@ -1,4 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@300;400;500;600;700&display=swap");
 
 @tailwind base;
 @tailwind components;
@@ -74,7 +75,7 @@
     --border: 143 25% 30%; /* Darker Dark Green */
     --input: 143 25% 30%; /* Darker Dark Green */
     --ring: 130 23% 72%; /* Soft Green */
-    
+
     --sidebar-background: 143 31% 18%; /* Darker Dark Green */
     --sidebar-foreground: 0 0% 100%; /* Changed to White */
     --sidebar-primary: 130 23% 72%; /* Soft Green */
@@ -94,23 +95,28 @@
   body {
     @apply bg-background text-foreground font-sans antialiased;
   }
-  
-  h1, h2, h3, h4, h5, h6 {
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     @apply font-heading font-semibold tracking-tight;
   }
-  
+
   h1 {
     @apply text-4xl;
   }
-  
+
   h2 {
     @apply text-3xl;
   }
-  
+
   h3 {
     @apply text-2xl;
   }
-  
+
   h4 {
     @apply text-xl;
   }
@@ -120,23 +126,23 @@
   .wellness-card {
     @apply bg-white rounded-2xl shadow-sm border border-wellness-light-green overflow-hidden transition-all duration-300 hover:shadow-md;
   }
-  
+
   .score-progress {
     @apply h-1.5 rounded-full bg-gray-200 overflow-hidden;
   }
-  
+
   .score-progress-bar {
     @apply h-full rounded-full transition-all duration-1000 ease-out;
   }
-  
+
   .action-card {
     @apply wellness-card flex items-center justify-center p-6 cursor-pointer transition-transform duration-300 hover:scale-[1.02];
   }
-  
+
   .nav-link {
     @apply px-4 py-2 font-medium transition-colors relative;
   }
-  
+
   .nav-link.active {
     @apply after:content-[''] after:absolute after:w-1/2 after:h-0.5 after:bottom-0 after:left-1/4;
   }
@@ -145,17 +151,27 @@
   .btn-green {
     @apply bg-wellness-bright-green text-white rounded-full px-6 py-3 font-medium transition-all hover:bg-wellness-green-gradient shadow-sm;
   }
-  
+
   .green-tab {
     @apply bg-wellness-light-green text-wellness-bright-green px-4 py-2 rounded-lg font-medium;
   }
-  
+
   .green-progress {
     @apply h-1.5 rounded-full bg-wellness-light-green overflow-hidden;
   }
-  
+
   .green-progress-bar {
     @apply h-full rounded-full bg-wellness-bright-green transition-all duration-1000 ease-out;
+  }
+
+  /* Scrollbar styling */
+  .scrollbar-none {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
   }
 }
 
@@ -164,11 +180,21 @@
   animation: fadeInOrgan 0.5s ease-out forwards;
 }
 
-.health-map-container .organ:nth-child(1) { animation-delay: 0.2s; }
-.health-map-container .organ:nth-child(2) { animation-delay: 0.4s; }
-.health-map-container .organ:nth-child(3) { animation-delay: 0.6s; }
-.health-map-container .organ:nth-child(4) { animation-delay: 0.8s; }
-.health-map-container .organ:nth-child(5) { animation-delay: 1s; }
+.health-map-container .organ:nth-child(1) {
+  animation-delay: 0.2s;
+}
+.health-map-container .organ:nth-child(2) {
+  animation-delay: 0.4s;
+}
+.health-map-container .organ:nth-child(3) {
+  animation-delay: 0.6s;
+}
+.health-map-container .organ:nth-child(4) {
+  animation-delay: 0.8s;
+}
+.health-map-container .organ:nth-child(5) {
+  animation-delay: 1s;
+}
 
 @keyframes fadeInOrgan {
   from {
@@ -187,12 +213,24 @@
   animation: staggerFadeIn 0.5s ease-out forwards;
 }
 
-.staggered-fade-in > *:nth-child(1) { animation-delay: 0.1s; }
-.staggered-fade-in > *:nth-child(2) { animation-delay: 0.2s; }
-.staggered-fade-in > *:nth-child(3) { animation-delay: 0.3s; }
-.staggered-fade-in > *:nth-child(4) { animation-delay: 0.4s; }
-.staggered-fade-in > *:nth-child(5) { animation-delay: 0.5s; }
-.staggered-fade-in > *:nth-child(6) { animation-delay: 0.6s; }
+.staggered-fade-in > *:nth-child(1) {
+  animation-delay: 0.1s;
+}
+.staggered-fade-in > *:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.staggered-fade-in > *:nth-child(3) {
+  animation-delay: 0.3s;
+}
+.staggered-fade-in > *:nth-child(4) {
+  animation-delay: 0.4s;
+}
+.staggered-fade-in > *:nth-child(5) {
+  animation-delay: 0.5s;
+}
+.staggered-fade-in > *:nth-child(6) {
+  animation-delay: 0.6s;
+}
 
 @keyframes staggerFadeIn {
   from {
@@ -207,7 +245,7 @@
 
 /* New green theme styles */
 .green-gradient-bg {
-  background: linear-gradient(135deg, #264E36 0%, #3A6D51 100%);
+  background: linear-gradient(135deg, #264e36 0%, #3a6d51 100%);
 }
 
 .nav-bottom-bar {
@@ -216,4 +254,22 @@
 
 .nav-bottom-bar svg {
   @apply h-6 w-6 text-wellness-warm-beige;
+}
+
+@keyframes fall {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 1;
+  }
+  75% {
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateY(400px) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+.animate-fall {
+  animation: fall 3s ease-in infinite;
 }
