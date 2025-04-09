@@ -107,7 +107,7 @@ const MealLoggingSection = ({
         </div>
       </div>
 
-      <form onSubmit={handleManualSubmit} className="relative">
+      {/* <form onSubmit={handleManualSubmit} className="relative">
         <Input
           type="text"
           placeholder="Type or use voice input..."
@@ -124,7 +124,7 @@ const MealLoggingSection = ({
         >
           <Mic className="h-5 w-5" />
         </button>
-      </form>
+      </form> */}
 
       {/* Modals */}
       <ScanMealModal
