@@ -305,7 +305,7 @@ const DailyTabContent = ({
           </Carousel>
         </div>
       ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
           <SleepScoreCard
             score={wearableDailyData?.finalDailySpikeSleepDataV4?.efficiency}
             bedtime={
@@ -325,7 +325,7 @@ const DailyTabContent = ({
             }
             wakeupCount={wearableDailyData?.wakeUpTimes}
           />
-          <SleepDistributionCard
+          {/* <SleepDistributionCard
             lightHR={convertSecondsToHHMM(
               wearableDailyData?.finalDailySpikeSleepDataV4?.light || 0
             )}
@@ -367,7 +367,21 @@ const DailyTabContent = ({
                   ?.bedtime_duration) *
               100
             }
+          /> */}
+
+          <SleepCycleAnimated
+            sleepData={formattedSleepData || []}
+            title="Sleep Cycle Animation"
+            startTime={formatTo12Hour(
+              wearableDailyData?.finalDailySpikeSleepDataV4?.bedtime_start ||
+                new Date()
+            )}
+            endTime={formatTo12Hour(
+              wearableDailyData?.finalDailySpikeSleepDataV4?.bedtime_end ||
+                new Date()
+            )}
           />
+
           <SleepQualityCard
             lightHR={convertSecondsToHHMM(
               wearableDailyData?.finalDailySpikeSleepDataV4?.light || 0
@@ -411,22 +425,8 @@ const DailyTabContent = ({
               100
             }
           />
-
           <SleepCycleClock
             sleepData={formattedSleepData || []}
-            startTime={formatTo12Hour(
-              wearableDailyData?.finalDailySpikeSleepDataV4?.bedtime_start ||
-                new Date()
-            )}
-            endTime={formatTo12Hour(
-              wearableDailyData?.finalDailySpikeSleepDataV4?.bedtime_end ||
-                new Date()
-            )}
-          />
-
-          <SleepCycleAnimated
-            sleepData={formattedSleepData || []}
-            title="Sleep Cycle Animation"
             startTime={formatTo12Hour(
               wearableDailyData?.finalDailySpikeSleepDataV4?.bedtime_start ||
                 new Date()

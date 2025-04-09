@@ -9,6 +9,16 @@ interface NutrientProgressProps {
   caloriesMultiplier?: number;
 }
 
+// Function to determine color based on percentage of calorie goal
+const getCalorieColor = (percentage: number): string => {
+  if (percentage <= 50) return "orange"; // Under 50% - yellow to green
+  if (percentage >= 51 && percentage <= 75) return "yellow"; // 50-100% - green gradient
+  if (percentage >= 76 && percentage <= 125) return "green"; // 50-100% - green gradient
+  if (percentage >= 126 && percentage <= 150) return "yellow"; // 50-100% - green gradient
+  if (percentage >= 151 && percentage <= 175) return "orange"; // 50-100% - green gradient
+  if (percentage > 175) return "red"; // 50-100% - green gradient
+};
+
 const NutrientProgressv2 = ({
   currentAmount,
   goalAmount,
@@ -20,6 +30,10 @@ const NutrientProgressv2 = ({
 
   // Calculate percentage of goal reached
   const percentage = Math.round((currentAmount / goalAmount) * 100);
+
+  const getcolor = getCalorieColor(percentage);
+
+  console.log(getcolor);
 
   // Calculate calories (1g of fat = 9 kcal)
   // const caloriesMultiplier = 9;
@@ -65,7 +79,7 @@ const NutrientProgressv2 = ({
             cx="50"
             cy="50"
             r="42"
-            stroke={percentage <= 50 ? "#FEDF89" : "url(#progressGradient)"}
+            stroke={`${getcolor}`}
             strokeWidth="8"
             fill="none"
             strokeLinecap="round"
@@ -84,7 +98,7 @@ const NutrientProgressv2 = ({
               </div>
             ) : (
               <div className="text-center">
-                {currentAmount}
+                {currentAmount?.toFixed()}
                 {unit} / {goalAmount}
                 {unit}
               </div>
@@ -147,9 +161,16 @@ const NutrientProgress = ({
 
 // Function to determine color based on percentage of calorie goal
 const getCalorieProgressColor = (percentage: number): string => {
-  if (percentage < 50) return "from-yellow-400 to-green-400"; // Under 50% - yellow to green
-  if (percentage >= 50 && percentage < 100)
-    return "from-green-400 to-green-500"; // 50-100% - green gradient
+  if (percentage <= 50) return "from-orange-400 to-yellow-400"; // Under 50% - yellow to green
+  if (percentage >= 51 && percentage <= 75)
+    return "from-yellow-400 to-green-500"; // 50-100% - green gradient
+  if (percentage >= 76 && percentage <= 125)
+    return "from-green-500 to-yellow-400"; // 50-100% - green gradient
+  if (percentage >= 126 && percentage <= 150)
+    return "from-yellow-400 to-orange-400"; // 50-100% - green gradient
+  if (percentage >= 151 && percentage <= 175)
+    return "from-orange-400 to-red-500"; // 50-100% - green gradient
+  if (percentage > 175) return "from-red-400 to-red-500"; // 50-100% - green gradient
   return "from-green-500 to-red-500"; // Over 100% - green to red
 };
 
