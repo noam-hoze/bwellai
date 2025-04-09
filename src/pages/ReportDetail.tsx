@@ -134,7 +134,7 @@ const ReportDetail = () => {
                 reportId: userPreviousData?.reportId,
                 testName: biomarker?.testName,
                 userId: userPreviousData?.userid,
-                perspective: "MODERN_MEDICINE",
+                perspective: perspective,
               })
             )
           );
@@ -214,7 +214,7 @@ const ReportDetail = () => {
                 }),
                 reportId: userPreviousData?.reportId,
                 language: "English",
-                perspective: "MODERN_MEDICINE",
+                perspective: perspective,
               })
             )
           );
@@ -265,7 +265,11 @@ const ReportDetail = () => {
         setProcessingReport(false);
       }
     }
-  }, [userPreviousData, userPreviousIsSuccess]);
+
+    if (userPreviousIsError) {
+      setProcessingReport(false);
+    }
+  }, [userPreviousData, userPreviousIsSuccess, userPreviousIsError]);
 
   const handleProcessingComplete = () => {
     // setProcessingReport(false);

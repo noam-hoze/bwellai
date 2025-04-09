@@ -54,6 +54,7 @@ export const useGetUserPreviousReportData = (
       ),
     enabled: isAuthenticated,
     refetchOnWindowFocus: false,
+    retry: 0,
   });
 
   return {
