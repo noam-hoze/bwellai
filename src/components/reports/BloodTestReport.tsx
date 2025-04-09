@@ -444,7 +444,7 @@ interface BloodTestReportProps {
 }
 
 const BloodTestReport = ({
-  perspective = "conventional",
+  perspective = "MODERN_MEDICE",
   panelAnalysisResponses,
   userPreviousData,
   biomarkerResponses,
@@ -1544,7 +1544,7 @@ const BloodTestReport = ({
                                       </div>
                                     </div>
 
-                                    <div className="grid md:grid-cols-2 gap-4 mb-4">
+                                    <div className="grid md:grid-cols-1 gap-4 mb-4">
                                       <div className="bg-blue-50 rounded-lg p-4">
                                         <h4 className="text-sm font-medium flex items-center text-blue-700 mb-2">
                                           <Info className="h-4 w-4 mr-1" /> What

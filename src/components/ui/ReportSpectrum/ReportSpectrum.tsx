@@ -300,11 +300,11 @@ const ReportSpectrum = ({ spectrum, min, max, testResultValue, rangeObj }) => {
   }
 
   return (
-    <div style={{ position: "relative" }}>
+    <div style={{ position: "relative", width: "100%" }}>
       <div
         style={{
-          width: "300px",
-          height: "10px",
+          width: "100%",
+          height: "13px",
           borderRadius: "10px",
           background: `linear-gradient(to right, ${gradientStops?.join(", ")})`,
         }}
@@ -349,8 +349,8 @@ const ReportSpectrum = ({ spectrum, min, max, testResultValue, rangeObj }) => {
             style={{
               position: "absolute",
               top: "50%",
-              width: "4px",
-              height: "4px",
+              width: "6px",
+              height: "6px",
               left: defaultValue + "%",
               background: "black",
               transform: "translate(-50%, -50%)",
