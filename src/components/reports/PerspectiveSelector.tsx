@@ -90,7 +90,7 @@ const PerspectiveSelector = ({
   const handlePerspectiveChange = (value: string) => {
     onChange(value);
     setShowIntro(true);
-    setTimeout(() => setShowIntro(false), 5000);
+    // setTimeout(() => setShowIntro(false), 5000);
   };
 
   return (
@@ -105,7 +105,7 @@ const PerspectiveSelector = ({
         className="w-full"
       >
         <TabsList className="h-auto p-1 bg-slate-100 grid grid-cols-3 md:grid-cols-6 gap-1">
-          {perspectives.map((perspective) => (
+          {perspectives?.map((perspective) => (
             <TabsTrigger
               key={perspective.id}
               value={perspective.id}
@@ -130,61 +130,57 @@ const PerspectiveSelector = ({
         </TabsList>
       </Tabs>
 
-      <AnimatePresence>
-        {showIntro && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.3 }}
-            className="mt-4"
-          >
-            <Card
-              className="border-l-4 overflow-hidden"
-              style={{ borderLeftColor: activePerspectiveData.color }}
+      {/* <AnimatePresence> */}
+      {showIntro && (
+        // <motion.div
+        //   initial={{ opacity: 0, y: -10 }}
+        //   animate={{ opacity: 1, y: 0 }}
+        //   exit={{ opacity: 0, y: -10 }}
+        //   transition={{ duration: 0.3 }}
+        //   className="mt-4"
+        // >
+        <Card
+          className="border-l-4 overflow-hidden mt-7"
+          style={{ borderLeftColor: activePerspectiveData.color }}
+        >
+          <CardContent className="p-4 flex items-start justify-between">
+            <div className="flex items-start gap-3">
+              <div
+                className="rounded-full p-2 flex-shrink-0 mt-0.5"
+                style={{
+                  backgroundColor: `${activePerspectiveData.color}20`,
+                }}
+              >
+                <activePerspectiveData.icon
+                  className="h-5 w-5"
+                  style={{ color: activePerspectiveData.color }}
+                />
+              </div>
+              <div>
+                <p className="font-medium">
+                  {activePerspectiveData.name} Perspective
+                </p>
+                <p className="text-sm text-gray-600">
+                  {activePerspectiveData.description}
+                  <Button variant="link" size="sm" className="h-auto p-0 ml-1">
+                    Learn more
+                  </Button>
+                </p>
+              </div>
+            </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-7 w-7 p-0"
+              onClick={() => setShowIntro(false)}
             >
-              <CardContent className="p-4 flex items-start justify-between">
-                <div className="flex items-start gap-3">
-                  <div
-                    className="rounded-full p-2 flex-shrink-0 mt-0.5"
-                    style={{
-                      backgroundColor: `${activePerspectiveData.color}20`,
-                    }}
-                  >
-                    <activePerspectiveData.icon
-                      className="h-5 w-5"
-                      style={{ color: activePerspectiveData.color }}
-                    />
-                  </div>
-                  <div>
-                    <p className="font-medium">
-                      {activePerspectiveData.name} Perspective
-                    </p>
-                    <p className="text-sm text-gray-600">
-                      {activePerspectiveData.description}
-                      <Button
-                        variant="link"
-                        size="sm"
-                        className="h-auto p-0 ml-1"
-                      >
-                        Learn more
-                      </Button>
-                    </p>
-                  </div>
-                </div>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-7 w-7 p-0"
-                  onClick={() => setShowIntro(false)}
-                >
-                  <X className="h-4 w-4" />
-                </Button>
-              </CardContent>
-            </Card>
-          </motion.div>
-        )}
-      </AnimatePresence>
+              <X className="h-4 w-4" />
+            </Button>
+          </CardContent>
+        </Card>
+        // </motion.div>
+      )}
+      {/* </AnimatePresence> */}
     </div>
   );
 };
