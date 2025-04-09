@@ -411,6 +411,16 @@ const perspectiveInsights: Record<string, PerspectiveInsight[]> = {
   ],
 };
 
+const colorMap = {
+  1: "#3b82f6",
+  2: "#e05d44",
+  3: "#22c55e",
+  4: "#f97316",
+  5: "#8b5cf6",
+  6: "#6366f1",
+  7: "#0ea5e9",
+};
+
 const calculateHealthScore = (results: BloodTestResult[]): number => {
   let score = 100;
   results.forEach((result) => {
@@ -725,7 +735,7 @@ const BloodTestReport = ({
                 className="space-y-4"
               >
                 {Object.entries(panelAnalysisResponses)?.map(
-                  ([key, panelData]: [string, any]) => {
+                  ([key, panelData]: [string, any], index: number) => {
                     return (
                       <Card
                         key={key}
@@ -733,11 +743,11 @@ const BloodTestReport = ({
                       >
                         <div
                           className="border-l-4 p-6"
-                          style={{ borderLeftColor: "#ec4899" }}
+                          style={{ borderLeftColor: colorMap[index % 7] }}
                         >
                           <h3
                             className="text-xl font-medium mb-2"
-                            style={{ color: "#ec4899" }}
+                            style={{ color: colorMap[index % 7] }}
                           >
                             {panelData?.panel}
                           </h3>
