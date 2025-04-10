@@ -44,6 +44,7 @@ import AllTestsList from "./components/tests/AllTestsList";
 import PerspectiveLoadingOverlay from "../reports/PerspectiveLoadingOverlay";
 import AbnormalTestsList from "./components/tests/AbnormalTestsList";
 import RecommendedActions from "./components/actions/RecommendedActions";
+import { useGetUserReportLatestResultByDate } from "@/service/hooks/ocr/useGetAlternativePerspectiveUserReport";
 
 interface BloodTestResult {
   id: string;
@@ -460,6 +461,21 @@ interface BloodTestReportProps {
   processingReport?: any;
 }
 
+const getProfileTestNameList = (reportData) => {
+  console.log(reportData);
+
+  const data = [];
+  if (reportData) {
+    reportData?.forEach((biomarkers) => {
+      biomarkers?.biomarker?.forEach((b) => {
+        data?.push(b?.testName);
+      });
+    });
+  }
+
+  return data;
+};
+
 const BloodTestReport = ({
   perspective,
   initialActiveTab = "key-findings",
@@ -478,6 +494,9 @@ const BloodTestReport = ({
   const [comparePerspectives, setComparePerspectives] = useState<string[]>([]);
   const healthScore = calculateHealthScore(bloodTestResults);
   const abnormalResults = getAbnormalResults(userPreviousData);
+
+  const { data: latestResultByDateData, mutate: latestResultByDateMutate } =
+    useGetUserReportLatestResultByDate();
 
   const resultsCategories = bloodTestResults.reduce((acc, result) => {
     if (!acc[result.category]) {
@@ -735,6 +754,19 @@ const BloodTestReport = ({
     }
   }, [processingReport]);
 
+  useEffect(() => {
+    if (
+      userPreviousData?.data?.resultData ||
+      userPreviousData?.data?.resultData?.length > 0
+    ) {
+      latestResultByDateMutate({
+        testName: getProfileTestNameList(
+          userPreviousData?.data?.resultData || []
+        ),
+      });
+    }
+  }, [userPreviousData?.data?.resultData]);
+
   const handlePerspectiveChange = () => {
     setLoading(true);
     setLoadingProgress(0);
@@ -781,6 +813,7 @@ const BloodTestReport = ({
             perspective={perspective}
             biomarkerResponses={biomarkerResponses}
             panelAnalysisResponses={panelAnalysisResponses}
+            latestResultByDateData={latestResultByDateData}
           />
         ) : (
           userPreviousData?.data?.resultData?.map((biomarkerData, index) => {
@@ -790,6 +823,7 @@ const BloodTestReport = ({
                   resultsCategories={biomarkerData}
                   biomarkerResponses={biomarkerResponses}
                   panelAnalysisResponses={panelAnalysisResponses}
+                  latestResultByDateData={latestResultByDateData}
                 />
               )
             );

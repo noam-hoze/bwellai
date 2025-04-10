@@ -1,7 +1,5 @@
 import { Client } from "../../api.client";
 
-// /perspective?perspective=TRADITIONAL_CHINESE_MEDICINE&category=HUMAN&sub-category=HUMAN&uuid=ZjY2MDM2&language=english&audience=patient
-
 const getAlternativePerspectiveUserReport = (
   perspective: any,
   uuid: string,
@@ -14,6 +12,8 @@ const getAlternativePerspectiveUserReport = (
   `/perspective?perspective=${perspective}&uuid=${uuid}&category=${category}&sub-category=${subCategory}&language=${language}&audience=${audience}${
     userId ? `&userid=${userId}` : ""
   }`;
+
+const getUserReportLatestResultByDate = () => `/report/latest/results`;
 
 export const getAlternativePerspectiveUserReportFetcher = ({
   perspective,
@@ -36,4 +36,8 @@ export const getAlternativePerspectiveUserReportFetcher = ({
     ),
     {}
   );
+};
+
+export const getUserReportLatestResultByDateFetcher = ({ testName }) => {
+  return Client.post(getUserReportLatestResultByDate(), { testName });
 };
