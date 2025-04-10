@@ -30,11 +30,15 @@ import {
   DialogClose,
   DialogContent,
   DialogHeader,
+  DialogDescription,
+  DialogTitle,
+  DialogTrigger,
 } from "@/components/ui/dialog";
 
 const ReportDetail = () => {
   const { id } = useParams();
   const [activeTab, setActiveTab] = useState("report");
+  const [secondaryTab, setSecondaryTab] = useState("key-findings");
   const [perspective, setPerspective] = useState("MODERN_MEDICINE");
 
   const [processingReport, setProcessingReport] = useState(false);
@@ -294,7 +298,7 @@ const ReportDetail = () => {
             </h1>
           </div>
 
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-4">
             <div>
               <div className="flex items-center">
                 <p className="text-gray-500 mr-3">
@@ -310,6 +314,123 @@ const ReportDetail = () => {
               <p className="text-gray-500 text-sm mt-1">
                 Order #: {userPreviousData?.reportId}
               </p>
+
+              {/* View Test Details Link */}
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button
+                    variant="link"
+                    size="sm"
+                    className="text-sm p-0 h-auto mt-2 text-primary"
+                  >
+                    <FileText className="h-4 w-4 mr-1" /> View Test Details
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-md">
+                  <DialogHeader>
+                    <DialogTitle>Test Details</DialogTitle>
+                    <DialogDescription>
+                      Information about this test and sample collection
+                    </DialogDescription>
+                  </DialogHeader>
+
+                  <div className="grid md:grid-cols-2 gap-6 mb-6">
+                    <div className="bg-gray-50 p-4 rounded-lg">
+                      <h3 className="text-md font-medium mb-2">
+                        Test Information
+                      </h3>
+                      <table className="w-full text-sm">
+                        <tbody>
+                          <tr>
+                            <td className="py-2 text-gray-600">Lab Name:</td>
+                            <td className="py-2 font-medium">
+                              {userPreviousData?.reportName}
+                            </td>
+                          </tr>
+                          <tr>
+                            <td className="py-2 text-gray-600">
+                              Ordering Physician:
+                            </td>
+                            <td className="py-2 font-medium">
+                              {report.doctor}
+                            </td>
+                          </tr>
+                          <tr>
+                            <td className="py-2 text-gray-600">
+                              Collection Date:
+                            </td>
+                            <td className="py-2 font-medium">
+                              {report.collectionDate}
+                            </td>
+                          </tr>
+                          <tr>
+                            <td className="py-2 text-gray-600">Report Date:</td>
+                            <td className="py-2 font-medium">
+                              {formatDateToShortMonth(
+                                userPreviousData?.uploadTime || new Date()
+                              )}
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+
+                    <div className="bg-gray-50 p-4 rounded-lg">
+                      <h3 className="text-md font-medium mb-2">
+                        Sample Information
+                      </h3>
+                      <table className="w-full text-sm">
+                        <tbody>
+                          <tr>
+                            <td className="py-2 text-gray-600">Sample Type:</td>
+                            <td className="py-2 font-medium">Blood</td>
+                          </tr>
+                          <tr>
+                            <td className="py-2 text-gray-600">Sample ID:</td>
+                            <td className="py-2 font-medium">
+                              {userPreviousData?.reportId}
+                            </td>
+                          </tr>
+                          <tr>
+                            <td className="py-2 text-gray-600">
+                              Collection Method:
+                            </td>
+                            <td className="py-2 font-medium">Venous Draw</td>
+                          </tr>
+                          <tr>
+                            <td className="py-2 text-gray-600">
+                              Fasting Status:
+                            </td>
+                            <td className="py-2 font-medium">
+                              Fasting (8+ hours)
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+
+                  <div className="bg-gray-50 p-4 rounded-lg">
+                    <h3 className="text-md font-medium mb-2">
+                      Test Methodology
+                    </h3>
+                    <p className="text-sm text-gray-600 mb-4">
+                      This comprehensive blood panel was conducted using
+                      state-of-the-art laboratory equipment and standardized
+                      methodologies:
+                    </p>
+                    <ul className="list-disc pl-5 text-sm text-gray-600 space-y-1">
+                      <li>Chemistry panel: Spectrophotometric analysis</li>
+                      <li>Lipid profile: Enzymatic colorimetric method</li>
+                      <li>Glucose: Hexokinase method</li>
+                      <li>
+                        HbA1c: High-performance liquid chromatography (HPLC)
+                      </li>
+                      <li>Liver enzymes: Spectrophotometric analysis</li>
+                    </ul>
+                  </div>
+                </DialogContent>
+              </Dialog>
             </div>
             <div className="flex gap-2">
               <Button variant="outline" size="sm">
@@ -376,14 +497,51 @@ const ReportDetail = () => {
             onChange={setPerspective}
           />
 
-          {processingReport && (
+          {/* {processingReport && (
             <ReportProcessingAnimation
               isProcessing={processingReport}
               onProcessingComplete={handleProcessingComplete}
             />
-          )}
+          )} */}
 
           <Card className="wellness-card p-6 mb-6">
+            {/* Secondary tabs for findings */}
+            {/* {report.type === "blood-test" && (
+            )} */}
+            <Tabs
+              defaultValue="key-findings"
+              value={secondaryTab}
+              onValueChange={setSecondaryTab}
+              className="w-full mb-6"
+            >
+              <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="key-findings">Abnormal Results</TabsTrigger>
+                <TabsTrigger value="all-tests">All Tests</TabsTrigger>
+              </TabsList>
+            </Tabs>
+
+            {id ? (
+              <BloodTestReport
+                perspective={perspective}
+                initialActiveTab={secondaryTab}
+                userPreviousData={userPreviousData}
+                biomarkerResponses={biomarkerResponses}
+                panelAnalysisResponses={panelAnalysisResponses}
+                processingReport={processingReport}
+              />
+            ) : (
+              <div className="p-4 min-h-[400px]">
+                <p>{report.content}</p>
+                <div className="mt-10 p-10 border border-dashed border-gray-200 rounded-lg flex items-center justify-center">
+                  <p className="text-gray-500">
+                    Report content would be displayed here.
+                  </p>
+                </div>
+              </div>
+            )}
+          </Card>
+
+          {/* <Card className="wellness-card p-6 mb-6">
             <Tabs
               defaultValue="report"
               value={activeTab}
@@ -408,21 +566,6 @@ const ReportDetail = () => {
               </TabsList>
 
               <TabsContent value="report">
-                {/* {report.type === "blood-test" ? (
-                  <BloodTestReport
-                    perspective={perspective}
-                    panelAnalysisResponses={panelAnalysisResponses}
-                  />
-                ) : (
-                  <div className="p-4 min-h-[400px]">
-                    <p>{report.content}</p>
-                    <div className="mt-10 p-10 border border-dashed border-gray-200 rounded-lg flex items-center justify-center">
-                      <p className="text-gray-500">
-                        Report content would be displayed here.
-                      </p>
-                    </div>
-                  </div>
-                )} */}
                 <BloodTestReport
                   perspective={perspective}
                   userPreviousData={userPreviousData}
@@ -531,7 +674,7 @@ const ReportDetail = () => {
                 </div>
               </TabsContent>
             </Tabs>
-          </Card>
+          </Card> */}
         </div>
       </main>
 

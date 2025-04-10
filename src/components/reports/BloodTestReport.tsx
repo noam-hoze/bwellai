@@ -41,6 +41,9 @@ import TestInformationTooltip from "./TestInformationTooltip";
 import ReportSpectrum from "../ui/ReportSpectrum/ReportSpectrum";
 import TestResultTrendHistory from "./components/test-result/TestResultTrendHistory";
 import AllTestsList from "./components/tests/AllTestsList";
+import PerspectiveLoadingOverlay from "../reports/PerspectiveLoadingOverlay";
+import AbnormalTestsList from "./components/tests/AbnormalTestsList";
+import RecommendedActions from "./components/actions/RecommendedActions";
 
 interface BloodTestResult {
   id: string;
@@ -450,18 +453,25 @@ const getAbnormalResults = (results: any): any[] => {
 
 interface BloodTestReportProps {
   perspective: string;
+  initialActiveTab?: string;
   panelAnalysisResponses?: any;
   userPreviousData?: any;
   biomarkerResponses?: any;
+  processingReport?: any;
 }
 
 const BloodTestReport = ({
-  perspective = "MODERN_MEDICINE",
+  perspective,
+  initialActiveTab = "key-findings",
   panelAnalysisResponses,
   userPreviousData,
   biomarkerResponses,
+  processingReport,
 }: BloodTestReportProps) => {
-  const [activeTab, setActiveTab] = useState("key-findings");
+  const [activeTab, setActiveTab] = useState(initialActiveTab);
+  const [loading, setLoading] = useState(false);
+  const [previousPerspective, setPreviousPerspective] = useState(perspective);
+  const [loadingProgress, setLoadingProgress] = useState(0);
   const [expandedTests, setExpandedTests] = useState<string[]>([]);
   const [expandedTestDetails, setExpandedTestDetails] = useState<string[]>([]);
   const [showCompareDialog, setShowCompareDialog] = useState(false);
@@ -704,9 +714,94 @@ const BloodTestReport = ({
     );
   };
 
+  // useEffect(() => {
+  //   if (previousPerspective !== perspective && !loading) {
+  //     handlePerspectiveChange();
+  //   }
+  // }, [perspective]);
+
+  useEffect(() => {
+    if (initialActiveTab) {
+      setActiveTab(initialActiveTab);
+    }
+  }, [initialActiveTab]);
+
+  useEffect(() => {
+    if (processingReport) {
+      handlePerspectiveChange();
+    } else {
+      setLoading(false);
+      setPreviousPerspective(perspective);
+    }
+  }, [processingReport]);
+
+  const handlePerspectiveChange = () => {
+    setLoading(true);
+    setLoadingProgress(0);
+
+    const interval = setInterval(() => {
+      setLoadingProgress((prev) => {
+        const newProgress = prev + (5 + Math.random() * 10);
+        // if (newProgress >= 100) {
+        //   clearInterval(interval);
+        //   setTimeout(() => {
+        //     setLoading(false);
+
+        //     setPreviousPerspective(perspective);
+        //   }, 30000);
+        //   return 100;
+        // }
+        return newProgress;
+      });
+    }, 30000);
+
+    return () => clearInterval(interval);
+  };
+
+  const handleCancelPerspectiveChange = () => {
+    setLoading(false);
+  };
+
   return (
-    <div className="animate-fade-in">
-      <Card className="wellness-card mb-6 bg-[#f8fafc]">
+    <div className="animate-fade-in relative">
+      <AnimatePresence>
+        <PerspectiveLoadingOverlay
+          previousPerspective={previousPerspective}
+          targetPerspective={perspective}
+          onCancel={handleCancelPerspectiveChange}
+          progress={loadingProgress}
+          isVisible={loading}
+        />
+      </AnimatePresence>
+
+      <div className="mt-4">
+        {activeTab === "key-findings" ? (
+          <AbnormalTestsList
+            abnormalResults={abnormalResults}
+            perspective={perspective}
+            biomarkerResponses={biomarkerResponses}
+            panelAnalysisResponses={panelAnalysisResponses}
+          />
+        ) : (
+          userPreviousData?.data?.resultData?.map((biomarkerData, index) => {
+            return (
+              biomarkerData?.biomarker?.length > 0 && (
+                <AllTestsList
+                  resultsCategories={biomarkerData}
+                  biomarkerResponses={biomarkerResponses}
+                  panelAnalysisResponses={panelAnalysisResponses}
+                />
+              )
+            );
+          })
+        )}
+      </div>
+
+      <div className="mt-8">
+        <RecommendedActions perspective={perspective} />
+      </div>
+
+      {/* <Card className="wellness-card mb-6 bg-[#f8fafc]">
         <CardHeader className="pb-1">
           <CardTitle className="text-xl flex items-center justify-between">
             <span>Personal Health Insights</span>
@@ -766,312 +861,9 @@ const BloodTestReport = ({
             </AnimatePresence>
           </div>
         </CardContent>
-      </Card>
+      </Card> */}
 
-      <Card className="wellness-card mb-6">
-        <CardHeader className="pb-1">
-          <CardTitle className="text-xl">
-            <p className="flex gap-2">
-              Recommended Actions
-              <span className="text-xs font-light border border-1 p-1 rounded-full">
-                Coming Soon
-              </span>
-            </p>
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={perspective}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.3 }}
-            >
-              <ul className="space-y-4">
-                {perspective === "MODERN_MEDICINE" && (
-                  <>
-                    <li className="flex items-start">
-                      <div className="h-8 w-8 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0 mt-0.5 mr-3">
-                        <span className="text-green-600 font-medium">1</span>
-                      </div>
-                      <div>
-                        <p className="font-medium text-lg">
-                          Schedule a follow-up with your physician
-                        </p>
-                        <p className="text-gray-600">
-                          Discuss your test results and potential treatment
-                          options
-                        </p>
-                      </div>
-                    </li>
-                    <li className="flex items-start">
-                      <div className="h-8 w-8 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0 mt-0.5 mr-3">
-                        <span className="text-green-600 font-medium">2</span>
-                      </div>
-                      <div>
-                        <p className="font-medium text-lg">
-                          Review your diet and lifestyle
-                        </p>
-                        <p className="text-gray-600">
-                          Make adjustments based on your test results
-                        </p>
-                      </div>
-                    </li>
-                    <li className="flex items-start">
-                      <div className="h-8 w-8 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0 mt-0.5 mr-3">
-                        <span className="text-green-600 font-medium">3</span>
-                      </div>
-                      <div>
-                        <p className="font-medium text-lg">
-                          Schedule your next routine test
-                        </p>
-                        <p className="text-gray-600">
-                          Regular monitoring is key to maintaining health
-                        </p>
-                      </div>
-                    </li>
-                  </>
-                )}
-
-                {perspective === "naturopathic" && (
-                  <>
-                    <li className="flex items-start">
-                      <div className="h-8 w-8 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0 mt-0.5 mr-3">
-                        <span className="text-green-600 font-medium">1</span>
-                      </div>
-                      <div>
-                        <p className="font-medium text-lg">
-                          Consult with a naturopathic doctor
-                        </p>
-                        <p className="text-gray-600">
-                          For a comprehensive whole-body approach to your health
-                        </p>
-                      </div>
-                    </li>
-                    <li className="flex items-start">
-                      <div className="h-8 w-8 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0 mt-0.5 mr-3">
-                        <span className="text-green-600 font-medium">2</span>
-                      </div>
-                      <div>
-                        <p className="font-medium text-lg">
-                          Implement an anti-inflammatory diet
-                        </p>
-                        <p className="text-gray-600">
-                          Focus on whole foods and eliminate common inflammatory
-                          triggers
-                        </p>
-                      </div>
-                    </li>
-                    <li className="flex items-start">
-                      <div className="h-8 w-8 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0 mt-0.5 mr-3">
-                        <span className="text-green-600 font-medium">3</span>
-                      </div>
-                      <div>
-                        <p className="font-medium text-lg">
-                          Consider targeted supplements
-                        </p>
-                        <p className="text-gray-600">
-                          After consulting with a professional about your
-                          specific needs
-                        </p>
-                      </div>
-                    </li>
-                  </>
-                )}
-
-                {perspective === "dietitian" && (
-                  <>
-                    <li className="flex items-start">
-                      <div className="h-8 w-8 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0 mt-0.5 mr-3">
-                        <span className="text-green-600 font-medium">1</span>
-                      </div>
-                      <div>
-                        <p className="font-medium text-lg">
-                          Track your food intake for one week
-                        </p>
-                        <p className="text-gray-600">
-                          Use a food journal or app to understand your current
-                          habits
-                        </p>
-                      </div>
-                    </li>
-                    <li className="flex items-start">
-                      <div className="h-8 w-8 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0 mt-0.5 mr-3">
-                        <span className="text-green-600 font-medium">2</span>
-                      </div>
-                      <div>
-                        <p className="font-medium text-lg">
-                          Consult with a registered dietitian
-                        </p>
-                        <p className="text-gray-600">
-                          For personalized nutrition recommendations based on
-                          your test results
-                        </p>
-                      </div>
-                    </li>
-                    <li className="flex items-start">
-                      <div className="h-8 w-8 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0 mt-0.5 mr-3">
-                        <span className="text-green-600 font-medium">3</span>
-                      </div>
-                      <div>
-                        <p className="font-medium text-lg">
-                          Gradually implement a heart-healthy eating pattern
-                        </p>
-                        <p className="text-gray-600">
-                          Focus on Mediterranean or DASH diet principles
-                        </p>
-                      </div>
-                    </li>
-                  </>
-                )}
-
-                {perspective === "tcm" && (
-                  <>
-                    <li className="flex items-start">
-                      <div className="h-8 w-8 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0 mt-0.5 mr-3">
-                        <span className="text-green-600 font-medium">1</span>
-                      </div>
-                      <div>
-                        <p className="font-medium text-lg">
-                          Visit a licensed TCM practitioner
-                        </p>
-                        <p className="text-gray-600">
-                          For pulse diagnosis and personalized herbal
-                          recommendations
-                        </p>
-                      </div>
-                    </li>
-                    <li className="flex items-start">
-                      <div className="h-8 w-8 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0 mt-0.5 mr-3">
-                        <span className="text-green-600 font-medium">2</span>
-                      </div>
-                      <div>
-                        <p className="font-medium text-lg">
-                          Consider acupuncture treatment
-                        </p>
-                        <p className="text-gray-600">
-                          To help balance energy systems and support organ
-                          function
-                        </p>
-                      </div>
-                    </li>
-                    <li className="flex items-start">
-                      <div className="h-8 w-8 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0 mt-0.5 mr-3">
-                        <span className="text-green-600 font-medium">3</span>
-                      </div>
-                      <div>
-                        <p className="font-medium text-lg">
-                          Incorporate gentle Qigong practice
-                        </p>
-                        <p className="text-gray-600">
-                          Daily movement to support qi and blood circulation
-                        </p>
-                      </div>
-                    </li>
-                  </>
-                )}
-
-                {perspective === "mental-health" && (
-                  <>
-                    <li className="flex items-start">
-                      <div className="h-8 w-8 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0 mt-0.5 mr-3">
-                        <span className="text-green-600 font-medium">1</span>
-                      </div>
-                      <div>
-                        <p className="font-medium text-lg">
-                          Start a daily stress reduction practice
-                        </p>
-                        <p className="text-gray-600">
-                          Even 10 minutes of meditation or deep breathing can
-                          have significant benefits
-                        </p>
-                      </div>
-                    </li>
-                    <li className="flex items-start">
-                      <div className="h-8 w-8 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0 mt-0.5 mr-3">
-                        <span className="text-green-600 font-medium">2</span>
-                      </div>
-                      <div>
-                        <p className="font-medium text-lg">
-                          Assess your sleep quality
-                        </p>
-                        <p className="text-gray-600">
-                          Optimizing sleep can improve both mental health and
-                          metabolic markers
-                        </p>
-                      </div>
-                    </li>
-                    <li className="flex items-start">
-                      <div className="h-8 w-8 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0 mt-0.5 mr-3">
-                        <span className="text-green-600 font-medium">3</span>
-                      </div>
-                      <div>
-                        <p className="font-medium text-lg">
-                          Consider talking to a mental health professional
-                        </p>
-                        <p className="text-gray-600">
-                          For support with stress management and emotional
-                          wellbeing
-                        </p>
-                      </div>
-                    </li>
-                  </>
-                )}
-
-                {perspective === "functional" && (
-                  <>
-                    <li className="flex items-start">
-                      <div className="h-8 w-8 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0 mt-0.5 mr-3">
-                        <span className="text-green-600 font-medium">1</span>
-                      </div>
-                      <div>
-                        <p className="font-medium text-lg">
-                          Pursue further specialized testing
-                        </p>
-                        <p className="text-gray-600">
-                          Consider advanced lipid testing, inflammatory markers,
-                          and micronutrient analysis
-                        </p>
-                      </div>
-                    </li>
-                    <li className="flex items-start">
-                      <div className="h-8 w-8 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0 mt-0.5 mr-3">
-                        <span className="text-green-600 font-medium">2</span>
-                      </div>
-                      <div>
-                        <p className="font-medium text-lg">
-                          Work with a functional medicine practitioner
-                        </p>
-                        <p className="text-gray-600">
-                          For a personalized systems-based approach to
-                          optimization
-                        </p>
-                      </div>
-                    </li>
-                    <li className="flex items-start">
-                      <div className="h-8 w-8 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0 mt-0.5 mr-3">
-                        <span className="text-green-600 font-medium">3</span>
-                      </div>
-                      <div>
-                        <p className="font-medium text-lg">
-                          Implement a 30-day reset protocol
-                        </p>
-                        <p className="text-gray-600">
-                          Focus on anti-inflammatory foods, targeted
-                          supplementation, and lifestyle modifications
-                        </p>
-                      </div>
-                    </li>
-                  </>
-                )}
-              </ul>
-            </motion.div>
-          </AnimatePresence>
-        </CardContent>
-      </Card>
-
-      <Tabs defaultValue="key-findings" className="mb-6">
+      {/* <Tabs defaultValue="key-findings" className="mb-6">
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="key-findings">Abnormal Results</TabsTrigger>
           <TabsTrigger value="all-tests">All Tests</TabsTrigger>
@@ -1232,8 +1024,6 @@ const BloodTestReport = ({
                                         </div>
                                       </div>
 
-                                      {/* Enhanced range bar */}
-                                      {/* {renderEnhancedRangeBar(result)} */}
                                       <div
                                         style={{
                                           width: "100%",
@@ -1304,18 +1094,6 @@ const BloodTestReport = ({
                                           }
                                         </p>
                                       </div>
-
-                                      {/* {result.whatAffects && (
-                                        <div className="bg-purple-50 rounded-lg p-4">
-                                          <h4 className="text-sm font-medium flex items-center text-purple-700 mb-2">
-                                            <Brain className="h-4 w-4 mr-1" />{" "}
-                                            What affects {result.name} levels?
-                                          </h4>
-                                          <p className="text-sm text-gray-700">
-                                            {result.whatAffects}
-                                          </p>
-                                        </div>
-                                      )} */}
                                     </div>
 
                                     <div className="bg-amber-50 rounded-lg p-4 mb-4">
@@ -1324,7 +1102,6 @@ const BloodTestReport = ({
                                         What does your result mean?
                                       </h4>
                                       <p className="text-sm text-gray-700">
-                                        {/* {result.whatMeans} */}
                                         {
                                           biomarkerResponses?.[result?.testName]
                                             ?.englishLanguageAnalysisData
@@ -1346,7 +1123,7 @@ const BloodTestReport = ({
             ))}
           </div>
         </TabsContent>
-      </Tabs>
+      </Tabs> */}
     </div>
   );
 };
