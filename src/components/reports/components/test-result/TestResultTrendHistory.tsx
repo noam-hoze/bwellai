@@ -12,8 +12,9 @@ const TestResultTrendHistory = ({
   testName,
   minValue,
   maxValue,
+  rangeObj,
 }: any) => {
-  console.log(result);
+  console.log({ result, minValue, maxValue });
 
   // if (!result?.testResult || result?.testResult.length < 2 || !result?.createdAt)
   //   return null;
@@ -22,20 +23,21 @@ const TestResultTrendHistory = ({
     return Number(d?.testResult);
   });
   const dates = result?.map((d) => {
-    return Number(d?.createdAt);
+    return d?.createdAt;
   });
 
   // Create points for the trend line
   const dataPoints = result?.map((value, index) => {
     let statusColor = "#10b981"; // green/normal
-    if (Number(value?.testResult) > maxValue * 1.4)
+    if (Number(value?.testResult) > Math.max(...data) * 1.4)
       statusColor = "#ef4444"; // red/high risk
-    else if (Number(value?.testResult) > maxValue)
+    else if (Number(value?.testResult) > Math.max(...data))
       statusColor = "#f59e0b"; // amber/moderate risk
-    else if (Number(value?.testResult) < minValue) statusColor = "#ef4444"; // red/low risk
+    else if (Number(value?.testResult) < Math.min(...data))
+      statusColor = "#ef4444"; // red/low risk
 
     return {
-      value,
+      value: Number(value?.testResult),
       date: dates[index],
       statusColor,
       isCurrent: index === data.length - 1,
@@ -48,8 +50,7 @@ const TestResultTrendHistory = ({
       if (index === 0 || index % 2 === 0 || index === dataPoints?.length - 1) {
         return index === dataPoints?.length - 1
           ? "Today"
-          : // : format(point?.date, "MMM");
-            "MMM";
+          : format(point?.date, "MMM");
       }
       return "";
     })
@@ -65,7 +66,7 @@ const TestResultTrendHistory = ({
       <div className="flex flex-col h-40 gap-1 px-4">
         {/* Y-axis top label */}
         <div className="text-xs text-gray-500 h-5">
-          {Math.ceil(Math.max(...data) * 1.1)}
+          {Math.ceil(Number(maxValue))}
         </div>
 
         {/* Chart area */}
@@ -100,7 +101,7 @@ const TestResultTrendHistory = ({
                   const x = (i / (dataPoints.length - 1)) * 80 + 10; // 10% left margin, 80% width
                   // Calculate y position based on value and max/min range
                   // Map the value to vertical position (higher value = lower position in SVG)
-                  const valueRange = Math.max(...data) - Math.min(...data);
+                  const valueRange = Number(maxValue) - Number(minValue);
                   const normalizedVal =
                     (point.value - Math.min(...data)) / valueRange;
                   // Invert because SVG coordinates grow downward
@@ -114,9 +115,10 @@ const TestResultTrendHistory = ({
             />
 
             {/* Draw the data points */}
-            {dataPoints.map((point, i) => {
+            {dataPoints?.map((point, i) => {
               const x = (i / (dataPoints.length - 1)) * 80 + 10;
-              const valueRange = Math.max(...data) - Math.min(...data);
+              const valueRange = Number(maxValue) - Number(minValue);
+
               const normalizedVal =
                 (point.value - Math.min(...data)) / valueRange;
               const y = 80 - normalizedVal * 60 + 10;
@@ -142,11 +144,11 @@ const TestResultTrendHistory = ({
 
         {/* X-axis labels */}
         <div className="flex justify-between px-6 text-xs text-gray-600 h-5">
-          {monthLabels.map((month, i) => (
+          {monthLabels?.map((month, i) => (
             <div
               key={i}
               className={
-                i === monthLabels.length - 1 ? "font-medium text-gray-800" : ""
+                i === monthLabels?.length - 1 ? "font-medium text-gray-800" : ""
               }
             >
               {month}
@@ -156,7 +158,7 @@ const TestResultTrendHistory = ({
 
         {/* Y-axis bottom label */}
         <div className="text-xs text-gray-500 h-5">
-          {Math.floor(Math.min(...data) * 0.9)}
+          {Math.floor(Number(minValue))}
         </div>
       </div>
 
