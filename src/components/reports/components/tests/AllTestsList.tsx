@@ -32,6 +32,7 @@ const AllTestsList = ({
   resultsCategories,
   biomarkerResponses,
   panelAnalysisResponses,
+  latestResultByDateData,
 }: any) => {
   const [expandedTests, setExpandedTests] = useState<string[]>([]);
 
@@ -169,7 +170,14 @@ const AllTestsList = ({
                                 testResultValue={result?.testResultValue}
                               />
                             </div>
-                            <TestResultTrendHistory result={result} />
+                            <TestResultTrendHistory
+                              result={
+                                latestResultByDateData?.[result?.testName]
+                              }
+                              testName={result?.testName}
+                              maxValue={result?.maxParameterValue}
+                              minValue={result?.minParameterValue}
+                            />
                           </div>
 
                           <div className="grid md:grid-cols-1 gap-4 mb-4">

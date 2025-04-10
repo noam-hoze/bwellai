@@ -30,6 +30,7 @@ interface AbnormalTestsListProps {
   biomarkerResponses: any[];
   perspective: string;
   panelAnalysisResponses?: any;
+  latestResultByDateData?: any;
 }
 
 const AbnormalTestsList = ({
@@ -37,6 +38,7 @@ const AbnormalTestsList = ({
   perspective,
   biomarkerResponses,
   panelAnalysisResponses,
+  latestResultByDateData,
 }: AbnormalTestsListProps) => {
   const [expandedTests, setExpandedTests] = useState<string[]>([]);
 
@@ -255,7 +257,14 @@ const AbnormalTestsList = ({
                                     />
                                   </div>
 
-                                  <TestResultTrendHistory result={result} />
+                                  <TestResultTrendHistory
+                                    result={
+                                      latestResultByDateData?.[result?.testName]
+                                    }
+                                    testName={result?.testName}
+                                    maxValue={result?.maxParameterValue}
+                                    minValue={result?.minParameterValue}
+                                  />
                                 </div>
 
                                 <div className="bg-amber-50 rounded-lg p-4 mb-4">
