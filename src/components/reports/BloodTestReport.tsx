@@ -462,8 +462,6 @@ interface BloodTestReportProps {
 }
 
 const getProfileTestNameList = (reportData) => {
-  console.log(reportData);
-
   const data = [];
   if (reportData) {
     reportData?.forEach((biomarkers) => {

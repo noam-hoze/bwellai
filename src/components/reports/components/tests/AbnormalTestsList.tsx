@@ -264,6 +264,7 @@ const AbnormalTestsList = ({
                                     testName={result?.testName}
                                     maxValue={result?.maxParameterValue}
                                     minValue={result?.minParameterValue}
+                                    rangeObj={result?.rangeObj}
                                   />
                                 </div>
 
