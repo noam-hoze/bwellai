@@ -1,17 +1,34 @@
-.wrapper {
+/* .wrapper {
   width: 100vw;
   height: 100vh;
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: center;
+} */
+
+.mxcanvas {
+  max-height: 75vh;
+  aspect-ratio: 0.547;
+  background-color: #ccc;
 }
-#mxcanvas {
+@media screen and ((max-width: 767px) or (max-aspect-ratio: 1)) {
+  .mxcanvas {
+    max-width: 100vw;
+    height: 70vh;
+    background-color: #ccc;
+  }
+  .mxcanvasTopHelper {
+    width: 100%;
+  }
+}
+
+#not-mxcanvas {
   aspect-ratio: 480/894;
   max-width: 100%;
   max-height: 100%;
 }
-@media (max-aspect-ratio: 480/894) {
+/* @media (max-aspect-ratio: 480/894) {
   #mxcanvas {
     width: 100%;
     height: auto;
@@ -22,7 +39,7 @@
     height: 100%;
     width: auto;
   }
-}
+} */
 
 .title {
   padding: 20px;
