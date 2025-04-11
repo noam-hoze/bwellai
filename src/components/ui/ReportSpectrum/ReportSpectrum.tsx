@@ -1,6 +1,7 @@
 import { Tooltip } from "../tooltip";
 
-const upArrow = `${import.meta.env.VITE_ASSETS_BASE_URL}up-arrow.svg`;
+// const upArrow = `${import.meta.env.VITE_ASSETS_BASE_URL}up-arrow.svg`;
+import upArrow from "@/assets/up-arrow.svg";
 
 const extractFirstNumber = (number) => {
   if (!number) return undefined;
