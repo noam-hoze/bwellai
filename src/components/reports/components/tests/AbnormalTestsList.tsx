@@ -24,6 +24,7 @@ import TestResultRangeBar from "../test-result/TestResultRangeBar";
 import TestResultTrendHistory from "../test-result/TestResultTrendHistory";
 import { perspectiveInsights } from "../../data/bloodTestData";
 import ReportSpectrum from "@/components/ui/ReportSpectrum/ReportSpectrum";
+import TestResultTrendHistoryGraphRechart from "../test-result/TestResultTrendHistoryGraphRechart";
 
 interface AbnormalTestsListProps {
   abnormalResults: any[];
@@ -257,7 +258,7 @@ const AbnormalTestsList = ({
                                     />
                                   </div>
 
-                                  <TestResultTrendHistory
+                                  {/* <TestResultTrendHistory
                                     result={
                                       latestResultByDateData?.[result?.testName]
                                     }
@@ -265,6 +266,15 @@ const AbnormalTestsList = ({
                                     maxValue={result?.maxParameterValue}
                                     minValue={result?.minParameterValue}
                                     rangeObj={result?.rangeObj}
+                                  /> */}
+
+                                  <TestResultTrendHistoryGraphRechart
+                                    testName={result?.testName}
+                                    result={
+                                      latestResultByDateData?.[result?.testName]
+                                    }
+                                    maxValue={result?.maxParameterValue}
+                                    minValue={result?.minParameterValue}
                                   />
                                 </div>
 

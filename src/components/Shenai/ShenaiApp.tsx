@@ -1,11 +1,11 @@
-import { ShenaiSDKProvider } from "./ShenaiContext";
+// import { ShenaiSDKProvider } from "./ShenaiContext";
 import { ShenaiSDKView } from "./ShenaiSDKView";
 
 function ShenaiApp() {
   return (
-    <ShenaiSDKProvider>
-      <ShenaiSDKView />
-    </ShenaiSDKProvider>
+    // <ShenaiSDKProvider>
+    // </ShenaiSDKProvider>
+    <ShenaiSDKView />
   );
 }
 
