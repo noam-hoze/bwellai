@@ -102,7 +102,7 @@ export default function TestResultTrendHistoryGraphRechart({
                   fill = "#DC2626"; // red
                 // else if (value >= 4) fill = "#FACC15"; // yellow
 
-                console.log(value, maxValue, minValue, fill);
+                // console.log(value, maxValue, minValue, fill);
 
                 return (
                   <circle
