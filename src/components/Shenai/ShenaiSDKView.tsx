@@ -3,10 +3,15 @@ import { useEffect, useRef, useState } from "react";
 import style from "./shenCanvas.module.css";
 import { useShenaiSdk } from "./useShenaiSDK";
 import { getEnumName } from "@/utils/shenaiHelper";
+import { Button } from "../ui/button";
+import { useFaceScan } from "@/contexts/FaceScanContext";
 
-export const ShenaiSDKView = () => {
+export const ShenaiSDKView = ({ setStep }) => {
   // const hr = useRealtimeHeartRate();
   const shenaiSDK = useShenaiSdk();
+
+  const { setFaceScanData } = useFaceScan();
+
   const [initializationSettings, setInitializationSettings] = useState<any>();
   const [cameraScanningFinished, setCameraScanningFinished] = useState(false); // false
   const [pendingInitialization, setPendingInitialization] = useState(false);
@@ -148,6 +153,7 @@ export const ShenaiSDKView = () => {
 
           rppgSignal: shenaiSDK.getFullPpgSignal(),
         };
+        setFaceScanData({ results: newState?.results });
         setSdkState(newState);
         //console.log(newState);
       }
@@ -170,27 +176,20 @@ export const ShenaiSDKView = () => {
         "UNKNOWN"
       ) === "FINISHED"
     ) {
+      setStep("results");
       setCameraScanningFinished(true);
     }
   }, [shenaiSDK?.getMeasurementState()]);
 
   return (
     <div className="wrapper">
-      <div className={style.title}>
-        <h1>Shen.AI SDK</h1>
-        <h2>React + Vite example</h2>
-      </div>
-      {/* <canvas id="not-mxcanvas"></canvas> */}
-      {/* <canvas id="not-mxcanvas"></canvas> */}
-
       <div ref={canvasTopRef} className={style.mxcanvasTopHelper} />
       <canvas id="mxcanvas" className={style.mxcanvas} />
 
-      <div className={style["hr-tile"]}>
-        Current Heart Rate: <br />
-        <button onClick={initialize}>start face</button>
-        {/* <strong>{hr ? `${hr} BPM` : "-"}</strong> */}
-      </div>
+      <Button variant="accent" onClick={initialize} className="w-full mt-4">
+        {/* <X className="mr-2 h-4 w-4" /> */}
+        Start Scan
+      </Button>
     </div>
   );
 };

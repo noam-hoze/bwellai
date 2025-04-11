@@ -1,11 +1,11 @@
 // import { ShenaiSDKProvider } from "./ShenaiContext";
 import { ShenaiSDKView } from "./ShenaiSDKView";
 
-function ShenaiApp() {
+function ShenaiApp({ setStep }) {
   return (
     // <ShenaiSDKProvider>
     // </ShenaiSDKProvider>
-    <ShenaiSDKView />
+    <ShenaiSDKView setStep={setStep} />
   );
 }
 

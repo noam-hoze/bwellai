@@ -1,4 +1,4 @@
-import { useState, useEffect, lazy } from "react";
+import { useState, useEffect, lazy, Suspense } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -67,6 +67,7 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
+import { FaceScanProvider, useFaceScan } from "@/contexts/FaceScanContext";
 
 const ShenaiApp = lazy(() => import("@/components/Shenai/ShenaiApp"));
 
@@ -693,23 +694,18 @@ const FaceScan = () => {
     );
   };
 
-  const renderCaptureScan = () => {
+  const RenderCaptureScan = () => {
     return (
       <div className="container max-w-md mx-auto p-4">
         <div className="flex flex-col items-center space-y-6">
-          <div className="relative w-full aspect-square bg-gray-900 rounded-lg flex items-center justify-center overflow-hidden">
-            {/* Face positioning circles */}
+          {/* <div className="relative w-full aspect-square bg-gray-900 rounded-lg flex items-center justify-center overflow-hidden">
             <div className="absolute inset-0 flex items-center justify-center">
-              {/* Outer circle - pulsing green */}
               <div className="w-[95%] h-[95%] rounded-full border-2 border-green-500 opacity-50"></div>
 
-              {/* Middle circle - solid green */}
               <div className="absolute w-[85%] h-[85%] rounded-full border-2 border-green-500"></div>
 
-              {/* Inner circle - where face should be positioned */}
               <div className="absolute w-[75%] h-[75%] rounded-full border-4 border-gray-400"></div>
 
-              {/* Blue indicator showing scan progress point */}
               <div
                 className="absolute w-4 h-4 bg-blue-500 rounded-full"
                 style={{
@@ -722,7 +718,6 @@ const FaceScan = () => {
               ></div>
             </div>
 
-            {/* Sound indicator */}
             <div className="absolute top-4 right-4 bg-black bg-opacity-60 p-2 rounded-full">
               <Volume2 className="h-5 w-5 text-white" />
             </div>
@@ -730,10 +725,10 @@ const FaceScan = () => {
             <div className="absolute top-0 left-0 right-0 bg-black bg-opacity-50 text-white p-2 text-sm text-center">
               Keep your face centered in the circle
             </div>
-          </div>
+          </div> */}
 
           {/* Real-time vitals display */}
-          <div className="w-full grid grid-cols-2 gap-3">
+          {/* <div className="w-full grid grid-cols-2 gap-3">
             <div
               className={`bg-white p-3 rounded-lg shadow-sm ${
                 heartRate ? "animate-fade-in" : "opacity-50"
@@ -759,7 +754,7 @@ const FaceScan = () => {
                 <span className="text-sm ml-1 mb-1">mmHg</span>
               </div>
             </div>
-          </div>
+          </div> */}
 
           <div className="w-full">
             <div className="flex justify-between text-sm mb-1">
@@ -777,17 +772,19 @@ const FaceScan = () => {
               style={{ width: "100%", height: "100%" }}
             ></iframe>  */}
 
-            {/* <ShenaiApp /> */}
+            <Suspense>
+              <ShenaiApp setStep={setStep} />
+            </Suspense>
           </div>
 
-          <Button
-            variant="destructive"
+          {/* <Button
+            variant="accent"
             onClick={handleCancel}
             className="w-full mt-4"
           >
             <X className="mr-2 h-4 w-4" />
-            Cancel Scan
-          </Button>
+            Start Scan
+          </Button> */}
         </div>
       </div>
     );
@@ -817,7 +814,15 @@ const FaceScan = () => {
     );
   };
 
-  const renderResults = () => {
+  const RenderResults = () => {
+    const { results } = useFaceScan();
+
+    useEffect(() => {
+      if (results) {
+        console.log(results);
+      }
+    }, [results]);
+
     return (
       <div className="container max-w-md mx-auto p-4">
         <div className="flex flex-col items-center space-y-6">
@@ -834,7 +839,7 @@ const FaceScan = () => {
                   <h3 className="font-medium">Pulse (HR)</h3>
                 </div>
                 <span className="text-xl font-semibold text-green-500">
-                  65 bpm
+                  {results?.heart_rate_bpm} bpm
                 </span>
               </div>
               <p className="text-sm text-gray-600 mb-2">
@@ -855,7 +860,8 @@ const FaceScan = () => {
                   <h3 className="font-medium">Blood Pressure</h3>
                 </div>
                 <span className="text-xl font-semibold text-red-500">
-                  121/77 mmHg
+                  {results?.systolic_blood_pressure_mmhg}/
+                  {results?.diastolic_blood_pressure_mmhg} mmHg
                 </span>
               </div>
               <p className="text-sm text-gray-600 mb-2">
@@ -876,7 +882,7 @@ const FaceScan = () => {
                   <h3 className="font-medium">Heart Rate Variability</h3>
                 </div>
                 <span className="text-xl font-semibold text-green-500">
-                  59 ms
+                  {results?.hrv_sdnn_ms} ms
                 </span>
               </div>
               <p className="text-sm text-gray-600 mb-2">
@@ -897,7 +903,7 @@ const FaceScan = () => {
                   <h3 className="font-medium">Breathing Rate</h3>
                 </div>
                 <span className="text-xl font-semibold text-green-500">
-                  18 bpm
+                  {results?.breathing_rate_bpm || 0} bpm
                 </span>
               </div>
               <p className="text-sm text-gray-600 mb-2">
@@ -916,7 +922,9 @@ const FaceScan = () => {
                   <ActivitySquare className="h-5 w-5 text-orange-500" />
                   <h3 className="font-medium">Stress Index</h3>
                 </div>
-                <span className="text-xl font-semibold text-green-500">23</span>
+                <span className="text-xl font-semibold text-green-500">
+                  {results?.stress_index}
+                </span>
               </div>
               <p className="text-sm text-gray-600 mb-2">
                 Stress index quantifies your body's level of stress based on
@@ -935,7 +943,7 @@ const FaceScan = () => {
                   <h3 className="font-medium">Cardiac Workload</h3>
                 </div>
                 <span className="text-xl font-semibold text-green-500">
-                  8.4
+                  {results?.cardiac_workload_mmhg_per_sec}
                 </span>
               </div>
               <p className="text-sm text-gray-600 mb-2">
@@ -956,7 +964,7 @@ const FaceScan = () => {
                   <h3 className="font-medium">Parasympathetic Activity</h3>
                 </div>
                 <span className="text-xl font-semibold text-green-500">
-                  42%
+                  {results?.parasympathetic_activity}%
                 </span>
               </div>
               <p className="text-sm text-gray-600 mb-2">
@@ -977,7 +985,7 @@ const FaceScan = () => {
                   <h3 className="font-medium">Body Mass Index (BMI)</h3>
                 </div>
                 <span className="text-xl font-semibold text-yellow-500">
-                  24.8
+                  {results?.bmi_kg_per_m2}
                 </span>
               </div>
               <p className="text-sm text-gray-600 mb-2">
@@ -1934,40 +1942,40 @@ const FaceScan = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Header />
+    <FaceScanProvider>
+      <div className="min-h-screen bg-gray-50">
+        <Header />
 
-      <ShenaiApp />
+        <main className="py-6">
+          <div className="container mx-auto px-4 mb-6">
+            <Button variant="ghost" onClick={handleCancel} className="mb-4">
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Back
+            </Button>
 
-      <main className="py-6">
-        <div className="container mx-auto px-4 mb-6">
-          <Button variant="ghost" onClick={handleCancel} className="mb-4">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back
-          </Button>
+            <h1 className="text-2xl font-bold mb-2">Face Scan</h1>
+            <p className="text-gray-500">
+              Scan your face to measure vitals and health metrics
+            </p>
+          </div>
 
-          <h1 className="text-2xl font-bold mb-2">Face Scan</h1>
-          <p className="text-gray-500">
-            Scan your face to measure vitals and health metrics
-          </p>
-        </div>
+          {step === "intro" && renderIntroScreen()}
+          {step === "preparation" && renderPreparationScreen()}
+          {step === "capture" && <RenderCaptureScan />}
+          {step === "processing" && renderProcessing()}
+          {step === "results" && <RenderResults />}
+          {step === "details" && renderHealthDetails()}
+          {step === "analysis" && renderAnalysis()}
+          {step === "personal-factors" && renderPersonalFactorsForm()}
+          {step === "results-processing" && renderResultsProcessing()}
+          {step === "analysis-results" && renderAnalysisResults()}
+        </main>
 
-        {step === "intro" && renderIntroScreen()}
-        {step === "preparation" && renderPreparationScreen()}
-        {step === "capture" && renderCaptureScan()}
-        {step === "processing" && renderProcessing()}
-        {step === "results" && renderResults()}
-        {step === "details" && renderHealthDetails()}
-        {step === "analysis" && renderAnalysis()}
-        {step === "personal-factors" && renderPersonalFactorsForm()}
-        {step === "results-processing" && renderResultsProcessing()}
-        {step === "analysis-results" && renderAnalysisResults()}
-      </main>
-
-      <footer className="py-6 text-center text-sm text-gray-500 border-t border-gray-100">
-        © 2024 Wellness App. All rights reserved.
-      </footer>
-    </div>
+        <footer className="py-6 text-center text-sm text-gray-500 border-t border-gray-100">
+          © 2024 Wellness App. All rights reserved.
+        </footer>
+      </div>
+    </FaceScanProvider>
   );
 };
 
