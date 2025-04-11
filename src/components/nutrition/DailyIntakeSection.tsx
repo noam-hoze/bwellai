@@ -158,18 +158,26 @@ const NutrientProgress = ({
 };
 
 // Function to determine color based on percentage of calorie goal
+// const getCalorieProgressColor = (percentage: number): string => {
+//   if (percentage <= 50) return "from-red-400 to-orange-400"; // Very low
+//   if (percentage <= 75) return "from-orange-400 to-yellow-400"; // Low
+//   if (percentage <= 100) return "from-yellow-400 to-green-400"; // Normal
+//   if (percentage <= 125) return "from-green-400 to-yellow-400"; // Slightly above
+//   if (percentage <= 150) return "from-yellow-400 to-orange-400"; // High
+//   if (percentage <= 175) return "from-orange-400 to-red-400"; // Very high
+//   return "from-red-500 to-red-600"; // Extreme
+// };
+
 const getCalorieProgressColor = (percentage: number): string => {
-  if (percentage <= 50) return "from-orange-400 to-yellow-400"; // Under 50% - yellow to green
-  if (percentage >= 51 && percentage <= 75)
-    return "from-yellow-400 to-green-500"; // 50-100% - green gradient
-  if (percentage >= 76 && percentage <= 125)
-    return "from-green-500 to-yellow-400"; // 50-100% - green gradient
-  if (percentage >= 126 && percentage <= 150)
-    return "from-yellow-400 to-orange-400"; // 50-100% - green gradient
-  if (percentage >= 151 && percentage <= 175)
-    return "from-orange-400 to-red-500"; // 50-100% - green gradient
-  if (percentage > 175) return "from-red-400 to-red-500"; // 50-100% - green gradient
-  return "from-green-500 to-red-500"; // Over 100% - green to red
+  if (percentage <= 25) return "from-red-400 to-orange-400";
+  if (percentage <= 50) return "from-red-400 via-orange-400 to-yellow-400";
+  if (percentage <= 75)
+    return "from-red-400 via-orange-400 via-yellow-400 to-yellow-300";
+  if (percentage <= 100)
+    return "from-red-400 via-orange-400 via-yellow-400 to-green-400";
+  if (percentage <= 125)
+    return "from-red-400 via-orange-400 via-yellow-400 via-green-400 to-green-500";
+  return "from-red-400 via-orange-400 via-yellow-400 via-green-400 to-green-600"; // Max stretch
 };
 
 const DailyIntakeSection = ({
