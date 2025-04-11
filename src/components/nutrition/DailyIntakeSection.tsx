@@ -12,9 +12,9 @@ interface NutrientProgressProps {
 // Function to determine color based on percentage of calorie goal
 const getCalorieColor = (percentage: number): string => {
   if (percentage <= 50) return "orange"; // Under 50% - yellow to green
-  if (percentage >= 51 && percentage <= 75) return "yellow"; // 50-100% - green gradient
+  if (percentage >= 51 && percentage <= 75) return "#e2e200"; // 50-100% - green gradient
   if (percentage >= 76 && percentage <= 125) return "green"; // 50-100% - green gradient
-  if (percentage >= 126 && percentage <= 150) return "yellow"; // 50-100% - green gradient
+  if (percentage >= 126 && percentage <= 150) return "#e2e200"; // 50-100% - green gradient
   if (percentage >= 151 && percentage <= 175) return "orange"; // 50-100% - green gradient
   if (percentage > 175) return "red"; // 50-100% - green gradient
 };
