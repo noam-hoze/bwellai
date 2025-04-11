@@ -103,6 +103,12 @@ const personalFactorsSchema = z.object({
   ethnicity: z.string().optional(),
 });
 
+const ethnicityMap = {
+  white: 0,
+  "african-american": 1,
+  other: 2,
+};
+
 // Health metric interface for strongly typed data
 interface HealthMetric {
   value: string | number;
@@ -112,6 +118,563 @@ interface HealthMetric {
   trend?: "up" | "down" | "stable";
   trendValue?: string;
 }
+
+// Form for personal factors
+
+const RenderPersonalFactorsForm = ({ setAnalysisProgress, setStep }) => {
+  const shenaiSDK = useShenaiSdk();
+  const { setWellnessData } = useWellness();
+
+  const personalFactorsForm = useForm<z.infer<typeof personalFactorsSchema>>({
+    resolver: zodResolver(personalFactorsSchema),
+    defaultValues: {
+      age: "46",
+      gender: "female",
+      height: "167",
+      weight: "60",
+      diabetes: false,
+      smoker: false,
+      hypertensionTreatment: false,
+      totalCholesterol: "138",
+      hdlCholesterol: "43",
+      systolicPressure: "",
+      waistCircumference: "",
+      physicalActivity: "moderate",
+      ethnicity: "",
+    },
+  });
+
+  const handleSubmitPersonalFactors = (
+    values: z.infer<typeof personalFactorsSchema>
+  ) => {
+    const computedHealthRisksData = shenaiSDK.computeHealthRisks({
+      age: Number(values.age),
+      cholesterol: Number(values.totalCholesterol),
+      cholesterolHdl: Number(values.hdlCholesterol),
+      sbp: Number(values.systolicPressure),
+
+      isSmoker: values.smoker,
+      hypertensionTreatment: values.hypertensionTreatment,
+      hasDiabetes: values.diabetes,
+
+      bodyHeight: Number(values.height),
+      bodyWeight: Number(values.weight),
+      waistCircumference: Number(values.waistCircumference),
+
+      gender:
+        values.gender === "male"
+          ? shenaiSDK.Gender.MALE
+          : values.gender === "female"
+          ? shenaiSDK.Gender.FEMALE
+          : shenaiSDK.Gender.OTHER,
+      country: "US",
+      race: ethnicityMap[values?.ethnicity],
+
+      physicalActivity: Number(values.physicalActivity),
+    });
+
+    console.log("Personal factors submitted:", values);
+    console.log("this is calculate value", computedHealthRisksData);
+
+    setWellnessData(computedHealthRisksData);
+
+    // In a real application, you would save these values and use them
+    setAnalysisProgress(0);
+    setStep("results-processing");
+  };
+  return (
+    <div className="container max-w-md mx-auto p-4">
+      <div className="flex flex-col items-center space-y-6">
+        <div className="text-center mb-4">
+          <h2 className="text-xl font-semibold">Additional Data Collection</h2>
+          <p className="text-gray-600 mt-1">
+            Great! Now let's add a few details for complete results.
+          </p>
+        </div>
+
+        <Form {...personalFactorsForm}>
+          <form
+            onSubmit={personalFactorsForm.handleSubmit(
+              handleSubmitPersonalFactors
+            )}
+            className="w-full space-y-6"
+          >
+            {/* Personal Information Section */}
+            <div className="bg-white p-5 rounded-lg shadow-sm border border-gray-100 w-full">
+              <h3 className="text-lg font-medium mb-4">Personal Information</h3>
+
+              <div className="space-y-4">
+                <FormField
+                  control={personalFactorsForm.control}
+                  name="age"
+                  render={({ field }) => (
+                    <FormItem>
+                      <div className="flex items-center justify-between">
+                        <FormLabel>Age</FormLabel>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <HelpCircle className="h-4 w-4 text-gray-400" />
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p className="w-52">
+                              Your age is a key factor in health risk
+                              assessment.
+                            </p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </div>
+                      <FormControl>
+                        <div className="flex">
+                          <Input
+                            {...field}
+                            type="number"
+                            min="1"
+                            max="120"
+                            className="flex-1"
+                          />
+                          <span className="flex items-center ml-2 text-gray-500">
+                            years
+                          </span>
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={personalFactorsForm.control}
+                  name="gender"
+                  render={({ field }) => (
+                    <FormItem>
+                      <div className="flex items-center justify-between">
+                        <FormLabel>Gender</FormLabel>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <HelpCircle className="h-4 w-4 text-gray-400" />
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p className="w-52">
+                              Health risk factors can vary by gender.
+                            </p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </div>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select gender" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="male">Male</SelectItem>
+                          <SelectItem value="female">Female</SelectItem>
+                          <SelectItem value="other">Other</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <div className="grid grid-cols-2 gap-4">
+                  <FormField
+                    control={personalFactorsForm.control}
+                    name="height"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Height</FormLabel>
+                        <FormControl>
+                          <div className="flex">
+                            <Input
+                              {...field}
+                              type="number"
+                              min="100"
+                              max="250"
+                              className="flex-1"
+                            />
+                            <span className="flex items-center ml-2 text-gray-500">
+                              cm
+                            </span>
+                          </div>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={personalFactorsForm.control}
+                    name="weight"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Weight</FormLabel>
+                        <FormControl>
+                          <div className="flex">
+                            <Input
+                              {...field}
+                              type="number"
+                              min="20"
+                              max="300"
+                              className="flex-1"
+                            />
+                            <span className="flex items-center ml-2 text-gray-500">
+                              kg
+                            </span>
+                          </div>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Health Markers Section */}
+            <div className="bg-white p-5 rounded-lg shadow-sm border border-gray-100 w-full">
+              <h3 className="text-lg font-medium mb-4">Health Markers</h3>
+
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <FormField
+                      control={personalFactorsForm.control}
+                      name="diabetes"
+                      render={({ field }) => (
+                        <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
+                          <div className="space-y-0.5">
+                            <FormLabel>Diabetes</FormLabel>
+                          </div>
+                          <FormControl>
+                            <Switch
+                              checked={field.value}
+                              onCheckedChange={field.onChange}
+                            />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <FormField
+                      control={personalFactorsForm.control}
+                      name="smoker"
+                      render={({ field }) => (
+                        <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
+                          <div className="space-y-0.5">
+                            <FormLabel>Smoker</FormLabel>
+                          </div>
+                          <FormControl>
+                            <Switch
+                              checked={field.value}
+                              onCheckedChange={field.onChange}
+                            />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <FormField
+                      control={personalFactorsForm.control}
+                      name="hypertensionTreatment"
+                      render={({ field }) => (
+                        <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
+                          <div className="space-y-0.5">
+                            <FormLabel>Hypertension Treatment</FormLabel>
+                          </div>
+                          <FormControl>
+                            <Switch
+                              checked={field.value}
+                              onCheckedChange={field.onChange}
+                            />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <FormField
+                    control={personalFactorsForm.control}
+                    name="totalCholesterol"
+                    render={({ field }) => (
+                      <FormItem>
+                        <div className="flex items-center justify-between">
+                          <FormLabel>Total Cholesterol</FormLabel>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <HelpCircle className="h-4 w-4 text-gray-400" />
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p className="w-52">
+                                Normal range: under 200 mg/dl
+                              </p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </div>
+                        <FormControl>
+                          <div className="flex">
+                            <Input
+                              {...field}
+                              placeholder="e.g. 138"
+                              className="flex-1"
+                            />
+                            <span className="flex items-center ml-2 text-gray-500">
+                              mg/dl
+                            </span>
+                          </div>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={personalFactorsForm.control}
+                    name="hdlCholesterol"
+                    render={({ field }) => (
+                      <FormItem>
+                        <div className="flex items-center justify-between">
+                          <FormLabel>HDL Cholesterol</FormLabel>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <HelpCircle className="h-4 w-4 text-gray-400" />
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p className="w-52">
+                                Healthy levels: above 40 mg/dl for men, above 50
+                                mg/dl for women
+                              </p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </div>
+                        <FormControl>
+                          <div className="flex">
+                            <Input
+                              {...field}
+                              placeholder="e.g. 43"
+                              className="flex-1"
+                            />
+                            <span className="flex items-center ml-2 text-gray-500">
+                              mg/dl
+                            </span>
+                          </div>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <FormField
+                  control={personalFactorsForm.control}
+                  name="systolicPressure"
+                  render={({ field }) => (
+                    <FormItem>
+                      <div className="flex items-center justify-between">
+                        <FormLabel>Systolic Pressure (optional)</FormLabel>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <HelpCircle className="h-4 w-4 text-gray-400" />
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p className="w-52">
+                              Only if you want to verify the scan reading
+                            </p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </div>
+                      <FormControl>
+                        <div className="flex">
+                          <Input
+                            {...field}
+                            placeholder="e.g. 120"
+                            className="flex-1"
+                          />
+                          <span className="flex items-center ml-2 text-gray-500">
+                            mmHg
+                          </span>
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </div>
+
+            {/* Additional Factors Section */}
+            <div className="bg-white p-5 rounded-lg shadow-sm border border-gray-100 w-full">
+              <h3 className="text-lg font-medium mb-4">Additional Factors</h3>
+
+              <div className="space-y-4">
+                <FormField
+                  control={personalFactorsForm.control}
+                  name="waistCircumference"
+                  render={({ field }) => (
+                    <FormItem>
+                      <div className="flex items-center justify-between">
+                        <FormLabel>Waist Circumference</FormLabel>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <HelpCircle className="h-4 w-4 text-gray-400" />
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p className="w-52">
+                              An important indicator of visceral fat and health
+                              risk
+                            </p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </div>
+                      <FormControl>
+                        <div className="flex">
+                          <Input
+                            {...field}
+                            placeholder="e.g. 75"
+                            className="flex-1"
+                          />
+                          <span className="flex items-center ml-2 text-gray-500">
+                            cm
+                          </span>
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={personalFactorsForm.control}
+                  name="physicalActivity"
+                  render={({ field }) => (
+                    <FormItem>
+                      <div className="flex items-center justify-between">
+                        <FormLabel>Physical Activity Level</FormLabel>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <HelpCircle className="h-4 w-4 text-gray-400" />
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p className="w-52">
+                              Regular physical activity reduces health risks
+                            </p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </div>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select activity level" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="sedentary">
+                            Sedentary (little or no exercise)
+                          </SelectItem>
+                          <SelectItem value="moderate">
+                            Moderate (exercise 1-3 times/week)
+                          </SelectItem>
+                          <SelectItem value="active">
+                            Active (exercise 4+ times/week)
+                          </SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={personalFactorsForm.control}
+                  name="ethnicity"
+                  render={({ field }) => (
+                    <FormItem>
+                      <div className="flex items-center justify-between">
+                        <FormLabel>Ethnicity</FormLabel>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <HelpCircle className="h-4 w-4 text-gray-400" />
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p className="w-52">
+                              Important for certain health calculations
+                            </p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </div>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select ethnicity" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="white">White</SelectItem>
+                          <SelectItem value="african-american">
+                            African American
+                          </SelectItem>
+                          <SelectItem value="asian">Asian</SelectItem>
+                          <SelectItem value="caucasian">Caucasian</SelectItem>
+                          <SelectItem value="hispanic">
+                            Hispanic/Latino
+                          </SelectItem>
+                          <SelectItem value="middleeastern">
+                            Middle Eastern
+                          </SelectItem>
+                          <SelectItem value="pacificislander">
+                            Pacific Islander
+                          </SelectItem>
+                          <SelectItem value="other">Other</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-3 w-full">
+              <Button
+                type="submit"
+                className="w-full bg-gradient-to-r from-blue-500 to-blue-600"
+              >
+                Submit and Continue to Analysis
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setStep("results")}
+                className="w-full"
+              >
+                Back to Results
+              </Button>
+            </div>
+          </form>
+        </Form>
+      </div>
+    </div>
+  );
+};
 
 const FaceScan = () => {
   const navigate = useNavigate();
@@ -235,26 +798,6 @@ const FaceScan = () => {
         status: "normal",
         reference: "1600-2000 (moderate activity)",
       } as HealthMetric,
-    },
-  });
-
-  // Form for personal factors
-  const personalFactorsForm = useForm<z.infer<typeof personalFactorsSchema>>({
-    resolver: zodResolver(personalFactorsSchema),
-    defaultValues: {
-      age: "46",
-      gender: "female",
-      height: "167",
-      weight: "60",
-      diabetes: false,
-      smoker: false,
-      hypertensionTreatment: false,
-      totalCholesterol: "138",
-      hdlCholesterol: "43",
-      systolicPressure: "",
-      waistCircumference: "",
-      physicalActivity: "moderate",
-      ethnicity: "",
     },
   });
 
@@ -1203,552 +1746,6 @@ const FaceScan = () => {
     );
   };
 
-  const ethnicityMap = {
-    white: 0,
-    "african-american": 1,
-    other: 2,
-  };
-
-  const RenderPersonalFactorsForm = () => {
-    const shenaiSDK = useShenaiSdk();
-    const { setWellnessData } = useWellness();
-
-    const handleSubmitPersonalFactors = (
-      values: z.infer<typeof personalFactorsSchema>
-    ) => {
-      const computedHealthRisksData = shenaiSDK.computeHealthRisks({
-        age: Number(values.age),
-        cholesterol: Number(values.totalCholesterol),
-        cholesterolHdl: Number(values.hdlCholesterol),
-        sbp: Number(values.systolicPressure),
-
-        isSmoker: values.smoker,
-        hypertensionTreatment: values.hypertensionTreatment,
-        hasDiabetes: values.diabetes,
-
-        bodyHeight: Number(values.height),
-        bodyWeight: Number(values.weight),
-        waistCircumference: Number(values.waistCircumference),
-
-        gender:
-          values.gender === "male"
-            ? shenaiSDK.Gender.MALE
-            : values.gender === "female"
-            ? shenaiSDK.Gender.FEMALE
-            : shenaiSDK.Gender.OTHER,
-        country: "US",
-        race: ethnicityMap[values?.ethnicity],
-
-        physicalActivity: Number(values.physicalActivity),
-      });
-
-      console.log("Personal factors submitted:", values);
-      console.log("this is calculate value", computedHealthRisksData);
-
-      setWellnessData(computedHealthRisksData);
-
-      // In a real application, you would save these values and use them
-      setAnalysisProgress(0);
-      setStep("results-processing");
-    };
-    return (
-      <div className="container max-w-md mx-auto p-4">
-        <div className="flex flex-col items-center space-y-6">
-          <div className="text-center mb-4">
-            <h2 className="text-xl font-semibold">
-              Additional Data Collection
-            </h2>
-            <p className="text-gray-600 mt-1">
-              Great! Now let's add a few details for complete results.
-            </p>
-          </div>
-
-          <Form {...personalFactorsForm}>
-            <form
-              onSubmit={personalFactorsForm.handleSubmit(
-                handleSubmitPersonalFactors
-              )}
-              className="w-full space-y-6"
-            >
-              {/* Personal Information Section */}
-              <div className="bg-white p-5 rounded-lg shadow-sm border border-gray-100 w-full">
-                <h3 className="text-lg font-medium mb-4">
-                  Personal Information
-                </h3>
-
-                <div className="space-y-4">
-                  <FormField
-                    control={personalFactorsForm.control}
-                    name="age"
-                    render={({ field }) => (
-                      <FormItem>
-                        <div className="flex items-center justify-between">
-                          <FormLabel>Age</FormLabel>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <HelpCircle className="h-4 w-4 text-gray-400" />
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <p className="w-52">
-                                Your age is a key factor in health risk
-                                assessment.
-                              </p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </div>
-                        <FormControl>
-                          <div className="flex">
-                            <Input
-                              {...field}
-                              type="number"
-                              min="1"
-                              max="120"
-                              className="flex-1"
-                            />
-                            <span className="flex items-center ml-2 text-gray-500">
-                              years
-                            </span>
-                          </div>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={personalFactorsForm.control}
-                    name="gender"
-                    render={({ field }) => (
-                      <FormItem>
-                        <div className="flex items-center justify-between">
-                          <FormLabel>Gender</FormLabel>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <HelpCircle className="h-4 w-4 text-gray-400" />
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <p className="w-52">
-                                Health risk factors can vary by gender.
-                              </p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </div>
-                        <Select
-                          onValueChange={field.onChange}
-                          defaultValue={field.value}
-                        >
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select gender" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            <SelectItem value="male">Male</SelectItem>
-                            <SelectItem value="female">Female</SelectItem>
-                            <SelectItem value="other">Other</SelectItem>
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <FormField
-                      control={personalFactorsForm.control}
-                      name="height"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Height</FormLabel>
-                          <FormControl>
-                            <div className="flex">
-                              <Input
-                                {...field}
-                                type="number"
-                                min="100"
-                                max="250"
-                                className="flex-1"
-                              />
-                              <span className="flex items-center ml-2 text-gray-500">
-                                cm
-                              </span>
-                            </div>
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={personalFactorsForm.control}
-                      name="weight"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Weight</FormLabel>
-                          <FormControl>
-                            <div className="flex">
-                              <Input
-                                {...field}
-                                type="number"
-                                min="20"
-                                max="300"
-                                className="flex-1"
-                              />
-                              <span className="flex items-center ml-2 text-gray-500">
-                                kg
-                              </span>
-                            </div>
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Health Markers Section */}
-              <div className="bg-white p-5 rounded-lg shadow-sm border border-gray-100 w-full">
-                <h3 className="text-lg font-medium mb-4">Health Markers</h3>
-
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <FormField
-                        control={personalFactorsForm.control}
-                        name="diabetes"
-                        render={({ field }) => (
-                          <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
-                            <div className="space-y-0.5">
-                              <FormLabel>Diabetes</FormLabel>
-                            </div>
-                            <FormControl>
-                              <Switch
-                                checked={field.value}
-                                onCheckedChange={field.onChange}
-                              />
-                            </FormControl>
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <FormField
-                        control={personalFactorsForm.control}
-                        name="smoker"
-                        render={({ field }) => (
-                          <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
-                            <div className="space-y-0.5">
-                              <FormLabel>Smoker</FormLabel>
-                            </div>
-                            <FormControl>
-                              <Switch
-                                checked={field.value}
-                                onCheckedChange={field.onChange}
-                              />
-                            </FormControl>
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <FormField
-                        control={personalFactorsForm.control}
-                        name="hypertensionTreatment"
-                        render={({ field }) => (
-                          <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
-                            <div className="space-y-0.5">
-                              <FormLabel>Hypertension Treatment</FormLabel>
-                            </div>
-                            <FormControl>
-                              <Switch
-                                checked={field.value}
-                                onCheckedChange={field.onChange}
-                              />
-                            </FormControl>
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <FormField
-                      control={personalFactorsForm.control}
-                      name="totalCholesterol"
-                      render={({ field }) => (
-                        <FormItem>
-                          <div className="flex items-center justify-between">
-                            <FormLabel>Total Cholesterol</FormLabel>
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <HelpCircle className="h-4 w-4 text-gray-400" />
-                              </TooltipTrigger>
-                              <TooltipContent>
-                                <p className="w-52">
-                                  Normal range: under 200 mg/dl
-                                </p>
-                              </TooltipContent>
-                            </Tooltip>
-                          </div>
-                          <FormControl>
-                            <div className="flex">
-                              <Input
-                                {...field}
-                                placeholder="e.g. 138"
-                                className="flex-1"
-                              />
-                              <span className="flex items-center ml-2 text-gray-500">
-                                mg/dl
-                              </span>
-                            </div>
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={personalFactorsForm.control}
-                      name="hdlCholesterol"
-                      render={({ field }) => (
-                        <FormItem>
-                          <div className="flex items-center justify-between">
-                            <FormLabel>HDL Cholesterol</FormLabel>
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <HelpCircle className="h-4 w-4 text-gray-400" />
-                              </TooltipTrigger>
-                              <TooltipContent>
-                                <p className="w-52">
-                                  Healthy levels: above 40 mg/dl for men, above
-                                  50 mg/dl for women
-                                </p>
-                              </TooltipContent>
-                            </Tooltip>
-                          </div>
-                          <FormControl>
-                            <div className="flex">
-                              <Input
-                                {...field}
-                                placeholder="e.g. 43"
-                                className="flex-1"
-                              />
-                              <span className="flex items-center ml-2 text-gray-500">
-                                mg/dl
-                              </span>
-                            </div>
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-
-                  <FormField
-                    control={personalFactorsForm.control}
-                    name="systolicPressure"
-                    render={({ field }) => (
-                      <FormItem>
-                        <div className="flex items-center justify-between">
-                          <FormLabel>Systolic Pressure (optional)</FormLabel>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <HelpCircle className="h-4 w-4 text-gray-400" />
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <p className="w-52">
-                                Only if you want to verify the scan reading
-                              </p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </div>
-                        <FormControl>
-                          <div className="flex">
-                            <Input
-                              {...field}
-                              placeholder="e.g. 120"
-                              className="flex-1"
-                            />
-                            <span className="flex items-center ml-2 text-gray-500">
-                              mmHg
-                            </span>
-                          </div>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-              </div>
-
-              {/* Additional Factors Section */}
-              <div className="bg-white p-5 rounded-lg shadow-sm border border-gray-100 w-full">
-                <h3 className="text-lg font-medium mb-4">Additional Factors</h3>
-
-                <div className="space-y-4">
-                  <FormField
-                    control={personalFactorsForm.control}
-                    name="waistCircumference"
-                    render={({ field }) => (
-                      <FormItem>
-                        <div className="flex items-center justify-between">
-                          <FormLabel>Waist Circumference</FormLabel>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <HelpCircle className="h-4 w-4 text-gray-400" />
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <p className="w-52">
-                                An important indicator of visceral fat and
-                                health risk
-                              </p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </div>
-                        <FormControl>
-                          <div className="flex">
-                            <Input
-                              {...field}
-                              placeholder="e.g. 75"
-                              className="flex-1"
-                            />
-                            <span className="flex items-center ml-2 text-gray-500">
-                              cm
-                            </span>
-                          </div>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={personalFactorsForm.control}
-                    name="physicalActivity"
-                    render={({ field }) => (
-                      <FormItem>
-                        <div className="flex items-center justify-between">
-                          <FormLabel>Physical Activity Level</FormLabel>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <HelpCircle className="h-4 w-4 text-gray-400" />
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <p className="w-52">
-                                Regular physical activity reduces health risks
-                              </p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </div>
-                        <Select
-                          onValueChange={field.onChange}
-                          defaultValue={field.value}
-                        >
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select activity level" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            <SelectItem value="sedentary">
-                              Sedentary (little or no exercise)
-                            </SelectItem>
-                            <SelectItem value="moderate">
-                              Moderate (exercise 1-3 times/week)
-                            </SelectItem>
-                            <SelectItem value="active">
-                              Active (exercise 4+ times/week)
-                            </SelectItem>
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={personalFactorsForm.control}
-                    name="ethnicity"
-                    render={({ field }) => (
-                      <FormItem>
-                        <div className="flex items-center justify-between">
-                          <FormLabel>Ethnicity</FormLabel>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <HelpCircle className="h-4 w-4 text-gray-400" />
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <p className="w-52">
-                                Important for certain health calculations
-                              </p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </div>
-                        <Select
-                          onValueChange={field.onChange}
-                          defaultValue={field.value}
-                        >
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select ethnicity" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            <SelectItem value="white">White</SelectItem>
-                            <SelectItem value="african-american">
-                              African American
-                            </SelectItem>
-                            <SelectItem value="asian">Asian</SelectItem>
-                            <SelectItem value="caucasian">Caucasian</SelectItem>
-                            <SelectItem value="hispanic">
-                              Hispanic/Latino
-                            </SelectItem>
-                            <SelectItem value="middleeastern">
-                              Middle Eastern
-                            </SelectItem>
-                            <SelectItem value="pacificislander">
-                              Pacific Islander
-                            </SelectItem>
-                            <SelectItem value="other">Other</SelectItem>
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-              </div>
-
-              <div className="flex flex-col gap-3 w-full">
-                <Button
-                  type="submit"
-                  className="w-full bg-gradient-to-r from-blue-500 to-blue-600"
-                >
-                  Submit and Continue to Analysis
-                </Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => setStep("results")}
-                  className="w-full"
-                >
-                  Back to Results
-                </Button>
-              </div>
-            </form>
-          </Form>
-        </div>
-      </div>
-    );
-  };
-
   const renderResultsProcessing = () => {
     return (
       <div className="container max-w-md mx-auto p-4">
@@ -2019,7 +2016,12 @@ const FaceScan = () => {
             {step === "results" && <RenderResults />}
             {step === "details" && renderHealthDetails()}
             {step === "analysis" && renderAnalysis()}
-            {step === "personal-factors" && <RenderPersonalFactorsForm />}
+            {step === "personal-factors" && (
+              <RenderPersonalFactorsForm
+                setAnalysisProgress={setAnalysisProgress}
+                setStep={setStep}
+              />
+            )}
             {step === "results-processing" && renderResultsProcessing()}
             {step === "analysis-results" && <RenderAnalysisResults />}
           </main>
