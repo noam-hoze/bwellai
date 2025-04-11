@@ -68,6 +68,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { FaceScanProvider, useFaceScan } from "@/contexts/FaceScanContext";
+import { useShenaiSdk } from "../components/Shenai/useShenaiSDK";
+import { useWellness, WellnessProvider } from "@/contexts/WellnessContext";
 
 const ShenaiApp = lazy(() => import("@/components/Shenai/ShenaiApp"));
 
@@ -339,15 +341,6 @@ const FaceScan = () => {
     setStep("personal-factors");
   };
 
-  const handleSubmitPersonalFactors = (
-    values: z.infer<typeof personalFactorsSchema>
-  ) => {
-    console.log("Personal factors submitted:", values);
-    // In a real application, you would save these values and use them
-    setAnalysisProgress(0);
-    setStep("results-processing");
-  };
-
   const handleRetakeScan = () => {
     setScanProgress(0);
     setProcessingProgress(0);
@@ -440,7 +433,7 @@ const FaceScan = () => {
   // Helper function to render metric rows in a standardized way
   const renderMetricRow = (
     label: string,
-    metric: HealthMetric,
+    metric: any,
     icon: React.ReactNode
   ) => {
     return (
@@ -452,16 +445,18 @@ const FaceScan = () => {
         <div className="flex flex-col items-end">
           <div className="flex items-center gap-2">
             <span
-              className={`text-lg font-medium ${getStatusColor(metric.status)}`}
+              className={`text-lg font-medium ${getStatusColor(
+                metric?.status
+              )}`}
             >
-              {metric.value} <span className="text-xs">{metric.unit}</span>
+              {metric?.value} <span className="text-xs">{metric?.unit}</span>
             </span>
           </div>
           <div className="flex items-center">
             <span className="text-xs text-gray-500 mr-2">
-              {metric.reference}
+              {metric?.reference}
             </span>
-            {renderTrend(metric.trend, metric.trendValue)}
+            {/* {renderTrend(metric?.trend, metric?.trendValue)} */}
           </div>
         </div>
       </div>
@@ -1208,7 +1203,54 @@ const FaceScan = () => {
     );
   };
 
-  const renderPersonalFactorsForm = () => {
+  const ethnicityMap = {
+    white: 0,
+    "african-american": 1,
+    other: 2,
+  };
+
+  const RenderPersonalFactorsForm = () => {
+    const shenaiSDK = useShenaiSdk();
+    const { setWellnessData } = useWellness();
+
+    const handleSubmitPersonalFactors = (
+      values: z.infer<typeof personalFactorsSchema>
+    ) => {
+      const computedHealthRisksData = shenaiSDK.computeHealthRisks({
+        age: Number(values.age),
+        cholesterol: Number(values.totalCholesterol),
+        cholesterolHdl: Number(values.hdlCholesterol),
+        sbp: Number(values.systolicPressure),
+
+        isSmoker: values.smoker,
+        hypertensionTreatment: values.hypertensionTreatment,
+        hasDiabetes: values.diabetes,
+
+        bodyHeight: Number(values.height),
+        bodyWeight: Number(values.weight),
+        waistCircumference: Number(values.waistCircumference),
+
+        gender:
+          values.gender === "male"
+            ? shenaiSDK.Gender.MALE
+            : values.gender === "female"
+            ? shenaiSDK.Gender.FEMALE
+            : shenaiSDK.Gender.OTHER,
+        country: "US",
+        race: ethnicityMap[values?.ethnicity],
+
+        physicalActivity: Number(values.physicalActivity),
+      });
+
+      console.log("Personal factors submitted:", values);
+      console.log("this is calculate value", computedHealthRisksData);
+
+      setWellnessData(computedHealthRisksData);
+
+      // In a real application, you would save these values and use them
+      setAnalysisProgress(0);
+      setStep("results-processing");
+    };
     return (
       <div className="container max-w-md mx-auto p-4">
         <div className="flex flex-col items-center space-y-6">
@@ -1659,8 +1701,9 @@ const FaceScan = () => {
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            <SelectItem value="african">
-                              African or African American
+                            <SelectItem value="white">White</SelectItem>
+                            <SelectItem value="african-american">
+                              African American
                             </SelectItem>
                             <SelectItem value="asian">Asian</SelectItem>
                             <SelectItem value="caucasian">Caucasian</SelectItem>
@@ -1732,13 +1775,18 @@ const FaceScan = () => {
     );
   };
 
-  const renderAnalysisResults = () => {
+  const RenderAnalysisResults = () => {
+    const { wellnessData } = useWellness();
+    const { results } = useFaceScan();
+
     return (
       <div className="container max-w-md mx-auto p-4">
         <div className="flex flex-col items-center space-y-6">
           <div className="text-center mb-2">
             <div className="bg-gradient-to-r from-blue-50 to-indigo-50 h-32 w-32 rounded-full flex items-center justify-center mx-auto mb-2 border-4 border-blue-100">
-              <span className="text-5xl font-bold text-blue-600">76</span>
+              <span className="text-5xl font-bold text-blue-600">
+                {wellnessData?.wellnessScore}
+              </span>
             </div>
             <h3 className="text-xl font-semibold">Health Score</h3>
             <p className="text-sm text-gray-500 max-w-xs mx-auto mt-2">
@@ -1763,27 +1811,27 @@ const FaceScan = () => {
                   <div className="space-y-2">
                     {renderMetricRow(
                       "Pulse",
-                      healthData.vitals.pulse,
+                      { value: results?.heart_rate_bpm || 0 },
                       <Heart className="h-4 w-4 text-red-500" />
                     )}
                     {renderMetricRow(
                       "Blood Pressure",
-                      healthData.vitals.bloodPressure,
+                      { value: results?.systolic_blood_pressure_mmhg || 0 },
                       <Activity className="h-4 w-4 text-blue-500" />
                     )}
                     {renderMetricRow(
                       "Heart Rate Variability",
-                      healthData.vitals.heartRateVariability,
+                      { value: results?.hrv_sdnn_ms || 0 },
                       <Heart className="h-4 w-4 text-purple-500" />
                     )}
                     {renderMetricRow(
                       "Breathing Rate",
-                      healthData.vitals.breathingRate,
+                      { value: results?.breathingRate || 0 },
                       <Activity className="h-4 w-4 text-green-500" />
                     )}
                     {renderMetricRow(
                       "Stress Index",
-                      healthData.vitals.stressIndex,
+                      { value: results?.stressIndex || 0 },
                       <ActivitySquare className="h-4 w-4 text-orange-500" />
                     )}
                   </div>
@@ -1804,12 +1852,12 @@ const FaceScan = () => {
                   <div className="space-y-2">
                     {renderMetricRow(
                       "Cardiovascular Disease Risk",
-                      healthData.risks.cardioRisk,
+                      { value: wellnessData?.cvDiseases?.overallRisk || 0 },
                       <Heart className="h-4 w-4 text-red-500" />
                     )}
                     {renderMetricRow(
                       "Vascular Age",
-                      healthData.risks.vascularAge,
+                      { value: wellnessData?.vascularAge || 0 },
                       <Activity className="h-4 w-4 text-purple-500" />
                     )}
                     {renderMetricRow(
@@ -1819,7 +1867,11 @@ const FaceScan = () => {
                     )}
                     {renderMetricRow(
                       "Fatal Events Risk (10yr)",
-                      healthData.risks.fatalEventRisk,
+                      {
+                        value:
+                          wellnessData?.hardAndFatalEvents
+                            ?.fatalStrokeEventRisk || 0,
+                      },
                       <Activity className="h-4 w-4 text-red-600" />
                     )}
                   </div>
@@ -1840,22 +1892,22 @@ const FaceScan = () => {
                   <div className="space-y-2">
                     {renderMetricRow(
                       "Body Fat Percentage",
-                      healthData.bodyComposition.bodyFat,
+                      { value: wellnessData?.bodyFatPercentage || 0 },
                       <Droplets className="h-4 w-4 text-blue-500" />
                     )}
                     {renderMetricRow(
                       "Body Roundness Index (BRI)",
-                      healthData.bodyComposition.bri,
+                      { value: wellnessData?.bodyRoundnessIndex || 0 },
                       <ActivitySquare className="h-4 w-4 text-purple-500" />
                     )}
                     {renderMetricRow(
                       "A Body Shape Index (ABSI)",
-                      healthData.bodyComposition.absi,
+                      { value: wellnessData?.aBodyShapeIndex || 0 },
                       <ActivitySquare className="h-4 w-4 text-teal-500" />
                     )}
                     {renderMetricRow(
                       "Conicity Index (CI)",
-                      healthData.bodyComposition.ci,
+                      { value: wellnessData?.conicityIndex || 0 },
                       <ActivitySquare className="h-4 w-4 text-indigo-500" />
                     )}
                   </div>
@@ -1876,7 +1928,7 @@ const FaceScan = () => {
                   <div className="space-y-2">
                     {renderMetricRow(
                       "Basal Metabolic Rate",
-                      healthData.metabolic.bmr,
+                      { value: wellnessData?.basalMetabolicRate || 0 },
                       <Flame className="h-4 w-4 text-orange-500" />
                     )}
                     {renderMetricRow(
@@ -1943,38 +1995,40 @@ const FaceScan = () => {
 
   return (
     <FaceScanProvider>
-      <div className="min-h-screen bg-gray-50">
-        <Header />
+      <WellnessProvider>
+        <div className="min-h-screen bg-gray-50">
+          <Header />
 
-        <main className="py-6">
-          <div className="container mx-auto px-4 mb-6">
-            <Button variant="ghost" onClick={handleCancel} className="mb-4">
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Back
-            </Button>
+          <main className="py-6">
+            <div className="container mx-auto px-4 mb-6">
+              <Button variant="ghost" onClick={handleCancel} className="mb-4">
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                Back
+              </Button>
 
-            <h1 className="text-2xl font-bold mb-2">Face Scan</h1>
-            <p className="text-gray-500">
-              Scan your face to measure vitals and health metrics
-            </p>
-          </div>
+              <h1 className="text-2xl font-bold mb-2">Face Scan</h1>
+              <p className="text-gray-500">
+                Scan your face to measure vitals and health metrics
+              </p>
+            </div>
 
-          {step === "intro" && renderIntroScreen()}
-          {step === "preparation" && renderPreparationScreen()}
-          {step === "capture" && <RenderCaptureScan />}
-          {step === "processing" && renderProcessing()}
-          {step === "results" && <RenderResults />}
-          {step === "details" && renderHealthDetails()}
-          {step === "analysis" && renderAnalysis()}
-          {step === "personal-factors" && renderPersonalFactorsForm()}
-          {step === "results-processing" && renderResultsProcessing()}
-          {step === "analysis-results" && renderAnalysisResults()}
-        </main>
+            {step === "intro" && renderIntroScreen()}
+            {step === "preparation" && renderPreparationScreen()}
+            {step === "capture" && <RenderCaptureScan />}
+            {step === "processing" && renderProcessing()}
+            {step === "results" && <RenderResults />}
+            {step === "details" && renderHealthDetails()}
+            {step === "analysis" && renderAnalysis()}
+            {step === "personal-factors" && <RenderPersonalFactorsForm />}
+            {step === "results-processing" && renderResultsProcessing()}
+            {step === "analysis-results" && <RenderAnalysisResults />}
+          </main>
 
-        <footer className="py-6 text-center text-sm text-gray-500 border-t border-gray-100">
-          © 2024 Wellness App. All rights reserved.
-        </footer>
-      </div>
+          <footer className="py-6 text-center text-sm text-gray-500 border-t border-gray-100">
+            © 2024 Wellness App. All rights reserved.
+          </footer>
+        </div>
+      </WellnessProvider>
     </FaceScanProvider>
   );
 };

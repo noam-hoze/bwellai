@@ -181,15 +181,40 @@ export const ShenaiSDKView = ({ setStep }) => {
     }
   }, [shenaiSDK?.getMeasurementState()]);
 
+  const initializationDisabled =
+    !shenaiSDK || sdkState?.isInitialized === true || pendingInitialization;
+
   return (
-    <div className="wrapper">
+    <div
+      className="wrapper"
+      style={{
+        display: `flex`,
+        alignItems: "center",
+        justifyContent: "center",
+        position: "relative",
+      }}
+    >
       <div ref={canvasTopRef} className={style.mxcanvasTopHelper} />
       <canvas id="mxcanvas" className={style.mxcanvas} />
 
-      <Button variant="accent" onClick={initialize} className="w-full mt-4">
-        {/* <X className="mr-2 h-4 w-4" /> */}
-        Start Scan
-      </Button>
+      {!cameraScanningFinished &&
+        !initializationDisabled &&
+        getEnumName(
+          shenaiSDK?.MeasurementState,
+          sdkState?.measurementState,
+          "UNKNOWN"
+        ) === "UNKNOWN" && (
+          <div
+            style={{
+              position: "absolute",
+            }}
+          >
+            <Button variant="accent" onClick={initialize} className="w-32 mt-4">
+              {/* <X className="mr-2 h-4 w-4" /> */}
+              Start Scan
+            </Button>
+          </div>
+        )}
     </div>
   );
 };
