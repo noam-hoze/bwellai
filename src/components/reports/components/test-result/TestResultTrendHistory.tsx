@@ -163,13 +163,13 @@ const TestResultTrendHistory = ({
       </div>
 
       {/* Insight box */}
-      <div className="m-4 text-xs text-gray-700 bg-white p-2 rounded border">
+      {/* <div className="m-4 text-xs text-gray-700 bg-white p-2 rounded border">
         Your {testName?.toLowerCase()} levels have
         {result?.changePercentage && result?.changePercentage > 0
           ? ` increased by ${result?.changePercentage}%`
           : ` decreased by ${Math.abs(result?.changePercentage || 0)}%`}
         over the past 4 months
-      </div>
+      </div> */}
     </div>
   );
 };
