@@ -425,7 +425,12 @@ const ConnectionsOverviewTab = () => {
                           <AlertCircle className="h-4 w-4 text-amber-500 mr-2" />
                         )}
                         <span className="text-gray-600">
-                          Last sync: {device.lastSync}
+                          Last sync:{" "}
+                          {
+                            connectedDevicesData?.filter(
+                              (d) => d.device === device?.id
+                            )?.[0]?.lastEvent
+                          }
                         </span>
                       </div>
                       <CollapsibleTrigger asChild>
@@ -567,7 +572,8 @@ const ConnectionsOverviewTab = () => {
           </div>
 
           <div className="text-sm text-gray-600 flex justify-between items-center mt-4">
-            <span>Last synced: {connectionsData.recentSync}</span>
+            {/* <span>Last synced: {connectionsData.recentSync}</span> */}
+            <span></span>
             {connectionsData.totalInactive > 0 && (
               <span className="flex items-center">
                 <AlertCircle className="h-4 w-4 text-amber-500 mr-1" />
