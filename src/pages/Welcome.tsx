@@ -1,8 +1,13 @@
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import OnboardingLayout from "@/components/onboarding/OnboardingLayout";
+import { useEffect } from "react";
 
 const Welcome = () => {
+  if (localStorage.getItem("token")) {
+    return <Navigate to="/dashboard" replace />;
+  }
+
   return (
     <OnboardingLayout showSkip={false} showClose={false}>
       <div className="flex flex-col items-center justify-center flex-1 p-6 text-center">
