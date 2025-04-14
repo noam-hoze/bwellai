@@ -42,9 +42,10 @@ const Sleep = () => {
     isSuccess: wearableDailyRecommendationIsSuccess,
     isLoading: wearableDailyRecommendationIsLoading,
   } = useGetWearableDailyRecommendationDataV4({
-    resource: connectedDevicesData?.[0],
+    resource: connectedDevicesData?.[0]?.device,
     startDate: formatDate(selectedDate),
-    isEnable: connectedDevicesData?.length > 0 ? connectedDevicesData?.[0] : "",
+    isEnable:
+      connectedDevicesData?.length > 0 ? connectedDevicesData?.[0]?.device : "",
     language: "english",
   });
   const {
@@ -52,17 +53,19 @@ const Sleep = () => {
     isSuccess: wearableDailyIsSuccess,
     isLoading: wearableDailyIsLoading,
   } = useGetWearableDailyDataV4({
-    resource: connectedDevicesData?.[0],
+    resource: connectedDevicesData?.[0]?.device,
     startDate: formatDate(selectedDate),
-    isEnable: connectedDevicesData?.length > 0 ? connectedDevicesData?.[0] : "",
+    isEnable:
+      connectedDevicesData?.length > 0 ? connectedDevicesData?.[0]?.device : "",
   });
   const {
     data: wearableMonthlyData,
     isSuccess: wearableMonthlyIsSuccess,
     isLoading: wearableMonthlyIsLoading,
   } = useGetWearableMonthlyDataV4({
-    resource: connectedDevicesData?.[0],
-    isEnable: connectedDevicesData?.length > 0 ? connectedDevicesData?.[0] : "",
+    resource: connectedDevicesData?.[0]?.device,
+    isEnable:
+      connectedDevicesData?.length > 0 ? connectedDevicesData?.[0]?.device : "",
     startDate: formatDate(selectedDate),
   });
 
@@ -71,7 +74,8 @@ const Sleep = () => {
     isSuccess: wearableWeeklyRecommendationIsSuccess,
     isLoading: wearableWeeklyRecommendationIsLoading,
   } = useGetWearableWeeklyRecommendationDataV4({
-    isEnable: connectedDevicesData?.length > 0 ? connectedDevicesData?.[0] : "",
+    isEnable:
+      connectedDevicesData?.length > 0 ? connectedDevicesData?.[0]?.device : "",
     language: "english",
     startDate: formatDate(selectedDate),
   });
@@ -80,7 +84,8 @@ const Sleep = () => {
     isSuccess: wearableMonthlyRecommendationIsSuccess,
     isLoading: wearableMonthlyRecommendationIsLoading,
   } = useGetWearableMonthlyRecommendationDataV4({
-    isEnable: connectedDevicesData?.length > 0 ? connectedDevicesData?.[0] : "",
+    isEnable:
+      connectedDevicesData?.length > 0 ? connectedDevicesData?.[0]?.device : "",
     language: "english",
     startDate: formatDate(selectedDate),
   });
@@ -90,8 +95,9 @@ const Sleep = () => {
     isSuccess: wearableWeeklyIsSuccess,
     isLoading: wearableWeeklyIsLoading,
   } = useGetWearableWeeklyDataV4({
-    resource: connectedDevicesData?.[0],
-    isEnable: connectedDevicesData?.length > 0 ? connectedDevicesData?.[0] : "",
+    resource: connectedDevicesData?.[0]?.device,
+    isEnable:
+      connectedDevicesData?.length > 0 ? connectedDevicesData?.[0]?.device : "",
     startDate: formatDate(selectedDate),
   });
 
