@@ -123,8 +123,9 @@ const AllTestsList = ({
                         </span>
                       </TableCell>
                       <TableCell>
-                        {result?.minParameterValue} -{" "}
-                        {result?.maxParameterValue} {result?.testMeasuringUnit}
+                        {result?.displayRange}{" "}
+                        {/* -{result?.maxParameterValue} */}
+                        {result?.testMeasuringUnit}
                       </TableCell>
                       <TableCell>
                         <div
