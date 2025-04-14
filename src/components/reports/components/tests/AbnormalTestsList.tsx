@@ -206,8 +206,8 @@ const AbnormalTestsList = ({
                               </span>
                             </TableCell>
                             <TableCell>
-                              {result?.minParameterValue} -{" "}
-                              {result?.maxParameterValue}{" "}
+                              {result?.displayRange}
+                              {/* -{" "}{result?.maxParameterValue} */}{" "}
                               {result?.testMeasuringUnit}
                             </TableCell>
                             <TableCell>
