@@ -153,7 +153,13 @@ export const ShenaiSDKView = ({ setStep }) => {
 
           rppgSignal: shenaiSDK.getFullPpgSignal(),
         };
-        setFaceScanData({ results: newState?.results });
+        setFaceScanData({
+          results: {
+            ...newState?.results,
+            hr10s: newState?.hr10s,
+            hr4s: newState?.hr4s,
+          },
+        });
         setSdkState(newState);
         //console.log(newState);
       }
@@ -209,7 +215,7 @@ export const ShenaiSDKView = ({ setStep }) => {
               position: "absolute",
             }}
           >
-            <Button variant="accent" onClick={initialize} className="w-32 mt-4">
+            <Button variant="accent" onClick={initialize} className="w-40 mt-4">
               {/* <X className="mr-2 h-4 w-4" /> */}
               Start Scan
             </Button>

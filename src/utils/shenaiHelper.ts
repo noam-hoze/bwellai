@@ -19,3 +19,32 @@ export function getEnumNames(enumObj: any) {
     ? Object.keys(enumObj).filter((x) => x != "values")
     : [];
 }
+
+export const filterFaceScanData = ({ userFaceDataLatest, key }) => {
+  const list = userFaceDataLatest
+    ?.filter(
+      (item) =>
+        item?.faceScanData?.[key] !== undefined &&
+        item?.faceScanData?.[key] !== null &&
+        Number(item?.faceScanData?.[key]) !== 0
+    )
+    ?.map((item) => {
+      return {
+        value: Number(item?.faceScanData?.[key]),
+        date: item?.createdAtUTC,
+      };
+    })
+    ?.slice(-20);
+
+  const date = userFaceDataLatest
+    ?.filter(
+      (item) =>
+        item?.faceScanData?.[key] !== undefined &&
+        item?.faceScanData?.[key] !== null &&
+        Number(item?.faceScanData?.[key]) !== 0
+    )
+    ?.map((item) => item?.createdAtUTC)
+    ?.slice(-20);
+
+  return list;
+};
