@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Layout from "@/components/layout/Layout";
 import DateNavigation from "@/components/activity/DateNavigation";
@@ -14,9 +14,11 @@ import {
 } from "@/components/activity/ActivityDateUtils";
 import { Calendar } from "lucide-react";
 import {
+  useGetTerraWearableDataV2,
   useGetUserInfoTerraData,
   useGetWearableDailySleepDataV4,
 } from "@/service/hooks/wearable/terra/useGetUserInfo";
+import moment from "moment-timezone";
 
 type ViewType = "day" | "week" | "month";
 
@@ -24,9 +26,55 @@ const formatDate = (date: Date) => {
   return date.toISOString().split("T")[0]; // Extract YYYY-MM-DD
 };
 
+export const timezoneMapping = {
+  "Asia/Calcutta": "Asia/Kolkata",
+};
+
+export const correctTimeZone = (timeZone) =>
+  timezoneMapping[timeZone] || timeZone;
+
+// {
+//   type: "sleep",
+//   timeZone: correctTimeZone(moment.tz.guess()),
+//   subtype: "sleep",
+// },
+// {
+//   type: "activities_summary",
+//   timeZone: correctTimeZone(moment.tz.guess()),
+//   subtype: "heart_rate_data",
+// },
+// {
+//   type: "activities_summary",
+//   timeZone: correctTimeZone(moment.tz.guess()),
+//   subtype: "stress_data",
+// },
+export const options = [
+  {
+    type: "activities_summary",
+    timeZone: correctTimeZone(moment.tz.guess()),
+    subtype: "active_durations_data",
+  },
+  {
+    type: "activities_summary",
+    timeZone: correctTimeZone(moment.tz.guess()),
+    subtype: "distance_data",
+  },
+
+  {
+    type: "activities_summary",
+    timeZone: correctTimeZone(moment.tz.guess()),
+    subtype: "calories_data",
+  },
+];
+
 const Activity = () => {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [viewType, setViewType] = useState<ViewType>("day");
+  const [wearableDataPending, setWearableDataPending] = useState(false);
+  const [showWearableLoader, setShowWearableLoader] = useState(false);
+  const [wearableDataSuccess, setWearableDataSuccess] = useState(false);
+  const [wearableDataError, setWearableDataError] = useState(false);
+  const [finalWearabledata, setfinalWearabledata] = useState([]);
 
   const { data: connectedDevicesData, refetch: connectedDevicesRefetch } =
     useGetUserInfoTerraData({ isAuthenticated: true });
@@ -42,6 +90,12 @@ const Activity = () => {
       connectedDevicesData?.length > 0 ? connectedDevicesData?.[0]?.device : "",
   });
 
+  const {
+    // data: wearableData,
+    // isError: wearableDataError,
+    mutateAsync: wearableDataMutateAsync,
+  } = useGetTerraWearableDataV2();
+
   const handlePrevious = () => {
     setSelectedDate((prev) => goToPreviousDate(prev, viewType));
   };
@@ -56,6 +110,54 @@ const Activity = () => {
 
   const isTodaySelected = isToday(selectedDate) && viewType === "day";
   const dateDisplay = getDateDisplay(selectedDate, viewType);
+
+  useEffect(() => {
+    if (connectedDevicesData?.[0]?.device) {
+      const processHealthSummary = async () => {
+        try {
+          // Use Promise.all to execute all mutations in parallel
+          setWearableDataPending(true);
+          setShowWearableLoader(true);
+          const results = await Promise.all(
+            options?.map((option) =>
+              wearableDataMutateAsync({
+                ...option,
+                device: connectedDevicesData?.[0]?.device,
+                date: formatDate(selectedDate),
+                language: "English",
+              })
+            )
+          );
+          // const res = results?.reduce((acc, d) => {
+          //   if (d?.data?.subtype) {
+          //     acc[d.data.subtype] = d.data;
+          //   }
+          //   return acc;
+          // }, {});
+
+          const l = [];
+          const res = results?.map((r) => {
+            r?.data?.healthSummaryHistory?.recommendations?.forEach((s) => {
+              l.push(s);
+            });
+          });
+
+          setfinalWearabledata(l);
+          setWearableDataSuccess(true);
+          return results;
+        } catch (error) {
+          console.error("Error fetching data:", error);
+          setWearableDataSuccess(false);
+          setWearableDataError(true);
+        } finally {
+          setWearableDataPending(false); // Ensure loading stops
+          setWearableDataSuccess(false);
+        }
+      };
+
+      processHealthSummary();
+    }
+  }, [connectedDevicesData, selectedDate]);
 
   return (
     <Layout>
@@ -105,6 +207,7 @@ const Activity = () => {
                 <DailyTabContent
                   selectedDate={selectedDate}
                   wearableDailySleepData={wearableDailySleepData}
+                  finalWearabledata={finalWearabledata}
                 />
               </TabsContent>
 

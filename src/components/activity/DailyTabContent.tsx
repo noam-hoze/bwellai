@@ -7,11 +7,13 @@ import ActivityRecommendations from "@/components/activity/ActivityRecommendatio
 interface DailyTabContentProps {
   selectedDate: Date;
   wearableDailySleepData?;
+  finalWearabledata?;
 }
 
 const DailyTabContent = ({
   selectedDate,
   wearableDailySleepData,
+  finalWearabledata,
 }: DailyTabContentProps) => {
   return (
     <div className="space-y-6">
@@ -40,7 +42,11 @@ const DailyTabContent = ({
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <ActivityRecommendations date={selectedDate} viewType="day" />
+            <ActivityRecommendations
+              date={selectedDate}
+              viewType="day"
+              finalWearabledata={finalWearabledata}
+            />
           </CardContent>
         </Card>
 
