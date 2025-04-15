@@ -103,20 +103,19 @@ const MealAnalysisPage = () => {
         }
       : null;
 
-    if (meal?.save_type === "logged" || meal?.save_type === "re_logged") {
-      logMealMutate({
-        es_id: meal?.id,
-        meal_type: mealType,
-        type: "re_logged",
-        date: new Intl.DateTimeFormat("en-CA", {
-          year: "numeric",
-          month: "2-digit",
-          day: "2-digit",
-        }).format(new Date(date || new Date())),
-      });
-    } else {
-      logMealMutate({ es_id: meal?.id, meal_type: mealType, type: "logged" });
-    }
+    logMealMutate({
+      es_id: meal?.id,
+      meal_type: mealType,
+      type:
+        meal?.save_type === "logged" || meal?.save_type === "re_logged"
+          ? "re_logged"
+          : "logged",
+      date: new Intl.DateTimeFormat("en-CA", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+      }).format(new Date(date || new Date())),
+    });
   };
 
   const handleBack = () => {
@@ -189,10 +188,10 @@ const MealAnalysisPage = () => {
                   Moderate
                 </span>
               </div>
-              <p className="text-sm text-gray-600 mt-1">
+              {/* <p className="text-sm text-gray-600 mt-1">
                 This meal is balanced but has a slightly high sugar content due
                 to honey.
-              </p>
+              </p> */}
             </div>
           </div>
 
