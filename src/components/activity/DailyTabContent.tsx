@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Activity, ListChecks, AlertCircle } from "lucide-react";
 import ActivityChart from "@/components/activity/ActivityChart";
@@ -7,9 +6,13 @@ import ActivityRecommendations from "@/components/activity/ActivityRecommendatio
 
 interface DailyTabContentProps {
   selectedDate: Date;
+  wearableDailySleepData?;
 }
 
-const DailyTabContent = ({ selectedDate }: DailyTabContentProps) => {
+const DailyTabContent = ({
+  selectedDate,
+  wearableDailySleepData,
+}: DailyTabContentProps) => {
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -21,10 +24,14 @@ const DailyTabContent = ({ selectedDate }: DailyTabContentProps) => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <ActivitySummary date={selectedDate} viewType="day" />
+            <ActivitySummary
+              date={selectedDate}
+              viewType="day"
+              wearableDailySleepData={wearableDailySleepData}
+            />
           </CardContent>
         </Card>
-        
+
         <Card className="wellness-card border-l-4 border-l-blue-400">
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center gap-2 text-lg">
@@ -36,7 +43,7 @@ const DailyTabContent = ({ selectedDate }: DailyTabContentProps) => {
             <ActivityRecommendations date={selectedDate} viewType="day" />
           </CardContent>
         </Card>
-        
+
         <Card className="lg:col-span-3 wellness-card border-l-4 border-l-blue-400">
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center gap-2 text-lg">
