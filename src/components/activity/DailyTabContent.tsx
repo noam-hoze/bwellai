@@ -58,7 +58,11 @@ const DailyTabContent = ({
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <ActivityChart date={selectedDate} viewType="day" />
+            <ActivityChart
+              date={selectedDate}
+              viewType="day"
+              wearableDailySleepData={wearableDailySleepData}
+            />
           </CardContent>
         </Card>
       </div>

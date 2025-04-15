@@ -220,3 +220,22 @@ export const getNextGoalValue = ({
 }) => {
   return (Math.floor(current / skipValue) + 1) * skipValue;
 };
+
+export const getPreviousDate = (daysAgo) => {
+  const date = new Date();
+  date.setDate(date.getDate() - daysAgo); // Subtract the given days
+
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0"); // Ensure 2-digit month
+  const day = String(date.getDate()).padStart(2, "0"); // Ensure 2-digit day
+
+  return `${year}-${month}-${day}`;
+};
+
+export const getFormattedDateYMD = (date = new Date()) => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0"); // Ensure 2-digit month
+  const day = String(date.getDate()).padStart(2, "0"); // Ensure 2-digit day
+
+  return `${year}-${month}-${day}`;
+};
