@@ -426,11 +426,16 @@ const ConnectionsOverviewTab = () => {
                         )}
                         <span className="text-gray-600">
                           Last sync:{" "}
-                          {
+                          {new Date(
                             connectedDevicesData?.filter(
                               (d) => d.device === device?.id
                             )?.[0]?.lastEvent
-                          }
+                          )?.toLocaleDateString()}{" "}
+                          {new Date(
+                            connectedDevicesData?.filter(
+                              (d) => d.device === device?.id
+                            )?.[0]?.lastEvent
+                          )?.toLocaleTimeString()}
                         </span>
                       </div>
                       <CollapsibleTrigger asChild>
