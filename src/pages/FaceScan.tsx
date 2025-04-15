@@ -70,6 +70,14 @@ import * as z from "zod";
 import { FaceScanProvider, useFaceScan } from "@/contexts/FaceScanContext";
 import { useShenaiSdk } from "../components/Shenai/useShenaiSDK";
 import { useWellness, WellnessProvider } from "@/contexts/WellnessContext";
+import HealthMetrics from "@/components/face-scan/HealthMetrics";
+import {
+  useGetUserFaceDataLatest,
+  useGetUserFaceDataSave,
+  useGetUserFaceScoreLatestFetcher,
+  useGetUserFaceScoreSave,
+} from "@/service/hooks/shenai/useShenaiFaceScore";
+import { filterFaceScanData } from "@/utils/shenaiHelper";
 
 const ShenaiApp = lazy(() => import("@/components/Shenai/ShenaiApp"));
 
@@ -893,11 +901,6 @@ const FaceScan = () => {
     setStep("preparation");
   };
 
-  const handleSaveData = () => {
-    // Here you would save the data to your backend or local storage
-    navigate("/dashboard");
-  };
-
   const handleCancel = () => {
     navigate(-1);
   };
@@ -1354,12 +1357,48 @@ const FaceScan = () => {
 
   const RenderResults = () => {
     const { results } = useFaceScan();
+    const [selectedOption, setSelectedOption] = useState("before_bedtime");
+
+    const {
+      data: userFaceDataLatest,
+      isSuccess: userFaceDataLatestIsSuccess,
+      refetch: userFaceDataLatestRefetch,
+    } = useGetUserFaceDataLatest(localStorage.getItem("token") ? true : false);
+
+    const { mutate: saveDataSaveMutate, isSuccess: saveDataSaveIsSuccess } =
+      useGetUserFaceDataSave();
 
     useEffect(() => {
-      if (results) {
-        console.log(results);
+      if (saveDataSaveIsSuccess) {
+        userFaceDataLatestRefetch();
       }
-    }, [results]);
+    }, [saveDataSaveIsSuccess]);
+
+    const SaveResultHandle = () => {
+      if (results) {
+        saveDataSaveMutate({
+          hr10s: Number(results.hr10s?.toFixed(0)) || 0,
+          hr4s: Number(results.hr4s?.toFixed(0)) || 0,
+          heart_rate_bpm: Number(results?.heart_rate_bpm.toFixed(0)) || 0,
+          hrv_sdnn_ms: Number(results?.hrv_sdnn_ms?.toFixed(0)) || 0,
+          hrv_lnrmssd_ms: Number(results?.hrv_lnrmssd_ms?.toFixed(1)) || 0,
+          breathing_rate_bpm:
+            Number(results?.breathing_rate_bpm?.toFixed(0)) || 0,
+          age_years: Number(results?.age_years?.toFixed(0)) || 0,
+          bmi_kg_per_m2: Number(results?.bmi_kg_per_m2?.toFixed(2)) || 0,
+          stress_index: Number(results?.stress_index?.toFixed(1)) || 0,
+          parasympathetic_activity:
+            Number(results?.parasympathetic_activity?.toFixed(0)) || 0,
+          systolic_blood_pressure_mmhg:
+            Number(results?.systolic_blood_pressure_mmhg?.toFixed(0)) || 0,
+          diastolic_blood_pressure_mmhg:
+            Number(results?.diastolic_blood_pressure_mmhg?.toFixed(0)) || 0,
+          cardiac_workload_mmhg_per_sec:
+            Number(results?.cardiac_workload_mmhg_per_sec?.toFixed(0)) || 0,
+          tag: selectedOption,
+        });
+      }
+    };
 
     return (
       <div className="container max-w-md mx-auto p-4">
@@ -1368,174 +1407,10 @@ const FaceScan = () => {
             Health Check Results
           </h2>
 
-          <div className="w-full space-y-4">
-            {/* Pulse (HR) */}
-            <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-100">
-              <div className="flex justify-between items-center mb-2">
-                <div className="flex items-center gap-2">
-                  <Heart className="h-5 w-5 text-red-500" />
-                  <h3 className="font-medium">Pulse (HR)</h3>
-                </div>
-                <span className="text-xl font-semibold text-green-500">
-                  {results?.heart_rate_bpm} bpm
-                </span>
-              </div>
-              <p className="text-sm text-gray-600 mb-2">
-                Heart rate measures how many times your heart beats per minute.
-                A normal resting heart rate indicates good cardiovascular
-                health.
-              </p>
-              <div className="text-xs text-gray-500 bg-gray-50 p-2 rounded">
-                Normal range: 60-100 bpm
-              </div>
-            </div>
-
-            {/* Blood Pressure */}
-            <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-100">
-              <div className="flex justify-between items-center mb-2">
-                <div className="flex items-center gap-2">
-                  <ActivitySquare className="h-5 w-5 text-blue-500" />
-                  <h3 className="font-medium">Blood Pressure</h3>
-                </div>
-                <span className="text-xl font-semibold text-red-500">
-                  {results?.systolic_blood_pressure_mmhg}/
-                  {results?.diastolic_blood_pressure_mmhg} mmHg
-                </span>
-              </div>
-              <p className="text-sm text-gray-600 mb-2">
-                Blood pressure measures the force of blood against your artery
-                walls. The top number (systolic) and bottom number (diastolic)
-                are important indicators of heart health.
-              </p>
-              <div className="text-xs text-gray-500 bg-gray-50 p-2 rounded">
-                Normal range: &lt;120/80 mmHg
-              </div>
-            </div>
-
-            {/* Heart Rate Variability (HRV) */}
-            <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-100">
-              <div className="flex justify-between items-center mb-2">
-                <div className="flex items-center gap-2">
-                  <Heart className="h-5 w-5 text-purple-500" />
-                  <h3 className="font-medium">Heart Rate Variability</h3>
-                </div>
-                <span className="text-xl font-semibold text-green-500">
-                  {results?.hrv_sdnn_ms} ms
-                </span>
-              </div>
-              <p className="text-sm text-gray-600 mb-2">
-                HRV measures the variation in time between each heartbeat.
-                Higher variability generally indicates better cardiovascular
-                health and stress resilience.
-              </p>
-              <div className="text-xs text-gray-500 bg-gray-50 p-2 rounded">
-                Normal range: &gt;40 ms
-              </div>
-            </div>
-
-            {/* Breathing Rate */}
-            <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-100">
-              <div className="flex justify-between items-center mb-2">
-                <div className="flex items-center gap-2">
-                  <ActivitySquare className="h-5 w-5 text-green-500" />
-                  <h3 className="font-medium">Breathing Rate</h3>
-                </div>
-                <span className="text-xl font-semibold text-green-500">
-                  {results?.breathing_rate_bpm || 0} bpm
-                </span>
-              </div>
-              <p className="text-sm text-gray-600 mb-2">
-                Breathing rate is the number of breaths you take per minute. It
-                can indicate respiratory health and stress levels.
-              </p>
-              <div className="text-xs text-gray-500 bg-gray-50 p-2 rounded">
-                Normal range: 12-20 breaths per minute
-              </div>
-            </div>
-
-            {/* Stress Index */}
-            <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-100">
-              <div className="flex justify-between items-center mb-2">
-                <div className="flex items-center gap-2">
-                  <ActivitySquare className="h-5 w-5 text-orange-500" />
-                  <h3 className="font-medium">Stress Index</h3>
-                </div>
-                <span className="text-xl font-semibold text-green-500">
-                  {results?.stress_index}
-                </span>
-              </div>
-              <p className="text-sm text-gray-600 mb-2">
-                Stress index quantifies your body's level of stress based on
-                heart rhythm patterns and other physiological markers.
-              </p>
-              <div className="text-xs text-gray-500 bg-gray-50 p-2 rounded">
-                Normal range: &lt;50 (lower is better)
-              </div>
-            </div>
-
-            {/* Cardiac Workload */}
-            <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-100">
-              <div className="flex justify-between items-center mb-2">
-                <div className="flex items-center gap-2">
-                  <Heart className="h-5 w-5 text-red-600" />
-                  <h3 className="font-medium">Cardiac Workload</h3>
-                </div>
-                <span className="text-xl font-semibold text-green-500">
-                  {results?.cardiac_workload_mmhg_per_sec}
-                </span>
-              </div>
-              <p className="text-sm text-gray-600 mb-2">
-                Cardiac workload measures how hard your heart is working. It's
-                calculated from heart rate and blood pressure and indicates
-                cardiovascular efficiency.
-              </p>
-              <div className="text-xs text-gray-500 bg-gray-50 p-2 rounded">
-                Normal range: 7-10
-              </div>
-            </div>
-
-            {/* Parasympathetic Activity */}
-            <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-100">
-              <div className="flex justify-between items-center mb-2">
-                <div className="flex items-center gap-2">
-                  <Heart className="h-5 w-5 text-blue-600" />
-                  <h3 className="font-medium">Parasympathetic Activity</h3>
-                </div>
-                <span className="text-xl font-semibold text-green-500">
-                  {results?.parasympathetic_activity}%
-                </span>
-              </div>
-              <p className="text-sm text-gray-600 mb-2">
-                Parasympathetic activity represents your body's "rest and
-                digest" state. Higher values indicate better recovery capability
-                and stress resilience.
-              </p>
-              <div className="text-xs text-gray-500 bg-gray-50 p-2 rounded">
-                Normal range: 35-65%
-              </div>
-            </div>
-
-            {/* Body Mass Index */}
-            <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-100">
-              <div className="flex justify-between items-center mb-2">
-                <div className="flex items-center gap-2">
-                  <ActivitySquare className="h-5 w-5 text-teal-500" />
-                  <h3 className="font-medium">Body Mass Index (BMI)</h3>
-                </div>
-                <span className="text-xl font-semibold text-yellow-500">
-                  {results?.bmi_kg_per_m2}
-                </span>
-              </div>
-              <p className="text-sm text-gray-600 mb-2">
-                BMI is a calculation that uses height and weight to estimate
-                body fat and assess weight categories. It's an indicator of
-                general health risk.
-              </p>
-              <div className="text-xs text-gray-500 bg-gray-50 p-2 rounded">
-                Normal range: 18.5-24.9
-              </div>
-            </div>
-          </div>
+          <HealthMetrics
+            facescanResult={results}
+            userFaceDataLatest={userFaceDataLatest}
+          />
 
           <div className="flex flex-col gap-3 w-full">
             <Button
@@ -1554,7 +1429,7 @@ const FaceScan = () => {
               Retake Scan
             </Button>
             <Button
-              onClick={handleSaveData}
+              onClick={SaveResultHandle}
               variant="secondary"
               className="w-full"
             >
@@ -1568,6 +1443,10 @@ const FaceScan = () => {
   };
 
   const renderHealthDetails = () => {
+    const handleSaveData = () => {
+      // Here you would save the data to your backend or local storage
+      // navigate("/dashboard");
+    };
     return (
       <div className="container max-w-md mx-auto p-4">
         <div className="flex flex-col items-center space-y-6">
@@ -1659,6 +1538,10 @@ const FaceScan = () => {
   };
 
   const renderAnalysis = () => {
+    const handleSaveData = () => {
+      // Here you would save the data to your backend or local storage
+      // navigate("/dashboard");
+    };
     return (
       <div className="container max-w-md mx-auto p-4">
         <div className="flex flex-col items-center space-y-6">
@@ -1775,6 +1658,61 @@ const FaceScan = () => {
   const RenderAnalysisResults = () => {
     const { wellnessData } = useWellness();
     const { results } = useFaceScan();
+
+    const { mutate: saveScoreSaveMutate, isSuccess: saveScoreSaveIsSuccess } =
+      useGetUserFaceScoreSave();
+
+    const handleSaveData = () => {
+      if (wellnessData) {
+        saveScoreSaveMutate({
+          wellnessScore: wellnessData?.wellnessScore || 0,
+          hardAndFatalEvents: {
+            coronaryDeathEventRisk:
+              wellnessData?.hardAndFatalEvents?.coronaryDeathEventRisk || 0,
+            fatalStrokeEventRisk:
+              wellnessData?.hardAndFatalEvents?.fatalStrokeEventRisk || 0,
+            totalCVMortalityRisk:
+              wellnessData?.hardAndFatalEvents?.totalCVMortalityRisk || 0,
+            hardCVEventRisk:
+              wellnessData?.hardAndFatalEvents?.hardCVEventRisk || 0,
+          },
+          cvDiseases: {
+            overallRisk: wellnessData?.cvDiseases?.overallRisk || 0,
+            coronaryHeartDiseaseRisk:
+              wellnessData?.cvDiseases?.coronaryHeartDiseaseRisk || 0,
+            strokeRisk: wellnessData?.cvDiseases?.strokeRisk || 0,
+            heartFailureRisk: wellnessData?.cvDiseases?.heartFailureRisk || 0,
+            peripheralVascularDiseaseRisk:
+              wellnessData?.cvDiseases?.peripheralVascularDiseaseRisk || 0,
+          },
+          vascularAge: wellnessData?.vascularAge || 0,
+          scores: {
+            ageScore: wellnessData?.scores?.ageScore || 0,
+            sbpScore: wellnessData?.scores?.sbpScore || 0,
+            smokingScore: wellnessData?.scores?.smokingScore || 0,
+            diabetesScore: wellnessData?.scores?.diabetesScore || 0,
+            bmiScore: wellnessData?.scores?.bmiScore || 0,
+            cholesterolScore: wellnessData?.scores?.cholesterolScore || 0,
+            cholesterolHdlScore: wellnessData?.scores?.cholesterolHdlScore || 0,
+            totalScore: wellnessData?.scores?.totalScore || 0,
+          },
+          waistToHeightRatio: wellnessData?.waistToHeightRatio || 0,
+          bodyFatPercentage: wellnessData?.bodyFatPercentage || 0,
+          basalMetabolicRate: wellnessData?.basalMetabolicRate || 0,
+          bodyRoundnessIndex: wellnessData?.bodyRoundnessIndex || 0,
+          conicityIndex: wellnessData?.conicityIndex || 0,
+          aBodyShapeIndex: wellnessData?.aBodyShapeIndex || 0,
+          totalDailyEnergyExpenditure:
+            wellnessData?.totalDailyEnergyExpenditure || 0,
+        });
+      }
+    };
+
+    useEffect(() => {
+      if (saveScoreSaveIsSuccess) {
+        navigate("/dashboard");
+      }
+    }, [saveScoreSaveIsSuccess]);
 
     return (
       <div className="container max-w-md mx-auto p-4">
@@ -2014,6 +1952,7 @@ const FaceScan = () => {
             {step === "capture" && <RenderCaptureScan />}
             {step === "processing" && renderProcessing()}
             {step === "results" && <RenderResults />}
+            {/* {<RenderResults />} */}
             {step === "details" && renderHealthDetails()}
             {step === "analysis" && renderAnalysis()}
             {step === "personal-factors" && (
