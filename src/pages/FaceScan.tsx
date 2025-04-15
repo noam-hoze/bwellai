@@ -1297,13 +1297,13 @@ const FaceScan = () => {
             </div>
           </div> */}
 
-          <div className="w-full">
+          {/* <div className="w-full">
             <div className="flex justify-between text-sm mb-1">
               <span>Scanning in progress...</span>
               <span>{scanProgress}%</span>
             </div>
             <Progress value={scanProgress} className="h-2" />
-          </div>
+          </div> */}
 
           <div className="sm:max-w-md h-[40em] p-0 overflow-hidden">
             {/* <iframe
