@@ -1,27 +1,56 @@
-
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Plus, Utensils, Upload, Smartphone, ScanFace, ChevronDown } from "lucide-react";
+import {
+  Plus,
+  Utensils,
+  Upload,
+  Smartphone,
+  ScanFace,
+  ChevronDown,
+} from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useNavigate } from "react-router-dom";
 
 interface AddDataDropdownProps {
-  onLogMeal: () => void;
-  onUploadLabReport: () => void;
-  onConnectWearable: () => void;
+  onLogMeal?: () => void;
+  onUploadLabReport?: () => void;
+  onConnectWearable?: () => void;
   onScanFace: () => void;
 }
 
-const AddDataDropdown = ({ 
+const AddDataDropdown = ({
   onLogMeal,
   onUploadLabReport,
   onConnectWearable,
-  onScanFace
+  onScanFace,
 }: AddDataDropdownProps) => {
+  const navigate = useNavigate();
+
+  const handleLogMeal = () => {
+    if (onLogMeal) {
+      onLogMeal();
+    }
+    navigate("/nutrition");
+  };
+
+  const handleUploadLabReport = () => {
+    if (onUploadLabReport) {
+      onUploadLabReport();
+    }
+    navigate("/reports");
+  };
+
+  const handleConnectWearable = () => {
+    if (onConnectWearable) {
+      onConnectWearable();
+    }
+    navigate("/connections");
+  };
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -32,19 +61,31 @@ const AddDataDropdown = ({
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="bg-white border border-gray-100 shadow-md rounded-lg w-56">
-        <DropdownMenuItem onClick={onLogMeal} className="cursor-pointer py-3 px-4 flex items-center gap-3">
+        <DropdownMenuItem
+          onClick={handleLogMeal}
+          className="cursor-pointer py-3 px-4 flex items-center gap-3"
+        >
           <Utensils className="h-4 w-4 text-green-600" />
           <span>Log Meal</span>
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={onUploadLabReport} className="cursor-pointer py-3 px-4 flex items-center gap-3">
+        <DropdownMenuItem
+          onClick={handleUploadLabReport}
+          className="cursor-pointer py-3 px-4 flex items-center gap-3"
+        >
           <Upload className="h-4 w-4 text-blue-600" />
           <span>Upload Lab Report</span>
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={onConnectWearable} className="cursor-pointer py-3 px-4 flex items-center gap-3">
+        <DropdownMenuItem
+          onClick={handleConnectWearable}
+          className="cursor-pointer py-3 px-4 flex items-center gap-3"
+        >
           <Smartphone className="h-4 w-4 text-purple-600" />
           <span>Connect Wearable</span>
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={onScanFace} className="cursor-pointer py-3 px-4 flex items-center gap-3">
+        <DropdownMenuItem
+          onClick={onScanFace}
+          className="cursor-pointer py-3 px-4 flex items-center gap-3"
+        >
           <ScanFace className="h-4 w-4 text-orange-600" />
           <span>Scan Face for Vitals</span>
         </DropdownMenuItem>

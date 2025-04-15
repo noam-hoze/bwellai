@@ -396,7 +396,7 @@ const FoodScanAnalysis = () => {
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow-sm p-4">
+          {/* <div className="bg-white rounded-lg shadow-sm p-4">
             <h2 className="text-xl font-semibold mb-3">Health Impact</h2>
 
             <div className="space-y-4">
@@ -421,7 +421,7 @@ const FoodScanAnalysis = () => {
                 </span>
               </div>
             </div>
-          </div>
+          </div> */}
 
           <div className="bg-white rounded-lg shadow-sm p-4">
             <h2 className="text-xl font-semibold mb-3">
@@ -485,7 +485,7 @@ const FoodScanAnalysis = () => {
                   <span className="ml-auto text-sm text-gray-500">
                     {ingredient.toLowerCase().includes("sugar")
                       ? "High in added sugar"
-                      : ingredient.toLowerCase().includes("whole grain")
+                      : ingredient.toLowerCase().includes("grain")
                       ? "Good source of fiber"
                       : ingredient.toLowerCase().includes("honey")
                       ? "Natural sweetener"
