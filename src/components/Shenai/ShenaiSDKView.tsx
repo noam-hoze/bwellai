@@ -74,7 +74,7 @@ export const ShenaiSDKView = ({ setStep }) => {
   useEffect(() => {
     if (!shenaiSDK) return;
     const settings: any = {
-      precisionMode: shenaiSDK.PrecisionMode.STRICT,
+      precisionMode: shenaiSDK.PrecisionMode.RELAXED,
       operatingMode: shenaiSDK.OperatingMode.POSITIONING,
       measurementPreset: shenaiSDK.MeasurementPreset.ONE_MINUTE_BETA_METRICS,
       cameraMode: shenaiSDK.CameraMode.FACING_USER,
