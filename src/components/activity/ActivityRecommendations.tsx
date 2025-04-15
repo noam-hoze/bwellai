@@ -15,8 +15,6 @@ const ActivityRecommendations: React.FC<ActivityRecommendationsProps> = ({
 }) => {
   const [expanded, setExpanded] = React.useState(false);
 
-  console.log(finalWearabledata);
-
   const getRecommendations = () => {
     if (viewType === "day") {
       return finalWearabledata || [];

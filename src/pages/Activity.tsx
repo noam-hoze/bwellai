@@ -17,8 +17,10 @@ import {
   useGetTerraWearableDataV2,
   useGetUserInfoTerraData,
   useGetWearableDailySleepDataV4,
+  useGetWearableGraphDataV3,
 } from "@/service/hooks/wearable/terra/useGetUserInfo";
 import moment from "moment-timezone";
+import { getFormattedDateYMD, getPreviousDate } from "@/utils/utils";
 
 type ViewType = "day" | "week" | "month";
 
@@ -96,6 +98,17 @@ const Activity = () => {
     mutateAsync: wearableDataMutateAsync,
   } = useGetTerraWearableDataV2();
 
+  const {
+    data: wearableGraphDataV3,
+    // isLoading: wearableGraphDataV3IsLoading,
+    // refetch: wearableGraphDataV3Refetch,
+  } = useGetWearableGraphDataV3({
+    isAuthenticated: localStorage.getItem("token") ? true : false,
+    resource: connectedDevicesData?.[0]?.device,
+    startDate: getPreviousDate(13),
+    endDate: getFormattedDateYMD(),
+  });
+
   const handlePrevious = () => {
     setSelectedDate((prev) => goToPreviousDate(prev, viewType));
   };
@@ -128,12 +141,6 @@ const Activity = () => {
               })
             )
           );
-          // const res = results?.reduce((acc, d) => {
-          //   if (d?.data?.subtype) {
-          //     acc[d.data.subtype] = d.data;
-          //   }
-          //   return acc;
-          // }, {});
 
           const l = [];
           const res = results?.map((r) => {

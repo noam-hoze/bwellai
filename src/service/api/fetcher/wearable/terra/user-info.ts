@@ -117,7 +117,7 @@ const getWearableDataV3 = (
   language: string
 ) =>
   `wearable/v3/report?resource=${device}&timeZone=${timeZone}&type=${type}&sub_type=${subtype}&date=${date}&language=${language}`;
-
+// v4/activity/daily/insight
 export const getUserInfoFetcher = () => {
   return Client.get(getUserInfo());
 };
