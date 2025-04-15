@@ -1951,8 +1951,8 @@ const FaceScan = () => {
             {step === "preparation" && renderPreparationScreen()}
             {step === "capture" && <RenderCaptureScan />}
             {step === "processing" && renderProcessing()}
-            {step === "results" && <RenderResults />}
-            {/* {<RenderResults />} */}
+            {/* {step === "results" && <RenderResults />} */}
+            {<RenderResults />}
             {step === "details" && renderHealthDetails()}
             {step === "analysis" && renderAnalysis()}
             {step === "personal-factors" && (
