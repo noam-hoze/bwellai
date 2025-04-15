@@ -31,6 +31,13 @@ const getWearableDailyDataV4 = ({
   startDate: string;
   resource: string;
 }) => `wearable/v4/daily?resource=${resource}&date=${startDate}`;
+const getWearableDailySleepDataV4 = ({
+  startDate,
+  resource,
+}: {
+  startDate: string;
+  resource: string;
+}) => `wearable/v4/activity/daily?resource=${resource}&date=${startDate}`;
 const getWearableWeeklyDataV4 = ({
   resource,
   startDate,
@@ -196,6 +203,12 @@ export const getWearableDailyDataV4Fetcher = (
   startDate: string
 ) => {
   return Client.get(getWearableDailyDataV4({ resource, startDate }));
+};
+export const getWearableDailySleepDataV4Fetcher = (
+  resource: string,
+  startDate: string
+) => {
+  return Client.get(getWearableDailySleepDataV4({ resource, startDate }));
 };
 export const getWearableWeeklyDataV4Fetcher = (
   resource: string,

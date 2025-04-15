@@ -6,6 +6,7 @@ import {
   getUserInfoFetcher,
   getWearableDailyDataV4Fetcher,
   getWearableDailyRecommendationDataV4Fetcher,
+  getWearableDailySleepDataV4Fetcher,
   getWearableDataFetcher,
   getWearableDataFetcherV2,
   getWearableElasticSearchDataFetcher,
@@ -211,6 +212,24 @@ export const useGetWearableDailyDataV4 = ({
   const { data, error, isError, isLoading, isSuccess, refetch } = useQuery({
     queryKey: ["get-wearable-daily-data-v4", startDate, resource],
     queryFn: () => getWearableDailyDataV4Fetcher(resource, startDate),
+    placeholderData: (previousData) => previousData,
+    enabled: isEnable ? true : false,
+  });
+
+  return { data: data?.data, error, isError, isLoading, isSuccess, refetch };
+};
+export const useGetWearableDailySleepDataV4 = ({
+  resource,
+  startDate,
+  isEnable,
+}: {
+  resource: string;
+  startDate: string;
+  isEnable: string;
+}) => {
+  const { data, error, isError, isLoading, isSuccess, refetch } = useQuery({
+    queryKey: ["get-wearable-daily-data-v4", startDate, resource],
+    queryFn: () => getWearableDailySleepDataV4Fetcher(resource, startDate),
     placeholderData: (previousData) => previousData,
     enabled: isEnable ? true : false,
   });
