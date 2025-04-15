@@ -5,6 +5,7 @@ import { useShenaiSdk } from "./useShenaiSDK";
 import { getEnumName } from "@/utils/shenaiHelper";
 import { Button } from "../ui/button";
 import { useFaceScan } from "@/contexts/FaceScanContext";
+import { Progress } from "../ui/progress";
 
 export const ShenaiSDKView = ({ setStep }) => {
   // const hr = useRealtimeHeartRate();
@@ -190,37 +191,65 @@ export const ShenaiSDKView = ({ setStep }) => {
   const initializationDisabled =
     !shenaiSDK || sdkState?.isInitialized === true || pendingInitialization;
 
-  return (
-    <div
-      className="wrapper"
-      style={{
-        display: `flex`,
-        alignItems: "center",
-        justifyContent: "center",
-        position: "relative",
-      }}
-    >
-      <div ref={canvasTopRef} className={style.mxcanvasTopHelper} />
-      <canvas id="mxcanvas" className={style.mxcanvas} />
+  const measurementInProgress =
+    sdkState &&
+    shenaiSDK &&
+    [
+      shenaiSDK.MeasurementState.FAILED,
+      shenaiSDK.MeasurementState.FINISHED,
+      shenaiSDK.MeasurementState.NOT_STARTED,
+    ].indexOf(sdkState.measurementState) < 0;
 
-      {!cameraScanningFinished &&
-        !initializationDisabled &&
-        getEnumName(
-          shenaiSDK?.MeasurementState,
-          sdkState?.measurementState,
-          "UNKNOWN"
-        ) === "UNKNOWN" && (
-          <div
-            style={{
-              position: "absolute",
-            }}
-          >
-            <Button variant="accent" onClick={initialize} className="w-40 mt-4">
-              {/* <X className="mr-2 h-4 w-4" /> */}
-              Start Scan
-            </Button>
+  return (
+    <div>
+      {typeof sdkState?.progress === "number" && measurementInProgress && (
+        <div className="w-full mb-5">
+          <div className="flex justify-between text-sm mb-1">
+            <span>Scanning in progress...</span>
+            <span>{sdkState.progress.toFixed(0)}%</span>
           </div>
-        )}
+          <Progress
+            value={Number(sdkState.progress.toFixed(0))}
+            className="h-2"
+          />
+        </div>
+      )}
+
+      <div
+        className="wrapper"
+        style={{
+          display: `flex`,
+          alignItems: "center",
+          justifyContent: "center",
+          position: "relative",
+        }}
+      >
+        <div ref={canvasTopRef} className={style.mxcanvasTopHelper} />
+        <canvas id="mxcanvas" className={style.mxcanvas} />
+
+        {!cameraScanningFinished &&
+          !initializationDisabled &&
+          getEnumName(
+            shenaiSDK?.MeasurementState,
+            sdkState?.measurementState,
+            "UNKNOWN"
+          ) === "UNKNOWN" && (
+            <div
+              style={{
+                position: "absolute",
+              }}
+            >
+              <Button
+                variant="accent"
+                onClick={initialize}
+                className="w-40 mt-4"
+              >
+                {/* <X className="mr-2 h-4 w-4" /> */}
+                Start Scan
+              </Button>
+            </div>
+          )}
+      </div>
     </div>
   );
 };
