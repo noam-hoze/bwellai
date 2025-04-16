@@ -1,13 +1,16 @@
-import {
-  useGenerateOTP,
-  useOtpValidation,
-} from "@/service/hooks/authentication/useAuthentication";
 import React, { createContext, useContext, useState, useEffect } from "react";
 
 type AuthContextType = {
   isAuthenticated: boolean;
+  isfirstLogin: boolean;
   login: (email: string, password: string) => Promise<void>;
-  loginWithOTP: (email: string, otp: string) => Promise<void>;
+  loginWithOTP: ({
+    email,
+    isAuthenticated,
+  }: {
+    email: string;
+    isAuthenticated: boolean;
+  }) => any;
   generateOTP: (email: string) => Promise<void>;
   loginWithGoogle: () => Promise<void>;
   logout: () => void;
@@ -20,30 +23,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-  const [useAuthRequestId, setUseAuthRequestId] = useState<string | null>(null);
+  const [isfirstLogin, setIsfirstLogin] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
-
-  const {
-    data: generateOTPData,
-    // isError: generateOTPIsError,
-    mutate: generateOTPMutate,
-    isPending: generateOTPPending,
-    isSuccess: generateOTPSuccess,
-  } = useGenerateOTP();
-
-  const {
-    data: otpValidationData,
-    error: otpValidationError,
-    mutate: otpValidationMutate,
-    isSuccess: otpValidationSuccess,
-    isPending: otpValidationPending,
-  } = useOtpValidation();
-
-  useEffect(() => {
-    if (generateOTPSuccess && generateOTPData) {
-      setUseAuthRequestId(generateOTPData?.requestId);
-    }
-  }, [generateOTPSuccess, generateOTPData]);
 
   useEffect(() => {
     // Check if there's an existing login token in localStorage
@@ -59,8 +40,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       // Simulate authentication
       setLoading(true);
       // In a real app, this would call an API
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      localStorage.setItem("auth_token", "demo_token");
+      // await new Promise((resolve) => setTimeout(resolve, 1000));
       setIsAuthenticated(true);
       setLoading(false);
     } catch (error) {
@@ -74,7 +54,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       setLoading(true);
       // Simulate OTP generation
       // await new Promise((resolve) => setTimeout(resolve, 1000));
-      generateOTPMutate({ email: email });
+
       setLoading(false);
       return;
     } catch (error) {
@@ -83,35 +63,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
-  const loginWithOTP = async (email: string, otp: string) => {
-    try {
-      setLoading(true);
-      // In a real app, this would verify OTP
-      // await new Promise((resolve) => setTimeout(resolve, 1000));
-      otpValidationMutate({
-        otp: otp,
-        requestId: useAuthRequestId,
-      });
-
-      localStorage.setItem(
-        "token",
-        otpValidationData?.payload?.token?.accessToken?.token
-      );
-      localStorage.setItem(
-        "refresh_token",
-        otpValidationData?.payload?.token?.refreshToken?.token
-      );
-      localStorage.setItem(
-        "is_Profile_updated",
-        otpValidationData?.payload?.isProfileUpdated
-      );
-
-      setIsAuthenticated(true);
-      setLoading(false);
-    } catch (error) {
-      setLoading(false);
-      throw error;
-    }
+  const loginWithOTP = ({
+    email,
+    isAuthenticated,
+    isfirstLogin,
+  }: {
+    email: string;
+    isAuthenticated: boolean;
+    isfirstLogin: boolean;
+  }) => {
+    setIsAuthenticated(isAuthenticated);
+    setIsfirstLogin(isfirstLogin);
   };
 
   const loginWithGoogle = async () => {
@@ -130,18 +92,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const logout = () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("refresh_token");
     setIsAuthenticated(false);
   };
 
   return (
     <AuthContext.Provider
       value={{
-        isAuthenticated,
         login,
         loginWithOTP,
         generateOTP,
         loginWithGoogle,
         logout,
+        isAuthenticated,
+        isfirstLogin,
         loading,
       }}
     >

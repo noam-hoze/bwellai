@@ -50,7 +50,6 @@ const Login = () => {
         title: "Welcome!",
         description: "You have successfully logged in.",
       });
-      console.log("navigating to dashboard");
 
       localStorage.setItem(
         "token",

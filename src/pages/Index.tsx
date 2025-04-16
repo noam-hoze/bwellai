@@ -2,12 +2,19 @@ import { useToast } from "@/hooks/use-toast";
 import Header from "@/components/layout/Header";
 import AddDataDropdown from "@/components/dashboard/AddDataDropdown";
 import HealthOverview from "@/components/dashboard/HealthOverview";
+import FriendlyGreeting from "@/components/dashboard/FriendlyGreeting";
 import BodyHealthInterface from "@/components/dashboard/BodyHealthInterface";
+import HealthNavigator from "@/components/dashboard/HealthNavigator";
 import { Button } from "@/components/ui/button";
 import { ScanFace } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Navigate, useNavigate } from "react-router-dom";
 import { useState } from "react";
+import ProtocolTracker from "@/components/dashboard/ProtocolTracker";
+import HealthVisualizations from "@/components/dashboard/HealthVisualizations";
+import LabResultsSummary from "@/components/dashboard/LabResultsSummary";
+import MessagesCenter from "@/components/dashboard/MessagesCenter";
+import NextActions from "@/components/dashboard/NextActions";
 
 const Index = () => {
   const { toast } = useToast();
@@ -80,7 +87,25 @@ const Index = () => {
           />
         </div>
 
+        <FriendlyGreeting />
+
         <HealthOverview />
+
+        <HealthNavigator />
+
+        <div className="grid gap-6 md:grid-cols-2 mt-6 space-y-6">
+          <ProtocolTracker />
+          <NextActions />
+        </div>
+
+        <div className="mt-6">
+          <HealthVisualizations />
+        </div>
+
+        <div className="grid gap-6 md:grid-cols-2 mt-6">
+          <LabResultsSummary />
+          <MessagesCenter />
+        </div>
 
         <BodyHealthInterface />
       </main>

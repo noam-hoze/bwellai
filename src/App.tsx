@@ -25,6 +25,7 @@ import FoodScanAnalysis from "./pages/FoodScanAnalysis";
 import FaceScan from "./pages/FaceScan";
 import Connections from "./pages/Connections";
 import Wallet from "./pages/Wallet";
+import DashboardFirstTime from "./pages/DashboardFirstTime";
 
 const queryClient = new QueryClient();
 
@@ -45,7 +46,8 @@ const App = () => (
             <Route path="/auth/login" element={<Login />} />
 
             {/* App Routes */}
-            <Route path="/dashboard" element={<Index />} />
+            {/* <Route path="/dashboard" element={<Index />} /> */}
+            <Route path="/dashboard" element={<DashboardFirstTime />} />
             <Route path="/reports" element={<Reports />} />
             <Route path="/report/:id" element={<ReportDetail />} />
             <Route path="/body-metrics" element={<BodyMetrics />} />
