@@ -34,11 +34,14 @@ import {
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import { useGetUserSelectedSubscription } from "@/service/hooks/subscription/useUserSubscription";
+import { useAuth } from "@/contexts/AuthContext";
 
 const AccountTab = ({ getProfileIsData }) => {
   const navigate = useNavigate();
   const [openDeleteDialog, setOpenDeleteDialog] = useState<string | null>(null);
   const [isAccountExpanded, setIsAccountExpanded] = useState(true);
+
+  const { logout } = useAuth();
 
   const {
     data: selectedSubscriptionCatalogData,
@@ -51,7 +54,8 @@ const AccountTab = ({ getProfileIsData }) => {
     // Placeholder for logout functionality
     localStorage.clear();
     toast.success("Successfully logged out");
-    setTimeout(() => navigate("/"), 1500);
+    logout();
+    setTimeout(() => navigate("/onboarding/0"), 1500);
   };
 
   const handleDeleteData = () => {
