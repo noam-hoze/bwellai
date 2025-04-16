@@ -46,6 +46,15 @@ const ScanHistoryTrends = ({
     formattedDate: format(new Date(point.date), "MMM d"),
   }));
 
+  // const maxValueThemAll = data?.reduce(
+  //   (acc, d) => Math.max(acc, Number(d?.value) || 0),
+  //   0
+  // );
+
+  // const totalMaxValue = Math.ceil(maxValueThemAll + maxValueThemAll * 0.3);
+
+  // console.log(formattedData, totalMaxValue, threshold, label);
+
   return (
     <div className="h-full w-full">
       <div className="mb-1">
@@ -55,7 +64,7 @@ const ScanHistoryTrends = ({
         <ResponsiveContainer width="100%" height="100%">
           <LineChart
             data={formattedData}
-            margin={{ top: 5, right: 20, bottom: 5, left: 0 }}
+            margin={{ top: 10, right: 20, bottom: 5, left: 0 }}
           >
             <XAxis
               dataKey="formattedDate"
