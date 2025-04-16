@@ -32,6 +32,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     if (token) {
       setIsAuthenticated(true);
     }
+
     setLoading(false);
   }, []);
 

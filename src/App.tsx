@@ -26,6 +26,7 @@ import FaceScan from "./pages/FaceScan";
 import Connections from "./pages/Connections";
 import Wallet from "./pages/Wallet";
 import DashboardFirstTime from "./pages/DashboardFirstTime";
+import OTP from "./pages/auth/Otp";
 
 const queryClient = new QueryClient();
 
@@ -44,6 +45,7 @@ const App = () => (
             <Route path="/onboarding/:step" element={<OnboardingScreen />} />
             <Route path="/auth/signup" element={<SignUp />} />
             <Route path="/auth/login" element={<Login />} />
+            <Route path="/auth/otp" element={<OTP />} />
 
             {/* App Routes */}
             {/* <Route path="/dashboard" element={<Index />} /> */}
