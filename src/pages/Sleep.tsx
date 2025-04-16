@@ -23,6 +23,8 @@ import {
   useGetWearableWeeklyRecommendationDataV4,
 } from "@/service/hooks/wearable/terra/useGetUserInfo";
 import { useGetUserProfile } from "@/service/hooks/profile/useGetUserProfile";
+import { Navigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 
 type ViewType = "day" | "week" | "month";
 
@@ -31,6 +33,8 @@ const formatDate = (date: Date) => {
 };
 
 const Sleep = () => {
+  const { isAuthenticated, loading } = useAuth();
+
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [viewType, setViewType] = useState<ViewType>("day");
 
@@ -117,6 +121,10 @@ const Sleep = () => {
 
   const isTodaySelected = isToday(selectedDate) && viewType === "day";
   const dateDisplay = getDateDisplay(selectedDate, viewType);
+
+  if (!loading && !isAuthenticated) {
+    return <Navigate to="/onboarding/0" replace />;
+  }
 
   return (
     <Layout>

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 
 import Layout from "@/components/layout/Layout";
 import NutritionHeader from "@/components/nutrition/NutritionHeader";
@@ -19,8 +19,11 @@ import {
   calorieNumberDisplayed,
   requiredMicronutrientsBalanceDisplayed,
 } from "@/utils/utils";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Nutrition = () => {
+  const { isAuthenticated, loading } = useAuth();
+
   const [activeTab, setActiveTab] = useState<"daily" | "trends">("daily");
   const [activeView, setActiveView] = useState<"meals" | "savedItems">("meals");
   const [date, setDate] = useState<Date | undefined>(new Date());
@@ -105,6 +108,10 @@ const Nutrition = () => {
       setTotalDailyCarbs(cc);
     }
   }, [loggedMealData]);
+
+  if (!loading && !isAuthenticated) {
+    return <Navigate to="/onboarding/0" replace />;
+  }
 
   return (
     <Layout>

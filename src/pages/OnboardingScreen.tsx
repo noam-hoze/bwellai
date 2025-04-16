@@ -12,6 +12,7 @@ import {
   useOtpValidation,
 } from "@/service/hooks/authentication/useAuthentication";
 import { useAuth } from "@/contexts/AuthContext";
+import GoogleLoginButton from "@/components/auth/GoogleAuthButton";
 
 const OnboardingScreen = () => {
   const [currentStep, setCurrentStep] = useState(0);
@@ -176,8 +177,36 @@ const OnboardingScreen = () => {
     }
   }, [generateOTPSuccess]);
 
-  const handleGoogleSignIn = () => {
-    navigate("/dashboard");
+  const handleGoogleSignIn = (loggedInData) => {
+    if (loggedInData) {
+      toast({
+        title: "Welcome!",
+        description: "You have successfully logged in.",
+      });
+
+      localStorage.setItem("token", loggedInData?.token?.accessToken?.token);
+      localStorage.setItem(
+        "refresh_token",
+        loggedInData?.token?.refreshToken?.token
+      );
+      localStorage.setItem(
+        "is_Profile_updated",
+        loggedInData?.isProfileUpdated
+      );
+
+      loginWithOTP({
+        email: email,
+        isAuthenticated: true,
+        isfirstLogin: loggedInData?.payload?.isfirstLogin,
+      });
+
+      navigate("/dashboard");
+    }
+  };
+
+  const handleGoogleSignInFailure = () => {
+    // navigate("/dashboard");
+    console.log();
   };
 
   const steps = [
@@ -623,7 +652,13 @@ const OnboardingScreen = () => {
               </div>
             </div>
 
-            <Button
+            <GoogleLoginButton
+              clientId={import.meta.env.VITE_GOOGLE_OAUTH_CLIENT_ID}
+              onLoginFailure={handleGoogleSignInFailure}
+              onLoginSuccess={handleGoogleSignIn}
+            />
+
+            {/* <Button
               type="button"
               variant="outline"
               className="w-full py-6"
@@ -654,7 +689,7 @@ const OnboardingScreen = () => {
                 />
               </svg>
               Sign in with Google
-            </Button>
+            </Button> */}
 
             <div className="text-center mt-6"></div>
           </div>

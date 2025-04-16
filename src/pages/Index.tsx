@@ -21,8 +21,10 @@ const Index = () => {
   const navigate = useNavigate();
   const { isAuthenticated, loading } = useAuth();
 
+  console.log(!loading && !isAuthenticated, loading, isAuthenticated);
+
   if (!loading && !isAuthenticated) {
-    return <Navigate to="/welcome" replace />;
+    return <Navigate to="/onboarding/0" replace />;
   }
 
   const handleLogMeal = () => {

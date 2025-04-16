@@ -1,5 +1,5 @@
 import { useState, useEffect, lazy, Suspense } from "react";
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import {
@@ -78,6 +78,7 @@ import {
   useGetUserFaceScoreSave,
 } from "@/service/hooks/shenai/useShenaiFaceScore";
 import { filterFaceScanData } from "@/utils/shenaiHelper";
+import { useAuth } from "@/contexts/AuthContext";
 
 const ShenaiApp = lazy(() => import("@/components/Shenai/ShenaiApp"));
 
@@ -1927,6 +1928,11 @@ const FaceScan = () => {
       </div>
     );
   };
+
+  const { isAuthenticated, loading } = useAuth();
+  if (!loading && !isAuthenticated) {
+    return <Navigate to="/onboarding/0" replace />;
+  }
 
   return (
     <FaceScanProvider>
