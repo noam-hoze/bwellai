@@ -7,10 +7,17 @@ import Header from "@/components/layout/Header";
 import { Button } from "@/components/ui/button";
 import { ScanFace } from "lucide-react";
 import AddDataDropdown from "@/components/dashboard/AddDataDropdown";
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 
 const DashboardFirstTime = () => {
   const navigate = useNavigate();
+
+  const { isAuthenticated, loading } = useAuth();
+
+  if (!loading && !isAuthenticated) {
+    return <Navigate to="/onboarding/0" replace />;
+  }
 
   const handleLogMeal = () => {
     navigate("/nutrition");

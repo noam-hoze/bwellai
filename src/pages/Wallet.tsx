@@ -30,9 +30,10 @@ import {
   useGetUserWalletData,
   useGetUserWalletTransaction,
 } from "@/service/hooks/wallet/useGetUserWalletData";
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { handleCopyToClipboard } from "@/utils/utils";
 import BalanceCard from "@/components/wallet/BalanceCard";
+import { useAuth } from "@/contexts/AuthContext";
 
 const actionMap = {
   ADD_MONEY: "Earned",
@@ -46,6 +47,8 @@ function toTitleCase(str) {
 }
 
 const Wallet = () => {
+  const { isAuthenticated, loading } = useAuth();
+
   const size = 10;
   const [page, setPage] = useState<number>(0);
   const navigate = useNavigate();
@@ -231,6 +234,10 @@ const Wallet = () => {
       minute: "2-digit",
     });
   };
+
+  if (!loading && !isAuthenticated) {
+    return <Navigate to="/onboarding/0" replace />;
+  }
 
   return (
     <Layout>

@@ -21,6 +21,8 @@ import {
 } from "@/service/hooks/wearable/terra/useGetUserInfo";
 import moment from "moment-timezone";
 import { getFormattedDateYMD, getPreviousDate } from "@/utils/utils";
+import { Navigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 
 type ViewType = "day" | "week" | "month";
 
@@ -70,6 +72,8 @@ export const options = [
 ];
 
 const Activity = () => {
+  const { isAuthenticated, loading } = useAuth();
+
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [viewType, setViewType] = useState<ViewType>("day");
   const [wearableDataPending, setWearableDataPending] = useState(false);
@@ -165,6 +169,10 @@ const Activity = () => {
       processHealthSummary();
     }
   }, [connectedDevicesData, selectedDate]);
+
+  if (!loading && !isAuthenticated) {
+    return <Navigate to="/onboarding/0" replace />;
+  }
 
   return (
     <Layout>
