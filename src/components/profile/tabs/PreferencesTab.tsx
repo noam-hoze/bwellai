@@ -12,6 +12,8 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Languages, Ruler, Scale, Thermometer } from "lucide-react";
 import { toast } from "sonner";
 import { LanguageObjectData } from "@/modules/constant/profile";
+import { Button } from "@/components/ui/button";
+import { useGetCreateProfile } from "@/service/hooks/profile/useGetCreateProfile";
 
 const PreferencesTab = ({
   getProfileIsData,
@@ -25,11 +27,25 @@ const PreferencesTab = ({
   setDistanceUnit,
   setTemperatureUnit,
   setLanguage,
+  getUserProfileRefetch,
 }) => {
+  const {
+    mutate: createProfileMutate,
+    isSuccess: createProfileIsSuccess,
+    error: createProfileError,
+  } = useGetCreateProfile();
+
   const handleLanguageChange = (value: string) => {
     setLanguage(value);
     toast.success(`Language changed to ${value}`);
   };
+
+  useEffect(() => {
+    if (createProfileIsSuccess) {
+      getUserProfileRefetch();
+      toast.success("Health profile updated successfully");
+    }
+  }, [createProfileIsSuccess]);
 
   useEffect(() => {
     if (getProfileIsData) {
@@ -46,6 +62,17 @@ const PreferencesTab = ({
     getProfileIsData?.temperatureUnit,
     getProfileIsData?.language,
   ]);
+
+  const handleSaveProfile = () => {
+    createProfileMutate({
+      ...getProfileIsData,
+      language,
+      weightUnit,
+      heightUnit,
+      distanceUnit,
+      temperatureUnit,
+    });
+  };
 
   return (
     <div className="space-y-6">
@@ -184,6 +211,9 @@ const PreferencesTab = ({
           </div>
         </CardContent>
       </Card>
+      <div className="flex justify-end mt-6">
+        <Button onClick={handleSaveProfile}>Save Health Profile</Button>
+      </div>
     </div>
   );
 };

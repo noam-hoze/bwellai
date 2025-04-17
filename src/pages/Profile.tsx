@@ -23,7 +23,10 @@ const Profile = () => {
           <h1 className="text-3xl font-bold">Profile</h1>
         </div>
 
-        <ProfileTabs getProfileIsData={getProfileIsData} />
+        <ProfileTabs
+          getProfileIsData={getProfileIsData}
+          getUserProfileRefetch={getUserProfileRefetch}
+        />
       </div>
     </Layout>
   );

@@ -58,6 +58,7 @@ const HealthProfileTab = ({
   distanceUnit,
   temperatureUnit,
   language,
+  getUserProfileRefetch,
 }) => {
   const [age, setAge] = useState<number>(30);
   const [gender, setGender] = useState<string>("male");
@@ -85,6 +86,13 @@ const HealthProfileTab = ({
     isSuccess: createProfileIsSuccess,
     error: createProfileError,
   } = useGetCreateProfile();
+
+  useEffect(() => {
+    if (createProfileIsSuccess) {
+      getUserProfileRefetch();
+      toast.success("Health profile updated successfully");
+    }
+  }, [createProfileIsSuccess]);
 
   useEffect(() => {
     // Calculate BMI when height or weight changes
@@ -220,7 +228,6 @@ const HealthProfileTab = ({
       distanceUnit,
       temperatureUnit,
     });
-    toast.success("Health profile updated successfully");
   };
 
   const handleConditionChange = (conditionId: string) => {

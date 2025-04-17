@@ -86,7 +86,7 @@ const Connections = () => {
       id: "fitbit",
       name: "Fitbit",
       category: "Activity & Sleep",
-      icon: "https://api-media-root.s3.us-east-2.amazonaws.com/static/img/fitbit.png",
+      icon: "/connections/fitbit.png",
       priority: "high",
       benefits: [
         "Track steps & workouts",
@@ -100,7 +100,7 @@ const Connections = () => {
       id: "oura",
       name: "Oura Ring",
       category: "Sleep",
-      icon: "https://api-media-root.s3.us-east-2.amazonaws.com/static/img/oura.png",
+      icon: "/connections/oura.png",
       priority: "high",
       benefits: [
         "Advanced sleep tracking",
@@ -128,7 +128,7 @@ const Connections = () => {
       id: "google_fit",
       name: "Google Fit",
       category: "Activity",
-      icon: "https://api.tryterra.co/v2/static/assets/img/app_icons/google.webp",
+      icon: "/connections/google.webp",
       priority: "medium",
       benefits: ["Activity tracking", "Heart points", "Works with many apps"],
       description:

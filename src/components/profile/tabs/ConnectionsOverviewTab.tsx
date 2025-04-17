@@ -137,8 +137,7 @@ const ConnectionsOverviewTab = () => {
       },
       description:
         "The FreeStyle LibreLink app is approved for use with FreeStyle Libre and FreeStyle Libre 2 system sensors.",
-      image:
-        "https://api.tryterra.co/v2/static/assets/img/app_icons/freestylelibre.webp",
+      image: "/connections/freestylelibre.webp",
       connected: true,
     },
     {
@@ -152,8 +151,7 @@ const ConnectionsOverviewTab = () => {
       tracking: {},
       description:
         "Achieve your fitness goals through customised coaching and actionable tips based on your health and activity history. Google Fit also makes it easy to monitor your progress and track your activity right from your phone or smartwatch.",
-      image:
-        "https://api.tryterra.co/v2/static/assets/img/app_icons/google.webp",
+      image: "/connections/google.webp",
       connected: true,
     },
     {
@@ -212,7 +210,7 @@ const ConnectionsOverviewTab = () => {
       tracking: {},
       description:
         "Figure out what's normal for you with our period and cycle tracker. Spot patterns in your symptoms and know when your period is likely to start.",
-      image: "https://api.tryterra.co/v2/static/assets/img/app_icons/flo.webp",
+      image: "/connections/flo.webp",
       connected: true,
     },
     {
@@ -226,8 +224,7 @@ const ConnectionsOverviewTab = () => {
       tracking: {},
       description:
         "Eat This Much is a meal planning app that helps users achieve their fitness goals by generating personalized meal plans based on their dietary preferences, budget, schedule, and daily caloric intake",
-      image:
-        "https://api.tryterra.co/v2/static/assets/img/app_icons/eatthismuch.webp",
+      image: "/connections/eatthismuch.webp",
       connected: true,
     },
     {
@@ -241,8 +238,7 @@ const ConnectionsOverviewTab = () => {
       tracking: {},
       description:
         "Upload activities recorded with the Apple Workout App to Strava and automatically sync activities from Strava to the Health app.",
-      image:
-        "https://api.tryterra.co/v2/static/assets/img/app_icons/strava.webp",
+      image: "/connections/strava.webp",
       connected: true,
     },
     {
@@ -270,8 +266,7 @@ const ConnectionsOverviewTab = () => {
       tracking: {},
       description:
         "The companion app to Huawei wearables. Huawei Health is a free health and fitness app that allows you to keep track of your fitness regimen.",
-      image:
-        "https://api.tryterra.co/v2/static/assets/img/app_icons/huawei.webp",
+      image: "/connections/huawei.webp",
       connected: true,
     },
     {
@@ -285,8 +280,7 @@ const ConnectionsOverviewTab = () => {
       tracking: {},
       description:
         "DexCare helps the health system optimize resources, orchestrate capacity, and intelligently guide patients to best-fit care options.",
-      image:
-        "https://api.tryterra.co/v2/static/assets/img/app_icons/dexcom.webp",
+      image: "/connections/dexcom.webp",
       connected: true,
     },
   ];
