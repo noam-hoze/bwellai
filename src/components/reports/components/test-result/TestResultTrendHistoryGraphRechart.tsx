@@ -80,9 +80,10 @@ export default function TestResultTrendHistoryGraphRechart({
               vertical={false}
             />
 
-            <XAxis dataKey="createdAt" />
+            <XAxis dataKey="createdAt" padding={{ left: 10, right: 10 }} />
             <YAxis
               domain={[Number(minValue), Number(maxValue)]} // 👈 set dynamic domain
+              padding={{ top: 10, bottom: 10 }}
               tick={{ fontSize: 12 }}
               tickLine={false}
               axisLine={true}

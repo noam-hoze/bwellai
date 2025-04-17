@@ -309,14 +309,14 @@ const MealAnalysisPage = () => {
 
                 {ingredients?.map((ingredient, idx) => (
                   <div key={idx} className="flex items-center mb-2">
-                    {idx === 0 ? (
+                    {/* {idx === 0 ? (
                       <AlertTriangle
                         size={16}
                         className="mr-2 text-yellow-500"
                       />
                     ) : (
-                      <Check size={16} className="mr-2 text-green-500" />
-                    )}
+                    )} */}
+                    <Check size={16} className="mr-2 text-green-500" />
                     <span
                       className={`text-gray-800 ${
                         idx === 0 ? "font-medium" : ""
@@ -324,7 +324,7 @@ const MealAnalysisPage = () => {
                     >
                       {ingredient}
                     </span>
-                    <span className="ml-auto text-sm text-gray-500">
+                    {/* <span className="ml-auto text-sm text-gray-500">
                       {idx === 0
                         ? "High in added sugar"
                         : idx === 1
@@ -332,7 +332,7 @@ const MealAnalysisPage = () => {
                         : idx === 2
                         ? "Rich in antioxidants"
                         : "High in vitamin C"}
-                    </span>
+                    </span> */}
                   </div>
                 ))}
               </div>

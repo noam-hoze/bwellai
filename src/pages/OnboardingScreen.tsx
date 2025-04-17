@@ -713,7 +713,7 @@ const OnboardingScreen = () => {
               className="bg-green-800 text-white px-3 py-1 rounded-full text-xs font-medium hover:bg-green-700 ml-2"
               onClick={() => setCurrentStep(steps.length - 1)}
             >
-              Sign Up Now
+              Sign In
             </button>
           )}
         </div>
@@ -731,7 +731,7 @@ const OnboardingScreen = () => {
               className="bg-green-800 text-white px-4 py-1 rounded-full text-sm font-medium hover:bg-green-700"
               onClick={() => setCurrentStep(steps.length - 1)}
             >
-              Sign Up Now
+              Sign In
             </button>
           )}
         </div>

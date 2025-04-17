@@ -1,7 +1,17 @@
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ChevronRight, Activity, Wind, Droplet, AlertTriangle, Brain, Thermometer, Info } from "lucide-react";
+import {
+  ChevronRight,
+  Activity,
+  Wind,
+  Droplet,
+  AlertTriangle,
+  Brain,
+  Thermometer,
+  Info,
+} from "lucide-react";
 import { Lungs } from "@/components/icons/Lungs";
+import ManBody from "./ManBody";
 
 type Organ = "lungs" | "brain" | "liver" | "kidneys" | null;
 
@@ -36,44 +46,44 @@ const HealthNavigator = () => {
           value: "98.2",
           unit: "%",
           label: "Oxygen saturation (SpO2)",
-          status: "normal"
+          status: "normal",
         },
         {
           icon: <Activity className="w-5 h-5 text-blue-600" />,
           value: "14",
           unit: "breaths/min",
           label: "Resting respiratory rate",
-          status: "normal"
+          status: "normal",
         },
         {
           icon: <Wind className="w-5 h-5 text-blue-600" />,
           value: "Deep",
           unit: "",
           label: "Breathing pattern",
-          status: "normal"
+          status: "normal",
         },
         {
           icon: <AlertTriangle className="w-5 h-5 text-amber-500" />,
           value: "Moderate",
           unit: "",
           label: "Pollution exposure risk",
-          status: "caution"
+          status: "caution",
         },
         {
           icon: <Activity className="w-5 h-5 text-green-600" />,
           value: "22",
           unit: "breaths/min",
           label: "Active respiratory rate",
-          status: "normal"
+          status: "normal",
         },
         {
           icon: <Thermometer className="w-5 h-5 text-green-600" />,
           value: "Low",
           unit: "",
           label: "Infection risk level",
-          status: "normal"
-        }
-      ]
+          status: "normal",
+        },
+      ],
     },
     brain: {
       title: "Brain & Nervous System",
@@ -85,23 +95,23 @@ const HealthNavigator = () => {
           value: "Normal",
           unit: "",
           label: "Neurological activity",
-          status: "normal"
+          status: "normal",
         },
         {
           icon: <Brain className="w-5 h-5 text-purple-600" />,
           value: "68",
           unit: "ms",
           label: "Reaction time",
-          status: "normal"
+          status: "normal",
         },
         {
           icon: <AlertTriangle className="w-5 h-5 text-purple-600" />,
           value: "7.5",
           unit: "hrs/night",
           label: "Sleep quality",
-          status: "normal"
-        }
-      ]
+          status: "normal",
+        },
+      ],
     },
     liver: {
       title: "Liver",
@@ -113,44 +123,44 @@ const HealthNavigator = () => {
           value: "7-55",
           unit: "U/L",
           label: "Normal ALT Range",
-          status: "normal"
+          status: "normal",
         },
         {
           icon: <Activity className="w-5 h-5 text-amber-600" />,
           value: "8-48",
           unit: "U/L",
           label: "Normal AST Range",
-          status: "normal"
+          status: "normal",
         },
         {
           icon: <Activity className="w-5 h-5 text-amber-600" />,
           value: "0.1-1.2",
           unit: "mg/dL",
           label: "Normal Bilirubin Range",
-          status: "normal"
+          status: "normal",
         },
         {
           icon: <Info className="w-5 h-5 text-amber-600" />,
           value: "Key Functions",
           unit: "",
           label: "Protein synthesis, toxin removal, bile production",
-          status: "normal"
+          status: "normal",
         },
         {
           icon: <Info className="w-5 h-5 text-amber-600" />,
           value: "Metabolic Role",
           unit: "",
           label: "Glucose regulation, nutrient processing",
-          status: "normal"
+          status: "normal",
         },
         {
           icon: <AlertTriangle className="w-5 h-5 text-amber-600" />,
           value: "Screening",
           unit: "",
           label: "Annual liver function tests recommended",
-          status: "normal"
-        }
-      ]
+          status: "normal",
+        },
+      ],
     },
     kidneys: {
       title: "Kidneys",
@@ -162,27 +172,39 @@ const HealthNavigator = () => {
           value: "Normal",
           unit: "",
           label: "Filtration rate",
-          status: "normal"
+          status: "normal",
         },
         {
           icon: <Activity className="w-5 h-5 text-blue-600" />,
           value: "Good",
           unit: "",
           label: "Electrolyte balance",
-          status: "normal"
-        }
-      ]
-    }
+          status: "normal",
+        },
+      ],
+    },
   };
 
   const getStatusBadge = (status: "normal" | "caution" | "warning") => {
     switch (status) {
       case "normal":
-        return <span className="ml-auto text-xs px-2 py-0.5 bg-green-100 text-green-800 rounded-full">Normal</span>;
+        return (
+          <span className="ml-auto text-xs px-2 py-0.5 bg-green-100 text-green-800 rounded-full">
+            Normal
+          </span>
+        );
       case "caution":
-        return <span className="ml-auto text-xs px-2 py-0.5 bg-amber-100 text-amber-800 rounded-full">Caution</span>;
+        return (
+          <span className="ml-auto text-xs px-2 py-0.5 bg-amber-100 text-amber-800 rounded-full">
+            Caution
+          </span>
+        );
       case "warning":
-        return <span className="ml-auto text-xs px-2 py-0.5 bg-red-100 text-red-800 rounded-full">Warning</span>;
+        return (
+          <span className="ml-auto text-xs px-2 py-0.5 bg-red-100 text-red-800 rounded-full">
+            Warning
+          </span>
+        );
     }
   };
 
@@ -198,7 +220,7 @@ const HealthNavigator = () => {
         <div className="max-w-4xl mx-auto bg-gray-50 p-4 rounded-lg">
           <div className="relative flex flex-col md:flex-row items-start">
             <div className="relative w-full md:w-1/2 flex justify-center">
-              <svg viewBox="0 0 200 400" className="w-64 h-auto mx-auto">
+              {/* <svg viewBox="0 0 200 400" className="w-64 h-auto mx-auto">
                 <path 
                   d="M100,20 C130,20 150,50 150,90 C150,130 140,170 140,220 C140,270 120,320 100,380 C80,320 60,270 60,220 C60,170 50,130 50,90 C50,50 70,20 100,20 Z" 
                   fill="#e2e8f0" 
@@ -254,72 +276,98 @@ const HealthNavigator = () => {
                 <ellipse cx="90" cy="25" rx="3" ry="2" fill="#94a3b8" />
                 <ellipse cx="110" cy="25" rx="3" ry="2" fill="#94a3b8" />
                 <path d="M90,40 C95,45 105,45 110,40" fill="none" stroke="#94a3b8" strokeWidth="1" />
-              </svg>
-              
-              {!activeOrgan && (
+              </svg> */}
+
+              <div className="relative">
+                <ManBody />
+              </div>
+
+              {/* {!activeOrgan && (
                 <>
                   <div className="absolute top-[25%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 animate-pulse opacity-70">
                     <div className="w-12 h-12 rounded-full border-2 border-purple-400 border-dashed"></div>
-                    <div className="text-center text-xs mt-1 text-purple-700">Brain</div>
+                    <div className="text-center text-xs mt-1 text-purple-700">
+                      Brain
+                    </div>
                   </div>
                   <div className="absolute top-[38%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 animate-pulse opacity-70">
                     <div className="w-14 h-14 rounded-full border-2 border-teal-400 border-dashed"></div>
-                    <div className="text-center text-xs mt-1 text-teal-700">Lungs</div>
+                    <div className="text-center text-xs mt-1 text-teal-700">
+                      Lungs
+                    </div>
                   </div>
                   <div className="absolute top-[58%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 animate-pulse opacity-70">
                     <div className="w-10 h-10 rounded-full border-2 border-amber-400 border-dashed"></div>
-                    <div className="text-center text-xs mt-1 text-amber-700">Liver</div>
+                    <div className="text-center text-xs mt-1 text-amber-700">
+                      Liver
+                    </div>
                   </div>
                   <div className="absolute top-[75%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 animate-pulse opacity-70">
                     <div className="w-12 h-12 rounded-full border-2 border-blue-400 border-dashed"></div>
-                    <div className="text-center text-xs mt-1 text-blue-700">Kidneys</div>
+                    <div className="text-center text-xs mt-1 text-blue-700">
+                      Kidneys
+                    </div>
                   </div>
                 </>
-              )}
+              )} */}
             </div>
-            
+
             <div className="w-full md:w-1/2 mt-6 md:mt-0 md:pl-6">
               {activeOrgan ? (
                 <div className="bg-white rounded-lg shadow-md overflow-hidden border border-gray-200">
-                  <div 
+                  <div
                     className="p-3 text-white font-medium flex justify-between items-center"
                     style={{ backgroundColor: organData[activeOrgan].color }}
                   >
-                    <span className="text-xl">{organData[activeOrgan].title}</span>
+                    <span className="text-xl">
+                      {organData[activeOrgan].title}
+                    </span>
                     <ChevronRight className="w-5 h-5" />
                   </div>
-                  
+
                   <div className="divide-y divide-gray-100">
                     <div className="p-3">
-                      <div className="font-medium text-gray-800 mb-2">{organData[activeOrgan].description}</div>
+                      <div className="font-medium text-gray-800 mb-2">
+                        {organData[activeOrgan].description}
+                      </div>
                       <div className="flex items-center justify-between text-sm py-1 px-2 bg-gray-50 rounded mb-1">
                         <span>View detailed health metrics</span>
                         <ChevronRight className="w-4 h-4 text-gray-600" />
                       </div>
                     </div>
-                    
+
                     <div className="p-3">
                       <div className="flex items-center text-gray-800 mb-2">
                         <div className="flex flex-col items-center mr-2">
-                          <span style={{ color: organData[activeOrgan].color }}>▲</span>
-                          <span style={{ color: organData[activeOrgan].color }}>▼</span>
+                          <span style={{ color: organData[activeOrgan].color }}>
+                            ▲
+                          </span>
+                          <span style={{ color: organData[activeOrgan].color }}>
+                            ▼
+                          </span>
                         </div>
                         <span className="font-medium">Current Metrics</span>
                       </div>
-                      
+
                       <div className="space-y-3">
                         {organData[activeOrgan].stats.map((stat, index) => (
                           <div key={index} className="flex items-start">
-                            <div className="mr-2 mt-1">
-                              {stat.icon}
-                            </div>
+                            <div className="mr-2 mt-1">{stat.icon}</div>
                             <div>
                               <div className="flex items-baseline">
-                                <span className="text-lg font-bold text-gray-900">{stat.value}</span>
-                                {stat.unit && <span className="ml-1 text-sm text-gray-600">{stat.unit}</span>}
+                                <span className="text-lg font-bold text-gray-900">
+                                  {stat.value}
+                                </span>
+                                {stat.unit && (
+                                  <span className="ml-1 text-sm text-gray-600">
+                                    {stat.unit}
+                                  </span>
+                                )}
                                 {getStatusBadge(stat.status)}
                               </div>
-                              <div className="text-xs text-gray-700">{stat.label}</div>
+                              <div className="text-xs text-gray-700">
+                                {stat.label}
+                              </div>
                             </div>
                           </div>
                         ))}
@@ -329,8 +377,13 @@ const HealthNavigator = () => {
                 </div>
               ) : (
                 <div className="bg-white rounded-lg shadow-sm p-4 border border-gray-200 text-center">
-                  <h3 className="text-lg font-medium mb-2 text-gray-800">Interactive Health Navigator</h3>
-                  <p className="text-gray-600 mb-4">Click on different parts of the body model to view detailed health metrics and insights.</p>
+                  <h3 className="text-lg font-medium mb-2 text-gray-800">
+                    Interactive Health Navigator
+                  </h3>
+                  <p className="text-gray-600 mb-4">
+                    Click on different parts of the body model to view detailed
+                    health metrics and insights.
+                  </p>
                   <ul className="text-left text-sm space-y-2 mx-auto max-w-xs">
                     <li className="flex items-center">
                       <div className="w-3 h-3 rounded-full bg-purple-400 mr-2"></div>
