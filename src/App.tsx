@@ -28,58 +28,67 @@ import Wallet from "./pages/Wallet";
 import DashboardFirstTime from "./pages/DashboardFirstTime";
 import OTP from "./pages/auth/Otp";
 import { UserInfoProvider } from "./contexts/UserInfoContext";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 
 const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <AuthProvider>
-      <UserInfoProvider>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <Routes>
-              {/* Auth & Onboarding Routes */}
-              <Route path="/" element={<Navigate to="/dashboard" replace />} />
+    <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_OAUTH_CLIENT_ID}>
+      <AuthProvider>
+        <UserInfoProvider>
+          <TooltipProvider>
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
+              <Routes>
+                {/* Auth & Onboarding Routes */}
+                <Route
+                  path="/"
+                  element={<Navigate to="/dashboard" replace />}
+                />
 
-              <Route path="/welcome" element={<Welcome />} />
-              <Route path="/onboarding/:step" element={<OnboardingScreen />} />
-              <Route path="/auth/signup" element={<SignUp />} />
-              <Route path="/auth/login" element={<Login />} />
-              <Route path="/auth/otp" element={<OTP />} />
+                <Route path="/welcome" element={<Welcome />} />
+                <Route
+                  path="/onboarding/:step"
+                  element={<OnboardingScreen />}
+                />
+                <Route path="/auth/signup" element={<SignUp />} />
+                <Route path="/auth/login" element={<Login />} />
+                <Route path="/auth/otp" element={<OTP />} />
 
-              {/* App Routes */}
-              <Route path="/dashboard" element={<Index />} />
-              {/* <Route path="/dashboard" element={<DashboardFirstTime />} /> */}
-              <Route path="/reports" element={<Reports />} />
-              <Route path="/report/:id" element={<ReportDetail />} />
-              <Route path="/body-metrics" element={<BodyMetrics />} />
-              <Route path="/sleep" element={<Sleep />} />
-              <Route path="/activity" element={<Activity />} />
-              <Route path="/nutrition" element={<Nutrition />} />
-              <Route path="/meal-analysis" element={<MealAnalysisPage />} />
-              <Route path="/meal-edit" element={<MealEditPage />} />
-              <Route
-                path="/food-scan-analysis"
-                element={<FoodScanAnalysis />}
-              />
-              <Route path="/risk-score" element={<NotFound />} />
-              <Route path="/connections" element={<Connections />} />
-              <Route path="/wallet" element={<Wallet />} />
-              <Route path="/settings" element={<Settings />} />
-              <Route path="/profile" element={<Profile />} />
-              <Route path="/face-scan" element={<FaceScan />} />
-              <Route
-                path="/subscription-plans"
-                element={<SubscriptionPlans />}
-              />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </BrowserRouter>
-        </TooltipProvider>
-      </UserInfoProvider>
-    </AuthProvider>
+                {/* App Routes */}
+                <Route path="/dashboard" element={<Index />} />
+                {/* <Route path="/dashboard" element={<DashboardFirstTime />} /> */}
+                <Route path="/reports" element={<Reports />} />
+                <Route path="/report/:id" element={<ReportDetail />} />
+                <Route path="/body-metrics" element={<BodyMetrics />} />
+                <Route path="/sleep" element={<Sleep />} />
+                <Route path="/activity" element={<Activity />} />
+                <Route path="/nutrition" element={<Nutrition />} />
+                <Route path="/meal-analysis" element={<MealAnalysisPage />} />
+                <Route path="/meal-edit" element={<MealEditPage />} />
+                <Route
+                  path="/food-scan-analysis"
+                  element={<FoodScanAnalysis />}
+                />
+                <Route path="/risk-score" element={<NotFound />} />
+                <Route path="/connections" element={<Connections />} />
+                <Route path="/wallet" element={<Wallet />} />
+                <Route path="/settings" element={<Settings />} />
+                <Route path="/profile" element={<Profile />} />
+                <Route path="/face-scan" element={<FaceScan />} />
+                <Route
+                  path="/subscription-plans"
+                  element={<SubscriptionPlans />}
+                />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </BrowserRouter>
+          </TooltipProvider>
+        </UserInfoProvider>
+      </AuthProvider>
+    </GoogleOAuthProvider>
   </QueryClientProvider>
 );
 

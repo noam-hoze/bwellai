@@ -1,14 +1,17 @@
 import { useState } from "react";
-import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
+import { GoogleLogin } from "@react-oauth/google";
 import axios from "axios";
 
-const GoogleLoginButton = ({ clientId, onLoginSuccess, onLoginFailure }) => {
+const GoogleLoginButton = ({ onLoginSuccess, onLoginFailure }) => {
   const [loading, setLoading] = useState(false);
 
   const handleSuccess = async (response) => {
     setLoading(true);
     try {
       const { credential } = response;
+      console.log(credential);
+      // Send the credential to your backend for verification and authentication
+
       const backendResponse = await axios.get(
         `${import.meta.env.VITE_API_BASE_URL}/user/auth/google/callback`,
         {
@@ -31,11 +34,11 @@ const GoogleLoginButton = ({ clientId, onLoginSuccess, onLoginFailure }) => {
   };
 
   return (
-    <GoogleOAuthProvider clientId={clientId}>
-      <div className="flex justify-center items-center w-full py-2 relative">
-        {loading ? (
-          <p>Loading..</p>
-        ) : (
+    <div className="flex justify-center items-center w-full py-2 relative">
+      {loading ? (
+        <p>Loading..</p>
+      ) : (
+        typeof window !== "undefined" && (
           <GoogleLogin
             onSuccess={handleSuccess}
             onError={() => {
@@ -45,9 +48,9 @@ const GoogleLoginButton = ({ clientId, onLoginSuccess, onLoginFailure }) => {
               }
             }}
           />
-        )}
-      </div>
-    </GoogleOAuthProvider>
+        )
+      )}
+    </div>
   );
 };
 
