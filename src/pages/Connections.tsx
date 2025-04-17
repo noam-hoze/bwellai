@@ -41,7 +41,8 @@ import {
   useGetUserInfoTerraData,
 } from "@/service/hooks/wearable/terra/useGetUserInfo";
 import { getValueFromToken } from "@/utils/auth";
-import { useSearchParams } from "react-router-dom";
+import { Navigate, useSearchParams } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 
 const user_id = getValueFromToken("userId");
 
@@ -362,6 +363,11 @@ const Connections = () => {
   }, [updateConnectedDeviceIsSuccess, updateConnectedDeviceIsError]);
 
   const hasConnections = connectionStats.active > 0;
+
+  const { isAuthenticated, loading } = useAuth();
+  if (!loading && !isAuthenticated) {
+    return <Navigate to="/onboarding/0" replace />;
+  }
 
   return (
     <Layout>
