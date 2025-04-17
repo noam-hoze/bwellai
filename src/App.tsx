@@ -48,8 +48,8 @@ const App = () => (
             <Route path="/auth/otp" element={<OTP />} />
 
             {/* App Routes */}
-            {/* <Route path="/dashboard" element={<Index />} /> */}
-            <Route path="/dashboard" element={<DashboardFirstTime />} />
+            <Route path="/dashboard" element={<Index />} />
+            {/* <Route path="/dashboard" element={<DashboardFirstTime />} /> */}
             <Route path="/reports" element={<Reports />} />
             <Route path="/report/:id" element={<ReportDetail />} />
             <Route path="/body-metrics" element={<BodyMetrics />} />

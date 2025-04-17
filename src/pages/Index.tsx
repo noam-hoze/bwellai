@@ -15,13 +15,15 @@ import HealthVisualizations from "@/components/dashboard/HealthVisualizations";
 import LabResultsSummary from "@/components/dashboard/LabResultsSummary";
 import MessagesCenter from "@/components/dashboard/MessagesCenter";
 import NextActions from "@/components/dashboard/NextActions";
+import StartJourneyBanner from "@/components/first-time/StartJourneyBanner";
+import JourneyDialog from "@/components/first-time/JourneyDialog";
+import { useJourneyDialog } from "@/hooks/use-journey-dialog";
 
 const Index = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { isOpen, closeJourney } = useJourneyDialog();
   const { isAuthenticated, loading } = useAuth();
-
-  console.log(!loading && !isAuthenticated, loading, isAuthenticated);
 
   if (!loading && !isAuthenticated) {
     return <Navigate to="/onboarding/0" replace />;
@@ -68,10 +70,13 @@ const Index = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className={`min-h-screen bg-gray-50 ${isOpen ? "opacity-95" : ""}`}>
       <Header />
 
       <main className="container max-w-7xl mx-auto px-4 py-6">
+        <FriendlyGreeting />
+        <StartJourneyBanner />
+
         <div className="flex justify-between items-center mb-6 animate-fade-in">
           <Button
             onClick={handleScanFace}
@@ -88,8 +93,6 @@ const Index = () => {
             onScanFace={handleScanFace}
           />
         </div>
-
-        <FriendlyGreeting />
 
         <HealthOverview />
 
@@ -111,6 +114,8 @@ const Index = () => {
 
         <BodyHealthInterface />
       </main>
+
+      <JourneyDialog open={isOpen} onOpenChange={closeJourney} />
 
       <footer className="py-6 text-center text-sm text-gray-500 border-t border-gray-100">
         © 2024 Wellness App. All rights reserved.

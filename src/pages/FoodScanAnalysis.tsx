@@ -468,11 +468,11 @@ const FoodScanAnalysis = () => {
             {product.ingredients &&
               product.ingredients.map((ingredient, idx) => (
                 <div key={idx} className="flex items-center mb-2">
-                  {ingredient.toLowerCase().includes("sugar") ? (
+                  {/* {ingredient.toLowerCase().includes("sugar") ? (
                     <AlertTriangle size={16} className="mr-2 text-yellow-500" />
                   ) : (
-                    <Check size={16} className="mr-2 text-green-500" />
-                  )}
+                  )} */}
+                  <Check size={16} className="mr-2 text-green-500" />
                   <span
                     className={`text-gray-800 ${
                       ingredient.toLowerCase().includes("sugar")
@@ -482,7 +482,7 @@ const FoodScanAnalysis = () => {
                   >
                     {ingredient}
                   </span>
-                  <span className="ml-auto text-sm text-gray-500">
+                  {/* <span className="ml-auto text-sm text-gray-500">
                     {ingredient.toLowerCase().includes("sugar")
                       ? "High in added sugar"
                       : ingredient.toLowerCase().includes("grain")
@@ -494,7 +494,7 @@ const FoodScanAnalysis = () => {
                       : ingredient === "Tripotassium Phosphate"
                       ? "Food additive"
                       : "Nutritious ingredient"}
-                  </span>
+                  </span> */}
                 </div>
               ))}
           </div>
