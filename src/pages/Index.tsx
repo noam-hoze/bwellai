@@ -112,7 +112,7 @@ const Index = () => {
           <MessagesCenter />
         </div>
 
-        <BodyHealthInterface />
+        {/* <BodyHealthInterface /> */}
       </main>
 
       <JourneyDialog open={isOpen} onOpenChange={closeJourney} />
