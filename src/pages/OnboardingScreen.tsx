@@ -702,7 +702,6 @@ const OnboardingScreen = () => {
             </div>
 
             <GoogleLoginButton
-              clientId={import.meta.env.VITE_GOOGLE_OAUTH_CLIENT_ID}
               onLoginFailure={handleGoogleSignInFailure}
               onLoginSuccess={handleGoogleSignIn}
             />
