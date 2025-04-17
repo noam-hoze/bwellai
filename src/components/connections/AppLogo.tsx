@@ -17,15 +17,15 @@ interface AppLogoProps {
 // Map of app names to their logo information
 const appLogos: Record<string, LogoType> = {
   fitbit: {
-    name: "https://api-media-root.s3.us-east-2.amazonaws.com/static/img/fitbit.png",
+    name: "/connections/fitbit.png",
     alt: "Fitbit logo",
   },
   oura: {
-    name: "https://api-media-root.s3.us-east-2.amazonaws.com/static/img/oura.png",
+    name: "/connections/oura.png",
     alt: "Oura Ring logo",
   },
   flo: {
-    name: "https://api.tryterra.co/v2/static/assets/img/app_icons/flo.webp",
+    name: "/connections/flo.webp",
     alt: "Flo logo",
   },
   myfitnesspal: {
@@ -33,35 +33,35 @@ const appLogos: Record<string, LogoType> = {
     alt: "MyFitnessPal logo",
   },
   strava: {
-    name: "https://api.tryterra.co/v2/static/assets/img/app_icons/strava.webp",
+    name: "/connections/strava.webp",
     alt: "Strava logo",
   },
   googlefit: {
-    name: "https://api.tryterra.co/v2/static/assets/img/app_icons/google.webp",
+    name: "/connections/google.webp",
     alt: "Google Fit logo",
   },
   garmin: {
-    name: "https://api-media-root.s3.us-east-2.amazonaws.com/static/img/garmin.png",
+    name: "/connections/garmin.png",
     alt: "Garmin logo",
   },
   polar: {
-    name: "https://api-media-root.s3.us-east-2.amazonaws.com/static/img/polar.png",
+    name: "/connections/polar.png",
     alt: "Polar logo",
   },
   EATTHISMUCH: {
-    name: "https://api.tryterra.co/v2/static/assets/img/app_icons/eatthismuch.webp",
+    name: "/connections/eatthismuch.webp",
     alt: "Polar logo",
   },
   whoop: {
-    name: "https://api-media-root.s3.us-east-2.amazonaws.com/static/img/whoop.png",
+    name: "/connections/whoop.png",
     alt: "Polar logo",
   },
   HUAWEI: {
-    name: "https://api.tryterra.co/v2/static/assets/img/app_icons/huawei.webp",
+    name: "/connections/huawei.webp",
     alt: "Polar logo",
   },
   dexcom: {
-    name: "https://api.tryterra.co/v2/static/assets/img/app_icons/dexcom.webp",
+    name: "/connections/dexcom.webp",
     alt: "Polar logo",
   },
   // Add more app logos as needed

@@ -9,7 +9,7 @@ import { ScrollArea } from "../ui/scroll-area";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import ConnectionsOverviewTab from "./tabs/ConnectionsOverviewTab";
 
-const ProfileTabs = ({ getProfileIsData }) => {
+const ProfileTabs = ({ getProfileIsData, getUserProfileRefetch }) => {
   const [activeMainTab, setActiveMainTab] = useState("profile");
   const [weightUnit, setWeightUnit] = useState("kg");
   const [heightUnit, setHeightUnit] = useState("cm");
@@ -166,6 +166,7 @@ const ProfileTabs = ({ getProfileIsData }) => {
                   setDistanceUnit={setDistanceUnit}
                   setTemperatureUnit={setTemperatureUnit}
                   setLanguage={setLanguage}
+                  getUserProfileRefetch={getUserProfileRefetch}
                 />
               </TabsContent>
 
@@ -177,6 +178,7 @@ const ProfileTabs = ({ getProfileIsData }) => {
                   distanceUnit={distanceUnit}
                   temperatureUnit={temperatureUnit}
                   language={language}
+                  getUserProfileRefetch={getUserProfileRefetch}
                 />
               </TabsContent>
             </Tabs>
