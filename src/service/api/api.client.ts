@@ -4,7 +4,7 @@ import { refreshTokenAPI, clearTokenAndAccessToken } from "../../utils/auth";
 
 // Define the base URL for the API
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
-const REDIRECT_PAGE_URL = "/welcome";
+const REDIRECT_PAGE_URL = "/onboarding/0";
 
 // Default headers for API requests
 const defaultHeaders = {
