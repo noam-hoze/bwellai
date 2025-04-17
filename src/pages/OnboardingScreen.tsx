@@ -13,6 +13,8 @@ import {
 } from "@/service/hooks/authentication/useAuthentication";
 import { useAuth } from "@/contexts/AuthContext";
 import GoogleLoginButton from "@/components/auth/GoogleAuthButton";
+import { UserInfoProvider, useUserInfo } from "@/contexts/UserInfoContext";
+import { useGetCreateProfile } from "@/service/hooks/profile/useGetCreateProfile";
 
 const OnboardingScreen = () => {
   const [currentStep, setCurrentStep] = useState(0);
@@ -28,6 +30,8 @@ const OnboardingScreen = () => {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
   const { toast } = useToast();
+
+  const { userInfo, updateUserInfo } = useUserInfo();
 
   const { loginWithOTP } = useAuth();
 
@@ -47,6 +51,12 @@ const OnboardingScreen = () => {
     isPending: otpValidationPending,
   } = useOtpValidation();
 
+  const {
+    mutate: createProfileMutate,
+    isSuccess: createProfileIsSuccess,
+    error: createProfileError,
+  } = useGetCreateProfile();
+
   const nextStep = () => {
     setCurrentStep((prev) => Math.min(prev + 1, steps.length - 1));
   };
@@ -60,9 +70,14 @@ const OnboardingScreen = () => {
   };
 
   const toggleGoal = (goal: string) => {
-    setSelectedGoals((prev) =>
-      prev.includes(goal) ? prev.filter((g) => g !== goal) : [...prev, goal]
-    );
+    setSelectedGoals((prev) => {
+      const selectedValue = prev.includes(goal)
+        ? prev.filter((g) => g !== goal)
+        : [...prev, goal];
+
+      updateUserInfo("goal", selectedValue);
+      return selectedValue;
+    });
   };
 
   const handleGenerateOtp = async (e: React.FormEvent) => {
@@ -146,7 +161,22 @@ const OnboardingScreen = () => {
         isfirstLogin: otpValidationData?.payload?.isfirstLogin,
       });
 
-      navigate("/dashboard");
+      createProfileMutate({
+        additionalDetails: {
+          "What Are You Aiming For?": {
+            answersArray: [userInfo?.goal],
+            include_in_interpretation: true,
+          },
+        },
+        age: userInfo?.age,
+        gender: userInfo?.gender,
+        height: userInfo?.height,
+        weight: userInfo?.weight,
+      });
+
+      setTimeout(() => {
+        navigate("/dashboard");
+      }, 1000);
     }
   }, [otpValidationSuccess]);
 
@@ -439,6 +469,10 @@ const OnboardingScreen = () => {
                     type="number"
                     className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
                     placeholder="Your age"
+                    value={userInfo?.age}
+                    onChange={(e) => {
+                      updateUserInfo("age", Number(e.target.value));
+                    }}
                   />
                 </div>
                 <p className="mt-1 text-xs text-gray-500">
@@ -450,10 +484,17 @@ const OnboardingScreen = () => {
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Gender
                 </label>
-                <select className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500">
+                <select
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                  value={userInfo?.gender}
+                  onChange={(e) => {
+                    updateUserInfo("gender", e.target.value);
+                  }}
+                >
                   <option value="">Select gender</option>
                   <option value="male">Male</option>
                   <option value="female">Female</option>
+                  <option value="other">Other</option>
                 </select>
                 <p className="mt-1 text-xs text-gray-500">
                   For more relevant health information
@@ -469,6 +510,10 @@ const OnboardingScreen = () => {
                     type="text"
                     className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
                     placeholder="Your height (cm or ft/in)"
+                    value={userInfo?.height}
+                    onChange={(e) => {
+                      updateUserInfo("height", Number(e.target.value));
+                    }}
                   />
                 </div>
                 <p className="mt-1 text-xs text-gray-500">
@@ -485,6 +530,10 @@ const OnboardingScreen = () => {
                     type="text"
                     className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
                     placeholder="Your weight (kg or lbs)"
+                    value={userInfo?.weight}
+                    onChange={(e) => {
+                      updateUserInfo("weight", Number(e.target.value));
+                    }}
                   />
                 </div>
                 <p className="mt-1 text-xs text-gray-500">
