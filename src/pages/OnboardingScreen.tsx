@@ -243,7 +243,30 @@ const OnboardingScreen = () => {
         isfirstLogin: loggedInData?.payload?.isfirstLogin,
       });
 
-      navigate("/dashboard");
+      if (
+        userInfo?.age ||
+        userInfo?.gender ||
+        userInfo?.height ||
+        userInfo?.weight
+      ) {
+        createProfileMutate({
+          additionalDetails: {
+            "What Are You Aiming For?": {
+              answersArray: [userInfo?.goal],
+              include_in_interpretation: true,
+            },
+          },
+          age: Number(userInfo?.age),
+          gender: Number(userInfo?.gender),
+          height: Number(userInfo?.height),
+          weight: Number(userInfo?.weight),
+          heightUnit: userInfo?.heightUnit,
+          weightUnit: userInfo?.weightUnit,
+        });
+      }
+      setTimeout(() => {
+        navigate("/dashboard");
+      }, 1000);
     }
   };
 
