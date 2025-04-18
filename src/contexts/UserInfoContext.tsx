@@ -7,10 +7,12 @@ const UserInfoContext = createContext(undefined);
 export const UserInfoProvider = ({ children }) => {
   const [userInfo, setUserInfo] = useState({
     goal: "", // What are you aiming for?
-    age: null,
+    age: "",
     gender: "", // 'male', 'female', 'other', etc.
-    height: null, // in cm or ft+inches (you can customize format)
-    weight: null, // in kg or lbs
+    height: "", // in cm or ft+inches (you can customize format)
+    weight: "", // in kg or lbs
+    weightUnit: "kg", // 'kg' or 'lb'
+    heightUnit: "cm", // 'cm' or 'ft+inches'
   });
 
   const updateUserInfo = (key, value) => {

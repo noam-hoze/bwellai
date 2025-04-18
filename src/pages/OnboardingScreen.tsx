@@ -15,6 +15,10 @@ import { useAuth } from "@/contexts/AuthContext";
 import GoogleLoginButton from "@/components/auth/GoogleAuthButton";
 import { UserInfoProvider, useUserInfo } from "@/contexts/UserInfoContext";
 import { useGetCreateProfile } from "@/service/hooks/profile/useGetCreateProfile";
+import {
+  convertHeightValueUnits,
+  convertWeightValueUnits,
+} from "@/utils/utils";
 
 const OnboardingScreen = () => {
   const [currentStep, setCurrentStep] = useState(0);
@@ -174,10 +178,12 @@ const OnboardingScreen = () => {
               include_in_interpretation: true,
             },
           },
-          age: userInfo?.age,
-          gender: userInfo?.gender,
-          height: userInfo?.height,
-          weight: userInfo?.weight,
+          age: Number(userInfo?.age),
+          gender: Number(userInfo?.gender),
+          height: Number(userInfo?.height),
+          weight: Number(userInfo?.weight),
+          heightUnit: userInfo?.heightUnit,
+          weightUnit: userInfo?.weightUnit,
         });
       }
 
@@ -512,16 +518,33 @@ const OnboardingScreen = () => {
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Height
                 </label>
-                <div className="relative">
+                <div className="relative  flex items-center gap-2">
                   <input
                     type="text"
                     className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
-                    placeholder="Your height (cm or ft/in)"
+                    placeholder="Your height"
                     value={userInfo?.height}
                     onChange={(e) => {
-                      updateUserInfo("height", Number(e.target.value));
+                      updateUserInfo("height", e.target.value);
                     }}
                   />
+
+                  <select
+                    className="w-20 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                    value={userInfo?.heightUnit}
+                    onChange={(e) => {
+                      const changedValue = convertHeightValueUnits(
+                        userInfo?.heightUnit,
+                        e.target.value,
+                        userInfo?.height
+                      );
+                      updateUserInfo("height", changedValue);
+                      updateUserInfo("heightUnit", e.target.value);
+                    }}
+                  >
+                    <option value="cm">cm</option>
+                    <option value="ft">ft</option>
+                  </select>
                 </div>
                 <p className="mt-1 text-xs text-gray-500">
                   For accurate physical metrics
@@ -532,16 +555,33 @@ const OnboardingScreen = () => {
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Weight
                 </label>
-                <div className="relative">
+                <div className="relative flex items-center gap-2">
                   <input
                     type="text"
                     className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
-                    placeholder="Your weight (kg or lbs)"
+                    placeholder="Your weight"
                     value={userInfo?.weight}
                     onChange={(e) => {
-                      updateUserInfo("weight", Number(e.target.value));
+                      updateUserInfo("weight", e.target.value);
                     }}
                   />
+
+                  <select
+                    className="w-20 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                    value={userInfo?.weightUnit}
+                    onChange={(e) => {
+                      const changedValue = convertWeightValueUnits(
+                        userInfo?.weightUnit,
+                        e.target.value,
+                        userInfo?.weight
+                      );
+                      updateUserInfo("weight", changedValue);
+                      updateUserInfo("weightUnit", e.target.value);
+                    }}
+                  >
+                    <option value="kg">kg</option>
+                    <option value="lb">lb</option>
+                  </select>
                 </div>
                 <p className="mt-1 text-xs text-gray-500">
                   For nutrition and activity recommendations
