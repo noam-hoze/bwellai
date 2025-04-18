@@ -239,3 +239,75 @@ export const getFormattedDateYMD = (date = new Date()) => {
 
   return `${year}-${month}-${day}`;
 };
+
+export const convertHeightValueUnits = (
+  prevUnit: string,
+  newUnit: string,
+  value: number
+): number => {
+  const newValue = 0;
+  if (prevUnit === "cm" && newUnit === "ft") {
+    const totalFeet = value * 0.0328084; // Convert cm to feet
+    const feet = Math.floor(totalFeet) || 0; // Get the integer part as feet
+    const inches = Math.round((totalFeet - feet) * 12) || 0; // Convert fractional feet to inches
+
+    return Number(`${feet}.${inches}`);
+  }
+  if (prevUnit === "cm" && newUnit === "inch") {
+    return Number((value / 2.54)?.toFixed(2));
+  }
+  if (prevUnit === "ft" && newUnit === "cm") {
+    const feetValue = String(value)?.split?.(".")?.[0] || 0;
+    const inchValue = String(value)?.split?.(".")?.[1] || 0;
+
+    const feetToCm = Number(feetValue) * 30.48;
+    const inchesToCm = Number(inchValue) * 2.54;
+    const totalCMValue = feetToCm + inchesToCm;
+
+    return Number(totalCMValue?.toFixed(2));
+  }
+  if (prevUnit === "ft" && newUnit === "inch") {
+    return Number((value * 12)?.toFixed(2));
+  }
+  if (prevUnit === "inch" && newUnit === "ft") {
+    return Number((value / 12)?.toFixed(2));
+  }
+  if (prevUnit === "inch" && newUnit === "cm") {
+    return Number((value * 2.54)?.toFixed(2));
+  }
+  return newValue;
+};
+
+export const convertWeightValueUnits = (
+  prevUnit: string,
+  newUnit: string,
+  value: number
+): number => {
+  let newValue = 0;
+  // kg to lb
+  if (prevUnit === "kg" && newUnit === "lb") {
+    newValue = Number((Number(value) * 2.20462)?.toFixed(2));
+  }
+  // kg to st lb
+  if (prevUnit === "kg" && newUnit === "st lb") {
+    newValue = Number((Number(value) * 0.157473)?.toFixed(2));
+  }
+  // lg to kg
+  if (prevUnit === "lb" && newUnit === "kg") {
+    newValue = Number((Number(value) / 2.20462)?.toFixed(2));
+  }
+  // lb to st lb
+  if (prevUnit === "lb" && newUnit === "st lb") {
+    newValue = Number((Number(value) * 0.0714286)?.toFixed(2));
+  }
+  // st lb to lb
+  if (prevUnit === "st lb" && newUnit === "lb") {
+    newValue = Number((Number(value) / 0.0714286)?.toFixed(2));
+  }
+  // st lb to kg
+  if (prevUnit === "st lb" && newUnit === "kg") {
+    newValue = Number((Number(value) * 6.35)?.toFixed(2));
+  }
+
+  return newValue;
+};

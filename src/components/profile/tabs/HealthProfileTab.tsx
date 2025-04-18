@@ -33,6 +33,11 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import {
+  convertHeightValueUnits,
+  convertWeightValueUnits,
+} from "@/utils/utils";
+import { h } from "node_modules/framer-motion/dist/types.d-B50aGbjN";
 
 const commonConditions = [
   { id: "hypertension", label: "Hypertension (High Blood Pressure)" },
@@ -55,6 +60,10 @@ const HealthProfileTab = ({
   getProfileIsData,
   weightUnit,
   heightUnit,
+  height,
+  setHeight,
+  weight,
+  setWeight,
   distanceUnit,
   temperatureUnit,
   language,
@@ -62,8 +71,6 @@ const HealthProfileTab = ({
 }) => {
   const [age, setAge] = useState<number>(30);
   const [gender, setGender] = useState<string>("male");
-  const [height, setHeight] = useState<number>(175);
-  const [weight, setWeight] = useState<number>(70);
   const [bmi, setBmi] = useState<number>(0);
   const [smoker, setSmoker] = useState<string>("no");
   const [alcohol, setAlcohol] = useState<string>("occasionally");
@@ -97,11 +104,21 @@ const HealthProfileTab = ({
   useEffect(() => {
     // Calculate BMI when height or weight changes
     if (height && weight) {
-      const heightInMeters = height / 100;
-      const bmiValue = weight / (heightInMeters * heightInMeters);
+      let heightValue = height;
+      let weightValue = weight;
+      if (heightUnit === "ft") {
+        heightValue = convertHeightValueUnits(heightUnit, "cm", heightValue);
+      }
+      if (weightUnit === "lb") {
+        weightValue = convertWeightValueUnits(weightUnit, "kg", weightValue);
+      }
+
+      const heightInMeters = heightValue / 100;
+      const bmiValue = weightValue / (heightInMeters * heightInMeters);
+      console.log({ heightValue, weightValue, bmiValue });
       setBmi(parseFloat(bmiValue.toFixed(1)));
     }
-  }, [height, weight]);
+  }, [height, weight, heightUnit, weightUnit]);
 
   useEffect(() => {
     if (getProfileIsData) {
@@ -109,11 +126,11 @@ const HealthProfileTab = ({
       setGender(getProfileIsData?.gender);
       setHeight(getProfileIsData?.height);
       setWeight(getProfileIsData?.weight);
-      setBmi(
-        getProfileIsData?.additionalDetails?.[
-          "What is your Body Mass Index (BMI)?"
-        ]?.answersArray?.[0] || ""
-      );
+      // setBmi(
+      //   getProfileIsData?.additionalDetails?.[
+      //     "What is your Body Mass Index (BMI)?"
+      //   ]?.answersArray?.[0] || ""
+      // );
       setGeneVariant(
         getProfileIsData?.additionalDetails?.[
           "What Common Gene Variants do you have? (may impact the insights we offer)"
@@ -168,8 +185,6 @@ const HealthProfileTab = ({
 
   const handleExerciseTypeChange = (type: string) => {
     setExerciseTypes((prev) => {
-      console.log(prev);
-
       return prev?.includes(type)
         ? prev?.filter((t) => t !== type)
         : [...prev, type];
@@ -312,13 +327,15 @@ const HealthProfileTab = ({
             <div className="space-y-4">
               <div className="space-y-2">
                 <div className="flex justify-between">
-                  <Label htmlFor="height">Height (cm)</Label>
-                  <span>{height} cm</span>
+                  <Label htmlFor="height">Height ({heightUnit})</Label>
+                  <span>
+                    {height} {heightUnit}
+                  </span>
                 </div>
                 <Slider
                   id="height"
-                  min={100}
-                  max={220}
+                  min={heightUnit === "ft" ? 2 : 100}
+                  max={heightUnit === "ft" ? 12 : 220}
                   step={1}
                   value={[height]}
                   onValueChange={(value) => setHeight(value[0])}
@@ -327,8 +344,10 @@ const HealthProfileTab = ({
 
               <div className="space-y-2">
                 <div className="flex justify-between">
-                  <Label htmlFor="weight">Weight (kg)</Label>
-                  <span>{weight} kg</span>
+                  <Label htmlFor="weight">Weight ({weightUnit})</Label>
+                  <span>
+                    {weight} {weightUnit}
+                  </span>
                 </div>
                 <Slider
                   id="weight"
