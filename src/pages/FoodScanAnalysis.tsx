@@ -162,6 +162,11 @@ const FoodScanAnalysis = () => {
         es_id: product?.id,
         meal_type: "Breakfast",
         type: "logged",
+        date: new Intl.DateTimeFormat("en-CA", {
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+        }).format(new Date()),
       });
       toast.success("Meal Logged succesfully!", {
         position: "top-center",
