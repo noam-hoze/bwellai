@@ -30,6 +30,7 @@ import OTP from "./pages/auth/Otp";
 import { UserInfoProvider } from "./contexts/UserInfoContext";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { ProfileProvider } from "./contexts/BodyProfileContext";
+import RiskScore from "./pages/RiskScore";
 
 const queryClient = new QueryClient();
 
@@ -74,7 +75,7 @@ const App = () => (
                     path="/food-scan-analysis"
                     element={<FoodScanAnalysis />}
                   />
-                  <Route path="/risk-score" element={<NotFound />} />
+                  <Route path="/risk-score" element={<RiskScore />} />
                   <Route path="/connections" element={<Connections />} />
                   <Route path="/wallet" element={<Wallet />} />
                   <Route path="/settings" element={<Settings />} />

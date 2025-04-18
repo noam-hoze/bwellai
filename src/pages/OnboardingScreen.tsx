@@ -161,18 +161,25 @@ const OnboardingScreen = () => {
         isfirstLogin: otpValidationData?.payload?.isfirstLogin,
       });
 
-      createProfileMutate({
-        additionalDetails: {
-          "What Are You Aiming For?": {
-            answersArray: [userInfo?.goal],
-            include_in_interpretation: true,
+      if (
+        userInfo?.age ||
+        userInfo?.gender ||
+        userInfo?.height ||
+        userInfo?.weight
+      ) {
+        createProfileMutate({
+          additionalDetails: {
+            "What Are You Aiming For?": {
+              answersArray: [userInfo?.goal],
+              include_in_interpretation: true,
+            },
           },
-        },
-        age: userInfo?.age,
-        gender: userInfo?.gender,
-        height: userInfo?.height,
-        weight: userInfo?.weight,
-      });
+          age: userInfo?.age,
+          gender: userInfo?.gender,
+          height: userInfo?.height,
+          weight: userInfo?.weight,
+        });
+      }
 
       setTimeout(() => {
         navigate("/dashboard");
