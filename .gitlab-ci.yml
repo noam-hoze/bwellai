@@ -11,3 +11,13 @@ build_and_run_mvp_stage:
     - docker build -t bwell-ui-v2 .
     - sh deploy.sh
     - docker run --name bwell-ui-v2 --restart always -p 3005:3000 -d bwell-ui-v2
+
+build_and_run_production:
+  stage: prod-deploy
+  tags:
+    - frontend-prod-001
+  when: manual
+  script:
+    - docker build -t bwell-ui-v2 -f Dockerfile_Prod .
+    - sh deploy.sh
+    - docker run --name bwell-ui-v2 --restart always -p 3005:3000 -d bwell-ui-v2
