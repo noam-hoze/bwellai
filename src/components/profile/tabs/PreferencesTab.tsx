@@ -17,6 +17,8 @@ import { useGetCreateProfile } from "@/service/hooks/profile/useGetCreateProfile
 
 const PreferencesTab = ({
   getProfileIsData,
+  weight,
+  height,
   weightUnit,
   heightUnit,
   distanceUnit,
@@ -28,6 +30,8 @@ const PreferencesTab = ({
   setTemperatureUnit,
   setLanguage,
   getUserProfileRefetch,
+  handleWeightUnitChange,
+  handleHeightUnitChange,
 }) => {
   const {
     mutate: createProfileMutate,
@@ -47,22 +51,6 @@ const PreferencesTab = ({
     }
   }, [createProfileIsSuccess]);
 
-  useEffect(() => {
-    if (getProfileIsData) {
-      setWeightUnit(getProfileIsData?.weightUnit);
-      setHeightUnit(getProfileIsData?.heightUnit);
-      setDistanceUnit(getProfileIsData?.distanceUnit);
-      setTemperatureUnit(getProfileIsData?.temperatureUnit);
-      setLanguage(getProfileIsData?.language);
-    }
-  }, [
-    getProfileIsData?.weightUnit,
-    getProfileIsData?.heightUnit,
-    getProfileIsData?.distanceUnit,
-    getProfileIsData?.temperatureUnit,
-    getProfileIsData?.language,
-  ]);
-
   const handleSaveProfile = () => {
     createProfileMutate({
       ...getProfileIsData,
@@ -71,6 +59,8 @@ const PreferencesTab = ({
       heightUnit,
       distanceUnit,
       temperatureUnit,
+      weight,
+      height,
     });
   };
 
@@ -127,7 +117,9 @@ const PreferencesTab = ({
                   type="single"
                   variant="outline"
                   value={weightUnit}
-                  onValueChange={(value) => value && setWeightUnit(value)}
+                  onValueChange={(value) => {
+                    handleWeightUnitChange(null, value);
+                  }}
                   className="justify-start"
                 >
                   <ToggleGroupItem value="kg" aria-label="Toggle kg">
@@ -150,7 +142,7 @@ const PreferencesTab = ({
                   type="single"
                   variant="outline"
                   value={heightUnit}
-                  onValueChange={(value) => value && setHeightUnit(value)}
+                  onValueChange={(value) => handleHeightUnitChange(null, value)}
                   className="justify-start"
                 >
                   <ToggleGroupItem value="cm" aria-label="Toggle cm">

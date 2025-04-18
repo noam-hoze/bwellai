@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -8,11 +8,17 @@ import HealthProfileTab from "./tabs/HealthProfileTab";
 import { ScrollArea } from "../ui/scroll-area";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import ConnectionsOverviewTab from "./tabs/ConnectionsOverviewTab";
+import {
+  convertHeightValueUnits,
+  convertWeightValueUnits,
+} from "@/utils/utils";
 
 const ProfileTabs = ({ getProfileIsData, getUserProfileRefetch }) => {
   const [activeMainTab, setActiveMainTab] = useState("profile");
   const [weightUnit, setWeightUnit] = useState("kg");
   const [heightUnit, setHeightUnit] = useState("cm");
+  const [height, setHeight] = useState<number>(175);
+  const [weight, setWeight] = useState<number>(70);
   const [distanceUnit, setDistanceUnit] = useState("km");
   const [temperatureUnit, setTemperatureUnit] = useState("°C");
   const [language, setLanguage] = useState("English");
@@ -52,6 +58,58 @@ const ProfileTabs = ({ getProfileIsData, getUserProfileRefetch }) => {
       behavior: "smooth",
     });
   };
+
+  const handleWeightUnitChange = (_, newUnit) => {
+    if (newUnit !== null) {
+      setWeightUnit((prevUnit) => {
+        setWeight((prevWeight) => {
+          const changedValue = convertWeightValueUnits(
+            prevUnit,
+            newUnit,
+            prevWeight
+          );
+
+          return changedValue;
+        });
+
+        return newUnit;
+      });
+    }
+  };
+
+  const handleHeightUnitChange = (_event, newUnit) => {
+    if (newUnit !== null) {
+      setHeightUnit((prevUnit) => {
+        setHeight((prevHeight) => {
+          const changedValue = convertHeightValueUnits(
+            prevUnit,
+            newUnit,
+            prevHeight
+          );
+
+          return changedValue;
+        });
+
+        return newUnit;
+      });
+    }
+  };
+
+  useEffect(() => {
+    if (getProfileIsData) {
+      setWeightUnit(getProfileIsData?.weightUnit);
+      setHeightUnit(getProfileIsData?.heightUnit);
+      setDistanceUnit(getProfileIsData?.distanceUnit);
+      setTemperatureUnit(getProfileIsData?.temperatureUnit);
+      setLanguage(getProfileIsData?.language);
+    }
+  }, [
+    getProfileIsData?.weightUnit,
+    getProfileIsData?.heightUnit,
+    getProfileIsData?.distanceUnit,
+    getProfileIsData?.temperatureUnit,
+    getProfileIsData?.language,
+  ]);
 
   return (
     <>
@@ -156,6 +214,8 @@ const ProfileTabs = ({ getProfileIsData, getUserProfileRefetch }) => {
               <TabsContent value="preferences" className="mt-0">
                 <PreferencesTab
                   getProfileIsData={getProfileIsData}
+                  weight={weight}
+                  height={height}
                   weightUnit={weightUnit}
                   heightUnit={heightUnit}
                   distanceUnit={distanceUnit}
@@ -167,6 +227,8 @@ const ProfileTabs = ({ getProfileIsData, getUserProfileRefetch }) => {
                   setTemperatureUnit={setTemperatureUnit}
                   setLanguage={setLanguage}
                   getUserProfileRefetch={getUserProfileRefetch}
+                  handleWeightUnitChange={handleWeightUnitChange}
+                  handleHeightUnitChange={handleHeightUnitChange}
                 />
               </TabsContent>
 
@@ -179,6 +241,10 @@ const ProfileTabs = ({ getProfileIsData, getUserProfileRefetch }) => {
                   temperatureUnit={temperatureUnit}
                   language={language}
                   getUserProfileRefetch={getUserProfileRefetch}
+                  weight={weight}
+                  setWeight={setWeight}
+                  height={height}
+                  setHeight={setHeight}
                 />
               </TabsContent>
             </Tabs>
