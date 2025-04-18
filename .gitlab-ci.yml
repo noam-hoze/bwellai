@@ -1,5 +1,6 @@
 stages:
   - dev-deploy
+  - prod-deploy
 
 # Job for building and running the React application
 build_and_run_mvp_stage:
