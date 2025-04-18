@@ -38,6 +38,7 @@ import {
   convertWeightValueUnits,
 } from "@/utils/utils";
 import { h } from "node_modules/framer-motion/dist/types.d-B50aGbjN";
+import { get } from "http";
 
 const commonConditions = [
   { id: "hypertension", label: "Hypertension (High Blood Pressure)" },
@@ -76,6 +77,8 @@ const HealthProfileTab = ({
   const [alcohol, setAlcohol] = useState<string>("occasionally");
   const [exercise, setExercise] = useState<string>("weekly");
   const [exerciseTypes, setExerciseTypes] = useState<string[]>([]);
+
+  const [sliderHeight, setSliderHeight] = useState<number>(height);
 
   const [selectedConditions, setSelectedConditions] = useState<string[]>([]);
   const [selectedAllergies, setSelectedAllergies] = useState<string[]>([]);
@@ -126,6 +129,14 @@ const HealthProfileTab = ({
       setGender(getProfileIsData?.gender);
       setHeight(getProfileIsData?.height);
       setWeight(getProfileIsData?.weight);
+
+      if (getProfileIsData?.heightUnit === "ft") {
+        setSliderHeight(
+          convertHeightValueUnits("ft", "cm", getProfileIsData?.height)
+        );
+      } else {
+        setSliderHeight(getProfileIsData?.height);
+      }
       // setBmi(
       //   getProfileIsData?.additionalDetails?.[
       //     "What is your Body Mass Index (BMI)?"
@@ -334,11 +345,21 @@ const HealthProfileTab = ({
                 </div>
                 <Slider
                   id="height"
-                  min={heightUnit === "ft" ? 2 : 100}
-                  max={heightUnit === "ft" ? 12 : 220}
+                  min={100}
+                  max={220}
                   step={1}
-                  value={[height]}
-                  onValueChange={(value) => setHeight(value[0])}
+                  value={[sliderHeight]}
+                  onValueChange={(value) => {
+                    let newValue = value[0];
+
+                    if (heightUnit === "ft") {
+                      newValue = convertHeightValueUnits("cm", "ft", newValue);
+                      setHeight(newValue);
+                    } else {
+                      setHeight(newValue);
+                    }
+                    setSliderHeight(value[0]);
+                  }}
                 />
               </div>
 
@@ -352,7 +373,7 @@ const HealthProfileTab = ({
                 <Slider
                   id="weight"
                   min={30}
-                  max={200}
+                  max={150}
                   step={1}
                   value={[weight]}
                   onValueChange={(value) => setWeight(value[0])}
