@@ -13,7 +13,6 @@ export default defineConfig(({ mode }) => ({
     port: 8080,
     headers: {
       "Cross-Origin-Opener-Policy": "same-origin",
-      // "Cross-Origin-Opener-Policy": "same-origin-allow-popups",
       "Cross-Origin-Embedder-Policy": "require-corp",
       "Cross-Origin-Resource-Policy": "cross-origin",
     },
