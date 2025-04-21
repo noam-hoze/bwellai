@@ -54,7 +54,7 @@ const Index = () => {
 
       setTimeout(() => {
         navigate("/dashboard");
-      }, 1000);
+      }, 500);
     }
   };
 
@@ -82,7 +82,7 @@ const Index = () => {
       } catch (error) {
         if (error) {
           console.log(error);
-          // navigate("/onboarding/0");
+          navigate("/onboarding/0");
         }
       } finally {
         // setLoading(false);
@@ -96,9 +96,9 @@ const Index = () => {
     console.log({ code });
   }, [code]);
 
-  // if (!code && !localStorage.getItem("token")) {
-  //   return <Navigate to="/onboarding/0" replace />;
-  // }
+  if (!code && !localStorage.getItem("token")) {
+    return <Navigate to="/onboarding/0" replace />;
+  }
 
   // http://localhost:8080/dashboard
   // ?code=4%2F0Ab_5qlnKVd1_xhNov17EPi6TtPlHJxf3hyOOknftRKDNNq4ixUvxLTeHELbfUSyW2sEDuw
