@@ -372,8 +372,8 @@ const HealthProfileTab = ({
                 </div>
                 <Slider
                   id="weight"
-                  min={30}
-                  max={150}
+                  min={100}
+                  max={300}
                   step={1}
                   value={[weight]}
                   onValueChange={(value) => setWeight(value[0])}

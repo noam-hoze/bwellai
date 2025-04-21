@@ -2,7 +2,6 @@ const GoogleRedirectLoginButton = () => {
   const handleLogin = () => {
     const clientId = import.meta.env.VITE_GOOGLE_OAUTH_CLIENT_ID;
     const redirectUri = `${window.location.origin}/dashboard`; // You must handle this route
-    console.log(redirectUri);
 
     const scope = "openid email profile";
     const responseType = "code";

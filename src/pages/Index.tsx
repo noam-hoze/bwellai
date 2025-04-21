@@ -18,6 +18,7 @@ import NextActions from "@/components/dashboard/NextActions";
 import StartJourneyBanner from "@/components/first-time/StartJourneyBanner";
 import JourneyDialog from "@/components/first-time/JourneyDialog";
 import { useJourneyDialog } from "@/hooks/use-journey-dialog";
+import axios from "axios";
 
 const Index = () => {
   const { toast } = useToast();
@@ -26,15 +27,85 @@ const Index = () => {
   const code = searchParams.get("code");
   const navigate = useNavigate();
   const { isOpen, closeJourney } = useJourneyDialog();
-  const { isAuthenticated, loading } = useAuth();
+  const { isAuthenticated, loginWithOTP, loading } = useAuth();
 
-  if (!loading && !isAuthenticated) {
+  const handleGoogleSignIn = (loggedInData) => {
+    if (loggedInData) {
+      toast({
+        title: "Welcome!",
+        description: "You have successfully logged in.",
+      });
+
+      localStorage.setItem("token", loggedInData?.token?.accessToken?.token);
+      localStorage.setItem(
+        "refresh_token",
+        loggedInData?.token?.refreshToken?.token
+      );
+      localStorage.setItem(
+        "is_Profile_updated",
+        loggedInData?.isProfileUpdated
+      );
+
+      loginWithOTP({
+        email: "",
+        isAuthenticated: true,
+        isfirstLogin: loggedInData?.payload?.isfirstLogin,
+      });
+
+      setTimeout(() => {
+        navigate("/dashboard");
+      }, 500);
+    }
+  };
+
+  useEffect(() => {
+    if (!code) return;
+
+    const handleSuccess = async (response) => {
+      try {
+        // const { credential } = response;
+        // console.log(credential);
+        // Send the credential to your backend for verification and authentication
+
+        const backendResponse = await axios.get(
+          `${import.meta.env.VITE_API_BASE_URL}/user/auth/google/callback`,
+          {
+            params: {
+              Token: response,
+            },
+          }
+        );
+
+        if (backendResponse.data.payload) {
+          handleGoogleSignIn(backendResponse.data.payload);
+        }
+      } catch (error) {
+        if (error) {
+          console.log(error);
+          navigate("/onboarding/0");
+        }
+      } finally {
+        // setLoading(false);
+      }
+    };
+
+    if (code) {
+      handleSuccess(code);
+    }
+
+    console.log({ code });
+  }, [code]);
+
+  if (!code && !localStorage.getItem("token")) {
     return <Navigate to="/onboarding/0" replace />;
   }
 
-  // useEffect(() => {
-  //   console.log({ code });
-  // }, [code]);
+  // http://localhost:8080/dashboard
+  // ?code=4%2F0Ab_5qlnKVd1_xhNov17EPi6TtPlHJxf3hyOOknftRKDNNq4ixUvxLTeHELbfUSyW2sEDuw
+  // &scope=email+profile+openid+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile
+  // &authuser=0
+  // &hd=wishfy.club
+  // &prompt=none
 
   const handleLogMeal = () => {
     toast({
