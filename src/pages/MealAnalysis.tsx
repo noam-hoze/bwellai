@@ -144,7 +144,7 @@ const MealAnalysisPage = () => {
     );
   }
 
-  const ingredients = meal?.ingredients || [];
+  const ingredients = meal?.ai_response?.ingredients || [];
 
   const totalMacrosGrams =
     meal?.ai_response?.protein?.quantity + meal?.carbs + meal?.fat;
@@ -153,6 +153,8 @@ const MealAnalysisPage = () => {
   );
   const fatPercentage = Math.round((meal?.fat / totalMacrosGrams) * 100);
   const carbsPercentage = Math.round((meal?.carbs / totalMacrosGrams) * 100);
+
+  console.log(meal?.ai_response, ingredients);
 
   return (
     <Layout>
@@ -309,20 +311,20 @@ const MealAnalysisPage = () => {
 
                 {ingredients?.map((ingredient, idx) => (
                   <div key={idx} className="flex items-center mb-2">
-                    {/* {idx === 0 ? (
+                    {ingredient?.category === "Good" ? (
+                      <Check size={16} className="mr-2 text-green-500" />
+                    ) : (
                       <AlertTriangle
                         size={16}
                         className="mr-2 text-yellow-500"
                       />
-                    ) : (
-                    )} */}
-                    <Check size={16} className="mr-2 text-green-500" />
+                    )}
                     <span
                       className={`text-gray-800 ${
                         idx === 0 ? "font-medium" : ""
                       }`}
                     >
-                      {ingredient}
+                      {ingredient?.name}
                     </span>
                     {/* <span className="ml-auto text-sm text-gray-500">
                       {idx === 0
