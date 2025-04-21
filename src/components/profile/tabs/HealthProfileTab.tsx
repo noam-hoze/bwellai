@@ -39,6 +39,14 @@ import {
 } from "@/utils/utils";
 import { h } from "node_modules/framer-motion/dist/types.d-B50aGbjN";
 import { get } from "http";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
 
 const commonConditions = [
   { id: "hypertension", label: "Hypertension (High Blood Pressure)" },
@@ -56,6 +64,41 @@ const commonAllergies = [
   { id: "tree-nuts", label: "Tree Nuts" },
 ];
 const commonMedication = [{ id: "", label: "" }];
+
+const additionalConditions = [
+  { id: "heart-disease", label: "Heart Disease" },
+  { id: "cancer", label: "Cancer" },
+  { id: "thyroid-disorder", label: "Thyroid Disorder" },
+  { id: "copd", label: "COPD" },
+  { id: "gerd", label: "GERD (Acid Reflux)" },
+  { id: "ibs", label: "Irritable Bowel Syndrome" },
+  { id: "migraine", label: "Migraine" },
+  { id: "insomnia", label: "Insomnia" },
+  { id: "fibromyalgia", label: "Fibromyalgia" },
+  { id: "osteoporosis", label: "Osteoporosis" },
+  { id: "psoriasis", label: "Psoriasis" },
+  { id: "alzheimers", label: "Alzheimer's Disease" },
+  { id: "parkinsons", label: "Parkinson's Disease" },
+];
+
+// Additional allergies for autocomplete
+const additionalAllergies = [
+  { id: "soy", label: "Soy" },
+  { id: "wheat", label: "Wheat" },
+  { id: "fish", label: "Fish" },
+  { id: "sesame", label: "Sesame" },
+  { id: "sulphites", label: "Sulphites" },
+  { id: "mustard", label: "Mustard" },
+  { id: "celery", label: "Celery" },
+  { id: "lupin", label: "Lupin" },
+  { id: "molluscs", label: "Molluscs" },
+  { id: "latex", label: "Latex" },
+  { id: "penicillin", label: "Penicillin" },
+  { id: "insect-stings", label: "Insect Stings" },
+  { id: "pollen", label: "Pollen" },
+  { id: "mold", label: "Mold" },
+  { id: "pet-dander", label: "Pet Dander" },
+];
 
 const HealthProfileTab = ({
   getProfileIsData,
@@ -77,6 +120,9 @@ const HealthProfileTab = ({
   const [alcohol, setAlcohol] = useState<string>("occasionally");
   const [exercise, setExercise] = useState<string>("weekly");
   const [exerciseTypes, setExerciseTypes] = useState<string[]>([]);
+  const [searchValue, setSearchValue] = useState("");
+  const [isConditionPopoverOpen, setIsConditionPopoverOpen] = useState(false);
+  const [otherConditions, setOtherConditions] = useState<string[]>([]);
 
   const [sliderHeight, setSliderHeight] = useState<number>(height);
 
@@ -88,8 +134,9 @@ const HealthProfileTab = ({
   const [geneVariant, setGeneVariant] = useState<string>("");
 
   const [openAllergy, setOpenAllergy] = useState(false);
-  const [inputValueAllergy, setInputValueAllergy] = useState("");
-  const [inputValueCondition, setInputValueCondition] = useState("");
+  // New allergies autocomplete states
+  const [allergySearchValue, setAllergySearchValue] = useState("");
+  const [isAllergyPopoverOpen, setIsAllergyPopoverOpen] = useState(false);
 
   const {
     mutate: createProfileMutate,
@@ -118,7 +165,6 @@ const HealthProfileTab = ({
 
       const heightInMeters = heightValue / 100;
       const bmiValue = weightValue / (heightInMeters * heightInMeters);
-      console.log({ heightValue, weightValue, bmiValue });
       setBmi(parseFloat(bmiValue.toFixed(1)));
     }
   }, [height, weight, heightUnit, weightUnit]);
@@ -201,6 +247,8 @@ const HealthProfileTab = ({
         : [...prev, type];
     });
   };
+
+  console.log({ selectedConditions, otherConditions });
 
   const handleSaveProfile = () => {
     createProfileMutate({
@@ -293,6 +341,35 @@ const HealthProfileTab = ({
     if (bmi < 30) return "text-orange-800";
     return "text-red-800";
   };
+
+  const handleAddCondition = (condition: string) => {
+    if (!selectedConditions.includes(condition) && condition.trim() !== "") {
+      setSelectedConditions((prev) => [...prev, condition]);
+    }
+    setSearchValue("");
+    setIsConditionPopoverOpen(false);
+  };
+
+  const handleAddAllergy = (allergy: string) => {
+    if (!selectedAllergies.includes(allergy) && allergy.trim() !== "") {
+      setSelectedAllergies((prev) => [...prev, allergy]);
+    }
+    setAllergySearchValue("");
+    setIsAllergyPopoverOpen(false);
+  };
+
+  const filteredConditions = additionalConditions?.filter(
+    (condition) =>
+      !selectedConditions.includes(condition.id) &&
+      condition.label.toLowerCase().includes(searchValue.toLowerCase())
+  );
+
+  // Filter allergies based on search input
+  const filteredAllergies = additionalAllergies.filter(
+    (allergy) =>
+      !selectedAllergies.includes(allergy.id) &&
+      allergy.label.toLowerCase().includes(allergySearchValue.toLowerCase())
+  );
 
   return (
     <div className="space-y-6">
@@ -414,6 +491,7 @@ const HealthProfileTab = ({
           <div className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="conditions">Common Conditions</Label>
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-2">
                 {commonConditions.map((condition) => (
                   <div
@@ -422,88 +500,104 @@ const HealthProfileTab = ({
                   >
                     <Checkbox
                       id={condition.label}
-                      checked={selectedConditions.includes(condition.label)}
+                      checked={selectedConditions.includes(condition.id)}
                       onCheckedChange={() =>
-                        handleConditionChange(condition.label)
+                        handleConditionChange(condition.id)
                       }
                     />
                     <Label htmlFor={condition.label}>{condition.label}</Label>
                   </div>
                 ))}
               </div>
+
               <div className="mt-4">
                 <Label htmlFor="other-conditions">
                   List any other conditions
                 </Label>
 
-                <Popover open={openAllergy} onOpenChange={setOpenAllergy}>
-                  <PopoverTrigger asChild>
-                    <Input
-                      id="other-conditions"
-                      placeholder="Enter any other medical conditions you have"
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter" && e.currentTarget.value.trim()) {
-                          const newAllergy = e.currentTarget.value.trim();
-                          handleConditionChange(newAllergy);
-                          e.currentTarget.value = "";
-                        }
-                      }}
-                    />
-                  </PopoverTrigger>
-
-                  <PopoverContent className="w-full p-2">
-                    {allergiesData?.filter((item) =>
-                      item.label
-                        .toLowerCase()
-                        .includes(inputValueAllergy.toLowerCase())
-                    ).length > 0 ? (
-                      <ul className="max-h-48 overflow-auto">
-                        {allergiesData
-                          ?.filter((item) =>
-                            item.label
-                              .toLowerCase()
-                              .includes(inputValueAllergy.toLowerCase())
-                          )
-                          ?.map((item) => (
-                            <li
-                              key={item.label}
-                              onClick={() => handleConditionChange(item.label)}
-                              className="p-2 cursor-pointer hover:bg-gray-200"
-                            >
-                              {item.label}
-                            </li>
-                          ))}
-                      </ul>
-                    ) : (
-                      <div className="p-2 text-gray-500">No results found</div>
-                    )}
-                  </PopoverContent>
-                </Popover>
-              </div>
-
-              {selectedConditions.length > 0 && (
-                <div className="mt-3">
-                  <div className="flex flex-wrap gap-2">
-                    {selectedConditions.map((condition) => (
-                      <div
-                        key={condition}
-                        className="flex items-center gap-1 bg-wellness-light-green py-1 px-2 rounded-full text-sm"
-                      >
-                        <span>
-                          {commonConditions.find((a) => a.id === condition)
-                            ?.label || condition}
-                        </span>
-                        <button
-                          onClick={() => handleConditionChange(condition)}
-                          className="text-wellness-muted-black hover:text-wellness-bright-green transition-colors"
-                        >
-                          ×
-                        </button>
+                <div className="mt-1 flex flex-col space-y-2">
+                  <Popover open={openAllergy} onOpenChange={setOpenAllergy}>
+                    <PopoverTrigger asChild>
+                      <div className="flex w-full items-center">
+                        <Input
+                          id="other-conditions"
+                          placeholder="Enter any other medical conditions you have"
+                          value={searchValue}
+                          onChange={(e) => setSearchValue(e.target.value)}
+                          onClick={() => setIsConditionPopoverOpen(true)}
+                          className="w-full"
+                        />
                       </div>
-                    ))}
-                  </div>
+                    </PopoverTrigger>
+                    <PopoverContent className="p-0 w-full" align="start">
+                      <Command>
+                        <CommandInput
+                          placeholder="Search conditions..."
+                          value={searchValue}
+                          onValueChange={setSearchValue}
+                        />
+                        <CommandList>
+                          <CommandEmpty>No conditions found</CommandEmpty>
+                          <CommandGroup>
+                            {filteredConditions.map((condition) => (
+                              <CommandItem
+                                key={condition.id}
+                                onSelect={() => {
+                                  handleAddCondition(condition.id);
+                                }}
+                              >
+                                {condition.label}
+                              </CommandItem>
+                            ))}
+                            {searchValue.trim() !== "" &&
+                              !additionalConditions.some(
+                                (c) =>
+                                  c.label.toLowerCase() ===
+                                  searchValue.toLowerCase()
+                              ) && (
+                                <CommandItem
+                                  onSelect={() =>
+                                    handleAddCondition(searchValue)
+                                  }
+                                >
+                                  Add "{searchValue}"
+                                </CommandItem>
+                              )}
+                          </CommandGroup>
+                        </CommandList>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
+                  {selectedConditions?.length > 0 && (
+                    <div className="mt-3">
+                      <div className="flex flex-wrap gap-2">
+                        {selectedConditions?.map((Conditions) => (
+                          <div
+                            key={Conditions}
+                            className="flex items-center gap-1 bg-wellness-light-green py-1 px-2 rounded-full text-sm"
+                          >
+                            <span>
+                              {commonConditions?.find(
+                                (a) => a.id === Conditions
+                              )?.label ||
+                                additionalConditions?.find(
+                                  (a) => a.id === Conditions
+                                )?.label ||
+                                Conditions}
+                            </span>
+                            <button
+                              onClick={() => handleConditionChange(Conditions)}
+                              className="text-wellness-muted-black hover:text-wellness-bright-green transition-colors"
+                            >
+                              ×
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
-              )}
+              </div>
             </div>
 
             <div className="space-y-2">
@@ -524,80 +618,76 @@ const HealthProfileTab = ({
                   </div>
                 ))}
               </div>
-              <div className="mt-3 w-full flex items-center space-x-2">
-                <Popover open={openAllergy} onOpenChange={setOpenAllergy}>
-                  <PopoverTrigger asChild>
-                    {/* <Input
-                      placeholder="List any other allergies"
-                      value={inputValueAllergy} // Controls input value
-                      onChange={(e) => setInputValueAllergy(e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter" && e.currentTarget.value.trim()) {
-                          const newAllergy = e.currentTarget.value.trim();
-                          handleAllergyChange(newAllergy);
-                          e.currentTarget.value = "";
-                        }
-                      }}
-                    /> */}
-                    <Input
-                      id="allergy"
-                      placeholder="List any other allergies"
-                      value={inputValueAllergy} // Bind state
-                      onChange={(e) => {
-                        setInputValueAllergy(e.target.value);
-                        setOpenAllergy(true);
-                      }}
-                      type="text"
-                      onFocus={() => setOpenAllergy(true)}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter" && inputValueAllergy.trim()) {
-                          handleAllergyChange(inputValueAllergy.trim());
-                        }
-                      }}
-                      className="w-full"
-                    />
-                  </PopoverTrigger>
 
-                  <PopoverContent className="w-full p-2">
-                    {allergiesData?.filter((item) =>
-                      item.label
-                        .toLowerCase()
-                        .includes(inputValueAllergy.toLowerCase())
-                    ).length > 0 ? (
-                      <ul className="max-h-48 overflow-auto">
-                        {allergiesData
-                          ?.filter((item) =>
-                            item.label
-                              .toLowerCase()
-                              .includes(inputValueAllergy.toLowerCase())
-                          )
-                          ?.map((item) => (
-                            <li
-                              key={item.label}
-                              onClick={() => handleAllergyChange(item.label)}
-                              className="p-2 cursor-pointer hover:bg-gray-200"
+              <div className="mt-3">
+                <Popover
+                  open={isAllergyPopoverOpen}
+                  onOpenChange={setIsAllergyPopoverOpen}
+                >
+                  <PopoverTrigger asChild>
+                    <div className="flex w-full items-center">
+                      <Input
+                        id="allergies"
+                        placeholder="List any other allergies"
+                        value={allergySearchValue}
+                        onChange={(e) => setAllergySearchValue(e.target.value)}
+                        onClick={() => setIsAllergyPopoverOpen(true)}
+                        className="w-full"
+                      />
+                    </div>
+                  </PopoverTrigger>
+                  <PopoverContent className="p-0 w-full" align="start">
+                    <Command>
+                      <CommandInput
+                        placeholder="Search allergies..."
+                        value={allergySearchValue}
+                        onValueChange={setAllergySearchValue}
+                      />
+                      <CommandList>
+                        <CommandEmpty>No allergies found</CommandEmpty>
+                        <CommandGroup>
+                          {filteredAllergies.map((allergy) => (
+                            <CommandItem
+                              key={allergy.id}
+                              onSelect={() => handleAddAllergy(allergy.id)}
                             >
-                              {item.label}
-                            </li>
+                              {allergy.label}
+                            </CommandItem>
                           ))}
-                      </ul>
-                    ) : (
-                      <div className="p-2 text-gray-500">No results found</div>
-                    )}
+                          {allergySearchValue.trim() !== "" &&
+                            !additionalAllergies.some(
+                              (a) =>
+                                a.label.toLowerCase() ===
+                                allergySearchValue.toLowerCase()
+                            ) && (
+                              <CommandItem
+                                onSelect={() =>
+                                  handleAddAllergy(allergySearchValue)
+                                }
+                              >
+                                Add "{allergySearchValue}"
+                              </CommandItem>
+                            )}
+                        </CommandGroup>
+                      </CommandList>
+                    </Command>
                   </PopoverContent>
                 </Popover>
               </div>
-              {selectedAllergies?.length > 0 && (
+              {selectedAllergies.length > 0 && (
                 <div className="mt-3">
                   <div className="flex flex-wrap gap-2">
-                    {selectedAllergies?.map((allergy) => (
+                    {selectedAllergies.map((allergy) => (
                       <div
                         key={allergy}
                         className="flex items-center gap-1 bg-wellness-light-green py-1 px-2 rounded-full text-sm"
                       >
                         <span>
                           {commonAllergies.find((a) => a.id === allergy)
-                            ?.label || allergy}
+                            ?.label ||
+                            additionalAllergies.find((a) => a.id === allergy)
+                              ?.label ||
+                            allergy}
                         </span>
                         <button
                           onClick={() => handleAllergyChange(allergy)}
