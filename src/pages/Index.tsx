@@ -8,8 +8,8 @@ import HealthNavigator from "@/components/dashboard/HealthNavigator";
 import { Button } from "@/components/ui/button";
 import { ScanFace } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
-import { Navigate, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { Navigate, useNavigate, useSearchParams } from "react-router-dom";
+import { useEffect, useState } from "react";
 import ProtocolTracker from "@/components/dashboard/ProtocolTracker";
 import HealthVisualizations from "@/components/dashboard/HealthVisualizations";
 import LabResultsSummary from "@/components/dashboard/LabResultsSummary";
@@ -21,6 +21,9 @@ import { useJourneyDialog } from "@/hooks/use-journey-dialog";
 
 const Index = () => {
   const { toast } = useToast();
+  useSearchParams();
+  const [searchParams] = useSearchParams();
+  const code = searchParams.get("code");
   const navigate = useNavigate();
   const { isOpen, closeJourney } = useJourneyDialog();
   const { isAuthenticated, loading } = useAuth();
@@ -28,6 +31,10 @@ const Index = () => {
   if (!loading && !isAuthenticated) {
     return <Navigate to="/onboarding/0" replace />;
   }
+
+  // useEffect(() => {
+  //   console.log({ code });
+  // }, [code]);
 
   const handleLogMeal = () => {
     toast({

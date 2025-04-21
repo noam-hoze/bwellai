@@ -19,6 +19,7 @@ import {
   convertHeightValueUnits,
   convertWeightValueUnits,
 } from "@/utils/utils";
+import GoogleRedirectLoginButton from "@/components/auth/GoogleRedirectLoginButton";
 
 const OnboardingScreen = () => {
   const [currentStep, setCurrentStep] = useState(0);
@@ -775,6 +776,8 @@ const OnboardingScreen = () => {
               onLoginFailure={handleGoogleSignInFailure}
               onLoginSuccess={handleGoogleSignIn}
             />
+
+            <GoogleRedirectLoginButton />
 
             {/* <Button
               type="button"
