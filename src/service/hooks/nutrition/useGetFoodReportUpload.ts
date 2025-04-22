@@ -1,5 +1,6 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import {
+  getDeleteUserFoodDataFetcher,
   getDeleteUserFoodProfileDataFetcher,
   getFoodTrackerUploadFetcher,
   getLogFoodDataV4Fetcher,
@@ -89,6 +90,20 @@ export const useGetFoodTrackerUploadFetcher = () => {
 export const useGetDeleteUserFoodProfileData = () => {
   const { data, error, isError, isPending, isSuccess, mutate } = useMutation({
     mutationFn: getDeleteUserFoodProfileDataFetcher,
+  });
+
+  return {
+    data: data?.data,
+    error,
+    isError,
+    isPending,
+    isSuccess,
+    mutate,
+  };
+};
+export const useGetDeleteUserFoodDataFetcher = () => {
+  const { data, error, isError, isPending, isSuccess, mutate } = useMutation({
+    mutationFn: getDeleteUserFoodDataFetcher,
   });
 
   return {

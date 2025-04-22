@@ -42,13 +42,13 @@ interface SleepCycleAnimatedProps {
 const SleepCycleAnimated: React.FC<SleepCycleAnimatedProps> = ({
   sleepData,
   title = "Sleep Cycles",
-  startTime = "10:30 PM",
-  endTime = "7:00 AM",
+  startTime,
+  endTime,
 }) => {
   const [isTimelineView, setIsTimelineView] = useState(false);
   const [totalSleepMinutes, setTotalSleepMinutes] = useState(0);
-  const [wakeTimeBeforeSleep, setWakeTimeBeforeSleep] = useState(60); // Changed to 60 min (one hour)
-  const [wakeTimeAfterSleep, setWakeTimeAfterSleep] = useState(15); // Set to 15 min
+  const [wakeTimeBeforeSleep, setWakeTimeBeforeSleep] = useState(0); // Changed to 60 min (one hour)
+  const [wakeTimeAfterSleep, setWakeTimeAfterSleep] = useState(0); // Set to 15 min
   const [timeInBedMinutes, setTimeInBedMinutes] = useState(0);
   const [modifiedSleepData, setModifiedSleepData] = useState<SleepSegment[]>(
     []
@@ -444,25 +444,25 @@ const SleepCycleAnimated: React.FC<SleepCycleAnimatedProps> = ({
             </button>
           </div>
 
-          <div className="grid grid-cols-3 gap-2 mt-4 mb-4 text-center text-xs">
-            <div className="bg-gray-50 p-2 rounded-md">
+          <div className="grid grid-cols-1 gap-2 mt-4 mb-4 text-center text-xs">
+            {/* <div className="bg-gray-50 p-2 rounded-md">
               <div className="font-medium">
                 {formatHoursMinutes(wakeTimeBeforeSleep || 0)}
               </div>
               <div className="text-gray-500">Before Sleep</div>
-            </div>
+            </div> */}
             <div className="bg-gray-50 p-2 rounded-md">
               <div className="font-medium">
                 {formatHoursMinutes(totalSleepMinutes || 0)}
               </div>
               <div className="text-gray-500">Sleep</div>
             </div>
-            <div className="bg-gray-50 p-2 rounded-md">
+            {/* <div className="bg-gray-50 p-2 rounded-md">
               <div className="font-medium">
                 {formatHoursMinutes(wakeTimeAfterSleep || 0)}
               </div>
               <div className="text-gray-500">After Sleep</div>
-            </div>
+            </div> */}
           </div>
 
           <div className="grid grid-cols-2 gap-2 text-xs">

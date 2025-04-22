@@ -1,5 +1,12 @@
 import { useEffect, useState } from "react";
-import { Filter, Utensils, ChevronDown, Calendar, Star } from "lucide-react";
+import {
+  Filter,
+  Utensils,
+  ChevronDown,
+  Calendar,
+  Star,
+  Trash,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -54,6 +61,7 @@ interface MealItemProps {
   meal?;
   isFavorite?: boolean;
   setCurrentMeal?;
+  deleteUserFoodData?;
   setAnalysisOpen?;
   key?;
 }
@@ -99,6 +107,7 @@ const MealItem = ({
   isFavorite,
   setCurrentMeal,
   setAnalysisOpen,
+  deleteUserFoodData,
   key,
 }: MealItemProps) => {
   return (
@@ -126,20 +135,36 @@ const MealItem = ({
               }`}
             />
           </div>
-          <div className="flex-1">
-            <div className="flex justify-between items-center mb-1">
-              <div className="flex items-center">
-                <h3 className="text-lg font-bold">{type}</h3>
-                {isFavorite && (
-                  <Star className="h-4 w-4 text-yellow-500 fill-current ml-2" />
-                )}
+          <div className="flex-1 flex justify-between items-center">
+            <div>
+              <div className="flex justify-between items-center mb-1">
+                <div className="flex items-center">
+                  <h3 className="text-lg font-bold">{type}</h3>
+                  {isFavorite && (
+                    <Star className="h-4 w-4 text-yellow-500 fill-current ml-2" />
+                  )}
+                </div>
               </div>
-              <span className="text-gray-500">{time}</span>
+              <h4 className="text-xl mb-1">{name}</h4>
+              <p className="text-gray-600">
+                {calories} kcal • {protein}g protein
+              </p>
             </div>
-            <h4 className="text-xl mb-1">{name}</h4>
-            <p className="text-gray-600">
-              {calories} kcal • {protein}g protein
-            </p>
+
+            <div className="flex flex-col gap-3 items-end">
+              <p className="text-gray-500">{time}</p>
+              <Button
+                variant="outline"
+                size="sm"
+                className="text-gray-500 hover:text-red-500 hover:bg-red-100"
+                onClick={(e) => {
+                  e.stopPropagation(); // Prevent triggering the card click event
+                  deleteUserFoodData({ esId: meal?.id, type: "nutrition" });
+                }}
+              >
+                <Trash className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
         </div>
       </CardContent>
@@ -158,6 +183,7 @@ const MealHistorySection = ({
   totalDailyFats,
   totalDailyRequiredCalories,
   requiredMicronutrientsBalance,
+  deleteUserFoodData,
 }) => {
   const navigate = useNavigate();
   const [expanded, setExpanded] = useState(false);
@@ -415,6 +441,7 @@ const MealHistorySection = ({
               onMealClick={handleMealClick}
               setCurrentMeal={setCurrentMeal}
               setAnalysisOpen={setAnalysisOpen}
+              deleteUserFoodData={deleteUserFoodData}
             />
           );
         })}
