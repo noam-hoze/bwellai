@@ -448,25 +448,25 @@ const SleepCycleClock: React.FC<SleepCycleClockProps> = ({
             </div>
           </div>
 
-          <div className="grid grid-cols-3 gap-2 text-center text-xs mb-4">
-            <div className="bg-gray-50 p-2 rounded-md">
+          <div className="grid grid-cols-1 gap-2 text-center text-xs mb-4">
+            {/* <div className="bg-gray-50 p-2 rounded-md">
               <div className="font-medium">
                 {formatHoursMinutes(wakeBeforeSleepMinutes || 0)}
               </div>
               <div className="text-gray-500">Before Sleep</div>
-            </div>
+            </div> */}
             <div className="bg-gray-50 p-2 rounded-md">
               <div className="font-medium">
                 {formatHoursMinutes(totalSleepMinutes || 0)}
               </div>
               <div className="text-gray-500">Sleep</div>
             </div>
-            <div className="bg-gray-50 p-2 rounded-md">
+            {/* <div className="bg-gray-50 p-2 rounded-md">
               <div className="font-medium">
                 {formatHoursMinutes(wakeAfterSleepMinutes || 0)}
               </div>
               <div className="text-gray-500">After Sleep</div>
-            </div>
+            </div> */}
           </div>
 
           <div className="text-xs text-center mb-2 text-gray-500">
