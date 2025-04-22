@@ -1,9 +1,10 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Header from "@/components/layout/Header";
 import { Card } from "@/components/ui/card";
 import { Upload, Eye, FileText, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { throttle } from "lodash";
 import {
   Select,
   SelectContent,
@@ -86,10 +87,16 @@ const initialReports = [
 ];
 
 const Reports = () => {
+  const viewportRef = useRef<HTMLDivElement>(null);
+  const isFetchingRef = useRef(false); // cooldown flag
+
+  const [hasTriggered, setHasTriggered] = useState(false);
+
   const [reports, setReports] = useState(initialReports);
   const [filterType, setFilterType] = useState("all");
   const [filterYear, setFilterYear] = useState("all");
   const [sortOrder, setSortOrder] = useState("newest");
+  const [sortedReports, setSortedReports] = useState([]);
   const [showPrivacyBanner, setShowPrivacyBanner] = useState(true);
   const [processingReport, setProcessingReport] = useState(false);
 
@@ -136,7 +143,10 @@ const Reports = () => {
     data: userLastReportIDsData,
     isSuccess: userLastReportIDsSuccess,
     refetch: userPreviousIsRefetch,
-  } = useGetUserLastReportIDsData(true);
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useGetUserLastReportIDsData({ isAuthenticated: true });
 
   const { mutateAsync: userBiomarkerReportMutate } =
     useGetUserBiomarkerReportData();
@@ -355,6 +365,39 @@ const Reports = () => {
     chunkPanelAnalysisApiStatus,
   ]);
 
+  const handleScroll = useCallback(
+    throttle(() => {
+      const el = viewportRef.current;
+      if (!el || isFetchingRef.current) return;
+
+      const { scrollTop, scrollHeight, clientHeight } = el;
+
+      // Within 150px from bottom
+      if (scrollTop + clientHeight >= scrollHeight - 150) {
+        isFetchingRef.current = true; // block further triggers
+
+        console.log("✅ Near end — triggering API");
+
+        if (fetchNextPage) fetchNextPage();
+
+        // Cooldown to prevent flooding (1.5s delay)
+        setTimeout(() => {
+          isFetchingRef.current = false;
+        }, 1500);
+      }
+    }, 200), // throttle scroll check to once every 200ms
+    [fetchNextPage]
+  );
+
+  useEffect(() => {
+    const el = viewportRef.current;
+    if (el) el.addEventListener("scroll", handleScroll);
+
+    return () => {
+      if (el) el.removeEventListener("scroll", handleScroll);
+    };
+  }, [handleScroll]);
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -410,6 +453,22 @@ const Reports = () => {
     }
   }, [userReportFileUploadData, userReportFileUploadSuccess]);
 
+  useEffect(() => {
+    const sorted = userLastReportIDsData?.pages
+      ?.flatMap((reportIds) => {
+        return reportIds?.data?.payload?.content;
+      })
+      ?.sort((a, b) => {
+        const dateA = new Date(a.createdAt);
+        const dateB = new Date(b.createdAt);
+        return sortOrder === "newest"
+          ? dateB.getTime() - dateA.getTime()
+          : dateA.getTime() - dateB.getTime();
+      });
+
+    setSortedReports(sorted);
+  }, [sortOrder, userLastReportIDsData]);
+
   return (
     <div className="min-h-screen bg-white">
       <Header />
@@ -462,7 +521,7 @@ const Reports = () => {
             <h2 className="text-2xl font-bold">All Reports</h2>
 
             <div className="flex gap-2">
-              <Select value={filterType} onValueChange={setFilterType}>
+              {/* <Select value={filterType} onValueChange={setFilterType}>
                 <SelectTrigger className="w-[150px]">
                   <SelectValue placeholder="Report Type" />
                 </SelectTrigger>
@@ -472,7 +531,7 @@ const Reports = () => {
                   <SelectItem value="xray">X-Ray</SelectItem>
                   <SelectItem value="mental">Mental Health</SelectItem>
                 </SelectContent>
-              </Select>
+              </Select> */}
 
               <Select value={filterYear} onValueChange={setFilterYear}>
                 <SelectTrigger className="w-[100px]">
@@ -503,9 +562,9 @@ const Reports = () => {
                     <DropdownMenuItem onClick={() => setSortOrder("oldest")}>
                       Oldest First
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setSortOrder("concerns")}>
+                    {/* <DropdownMenuItem onClick={() => setSortOrder("concerns")}>
                       Most Concerns
-                    </DropdownMenuItem>
+                    </DropdownMenuItem> */}
                   </DropdownMenuGroup>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -513,10 +572,10 @@ const Reports = () => {
           </div>
 
           <Card className="wellness-card overflow-hidden">
-            <ScrollArea className="h-[550px]">
+            <ScrollArea className="h-[550px]" ref={viewportRef}>
               <div className="divide-y">
-                {userLastReportIDsData?.length > 0 ? (
-                  userLastReportIDsData?.map((report, index: number) => (
+                {sortedReports?.length > 0 ? (
+                  sortedReports?.map((report, index: number) => (
                     <ReportListItem
                       key={index}
                       report={report}
