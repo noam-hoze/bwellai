@@ -23,6 +23,7 @@ import moment from "moment-timezone";
 import { getFormattedDateYMD, getPreviousDate } from "@/utils/utils";
 import { Navigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import { useDebounce } from "@/hooks/use-debounce";
 
 type ViewType = "day" | "week" | "month";
 
@@ -75,6 +76,7 @@ const Activity = () => {
   const { isAuthenticated, loading } = useAuth();
 
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const debouncedSearch = useDebounce(selectedDate, 700);
   const [viewType, setViewType] = useState<ViewType>("day");
   const [wearableDataPending, setWearableDataPending] = useState(false);
   const [showWearableLoader, setShowWearableLoader] = useState(false);
@@ -91,7 +93,7 @@ const Activity = () => {
     isLoading: wearableDailySleepIsLoading,
   } = useGetWearableDailySleepDataV4({
     resource: connectedDevicesData?.[0]?.device,
-    startDate: formatDate(selectedDate),
+    startDate: formatDate(debouncedSearch),
     isEnable:
       connectedDevicesData?.length > 0 ? connectedDevicesData?.[0]?.device : "",
   });
@@ -125,8 +127,8 @@ const Activity = () => {
     setSelectedDate(new Date());
   };
 
-  const isTodaySelected = isToday(selectedDate) && viewType === "day";
-  const dateDisplay = getDateDisplay(selectedDate, viewType);
+  const isTodaySelected = isToday(debouncedSearch) && viewType === "day";
+  const dateDisplay = getDateDisplay(debouncedSearch, viewType);
 
   useEffect(() => {
     if (connectedDevicesData?.[0]?.device) {
@@ -140,7 +142,7 @@ const Activity = () => {
               wearableDataMutateAsync({
                 ...option,
                 device: connectedDevicesData?.[0]?.device,
-                date: formatDate(selectedDate),
+                date: formatDate(debouncedSearch),
                 language: "English",
               })
             )
@@ -168,7 +170,7 @@ const Activity = () => {
 
       processHealthSummary();
     }
-  }, [connectedDevicesData, selectedDate]);
+  }, [connectedDevicesData, debouncedSearch]);
 
   if (!loading && !isAuthenticated) {
     return <Navigate to="/onboarding/0" replace />;
@@ -220,18 +222,18 @@ const Activity = () => {
 
               <TabsContent value="day" className="mt-6">
                 <DailyTabContent
-                  selectedDate={selectedDate}
+                  selectedDate={debouncedSearch}
                   wearableDailySleepData={wearableDailySleepData}
                   finalWearabledata={finalWearabledata}
                 />
               </TabsContent>
 
               <TabsContent value="week" className="mt-6">
-                <WeeklyTabContent selectedDate={selectedDate} />
+                <WeeklyTabContent selectedDate={debouncedSearch} />
               </TabsContent>
 
               <TabsContent value="month" className="mt-6">
-                <MonthlyTabContent selectedDate={selectedDate} />
+                <MonthlyTabContent selectedDate={debouncedSearch} />
               </TabsContent>
             </Tabs>
           </div>

@@ -25,6 +25,7 @@ import {
 import { useGetUserProfile } from "@/service/hooks/profile/useGetUserProfile";
 import { Navigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import { useDebounce } from "@/hooks/use-debounce";
 
 type ViewType = "day" | "week" | "month";
 
@@ -36,6 +37,8 @@ const Sleep = () => {
   const { isAuthenticated, loading } = useAuth();
 
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const debouncedSearch = useDebounce(selectedDate, 700);
+
   const [viewType, setViewType] = useState<ViewType>("day");
 
   const { data: connectedDevicesData, refetch: connectedDevicesRefetch } =
@@ -47,7 +50,7 @@ const Sleep = () => {
     isLoading: wearableDailyRecommendationIsLoading,
   } = useGetWearableDailyRecommendationDataV4({
     resource: connectedDevicesData?.[0]?.device,
-    startDate: formatDate(selectedDate),
+    startDate: formatDate(debouncedSearch),
     isEnable:
       connectedDevicesData?.length > 0 ? connectedDevicesData?.[0]?.device : "",
     language: "english",
@@ -58,7 +61,7 @@ const Sleep = () => {
     isLoading: wearableDailyIsLoading,
   } = useGetWearableDailyDataV4({
     resource: connectedDevicesData?.[0]?.device,
-    startDate: formatDate(selectedDate),
+    startDate: formatDate(debouncedSearch),
     isEnable:
       connectedDevicesData?.length > 0 ? connectedDevicesData?.[0]?.device : "",
   });
@@ -70,7 +73,7 @@ const Sleep = () => {
     resource: connectedDevicesData?.[0]?.device,
     isEnable:
       connectedDevicesData?.length > 0 ? connectedDevicesData?.[0]?.device : "",
-    startDate: formatDate(selectedDate),
+    startDate: formatDate(debouncedSearch),
   });
 
   const {
@@ -81,7 +84,7 @@ const Sleep = () => {
     isEnable:
       connectedDevicesData?.length > 0 ? connectedDevicesData?.[0]?.device : "",
     language: "english",
-    startDate: formatDate(selectedDate),
+    startDate: formatDate(debouncedSearch),
   });
   const {
     data: wearableMonthlyRecommendationData,
@@ -91,7 +94,7 @@ const Sleep = () => {
     isEnable:
       connectedDevicesData?.length > 0 ? connectedDevicesData?.[0]?.device : "",
     language: "english",
-    startDate: formatDate(selectedDate),
+    startDate: formatDate(debouncedSearch),
   });
 
   const {
@@ -102,7 +105,7 @@ const Sleep = () => {
     resource: connectedDevicesData?.[0]?.device,
     isEnable:
       connectedDevicesData?.length > 0 ? connectedDevicesData?.[0]?.device : "",
-    startDate: formatDate(selectedDate),
+    startDate: formatDate(debouncedSearch),
   });
 
   const { data: getProfileIsData } = useGetUserProfile();
@@ -119,8 +122,8 @@ const Sleep = () => {
     setSelectedDate(new Date());
   };
 
-  const isTodaySelected = isToday(selectedDate) && viewType === "day";
-  const dateDisplay = getDateDisplay(selectedDate, viewType);
+  const isTodaySelected = isToday(debouncedSearch) && viewType === "day";
+  const dateDisplay = getDateDisplay(debouncedSearch, viewType);
 
   if (!loading && !isAuthenticated) {
     return <Navigate to="/onboarding/0" replace />;
@@ -169,7 +172,7 @@ const Sleep = () => {
 
               <TabsContent value="day" className="mt-6">
                 <DailyTabContent
-                  selectedDate={selectedDate}
+                  selectedDate={debouncedSearch}
                   wearableDailyRecommendationData={
                     wearableDailyRecommendationData?.ai_response?.insights
                   }
@@ -180,7 +183,7 @@ const Sleep = () => {
 
               <TabsContent value="week" className="mt-6">
                 <WeeklyTabContent
-                  selectedDate={selectedDate}
+                  selectedDate={debouncedSearch}
                   wearableWeeklyRecommendationData={
                     wearableWeeklyRecommendationData?.ai_response?.insights
                   }
@@ -191,7 +194,7 @@ const Sleep = () => {
 
               <TabsContent value="month" className="mt-6">
                 <MonthlyTabContent
-                  selectedDate={selectedDate}
+                  selectedDate={debouncedSearch}
                   wearableMonthlyRecommendationData={
                     wearableMonthlyRecommendationData?.ai_response?.insights
                   }

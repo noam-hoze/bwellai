@@ -64,8 +64,6 @@ const HealthMetrics = ({ facescanResult, userFaceDataLatest }: any) => {
     key: "bmi_kg_per_m2",
   });
 
-  console.log(userFaceDataLatest);
-
   return (
     <div className="w-full space-y-4">
       <MetricCard
