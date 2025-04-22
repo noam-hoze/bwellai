@@ -64,12 +64,18 @@ const HealthMetrics = ({ facescanResult, userFaceDataLatest }: any) => {
     key: "bmi_kg_per_m2",
   });
 
+  console.log(userFaceDataLatest);
+
   return (
     <div className="w-full space-y-4">
       <MetricCard
         icon={<Heart className="h-5 w-5 text-red-500" />}
         title="Heart Rate"
-        value={facescanResult?.heart_rate_bpm}
+        value={
+          facescanResult?.heart_rate_bpm ||
+          userFaceDataLatest?.[userFaceDataLatest?.length - 1]?.faceScanData
+            ?.heart_rate_bpm
+        }
         unit="bpm"
         normalRange="60-100 bpm"
         description="Measures the average number of heartbeats per minute, which reflects the current state of the autonomic nervous system and may be indicative of the cardiovascular fitness level."
@@ -87,7 +93,11 @@ const HealthMetrics = ({ facescanResult, userFaceDataLatest }: any) => {
       <MetricCard
         icon={<ActivitySquare className="h-5 w-5 text-purple-500" />}
         title="Heart Rate Variability (HRV)"
-        value={facescanResult?.hrv_sdnn_ms}
+        value={
+          facescanResult?.hrv_sdnn_ms ||
+          userFaceDataLatest?.[userFaceDataLatest?.length - 1]?.faceScanData
+            ?.hrv_sdnn_ms
+        }
         unit="ms"
         normalRange=""
         description="Measures the variation in time intervals between the heartbeats, which reflects the state of the autonomic nervous system."
@@ -98,7 +108,11 @@ const HealthMetrics = ({ facescanResult, userFaceDataLatest }: any) => {
       <MetricCard
         icon={<Lungs className="h-5 w-5 text-blue-400" />}
         title="Breathing Rate (BR)"
-        value={facescanResult?.breathing_rate_bpm}
+        value={
+          facescanResult?.breathing_rate_bpm ||
+          userFaceDataLatest?.[userFaceDataLatest?.length - 1]?.faceScanData
+            ?.breathing_rate_bpm
+        }
         unit="bpm"
         normalRange="12-20 bpm"
         description="Counts breaths per minute, reflecting respiratory status and (indirectly) stress level."
@@ -110,7 +124,11 @@ const HealthMetrics = ({ facescanResult, userFaceDataLatest }: any) => {
       <MetricCard
         icon={<Thermometer className="h-5 w-5 text-orange-500" />}
         title="Stress Index"
-        value={facescanResult?.stress_index}
+        value={
+          facescanResult?.stress_index ||
+          userFaceDataLatest?.[userFaceDataLatest?.length - 1]?.faceScanData
+            ?.stress_index
+        }
         unit=""
         normalRange="0-4"
         description="Indicates whether the heart is working in a stressed or relaxed manner."
@@ -122,7 +140,11 @@ const HealthMetrics = ({ facescanResult, userFaceDataLatest }: any) => {
       <MetricCard
         icon={<ActivitySquare className="h-5 w-5 text-red-400" />}
         title="Cardiac Workload"
-        value={facescanResult?.cardiac_workload_mmhg_per_sec}
+        value={
+          facescanResult?.cardiac_workload_mmhg_per_sec ||
+          userFaceDataLatest?.[userFaceDataLatest?.length - 1]?.faceScanData
+            ?.cardiac_workload_mmhg_per_sec
+        }
         unit="mmHg/s"
         normalRange="90-216 mmHg/s"
         description="Indicates the work that the heart needs to do to pump blood."
@@ -134,7 +156,11 @@ const HealthMetrics = ({ facescanResult, userFaceDataLatest }: any) => {
       <MetricCard
         icon={<Brain className="h-5 w-5 text-green-500" />}
         title="Parasympathetic Activity"
-        value={facescanResult?.parasympathetic_activity}
+        value={
+          facescanResult?.parasympathetic_activity ||
+          userFaceDataLatest?.[userFaceDataLatest?.length - 1]?.faceScanData
+            ?.parasympathetic_activity
+        }
         unit="%"
         normalRange=""
         description="Assesses the activity of the parasympathetic nervous system, which is responsible for body relaxation and recovery from stress."
@@ -145,7 +171,11 @@ const HealthMetrics = ({ facescanResult, userFaceDataLatest }: any) => {
       <MetricCard
         icon={<Scale className="h-5 w-5 text-blue-500" />}
         title="Body Mass Index (BMI)"
-        value={facescanResult?.bmi_kg_per_m2}
+        value={
+          facescanResult?.bmi_kg_per_m2 ||
+          userFaceDataLatest?.[userFaceDataLatest?.length - 1]?.faceScanData
+            ?.bmi_kg_per_m2
+        }
         unit="kg/m²"
         normalRange="18.5-24.9 kg/m²"
         description="Body Mass Index, which indicates if your weight is appropriate for your height."
