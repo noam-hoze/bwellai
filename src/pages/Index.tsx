@@ -19,6 +19,7 @@ import StartJourneyBanner from "@/components/first-time/StartJourneyBanner";
 import JourneyDialog from "@/components/first-time/JourneyDialog";
 import { useJourneyDialog } from "@/hooks/use-journey-dialog";
 import axios from "axios";
+import { useGetUserProfile } from "@/service/hooks/profile/useGetUserProfile";
 
 const Index = () => {
   const { toast } = useToast();
@@ -28,6 +29,12 @@ const Index = () => {
   const navigate = useNavigate();
   const { isOpen, closeJourney } = useJourneyDialog();
   const { isAuthenticated, loginWithOTP, loading } = useAuth();
+
+  const {
+    data: getProfileIsData,
+    isSuccess: getProfileIsSuccess,
+    refetch: getUserProfileRefetch,
+  } = useGetUserProfile();
 
   const handleGoogleSignIn = (loggedInData) => {
     if (loggedInData) {
@@ -193,7 +200,14 @@ const Index = () => {
         {/* <BodyHealthInterface /> */}
       </main>
 
-      <JourneyDialog open={isOpen} onOpenChange={closeJourney} />
+      <JourneyDialog
+        open={isOpen}
+        onOpenChange={closeJourney}
+        journeyList={
+          getProfileIsData?.additionalDetails?.["What Are You Aiming For?"]
+            ?.answersArray || []
+        }
+      />
 
       <footer className="py-6 text-center text-sm text-gray-500 border-t border-gray-100">
         © 2024 Wellness App. All rights reserved.

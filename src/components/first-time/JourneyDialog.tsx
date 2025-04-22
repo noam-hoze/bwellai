@@ -1,12 +1,15 @@
-
-import {
-  Dialog,
-  DialogContent,
-  DialogClose,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogClose } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
-import { Smartphone, Upload, Utensils, HeartPulse, ArrowRight, ArrowLeft, X } from "lucide-react";
+import {
+  Smartphone,
+  Upload,
+  Utensils,
+  HeartPulse,
+  ArrowRight,
+  ArrowLeft,
+  X,
+} from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 interface StepProps {
@@ -17,14 +20,23 @@ interface StepProps {
   actionText: string;
 }
 
-const JourneyDialog = ({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void }) => {
+const JourneyDialog = ({
+  open,
+  onOpenChange,
+  journeyList,
+}: {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  journeyList?: string[];
+}) => {
   const [currentStep, setCurrentStep] = useState(0);
   const navigate = useNavigate();
 
   const steps: StepProps[] = [
     {
       title: "Connect Your Wearable Device",
-      description: "Track your daily activities and health metrics in real-time",
+      description:
+        "Track your daily activities and health metrics in real-time",
       icon: <Smartphone className="h-12 w-12 text-blue-500" />,
       path: "/connections",
       actionText: "Connect Device",
@@ -51,6 +63,45 @@ const JourneyDialog = ({ open, onOpenChange }: { open: boolean; onOpenChange: (o
       actionText: "Start Scan",
     },
   ];
+
+  // Mapping API keys to step titles
+  const keywordToTitleMap: Record<string, string> = {
+    sleep: "Connect Your Wearable Device",
+    active: "Connect Your Wearable Device",
+    weight: "Connect Your Wearable Device",
+    eat: "Scan Your Meals",
+    stress: "Scan For Vitals",
+    "lab-reports": "Upload Your Lab Reports",
+  };
+
+  // Step sorting logic
+  // Keep track of already added step titles
+  const getSortedSteps = (apiOrder: string[]): StepProps[] => {
+    if (apiOrder?.length === 0) return steps; // fallback to default
+
+    const addedTitles = new Set<string>();
+    const orderedSteps: StepProps[] = [];
+
+    for (const keyword of apiOrder) {
+      const title = keywordToTitleMap?.[keyword];
+      if (title && !addedTitles?.has(title)) {
+        const matchedStep = steps?.find((s) => s?.title === title);
+        if (matchedStep) {
+          orderedSteps?.push(matchedStep);
+          addedTitles?.add(title);
+        }
+      }
+    }
+
+    // Add remaining steps not already included
+    const remainingSteps = steps?.filter(
+      (step) => !addedTitles?.has(step?.title)
+    );
+    return [...orderedSteps, ...remainingSteps];
+  };
+
+  // Usage
+  const sortedSteps = getSortedSteps(journeyList || []);
 
   const handleNext = () => {
     if (currentStep < steps.length - 1) {
@@ -80,29 +131,43 @@ const JourneyDialog = ({ open, onOpenChange }: { open: boolean; onOpenChange: (o
         <div className="w-full bg-gray-200 h-1 mb-8 rounded-full">
           <div
             className="bg-blue-500 h-1 rounded-full transition-all duration-300"
-            style={{ width: `${((currentStep + 1) / steps.length) * 100}%` }}
+            style={{
+              width: `${((currentStep + 1) / sortedSteps?.length) * 100}%`,
+            }}
           />
         </div>
-        
+
         <div className="text-center mb-8">
-          {steps[currentStep].icon}
-          <h2 className="text-2xl font-bold mt-4 mb-2">{steps[currentStep].title}</h2>
-          <p className="text-gray-600">{steps[currentStep].description}</p>
+          {sortedSteps?.[currentStep]?.icon}
+          <h2 className="text-2xl font-bold mt-4 mb-2">
+            {sortedSteps?.[currentStep]?.title}
+          </h2>
+          <p className="text-gray-600">
+            {sortedSteps?.[currentStep]?.description}
+          </p>
         </div>
 
         <div className="flex gap-3 mt-6">
           {currentStep === 0 ? (
             <>
-              <Button variant="outline" onClick={handleBack} className="w-24 invisible">
+              <Button
+                variant="outline"
+                onClick={handleBack}
+                className="w-24 invisible"
+              >
                 Back
               </Button>
-              <Button 
-                onClick={handleAction} 
+              <Button
+                onClick={handleAction}
                 className="flex-1 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white shadow-md"
               >
-                {steps[currentStep].actionText}
+                {sortedSteps?.[currentStep]?.actionText}
               </Button>
-              <Button variant="outline" onClick={handleNext} className="w-32 flex justify-center">
+              <Button
+                variant="outline"
+                onClick={handleNext}
+                className="w-32 flex justify-center"
+              >
                 <span className="mx-auto flex items-center">
                   Next Option
                   <ArrowRight className="ml-2 h-4 w-4" />
@@ -115,20 +180,18 @@ const JourneyDialog = ({ open, onOpenChange }: { open: boolean; onOpenChange: (o
                 <ArrowLeft className="mr-2 h-4 w-4" />
                 Back
               </Button>
-              <Button 
-                onClick={handleAction} 
+              <Button
+                onClick={handleAction}
                 className="flex-1 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white shadow-md"
               >
-                {steps[currentStep].actionText}
+                {sortedSteps?.[currentStep]?.actionText}
               </Button>
-              <Button 
+              <Button
                 variant="outline"
                 onClick={handleBackToHome}
                 className="w-32 flex justify-center"
               >
-                <span className="mx-auto">
-                  Home
-                </span>
+                <span className="mx-auto">Home</span>
               </Button>
             </>
           ) : (
@@ -137,13 +200,13 @@ const JourneyDialog = ({ open, onOpenChange }: { open: boolean; onOpenChange: (o
                 <ArrowLeft className="mr-2 h-4 w-4" />
                 Back
               </Button>
-              <Button 
-                onClick={handleAction} 
+              <Button
+                onClick={handleAction}
                 className="flex-1 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white shadow-md"
               >
-                {steps[currentStep].actionText}
+                {sortedSteps?.[currentStep]?.actionText}
               </Button>
-              <Button 
+              <Button
                 variant="outline"
                 onClick={handleNext}
                 className="w-32 flex justify-center"

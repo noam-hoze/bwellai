@@ -15,10 +15,17 @@ const getUserReportUpload = ({
 // }) =>
 //   `/report/v2/upload?category=${category}&sub-category=${subCategory}&language=${language}&persona-type=${personaType}`;
 
-const getUserLastReportIDs = () => `report/v2/ids`;
+const getUserLastReportIDs = ({ page, size }: { page: number; size: number }) =>
+  `report/v2/ids?page=${page}&size=${size}`;
 
-export const getUserLastReportIDsFetcher = () => {
-  return Client.get(getUserLastReportIDs());
+export const getUserLastReportIDsFetcher = ({
+  page,
+  size,
+}: {
+  page: number;
+  size: number;
+}) => {
+  return Client.get(getUserLastReportIDs({ page, size }));
 };
 
 export const getUserReportUploadFetcher = ({

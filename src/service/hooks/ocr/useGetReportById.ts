@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { getUserReportFetcher } from "../../api/fetcher/ocr/get-report";
 import { getUserPreviousReportFetcher } from "../../api/fetcher/ocr/get-previous-report";
 import { getUserLastReportIDsFetcher } from "../../api/fetcher/ocr/pdf-upload";
@@ -69,7 +69,11 @@ export const useGetUserPreviousReportData = (
   };
 };
 
-export const useGetUserLastReportIDsData = (isAuthenticated: boolean) => {
+export const useGetUserLastReportIDsData = ({
+  isAuthenticated,
+}: {
+  isAuthenticated: boolean;
+}) => {
   const {
     data,
     error,
@@ -78,22 +82,35 @@ export const useGetUserLastReportIDsData = (isAuthenticated: boolean) => {
     isFetching,
     isSuccess,
     status,
+    fetchNextPage,
+    isFetchingNextPage,
+    hasNextPage,
     refetch,
-  } = useQuery({
+  } = useInfiniteQuery({
     queryKey: ["get-user-previous-report-ids-list"],
-    queryFn: () => getUserLastReportIDsFetcher(),
+    queryFn: ({ pageParam }: { pageParam: number }) =>
+      getUserLastReportIDsFetcher({ size: 10, page: pageParam }),
+    initialPageParam: 0,
     enabled: isAuthenticated,
     refetchOnWindowFocus: false,
+    getNextPageParam: (lastPage, allPages) => {
+      return lastPage?.data?.payload?.content?.length
+        ? allPages?.length
+        : undefined;
+    },
   });
 
   return {
-    data: data?.data,
+    data: data,
     error,
-    isError,
     isLoading,
+    isError,
     isFetching,
     isSuccess,
     status,
+    fetchNextPage,
+    isFetchingNextPage,
+    hasNextPage,
     refetch,
   };
 };
