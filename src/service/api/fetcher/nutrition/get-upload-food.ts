@@ -35,6 +35,13 @@ const getUserFoodProfileList = () => `/food/list`;
 const getUserFoodGraphDetails = () => `/food/tracker/detail`;
 const getDeleteUserFoodProfileData = (reportId) =>
   `/food/profile/remove?report_id=${reportId}`;
+const getDeleteUserFoodData = ({
+  esId,
+  type,
+}: {
+  esId: string;
+  type: string;
+}) => `/food/delete/v4?es_id=${esId}&type=${type}`;
 
 export const getUserFoodReportUploadFetcher = ({
   PdfFile,
@@ -136,6 +143,15 @@ export const getDeleteUserFoodProfileDataFetcher = ({
   reportId: string;
 }) => {
   return Client.delete(getDeleteUserFoodProfileData(reportId), {});
+};
+export const getDeleteUserFoodDataFetcher = ({
+  esId,
+  type,
+}: {
+  esId: string;
+  type: string;
+}) => {
+  return Client.delete(getDeleteUserFoodData({ esId, type }), {});
 };
 
 export const getUserFoodProfileListFetcher = () => {

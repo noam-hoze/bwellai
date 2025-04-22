@@ -10,6 +10,7 @@ import MealHistorySection from "@/components/nutrition/MealHistorySection";
 import TrendsInsightsSection from "@/components/nutrition/TrendsInsightsSection";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import {
+  useGetDeleteUserFoodDataFetcher,
   useGetUserFoodReportUpload,
   useGetUserLoggedMealDataFetcherV4,
 } from "@/service/hooks/nutrition/useGetFoodReportUpload";
@@ -20,9 +21,11 @@ import {
   requiredMicronutrientsBalanceDisplayed,
 } from "@/utils/utils";
 import { useAuth } from "@/contexts/AuthContext";
+import { useToast } from "@/hooks/use-toast";
 
 const Nutrition = () => {
   const { isAuthenticated, loading } = useAuth();
+  const { toast } = useToast();
 
   const [activeTab, setActiveTab] = useState<"daily" | "trends">("daily");
   const [activeView, setActiveView] = useState<"meals" | "savedItems">("meals");
@@ -35,6 +38,9 @@ const Nutrition = () => {
     isSuccess: getProfileIsSuccess,
     refetch: getUserProfileRefetch,
   } = useGetUserProfile();
+
+  const { mutate: deleteUserFoodData, isSuccess: deleteUserFoodDataIsSuccess } =
+    useGetDeleteUserFoodDataFetcher();
 
   const { data: loggedMealData, refetch: refetchLoggedMeals } =
     useGetUserLoggedMealDataFetcherV4(
@@ -109,6 +115,17 @@ const Nutrition = () => {
     }
   }, [loggedMealData]);
 
+  useEffect(() => {
+    if (deleteUserFoodDataIsSuccess) {
+      refetchLoggedMeals();
+      toast({
+        title: "Success",
+        description: "Food data deleted successfully.",
+        variant: "default",
+      });
+    }
+  }, [deleteUserFoodDataIsSuccess]);
+
   if (!loading && !isAuthenticated) {
     return <Navigate to="/onboarding/0" replace />;
   }
@@ -161,6 +178,7 @@ const Nutrition = () => {
                 totalDailyFats={totalDailyFats}
                 totalDailyRequiredCalories={totalDailyRequiredCalories}
                 requiredMicronutrientsBalance={requiredMicronutrientsBalance}
+                deleteUserFoodData={deleteUserFoodData}
               />
               {activeTab === "trends" && <TrendsInsightsSection />}
             </TabsContent>
