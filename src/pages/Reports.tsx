@@ -589,6 +589,13 @@ const Reports = () => {
                     <p className="mt-1">Upload a new report to get started</p>
                   </div>
                 )}
+                {initialReports.map((report) => (
+                  <ReportListItem
+                    key={report.id}
+                    report={report}
+                    onDelete={handleDeleteReport}
+                  />
+                ))}
               </div>
             </ScrollArea>
           </Card>

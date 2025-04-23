@@ -108,7 +108,7 @@ const Sleep = () => {
     startDate: formatDate(debouncedSearch),
   });
 
-  const { data: getProfileIsData } = useGetUserProfile();
+  const { data: getProfileIsData } = useGetUserProfile({ isAuthenticated });
 
   const handlePrevious = () => {
     setSelectedDate((prev) => goToPreviousDate(prev, viewType));

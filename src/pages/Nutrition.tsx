@@ -37,7 +37,7 @@ const Nutrition = () => {
     data: getProfileIsData,
     isSuccess: getProfileIsSuccess,
     refetch: getUserProfileRefetch,
-  } = useGetUserProfile();
+  } = useGetUserProfile({ isAuthenticated });
 
   const { mutate: deleteUserFoodData, isSuccess: deleteUserFoodDataIsSuccess } =
     useGetDeleteUserFoodDataFetcher();
