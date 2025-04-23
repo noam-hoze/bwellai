@@ -13,6 +13,7 @@ import {
   X,
   ExternalLink,
   Copy,
+  Lock,
 } from "lucide-react";
 import BloodTestReport from "@/components/reports/BloodTestReport";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -433,14 +434,22 @@ const ReportDetail = () => {
               </Dialog>
             </div>
             <div className="flex gap-2">
-              <Button variant="outline" size="sm">
+              <Button
+                variant="outline"
+                size="sm"
+                className="disabled"
+                disabled={true}
+              >
+                <Lock />
                 <Download className="h-4 w-4 mr-1" /> Download
               </Button>
               <Button
                 variant="outline"
                 size="sm"
+                disabled={true}
                 onClick={() => setShareModalOpen(true)}
               >
+                <Lock />
                 <Share2 className="h-4 w-4 mr-1" /> Share
               </Button>
             </div>
