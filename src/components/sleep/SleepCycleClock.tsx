@@ -35,8 +35,8 @@ interface SleepCycleClockProps {
 const SleepCycleClock: React.FC<SleepCycleClockProps> = ({
   sleepData,
   title = "Sleep Clock",
-  startTime = "10:30 PM",
-  endTime = "7:00 AM",
+  startTime,
+  endTime,
 }) => {
   // Calculate total duration
   const totalDuration = sleepData?.reduce(
@@ -284,8 +284,8 @@ const SleepCycleClock: React.FC<SleepCycleClockProps> = ({
         </CardHeader>
         <CardContent>
           <div className="flex justify-between text-sm text-gray-500 mb-2">
-            <span>Bedtime: {startTime}</span>
-            <span>Wake-up: {endTime}</span>
+            {startTime && <span>Bedtime: {startTime}</span>}
+            {endTime && <span>Wake-up: {endTime}</span>}
           </div>
 
           <div className="aspect-square relative mb-4">

@@ -5,13 +5,14 @@ import { useGetUserProfile } from "@/service/hooks/profile/useGetUserProfile";
 import { Navigate } from "react-router-dom";
 
 const Profile = () => {
+  const { isAuthenticated, loading } = useAuth();
+
   const {
     data: getProfileIsData,
     isSuccess: getProfileIsSuccess,
     refetch: getUserProfileRefetch,
-  } = useGetUserProfile();
+  } = useGetUserProfile({ isAuthenticated });
 
-  const { isAuthenticated, loading } = useAuth();
   if (!loading && !isAuthenticated) {
     return <Navigate to="/onboarding/0" replace />;
   }

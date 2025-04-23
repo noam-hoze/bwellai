@@ -20,6 +20,7 @@ import JourneyDialog from "@/components/first-time/JourneyDialog";
 import { useJourneyDialog } from "@/hooks/use-journey-dialog";
 import axios from "axios";
 import { useGetUserProfile } from "@/service/hooks/profile/useGetUserProfile";
+import { useGetUserFaceScore } from "@/service/hooks/shenai/useShenaiFaceScore";
 
 const Index = () => {
   const { toast } = useToast();
@@ -34,7 +35,24 @@ const Index = () => {
     data: getProfileIsData,
     isSuccess: getProfileIsSuccess,
     refetch: getUserProfileRefetch,
-  } = useGetUserProfile();
+  } = useGetUserProfile({ isAuthenticated });
+
+  const { data: userFaceScoreHealthData } = useGetUserFaceScore(
+    isAuthenticated,
+    "HEALTH"
+  );
+  const { data: userFaceScoreActivityData } = useGetUserFaceScore(
+    isAuthenticated,
+    "ACTIVITY"
+  );
+  const { data: userFaceScoreSleepData } = useGetUserFaceScore(
+    isAuthenticated,
+    "SLEEP"
+  );
+  const { data: userFaceScoreNutritionData } = useGetUserFaceScore(
+    isAuthenticated,
+    "NUTRITION"
+  );
 
   const handleGoogleSignIn = (loggedInData) => {
     if (loggedInData) {

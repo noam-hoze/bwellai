@@ -1,11 +1,15 @@
 import { useQuery } from "@tanstack/react-query";
 import { getUserProfileFetcher } from "../../api/fetcher/profile/get-user-profile";
 
-export const useGetUserProfile = () => {
+export const useGetUserProfile = ({
+  isAuthenticated,
+}: {
+  isAuthenticated: boolean;
+}) => {
   const { data, refetch, error, isError, isSuccess, isLoading } = useQuery({
     queryFn: getUserProfileFetcher,
     queryKey: ["get-user-profile"],
-    // enabled: isAuthenticated,
+    enabled: isAuthenticated,
     // staleTime: 1000,
   });
 

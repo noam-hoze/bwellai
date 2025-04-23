@@ -246,8 +246,8 @@ const SleepCycleAnimated: React.FC<SleepCycleAnimatedProps> = ({
         </CardHeader>
         <CardContent>
           <div className="flex justify-between text-sm text-gray-500 mb-2">
-            <span>Bedtime: {startTime}</span>
-            <span>Wake-up: {endTime}</span>
+            {startTime && <span>Bedtime: {startTime}</span>}
+            {endTime && <span>Wake-up: {endTime}</span>}
           </div>
 
           <div className="relative h-60">
