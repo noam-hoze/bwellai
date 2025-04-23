@@ -25,6 +25,8 @@ import SleepCycleClock from "./SleepCycleClock";
 import { SleepStage } from "./SleepCycleRing";
 
 function formatTo12Hour(timeString: string): string {
+  if (!timeString) return "";
+
   const date = new Date(timeString);
 
   const hours = date?.getHours();
@@ -277,12 +279,10 @@ const DailyTabContent = ({
                   sleepData={formattedSleepData || []}
                   title="Sleep Cycle Animation"
                   startTime={formatTo12Hour(
-                    wearableDailyData?.finalDailySpikeSleepDataV4
-                      ?.bedtime_start || new Date()
+                    wearableDailyData?.finalDailySpikeSleepDataV4?.bedtime_start
                   )}
                   endTime={formatTo12Hour(
-                    wearableDailyData?.finalDailySpikeSleepDataV4
-                      ?.bedtime_end || new Date()
+                    wearableDailyData?.finalDailySpikeSleepDataV4?.bedtime_end
                   )}
                 />
               </CarouselItem>
@@ -290,12 +290,10 @@ const DailyTabContent = ({
                 <SleepCycleClock
                   sleepData={formattedSleepData || []}
                   startTime={formatTo12Hour(
-                    wearableDailyData?.finalDailySpikeSleepDataV4
-                      ?.bedtime_start || new Date()
+                    wearableDailyData?.finalDailySpikeSleepDataV4?.bedtime_start
                   )}
                   endTime={formatTo12Hour(
-                    wearableDailyData?.finalDailySpikeSleepDataV4
-                      ?.bedtime_end || new Date()
+                    wearableDailyData?.finalDailySpikeSleepDataV4?.bedtime_end
                   )}
                 />
               </CarouselItem>
@@ -373,12 +371,10 @@ const DailyTabContent = ({
             sleepData={formattedSleepData || []}
             title="Sleep Cycle Animation"
             startTime={formatTo12Hour(
-              wearableDailyData?.finalDailySpikeSleepDataV4?.bedtime_start ||
-                new Date()
+              wearableDailyData?.finalDailySpikeSleepDataV4?.bedtime_start
             )}
             endTime={formatTo12Hour(
-              wearableDailyData?.finalDailySpikeSleepDataV4?.bedtime_end ||
-                new Date()
+              wearableDailyData?.finalDailySpikeSleepDataV4?.bedtime_end
             )}
           />
 
@@ -428,12 +424,10 @@ const DailyTabContent = ({
           <SleepCycleClock
             sleepData={formattedSleepData || []}
             startTime={formatTo12Hour(
-              wearableDailyData?.finalDailySpikeSleepDataV4?.bedtime_start ||
-                new Date()
+              wearableDailyData?.finalDailySpikeSleepDataV4?.bedtime_start
             )}
             endTime={formatTo12Hour(
-              wearableDailyData?.finalDailySpikeSleepDataV4?.bedtime_end ||
-                new Date()
+              wearableDailyData?.finalDailySpikeSleepDataV4?.bedtime_end
             )}
           />
         </div>
