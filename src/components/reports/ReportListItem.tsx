@@ -67,7 +67,7 @@ const ReportListItem = ({ report, onDelete }: ReportListItemProps) => {
         <Link to={`/report/${report?.reportId}`} className="flex-1">
           <div className="flex items-center gap-2">
             <h3 className="text-lg font-semibold text-gray-800">
-              {report?.reportName}
+              {report?.reportName || report?.title}
             </h3>
             {report?.concernCount > 0 && (
               <div className="px-2 py-0.5 bg-red-50 text-red-600 text-xs font-medium rounded-full flex items-center">
@@ -76,11 +76,16 @@ const ReportListItem = ({ report, onDelete }: ReportListItemProps) => {
                 {report?.concernCount === 1 ? "concern" : "concerns"}
               </div>
             )}
+            {report?.url && (
+              <div className="px-2 py-0.5 bg-gray-100 text-gray-600 text-xs font-medium rounded-full flex items-center">
+                comming soon
+              </div>
+            )}
           </div>
           <div className="flex flex-col sm:flex-row sm:gap-6 mt-1">
             <p className="text-gray-500">
               <span className="text-gray-400 text-sm">Date uploaded:</span>{" "}
-              {formatDateToShortMonth(report?.createdAt)}
+              {formatDateToShortMonth(report?.createdAt || report?.testDate)}
             </p>
             {/* <p className="text-gray-500">
               <span className="text-gray-400 text-sm">Test date:</span>{" "}
