@@ -78,7 +78,7 @@ const ReportListItem = ({ report, onDelete }: ReportListItemProps) => {
             )}
             {report?.url && (
               <div className="px-2 py-0.5 bg-gray-100 text-gray-600 text-xs font-medium rounded-full flex items-center">
-                comming soon
+                coming soon
               </div>
             )}
           </div>
