@@ -258,7 +258,9 @@ const SleepCycleAnimated: React.FC<SleepCycleAnimatedProps> = ({
               }}
             >
               <motion.div
-                className="absolute inset-0 origin-center"
+                className={`absolute inset-0 origin-center ${
+                  isTimelineView ? "z-0" : "z-10"
+                }`}
                 initial={false}
                 animate={{
                   borderRadius: isTimelineView ? "0%" : "50%",
@@ -373,7 +375,9 @@ const SleepCycleAnimated: React.FC<SleepCycleAnimatedProps> = ({
               </motion.div>
 
               <motion.div
-                className="absolute inset-0"
+                className={`absolute inset-0 ${
+                  isTimelineView ? "z-10" : "z-0"
+                }`}
                 initial={false}
                 animate={{
                   opacity: isTimelineView ? 1 : 0,
