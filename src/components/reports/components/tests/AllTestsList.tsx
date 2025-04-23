@@ -144,35 +144,37 @@ const AllTestsList = ({
                     {expandedTests?.includes(result?.testName) && (
                       <TableRow>
                         <TableCell colSpan={4} className="bg-gray-50 p-4">
-                          <div className="bg-white rounded-lg p-6 mb-6 border border-gray-100 shadow-sm">
-                            <div className="flex items-center justify-between mb-4">
-                              <h4 className="text-base font-medium text-gray-800">
-                                Where your result falls
-                              </h4>
-                            </div>
-                            {/* <TestResultRangeBar result={result} /> */}
-                            <div
-                              style={{
-                                width: "100%",
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                marginTop: "1.5em",
-                                marginBottom: "2em",
-                              }}
-                            >
-                              <ReportSpectrum
-                                spectrum={
-                                  biomarkerResponses?.[result?.testName]
-                                    ?.spectrumRange
-                                }
-                                rangeObj={result?.rangeObj}
-                                max={result?.maxParameterValue}
-                                min={result?.minParameterValue}
-                                testResultValue={result?.testResultValue}
-                              />
-                            </div>
-                            {/* <TestResultTrendHistory
+                          {(!!Number(result?.maxParameterValue) ||
+                            !!Number(result?.minParameterValue)) && (
+                            <div className="bg-white rounded-lg p-6 mb-6 border border-gray-100 shadow-sm">
+                              <div className="flex items-center justify-between mb-4">
+                                <h4 className="text-base font-medium text-gray-800">
+                                  Where your result falls
+                                </h4>
+                              </div>
+                              {/* <TestResultRangeBar result={result} /> */}
+                              <div
+                                style={{
+                                  width: "100%",
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                  marginTop: "1.5em",
+                                  marginBottom: "2em",
+                                }}
+                              >
+                                <ReportSpectrum
+                                  spectrum={
+                                    biomarkerResponses?.[result?.testName]
+                                      ?.spectrumRange
+                                  }
+                                  rangeObj={result?.rangeObj}
+                                  max={result?.maxParameterValue}
+                                  min={result?.minParameterValue}
+                                  testResultValue={result?.testResultValue}
+                                />
+                              </div>
+                              {/* <TestResultTrendHistory
                               result={
                                 latestResultByDateData?.[result?.testName]
                               }
@@ -181,15 +183,20 @@ const AllTestsList = ({
                               minValue={result?.minParameterValue}
                             /> */}
 
-                            <TestResultTrendHistoryGraphRechart
-                              testName={result?.testName}
-                              result={
+                              {latestResultByDateData?.[result?.testName] &&
                                 latestResultByDateData?.[result?.testName]
-                              }
-                              maxValue={result?.maxParameterValue}
-                              minValue={result?.minParameterValue}
-                            />
-                          </div>
+                                  ?.length > 0 && (
+                                  <TestResultTrendHistoryGraphRechart
+                                    testName={result?.testName}
+                                    result={
+                                      latestResultByDateData?.[result?.testName]
+                                    }
+                                    maxValue={result?.maxParameterValue}
+                                    minValue={result?.minParameterValue}
+                                  />
+                                )}
+                            </div>
+                          )}
 
                           <div className="grid md:grid-cols-1 gap-4 mb-4">
                             <div className="bg-blue-50 rounded-lg p-4">

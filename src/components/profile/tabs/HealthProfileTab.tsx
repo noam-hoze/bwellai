@@ -165,6 +165,15 @@ const HealthProfileTab = ({
 
       const heightInMeters = heightValue / 100;
       const bmiValue = weightValue / (heightInMeters * heightInMeters);
+      console.log({
+        weight,
+        height,
+        weightValue,
+        heightValue,
+        heightInMeters,
+        bmiValue,
+      });
+
       setBmi(parseFloat(bmiValue.toFixed(1)));
     }
   }, [height, weight, heightUnit, weightUnit]);
@@ -247,8 +256,6 @@ const HealthProfileTab = ({
         : [...prev, type];
     });
   };
-
-  console.log({ selectedConditions, otherConditions });
 
   const handleSaveProfile = () => {
     createProfileMutate({
@@ -371,6 +378,8 @@ const HealthProfileTab = ({
       allergy.label.toLowerCase().includes(allergySearchValue.toLowerCase())
   );
 
+  console.log(bmi);
+
   return (
     <div className="space-y-6">
       {/* General Information Section */}
@@ -449,31 +458,35 @@ const HealthProfileTab = ({
                 </div>
                 <Slider
                   id="weight"
-                  min={100}
-                  max={300}
+                  min={weightUnit === "kg" ? 40 : 90}
+                  max={weightUnit === "kg" ? 130 : 300}
                   step={1}
                   value={[weight]}
                   onValueChange={(value) => setWeight(value[0])}
                 />
               </div>
 
-              <div className={`p-4 rounded-lg ${getBmiBackgroundColor(bmi)}`}>
-                <div className="flex items-center justify-between">
-                  <span className="font-medium">BMI</span>
-                  <span className={`text-xl font-bold ${getBmiTextColor(bmi)}`}>
-                    {bmi}
-                  </span>
+              {bmi !== 0 && (
+                <div className={`p-4 rounded-lg ${getBmiBackgroundColor(bmi)}`}>
+                  <div className="flex items-center justify-between">
+                    <span className="font-medium">BMI</span>
+                    <span
+                      className={`text-xl font-bold ${getBmiTextColor(bmi)}`}
+                    >
+                      {bmi}
+                    </span>
+                  </div>
+                  <div className={`text-xs ${getBmiTextColor(bmi)} mt-1`}>
+                    {bmi < 18.5
+                      ? "Underweight"
+                      : bmi < 25
+                      ? "Normal weight"
+                      : bmi < 30
+                      ? "Overweight"
+                      : "Obese"}
+                  </div>
                 </div>
-                <div className={`text-xs ${getBmiTextColor(bmi)} mt-1`}>
-                  {bmi < 18.5
-                    ? "Underweight"
-                    : bmi < 25
-                    ? "Normal weight"
-                    : bmi < 30
-                    ? "Overweight"
-                    : "Obese"}
-                </div>
-              </div>
+              )}
             </div>
           </div>
         </CardContent>

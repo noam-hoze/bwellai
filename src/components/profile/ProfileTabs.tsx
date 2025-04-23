@@ -17,8 +17,8 @@ const ProfileTabs = ({ getProfileIsData, getUserProfileRefetch }) => {
   const [activeMainTab, setActiveMainTab] = useState("profile");
   const [weightUnit, setWeightUnit] = useState("kg");
   const [heightUnit, setHeightUnit] = useState("cm");
-  const [height, setHeight] = useState<number>(175);
-  const [weight, setWeight] = useState<number>(70);
+  const [height, setHeight] = useState<number>(0);
+  const [weight, setWeight] = useState<number>(0);
   const [distanceUnit, setDistanceUnit] = useState("km");
   const [temperatureUnit, setTemperatureUnit] = useState("°C");
   const [language, setLanguage] = useState("English");
@@ -97,11 +97,21 @@ const ProfileTabs = ({ getProfileIsData, getUserProfileRefetch }) => {
 
   useEffect(() => {
     if (getProfileIsData) {
-      setWeightUnit(getProfileIsData?.weightUnit);
-      setHeightUnit(getProfileIsData?.heightUnit);
-      setDistanceUnit(getProfileIsData?.distanceUnit);
-      setTemperatureUnit(getProfileIsData?.temperatureUnit);
-      setLanguage(getProfileIsData?.language);
+      if (getProfileIsData?.weightUnit) {
+        setWeightUnit(getProfileIsData?.weightUnit);
+      }
+      if (getProfileIsData?.heightUnit) {
+        setHeightUnit(getProfileIsData?.heightUnit);
+      }
+      if (getProfileIsData?.distanceUnit) {
+        setDistanceUnit(getProfileIsData?.distanceUnit);
+      }
+      if (getProfileIsData?.temperatureUnit) {
+        setTemperatureUnit(getProfileIsData?.temperatureUnit);
+      }
+      if (getProfileIsData?.language) {
+        setLanguage(getProfileIsData?.language);
+      }
     }
   }, [
     getProfileIsData?.weightUnit,
