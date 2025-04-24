@@ -20,6 +20,44 @@ export const ExerciseFrequency = {
   None: "never",
 };
 
+export const currentMedicationOptionsData = [
+  { id: "No current medications", label: "No current medications" },
+  { id: "Antibiotics", label: "Antibiotics (e.g., Amoxicillin, Penicillin)" },
+  { id: "Antidepressants", label: "Antidepressants (e.g., Prozac, Zoloft)" },
+  {
+    id: "Anti-inflammatory",
+    label: "Anti-inflammatory (e.g., Ibuprofen, Naproxen)",
+  },
+  { id: "Antihistamines", label: "Antihistamines (e.g., Benadryl, Claritin)" },
+  { id: "Asthma inhalers", label: "Asthma inhalers (e.g., Albuterol)" },
+  {
+    id: "Blood pressure medications",
+    label: "Blood pressure medications (e.g., Lisinopril, Amlodipine)",
+  },
+  { id: "Blood thinners", label: "Blood thinners (e.g., Warfarin, Aspirin)" },
+  {
+    id: "Cholesterol medications",
+    label: "Cholesterol medications (e.g., Statins)",
+  },
+  {
+    id: "Diabetes medications",
+    label: "Diabetes medications (e.g., Insulin, Metformin)",
+  },
+  {
+    id: "Hormonal treatments",
+    label: "Hormonal treatments (e.g., Birth control, HRT)",
+  },
+  { id: "Pain relief", label: "Pain relief (e.g., Acetaminophen, Oxycodone)" },
+  {
+    id: "Thyroid medications",
+    label: "Thyroid medications (e.g., Levothyroxine)",
+  },
+  {
+    id: "Vitamins and supplements",
+    label: "Vitamins and supplements (e.g., Vitamin D, Iron)",
+  },
+];
+
 export const CommonGeneVariantsDataDescriptionMapping = {
   "APOE ε4 Allele":
     "APOE ε4 Allele (Apolipoprotein E ε4, APOE4, Alzheimer's Risk Gene)\nAssociated Risks: Higher risk for late-onset Alzheimer's disease and cardiovascular disease.\nActions: Lifestyle modifications (diet, exercise), cognitive training, cholesterol management, potential participation in clinical trials.",

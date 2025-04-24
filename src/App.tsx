@@ -46,12 +46,16 @@ const App = () => (
               <BrowserRouter>
                 <Routes>
                   {/* Auth & Onboarding Routes */}
+                  {/* <Route path="/welcome" element={<Welcome />} /> */}
+                  <Route
+                    path="/welcome"
+                    element={<Navigate to="/dashboard" replace />}
+                  />
                   <Route
                     path="/"
                     element={<Navigate to="/dashboard" replace />}
                   />
 
-                  <Route path="/welcome" element={<Welcome />} />
                   <Route
                     path="/onboarding/:step"
                     element={<OnboardingScreen />}

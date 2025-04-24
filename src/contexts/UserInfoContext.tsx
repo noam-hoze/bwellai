@@ -13,6 +13,7 @@ export const UserInfoProvider = ({ children }) => {
     weight: "", // in kg or lbs
     weightUnit: "kg", // 'kg' or 'lb'
     heightUnit: "cm", // 'cm' or 'ft+inches'
+    privacyConsent: false, // User's consent for privacy policy
   });
 
   const updateUserInfo = (key, value) => {
