@@ -37,6 +37,7 @@ interface SleepCycleAnimatedProps {
   title?: string;
   startTime?: string;
   endTime?: string;
+  totalSleep?: string;
 }
 
 const SleepCycleAnimated: React.FC<SleepCycleAnimatedProps> = ({
@@ -44,6 +45,7 @@ const SleepCycleAnimated: React.FC<SleepCycleAnimatedProps> = ({
   title = "Sleep Cycles",
   startTime,
   endTime,
+  totalSleep,
 }) => {
   const [isTimelineView, setIsTimelineView] = useState(false);
   const [totalSleepMinutes, setTotalSleepMinutes] = useState(0);
@@ -53,6 +55,8 @@ const SleepCycleAnimated: React.FC<SleepCycleAnimatedProps> = ({
   const [modifiedSleepData, setModifiedSleepData] = useState<SleepSegment[]>(
     []
   );
+
+  console.log(totalSleep);
 
   useEffect(() => {
     const firstNonWakeIndex = sleepData?.findIndex(
@@ -68,19 +72,19 @@ const SleepCycleAnimated: React.FC<SleepCycleAnimatedProps> = ({
 
     const newSleepData = [...sleepData];
 
-    if (firstNonWakeIndex > 0) {
-      const initialWake = {
-        ...newSleepData[0],
-        duration: 60, // Changed to 60 min (one hour)
-      };
-      newSleepData[0] = initialWake;
-    } else if (firstNonWakeIndex === -1 || firstNonWakeIndex > 0) {
-      newSleepData?.unshift({
-        stage: "AWAKE",
-        duration: 60, // Changed to 60 min (one hour)
-        isWakeEvent: false,
-      });
-    }
+    // if (firstNonWakeIndex > 0) {
+    //   const initialWake = {
+    //     ...newSleepData[0],
+    //     duration: 60, // Changed to 60 min (one hour)
+    //   };
+    //   newSleepData[0] = initialWake;
+    // } else if (firstNonWakeIndex === -1 || firstNonWakeIndex > 0) {
+    //   newSleepData?.unshift({
+    //     stage: "AWAKE",
+    //     duration: 60, // Changed to 60 min (one hour)
+    //     isWakeEvent: false,
+    //   });
+    // }
 
     if (lastNonWakeIndex < newSleepData?.length - 1) {
       for (let i = newSleepData?.length - 1; i > lastNonWakeIndex; i--) {
@@ -93,12 +97,6 @@ const SleepCycleAnimated: React.FC<SleepCycleAnimatedProps> = ({
           newSleepData?.splice(i, 1);
         }
       }
-    } else {
-      newSleepData?.push({
-        stage: "AWAKE",
-        duration: 15,
-        isWakeEvent: false,
-      });
     }
 
     setModifiedSleepData(newSleepData);
@@ -111,12 +109,17 @@ const SleepCycleAnimated: React.FC<SleepCycleAnimatedProps> = ({
 
     const totalSleep = newSleepData?.reduce(
       (acc, segment) =>
-        segment.stage !== "AWAKE" || segment.isWakeEvent
-          ? acc + segment.duration
-          : acc,
+        // segment.stage !== "AWAKE" ? acc + segment.duration : acc,
+        acc + segment.duration,
       0
     );
-    setTotalSleepMinutes(totalSleep);
+    const totalWake = newSleepData?.reduce(
+      (acc, segment) =>
+        segment.stage === "AWAKE" ? acc + segment.duration : acc,
+      0
+    );
+
+    setTotalSleepMinutes(totalSleep - totalWake);
   }, [sleepData]);
 
   const chartData = modifiedSleepData?.map((segment, index) => {
@@ -356,10 +359,10 @@ const SleepCycleAnimated: React.FC<SleepCycleAnimatedProps> = ({
                       x="100"
                       y="95"
                       textAnchor="middle"
-                      fontSize="24"
+                      fontSize="22"
                       fontWeight="bold"
                     >
-                      {formatHoursMinutes(totalSleepMinutes || 0)}
+                      {totalSleep?.split(":")[0]}h {totalSleep?.split(":")[1]}m
                     </text>
                     <text
                       x="100"
@@ -457,7 +460,7 @@ const SleepCycleAnimated: React.FC<SleepCycleAnimatedProps> = ({
             </div> */}
             <div className="bg-gray-50 p-2 rounded-md">
               <div className="font-medium">
-                {formatHoursMinutes(totalSleepMinutes || 0)}
+                {totalSleep?.split(":")[0]}h {totalSleep?.split(":")[1]}m
               </div>
               <div className="text-gray-500">Sleep</div>
             </div>

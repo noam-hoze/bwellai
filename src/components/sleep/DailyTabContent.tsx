@@ -97,7 +97,7 @@ function convertAndGroupSleepData(
     } else {
       result?.push({
         stage: currentStage,
-        duration: Math.round(totalSeconds / 60),
+        duration: Number((totalSeconds / 60).toFixed(2)),
         ...(currentStage === "AWAKE"
           ? { isWakeEvent: isWake && result?.length > 0 }
           : {}),
@@ -112,7 +112,7 @@ function convertAndGroupSleepData(
   // Push the final group
   result?.push({
     stage: currentStage,
-    duration: Math.round(totalSeconds / 60),
+    duration: Number((totalSeconds / 60).toFixed(2)),
     ...(currentStage === "AWAKE" ? { isWakeEvent: result?.length > 0 } : {}),
   });
 
@@ -284,6 +284,10 @@ const DailyTabContent = ({
                   endTime={formatTo12Hour(
                     wearableDailyData?.finalDailySpikeSleepDataV4?.bedtime_end
                   )}
+                  totalSleep={convertSecondsToHHMM(
+                    wearableDailyData?.finalDailySpikeSleepDataV4
+                      ?.total_sleep || 0
+                  )}
                 />
               </CarouselItem>
               <CarouselItem>
@@ -294,6 +298,10 @@ const DailyTabContent = ({
                   )}
                   endTime={formatTo12Hour(
                     wearableDailyData?.finalDailySpikeSleepDataV4?.bedtime_end
+                  )}
+                  totalSleep={convertSecondsToHHMM(
+                    wearableDailyData?.finalDailySpikeSleepDataV4
+                      ?.total_sleep || 0
                   )}
                 />
               </CarouselItem>
@@ -376,6 +384,9 @@ const DailyTabContent = ({
             endTime={formatTo12Hour(
               wearableDailyData?.finalDailySpikeSleepDataV4?.bedtime_end
             )}
+            totalSleep={convertSecondsToHHMM(
+              wearableDailyData?.finalDailySpikeSleepDataV4?.total_sleep || 0
+            )}
           />
 
           <SleepQualityCard
@@ -428,6 +439,9 @@ const DailyTabContent = ({
             )}
             endTime={formatTo12Hour(
               wearableDailyData?.finalDailySpikeSleepDataV4?.bedtime_end
+            )}
+            totalSleep={convertSecondsToHHMM(
+              wearableDailyData?.finalDailySpikeSleepDataV4?.total_sleep || 0
             )}
           />
         </div>

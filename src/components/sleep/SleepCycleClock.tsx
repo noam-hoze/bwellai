@@ -30,6 +30,7 @@ interface SleepCycleClockProps {
   title?: string;
   startTime?: string;
   endTime?: string;
+  totalSleep?: string;
 }
 
 const SleepCycleClock: React.FC<SleepCycleClockProps> = ({
@@ -37,6 +38,7 @@ const SleepCycleClock: React.FC<SleepCycleClockProps> = ({
   title = "Sleep Clock",
   startTime,
   endTime,
+  totalSleep,
 }) => {
   // Calculate total duration
   const totalDuration = sleepData?.reduce(
@@ -441,8 +443,9 @@ const SleepCycleClock: React.FC<SleepCycleClockProps> = ({
             </svg>
 
             <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-              <div className="text-3xl font-bold">
-                {formatHoursMinutes(totalSleepMinutes || 0)}
+              <div className="text-2xl font-bold">
+                {/* {formatHoursMinutes(totalSleepMinutes || 0)} */}
+                {totalSleep?.split(":")[0]}h {totalSleep?.split(":")[1]}m
               </div>
               <div className="text-sm text-gray-500">Total Sleep</div>
             </div>
@@ -457,7 +460,7 @@ const SleepCycleClock: React.FC<SleepCycleClockProps> = ({
             </div> */}
             <div className="bg-gray-50 p-2 rounded-md">
               <div className="font-medium">
-                {formatHoursMinutes(totalSleepMinutes || 0)}
+                {totalSleep?.split(":")[0]}h {totalSleep?.split(":")[1]}m
               </div>
               <div className="text-gray-500">Sleep</div>
             </div>
