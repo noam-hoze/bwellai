@@ -295,7 +295,7 @@ const ReportDetail = () => {
               </Button>
             </Link>
             <h1 className="text-3xl font-bold">
-              {userPreviousData?.reportName}
+              {userPreviousData?.reportName || report?.title}
             </h1>
           </div>
 
@@ -313,7 +313,7 @@ const ReportDetail = () => {
                 </span>
               </div>
               <p className="text-gray-500 text-sm mt-1">
-                Order #: {userPreviousData?.reportId}
+                Order #: {userPreviousData?.reportId || report?.id}
               </p>
 
               {/* View Test Details Link */}
