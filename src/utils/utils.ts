@@ -311,3 +311,25 @@ export const convertWeightValueUnits = (
 
   return newValue;
 };
+
+export const getReportSignalTextCalc = ({
+  testResultValue,
+  minParameterValue,
+  maxParameterValue,
+}: {
+  testResultValue: number | string;
+  minParameterValue: number | string;
+  maxParameterValue: number | string;
+}): "low" | "normal" | "high" => {
+  const nt = Number(testResultValue);
+  const nMin = Number(minParameterValue);
+  const nMax = Number(maxParameterValue);
+
+  if (nt <= nMin && nt >= nMax) {
+    return "normal";
+  } else if (nt > nMax) {
+    return "high";
+  } else {
+    return "low";
+  }
+};

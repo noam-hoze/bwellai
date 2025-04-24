@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { CheckCircle2 } from "lucide-react";
@@ -14,7 +13,9 @@ const ProtocolTracker = () => {
   return (
     <Card className="animate-fade-in">
       <CardHeader className="flex flex-row items-center justify-between pb-2">
-        <CardTitle className="text-xl font-semibold">Protocol Tracker</CardTitle>
+        <CardTitle className="text-xl font-semibold">
+          Protocol Tracker{" "}
+        </CardTitle>
         <CheckCircle2 className="h-5 w-5 text-green-500" />
       </CardHeader>
       <CardContent>
@@ -25,7 +26,11 @@ const ProtocolTracker = () => {
                 <span>{protocol.name}</span>
                 <span>{protocol.progress}%</span>
               </div>
-              <Progress value={protocol.progress} indicatorColor={protocol.color} className="h-2" />
+              <Progress
+                value={protocol.progress}
+                indicatorColor={protocol.color}
+                className="h-2"
+              />
             </div>
           ))}
         </div>

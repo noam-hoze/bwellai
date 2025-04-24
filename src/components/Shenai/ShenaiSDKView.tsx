@@ -242,7 +242,7 @@ export const ShenaiSDKView = ({ setStep }) => {
               <Button
                 variant="accent"
                 onClick={initialize}
-                className="w-40 mt-4"
+                className="w-40 mt-4 bg-orange-500 hover:bg-orange-600"
               >
                 {/* <X className="mr-2 h-4 w-4" /> */}
                 Start Scan

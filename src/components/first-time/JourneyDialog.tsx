@@ -138,7 +138,9 @@ const JourneyDialog = ({
         </div>
 
         <div className="text-center mb-8">
-          {sortedSteps?.[currentStep]?.icon}
+          <div className="flex justify-center items-center">
+            {sortedSteps?.[currentStep]?.icon}
+          </div>
           <h2 className="text-2xl font-bold mt-4 mb-2">
             {sortedSteps?.[currentStep]?.title}
           </h2>

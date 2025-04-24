@@ -504,6 +504,10 @@ const OnboardingScreen = () => {
                 name="privacy-consent"
                 type="checkbox"
                 className="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded"
+                value={userInfo?.privacyConsent}
+                onChange={(e) => {
+                  updateUserInfo("privacyConsent", e.target.checked);
+                }}
               />
               <label
                 htmlFor="privacy-consent"
@@ -659,7 +663,7 @@ const OnboardingScreen = () => {
           {!isMobile && currentStep < steps.length - 1 && (
             <button
               className="bg-green-800 text-white px-4 py-1 rounded-full text-sm font-medium hover:bg-green-700"
-              onClick={() => setCurrentStep(steps.length - 1)}
+              onClick={() => setCurrentStep(steps.length - 2)}
             >
               Sign In
             </button>
@@ -697,8 +701,13 @@ const OnboardingScreen = () => {
             )}
 
             <button
-              className="flex-1 py-3 px-4 bg-green-800 rounded-lg text-white font-medium hover:bg-green-700"
+              className={`flex-1 py-3 px-4 rounded-lg text-white font-medium ${
+                currentStep === 3 && !userInfo?.privacyConsent
+                  ? "bg-gray-400"
+                  : "bg-green-800 hover:bg-green-700"
+              }`}
               onClick={nextStep}
+              disabled={currentStep === 3 && !userInfo?.privacyConsent}
             >
               Continue
             </button>

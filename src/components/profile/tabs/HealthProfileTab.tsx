@@ -25,6 +25,7 @@ import {
   allergiesData,
   CommonGeneVariantsData,
   CommonGeneVariantsDataDescriptionMapping,
+  currentMedicationOptionsData,
   ExerciseFrequency,
 } from "@/modules/constant/profile";
 import { useGetCreateProfile } from "@/service/hooks/profile/useGetCreateProfile";
@@ -128,7 +129,7 @@ const HealthProfileTab = ({
 
   const [selectedConditions, setSelectedConditions] = useState<string[]>([]);
   const [selectedAllergies, setSelectedAllergies] = useState<string[]>([]);
-  const [bloodType, setBloodType] = useState<string>("");
+  const [bloodType, setBloodType] = useState<string>("unknown");
   const [medications, setMedications] = useState<string[]>([]);
 
   const [geneVariant, setGeneVariant] = useState<string>("");
@@ -136,7 +137,10 @@ const HealthProfileTab = ({
   const [openAllergy, setOpenAllergy] = useState(false);
   // New allergies autocomplete states
   const [allergySearchValue, setAllergySearchValue] = useState("");
+  const [medicalConditionValue, setmedicalConditionValue] = useState("");
+
   const [isAllergyPopoverOpen, setIsAllergyPopoverOpen] = useState(false);
+  const [isMedicalPopoverOpen, setIsMedicalPopoverOpen] = useState(false);
 
   const {
     mutate: createProfileMutate,
@@ -165,14 +169,6 @@ const HealthProfileTab = ({
 
       const heightInMeters = heightValue / 100;
       const bmiValue = weightValue / (heightInMeters * heightInMeters);
-      console.log({
-        weight,
-        height,
-        weightValue,
-        heightValue,
-        heightInMeters,
-        bmiValue,
-      });
 
       setBmi(parseFloat(bmiValue.toFixed(1)));
     }
@@ -237,9 +233,10 @@ const HealthProfileTab = ({
           "Are you currently taking any medications?"
         ]?.answersArray || []
       );
+
       setBloodType(
         getProfileIsData?.additionalDetails?.["What is your blood type?"]
-          ?.answersArray?.[0] || []
+          ?.answersArray?.[0] || "unknown"
       );
     }
   }, [
@@ -364,6 +361,16 @@ const HealthProfileTab = ({
     setAllergySearchValue("");
     setIsAllergyPopoverOpen(false);
   };
+  const handleAddMedicalCondition = (medicalCondition: string) => {
+    if (
+      !selectedAllergies.includes(medicalCondition) &&
+      medicalCondition.trim() !== ""
+    ) {
+      setMedications((prev) => [...prev, medicalCondition]);
+    }
+    setmedicalConditionValue("");
+    setIsMedicalPopoverOpen(false);
+  };
 
   const filteredConditions = additionalConditions?.filter(
     (condition) =>
@@ -377,8 +384,6 @@ const HealthProfileTab = ({
       !selectedAllergies.includes(allergy.id) &&
       allergy.label.toLowerCase().includes(allergySearchValue.toLowerCase())
   );
-
-  console.log(bmi);
 
   return (
     <div className="space-y-6">
@@ -720,32 +725,91 @@ const HealthProfileTab = ({
                 Are you currently taking any medications?
               </Label>
 
-              <Input
-                id="medications"
-                placeholder="List any medications, supplements, or vitamins you are currently taking"
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" && e.currentTarget.value.trim()) {
-                    const newMedication = e.currentTarget.value.trim();
-                    handleMedicationChange(newMedication);
-                    e.currentTarget.value = "";
-                  }
-                }}
-              />
+              <div className="mt-3">
+                <Popover
+                  open={isMedicalPopoverOpen}
+                  onOpenChange={setIsMedicalPopoverOpen}
+                >
+                  <PopoverTrigger asChild>
+                    <div className="flex w-full items-center">
+                      <Input
+                        id="medications"
+                        placeholder="List any medications, supplements, or vitamins you are currently taking"
+                        value={medicalConditionValue}
+                        onChange={(e) =>
+                          setmedicalConditionValue(e.target.value)
+                        }
+                        onClick={() => setIsMedicalPopoverOpen(true)}
+                        onKeyDown={(e) => {
+                          if (
+                            e.key === "Enter" &&
+                            e.currentTarget.value.trim()
+                          ) {
+                            const newMedication = e.currentTarget.value.trim();
+                            handleMedicationChange(newMedication);
+                            e.currentTarget.value = "";
+                          }
+                        }}
+                      />
+                    </div>
+                  </PopoverTrigger>
+                  <PopoverContent className="p-0 w-full" align="start">
+                    <Command>
+                      <CommandInput
+                        placeholder="Search allergies..."
+                        value={medicalConditionValue}
+                        onValueChange={setmedicalConditionValue}
+                      />
+                      <CommandList>
+                        <CommandEmpty>No Medication found</CommandEmpty>
+                        <CommandGroup>
+                          {currentMedicationOptionsData.map((medicals) => (
+                            <CommandItem
+                              key={medicals.id}
+                              onSelect={() =>
+                                handleAddMedicalCondition(medicals.id)
+                              }
+                            >
+                              {medicals.label}
+                            </CommandItem>
+                          ))}
+                          {medicalConditionValue.trim() !== "" &&
+                            !currentMedicationOptionsData.some(
+                              (a) =>
+                                a.label.toLowerCase() ===
+                                medicalConditionValue.toLowerCase()
+                            ) && (
+                              <CommandItem
+                                onSelect={() =>
+                                  handleAddMedicalCondition(
+                                    medicalConditionValue
+                                  )
+                                }
+                              >
+                                Add "{medicalConditionValue}"
+                              </CommandItem>
+                            )}
+                        </CommandGroup>
+                      </CommandList>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
+              </div>
 
               {medications?.length > 0 && (
                 <div className="mt-3">
                   <div className="flex flex-wrap gap-2">
-                    {medications?.map((allergy) => (
+                    {medications?.map((medication) => (
                       <div
-                        key={allergy}
+                        key={medication}
                         className="flex items-center gap-1 bg-wellness-light-green py-1 px-2 rounded-full text-sm"
                       >
                         <span>
-                          {commonMedication?.find((a) => a.id === allergy)
-                            ?.label || allergy}
+                          {commonMedication?.find((a) => a.id === medication)
+                            ?.label || medication}
                         </span>
                         <button
-                          onClick={() => handleMedicationChange(allergy)}
+                          onClick={() => handleMedicationChange(medication)}
                           className="text-wellness-muted-black hover:text-wellness-bright-green transition-colors"
                         >
                           ×

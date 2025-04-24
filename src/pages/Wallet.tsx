@@ -312,9 +312,11 @@ const Wallet = () => {
           </CardHeader>
           <CardContent>
             <div className="bg-muted p-3 rounded-md flex items-center justify-between">
-              <code className="text-sm font-mono">
-                {userWalletData?.ethAddress}
-              </code>
+              <div className="overflow-hidden ">
+                <code className="text-sm font-mono">
+                  {userWalletData?.ethAddress}
+                </code>
+              </div>
               <div className="flex items-center justify-between">
                 <Button
                   variant="ghost"
