@@ -24,13 +24,17 @@ import {
 import { formatDateToShortMonth } from "@/utils/utils";
 
 interface Report {
+  id?: number;
+  title?: string;
+  description?: string;
+
   reportId: number;
   reportName: string;
   createdAt: string;
   testDate: string;
   fileType: string;
   fileSize: string;
-  url: string;
+  url?: string;
   concernCount?: number;
 }
 
@@ -64,7 +68,10 @@ const ReportListItem = ({ report, onDelete }: ReportListItemProps) => {
   return (
     <div className="hover:bg-gray-50 transition-colors">
       <div className="p-5 flex justify-between items-center">
-        <Link to={`/report/${report?.reportId}`} className="flex-1">
+        <Link
+          to={`/report/${report?.reportId || report?.id}`}
+          className="flex-1"
+        >
           <div className="flex items-center gap-2">
             <h3 className="text-lg font-semibold text-gray-800">
               {report?.reportName || report?.title}
