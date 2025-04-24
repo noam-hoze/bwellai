@@ -226,7 +226,7 @@ const HealthNavigator = () => {
           <div className="flex items-center justify-center overflow-hidden"></div>
 
           <div className="relative flex flex-col md:flex-row items-start">
-            <div className="w-full md:w-1/2 flex items-center justify-center overflow-hidden">
+            <div className="w-full flex items-center justify-center overflow-hidden">
               <ManBody handleOrganClick={handleOrganClick} />
             </div>
 
