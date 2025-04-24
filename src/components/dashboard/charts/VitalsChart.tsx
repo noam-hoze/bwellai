@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartContainer } from "@/components/ui/chart";
 import { Heart } from "lucide-react";
@@ -16,7 +15,12 @@ const VitalsChart = () => {
   return (
     <Card className="animate-fade-in">
       <CardHeader className="flex flex-row items-center justify-between pb-2">
-        <CardTitle className="text-lg font-semibold">Vitals Trends</CardTitle>
+        <CardTitle className="flex gap-2 text-lg font-semibold">
+          Vitals Trends{" "}
+          <div className="px-2 py-0.5 bg-gray-100 text-gray-600 text-xs font-medium rounded-full flex items-center">
+            coming soon
+          </div>
+        </CardTitle>
         <Heart className="h-5 w-5 text-red-500" />
       </CardHeader>
       <CardContent>
@@ -25,19 +29,19 @@ const VitalsChart = () => {
             <XAxis dataKey="date" />
             <YAxis />
             <Tooltip />
-            <Line 
-              type="monotone" 
-              dataKey="heart" 
-              stroke="#ef4444" 
+            <Line
+              type="monotone"
+              dataKey="heart"
+              stroke="#ef4444"
               strokeWidth={2}
-              dot={{ fill: "#ef4444" }} 
+              dot={{ fill: "#ef4444" }}
             />
-            <Line 
-              type="monotone" 
-              dataKey="bp" 
-              stroke="#3b82f6" 
+            <Line
+              type="monotone"
+              dataKey="bp"
+              stroke="#3b82f6"
               strokeWidth={2}
-              dot={{ fill: "#3b82f6" }} 
+              dot={{ fill: "#3b82f6" }}
             />
           </LineChart>
         </ChartContainer>
