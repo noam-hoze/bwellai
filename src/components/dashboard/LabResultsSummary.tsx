@@ -1,42 +1,46 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FileText, TrendingUp, TrendingDown } from "lucide-react";
 
 const LabResultsSummary = () => {
   const results = [
-    { 
-      name: "Vitamin D", 
-      value: "32 ng/mL", 
-      change: "up", 
+    {
+      name: "Vitamin D",
+      value: "32 ng/mL",
+      change: "up",
       status: "normal",
-      date: "2025-04-10" 
+      date: "2025-04-10",
     },
-    { 
-      name: "Cholesterol", 
-      value: "195 mg/dL", 
-      change: "down", 
+    {
+      name: "Cholesterol",
+      value: "195 mg/dL",
+      change: "down",
       status: "normal",
-      date: "2025-04-10"
+      date: "2025-04-10",
     },
-    { 
-      name: "Blood Glucose", 
-      value: "89 mg/dL", 
-      change: "neutral", 
+    {
+      name: "Blood Glucose",
+      value: "89 mg/dL",
+      change: "neutral",
       status: "normal",
-      date: "2025-04-10"
-    }
+      date: "2025-04-10",
+    },
   ];
 
   return (
     <Card className="animate-fade-in">
       <CardHeader className="flex flex-row items-center justify-between pb-2">
-        <CardTitle className="text-xl font-semibold">Recent Lab Results</CardTitle>
+        <CardTitle className="flex gap-2 text-xl font-semibold">
+          Recent Lab Results{" "}
+          <div className="px-2 py-0.5 bg-gray-100 text-gray-600 text-xs font-medium rounded-full flex items-center">
+            coming soon
+          </div>
+        </CardTitle>
         <FileText className="h-5 w-5 text-blue-500" />
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
           {results.map((result) => (
-            <div 
+            <div
               key={result.name}
               className="flex items-center justify-between p-2 rounded-lg bg-gray-50"
             >

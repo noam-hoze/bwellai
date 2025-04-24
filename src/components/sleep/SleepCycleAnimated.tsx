@@ -56,8 +56,6 @@ const SleepCycleAnimated: React.FC<SleepCycleAnimatedProps> = ({
     []
   );
 
-  console.log(totalSleep);
-
   useEffect(() => {
     const firstNonWakeIndex = sleepData?.findIndex(
       (segment) => segment.stage !== "AWAKE" || segment.isWakeEvent

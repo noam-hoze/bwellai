@@ -1,4 +1,5 @@
 import React from "react";
+import { parse, differenceInMinutes } from "date-fns";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Clock, Info } from "lucide-react";
 import {
@@ -16,6 +17,7 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
+import { calcAngle } from "@/utils/utils";
 
 // Sleep stage colors - updated with new colors
 const COLORS = {
@@ -121,62 +123,126 @@ const SleepCycleClock: React.FC<SleepCycleClockProps> = ({
   })();
 
   // Generate clock segments
-  const clockSegments = sleepData?.map((segment, index) => {
-    // Calculate previous segments' total duration
-    const previousDuration = sleepData
-      .slice(0, index)
-      .reduce((acc, seg) => acc + seg.duration, 0);
+  // const clockSegments = sleepData?.map((segment, index) => {
+  //   // Calculate previous segments' total duration
+  //   const previousDuration = sleepData
+  //     .slice(0, index)
+  //     .reduce((acc, seg) => acc + seg.duration, 0);
 
-    // Calculate segment position as a percentage
-    const startPercent = (previousDuration / totalDuration) * 100;
-    const endPercent =
-      ((previousDuration + segment.duration) / totalDuration) * 100;
+  //   // Calculate segment position as a percentage
+  //   const startPercent = (previousDuration / totalDuration) * 100;
+  //   const endPercent =
+  //     ((previousDuration + segment.duration) / totalDuration) * 100;
 
-    // Map to the clock arc (11PM to 7AM)
-    const startDegree =
-      clockStartDegree + (startPercent / 100) * totalClockArcDegrees;
-    const endDegree =
-      clockStartDegree + (endPercent / 100) * totalClockArcDegrees;
+  //   // Map to the clock arc (11PM to 7AM)
+  //   const startDegree =
+  //     clockStartDegree + (startPercent / 100) * totalClockArcDegrees;
+  //   const endDegree =
+  //     clockStartDegree + (endPercent / 100) * totalClockArcDegrees;
 
-    // Identify before/after sleep segments using the same manual approach
-    // First non-wake index
-    let firstNonWakeIndex = sleepData?.findIndex(
-      (s) => s.stage !== "AWAKE" || s.isWakeEvent
-    );
-    if (firstNonWakeIndex === -1) firstNonWakeIndex = 0;
+  //   // Identify before/after sleep segments using the same manual approach
+  //   // First non-wake index
+  //   let firstNonWakeIndex = sleepData?.findIndex(
+  //     (s) => s.stage !== "AWAKE" || s.isWakeEvent
+  //   );
+  //   if (firstNonWakeIndex === -1) firstNonWakeIndex = 0;
 
-    // Last non-wake index (manual implementation)
-    let lastNonWakeIndex = -1;
-    for (let i = 0; i < sleepData?.length; i++) {
-      if (sleepData?.[i]?.stage !== "AWAKE" || sleepData?.[i]?.isWakeEvent) {
-        lastNonWakeIndex = i;
-      }
+  //   // Last non-wake index (manual implementation)
+  //   let lastNonWakeIndex = -1;
+  //   for (let i = 0; i < sleepData?.length; i++) {
+  //     if (sleepData?.[i]?.stage !== "AWAKE" || sleepData?.[i]?.isWakeEvent) {
+  //       lastNonWakeIndex = i;
+  //     }
+  //   }
+
+  //   const isBeforeSleep =
+  //     segment.stage === "AWAKE" &&
+  //     !segment.isWakeEvent &&
+  //     index < firstNonWakeIndex;
+  //   const isAfterSleep =
+  //     segment.stage === "AWAKE" &&
+  //     !segment.isWakeEvent &&
+  //     index > lastNonWakeIndex;
+
+  //   return {
+  //     stage: segment.stage,
+  //     startDegree,
+  //     endDegree,
+  //     isWakeEvent: segment.isWakeEvent,
+  //     isBeforeSleep,
+  //     isAfterSleep,
+  //     duration: segment.duration,
+  //   };
+  // });
+
+  const generateClockSegments = (sleepData, startTime, endTime) => {
+    const parsedStart = parse(startTime, "hh:mm a", new Date());
+    const parsedEnd = parse(endTime, "hh:mm a", new Date());
+
+    // Handle overnight (end is next day)
+    if (parsedEnd < parsedStart) {
+      parsedEnd?.setDate(parsedEnd?.getDate() + 1);
     }
 
-    const isBeforeSleep =
-      segment.stage === "AWAKE" &&
-      !segment.isWakeEvent &&
-      index < firstNonWakeIndex;
-    const isAfterSleep =
-      segment.stage === "AWAKE" &&
-      !segment.isWakeEvent &&
-      index > lastNonWakeIndex;
+    const sleepDurationMinutes = differenceInMinutes(parsedEnd, parsedStart);
+    const clockSegments = [];
 
-    return {
-      stage: segment.stage,
-      startDegree,
-      endDegree,
-      isWakeEvent: segment.isWakeEvent,
-      isBeforeSleep,
-      isAfterSleep,
-      duration: segment.duration,
-    };
-  });
+    // How much of a full circle this sleep duration takes
+    const arcDegrees = (sleepDurationMinutes / (12 * 60)) * 360; // 12hr = 360°
+    const clockStartAngle = 270; // midnight at top
+
+    const firstNonWakeIndex = sleepData?.findIndex(
+      (s) => s.stage !== "AWAKE" || s.isWakeEvent
+    );
+    const lastNonWakeIndex =
+      [...sleepData]
+        ?.reverse()
+        ?.findIndex((s) => s?.stage !== "AWAKE" || s?.isWakeEvent) === -1
+        ? sleepData?.length - 1
+        : sleepData?.length -
+          1 -
+          [...sleepData]
+            ?.reverse()
+            ?.findIndex((s) => s?.stage !== "AWAKE" || s?.isWakeEvent);
+
+    let cumulativeDuration = 0;
+
+    for (let i = 0; i < sleepData?.length; i++) {
+      const segment = sleepData?.[i];
+      const startPercent = cumulativeDuration / sleepDurationMinutes;
+      const segmentDuration = segment?.duration;
+      cumulativeDuration += segmentDuration;
+      const endPercent = cumulativeDuration / sleepDurationMinutes;
+
+      const startDegree = clockStartAngle + startPercent * arcDegrees;
+      const endDegree = clockStartAngle + endPercent * arcDegrees;
+
+      const isBeforeSleep =
+        segment?.stage === "AWAKE" &&
+        !segment?.isWakeEvent &&
+        i < firstNonWakeIndex;
+
+      const isAfterSleep =
+        segment?.stage === "AWAKE" &&
+        !segment?.isWakeEvent &&
+        i > lastNonWakeIndex;
+
+      clockSegments.push({
+        ...segment,
+        startDegree,
+        endDegree,
+        isBeforeSleep,
+        isAfterSleep,
+      });
+    }
+
+    return clockSegments;
+  };
 
   // Calculate total sleep minutes (excluding initial/final wake periods)
   const totalSleepMinutes = sleepData?.reduce((acc, segment) => {
-    if (segment.stage !== "AWAKE" || segment.isWakeEvent) {
-      return acc + segment.duration;
+    if (segment?.stage !== "AWAKE" || segment?.isWakeEvent) {
+      return acc + segment?.duration;
     }
     return acc;
   }, 0);
@@ -338,6 +404,7 @@ const SleepCycleClock: React.FC<SleepCycleClockProps> = ({
                 const innerY = 100 + 75 * Math.sin(angle);
                 const outerX = 100 + 80 * Math.cos(angle);
                 const outerY = 100 + 80 * Math.sin(angle);
+
                 return (
                   <line
                     key={i}
@@ -352,45 +419,47 @@ const SleepCycleClock: React.FC<SleepCycleClockProps> = ({
               })}
 
               {/* Sleep segments as rings/arcs */}
-              {clockSegments?.map((segment, index) => {
-                // For wake periods before/after sleep, use different styling
-                let opacity = 1;
-                const color = COLORS[segment.stage];
+              {generateClockSegments(sleepData, startTime, endTime)?.map(
+                (segment, index) => {
+                  // For wake periods before/after sleep, use different styling
+                  let opacity = 1;
+                  const color = COLORS[segment.stage];
 
-                if (segment.isBeforeSleep || segment.isAfterSleep) {
-                  opacity = 0.4; // More transparent for wake periods
+                  if (segment.isBeforeSleep || segment.isAfterSleep) {
+                    opacity = 0.4; // More transparent for wake periods
+                  }
+
+                  return (
+                    <Tooltip key={index}>
+                      <TooltipTrigger asChild>
+                        <path
+                          d={calculateArcPath(
+                            segment.startDegree,
+                            segment.endDegree,
+                            60,
+                            70
+                          )}
+                          fill={color}
+                          opacity={opacity}
+                          stroke="white"
+                          strokeWidth="0.5"
+                          data-stage={segment.stage}
+                          className="hover:opacity-80 hover:stroke-slate-300 hover:stroke-[1.5px] transition-all cursor-pointer"
+                        />
+                      </TooltipTrigger>
+                      <TooltipContent
+                        side="top"
+                        className="bg-white p-2 shadow-md rounded-md text-xs z-50"
+                      >
+                        <p className="font-medium">
+                          {getSegmentDescription(segment)}
+                        </p>
+                        <p>{`Duration: ${Math.round(segment.duration)} min`}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  );
                 }
-
-                return (
-                  <Tooltip key={index}>
-                    <TooltipTrigger asChild>
-                      <path
-                        d={calculateArcPath(
-                          segment.startDegree,
-                          segment.endDegree,
-                          60,
-                          70
-                        )}
-                        fill={color}
-                        opacity={opacity}
-                        stroke="white"
-                        strokeWidth="0.5"
-                        data-stage={segment.stage}
-                        className="hover:opacity-80 hover:stroke-slate-300 hover:stroke-[1.5px] transition-all cursor-pointer"
-                      />
-                    </TooltipTrigger>
-                    <TooltipContent
-                      side="top"
-                      className="bg-white p-2 shadow-md rounded-md text-xs z-50"
-                    >
-                      <p className="font-medium">
-                        {getSegmentDescription(segment)}
-                      </p>
-                      <p>{`Duration: ${Math.round(segment.duration)} min`}</p>
-                    </TooltipContent>
-                  </Tooltip>
-                );
-              })}
+              )}
 
               {/* Center point */}
               <circle
