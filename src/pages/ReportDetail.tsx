@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import Header from "@/components/layout/Header";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -35,17 +35,20 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { n } from "node_modules/framer-motion/dist/types.d-B50aGbjN";
 
 const ReportDetail = () => {
   const { id } = useParams();
   const [activeTab, setActiveTab] = useState("report");
   const [secondaryTab, setSecondaryTab] = useState("key-findings");
   const [perspective, setPerspective] = useState("MODERN_MEDICINE");
+  const navigate = useNavigate();
 
   const [processingReport, setProcessingReport] = useState(false);
   const [biomarkerResponses, setBiomarkerResponses] = useState({});
   const [panelAnalysisResponses, setPanelAnalysisResponses] = useState({});
   const [shareModalOpen, setShareModalOpen] = useState(false);
+  const [planeLimitModalOpen, setPlaneLimitModalOpen] = useState(false);
 
   const [biomarkerDataStatus, setBiomarkerDataStatus] = useState({
     isLoading: false,
@@ -268,6 +271,11 @@ const ReportDetail = () => {
         userPreviousData?.data?.resultData?.length === 0
       ) {
         setProcessingReport(false);
+      }
+
+      if (userPreviousData?.code === 403) {
+        console.log("403 error");
+        setPlaneLimitModalOpen(true);
       }
     }
 
@@ -492,6 +500,36 @@ const ReportDetail = () => {
                     size="icon"
                     className="text-white"
                     onClick={() => setShareModalOpen(false)}
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                </DialogClose>
+              </DialogHeader>
+            </DialogContent>
+          </Dialog>
+
+          <Dialog
+            open={planeLimitModalOpen}
+            onOpenChange={() => setPlaneLimitModalOpen(false)}
+          >
+            <DialogContent className="sm:max-w-md p-0 overflow-hidden">
+              <DialogHeader>
+                <div className="bg-muted p-3 m-3 mt-10 rounded-md flex items-center justify-between">
+                  <p>Plan Limit is exhausted, Please upgrade the plan</p>
+                  <Button
+                    variant="accent"
+                    className="text-white"
+                    onClick={() => navigate("/subscription-plans")}
+                  >
+                    Upgrade Plan
+                  </Button>
+                </div>
+                <DialogClose asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="text-white"
+                    onClick={() => setPlaneLimitModalOpen(false)}
                   >
                     <X className="h-4 w-4" />
                   </Button>
