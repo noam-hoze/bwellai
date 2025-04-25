@@ -55,7 +55,7 @@ const AccountTab = ({ getProfileIsData }) => {
     localStorage.clear();
     toast.success("Successfully logged out");
     logout();
-    setTimeout(() => navigate("/onboarding/0"), 1500);
+    setTimeout(() => navigate("/welcome"), 1500);
   };
 
   const handleDeleteData = () => {

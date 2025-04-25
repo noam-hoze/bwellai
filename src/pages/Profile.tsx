@@ -14,7 +14,7 @@ const Profile = () => {
   } = useGetUserProfile({ isAuthenticated });
 
   if (!loading && !isAuthenticated) {
-    return <Navigate to="/onboarding/0" replace />;
+    return <Navigate to="/welcome" replace />;
   }
 
   return (

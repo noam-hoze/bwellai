@@ -1,10 +1,11 @@
 import { Link, Navigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import OnboardingLayout from "@/components/onboarding/OnboardingLayout";
-import { useEffect } from "react";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Welcome = () => {
-  if (localStorage.getItem("token")) {
+  const { isAuthenticated } = useAuth();
+  if (isAuthenticated) {
     return <Navigate to="/dashboard" replace />;
   }
 
@@ -28,9 +29,9 @@ const Welcome = () => {
           </div>
 
           <div className="space-y-4 pt-8">
-            {/* <Button className="w-full py-6 text-lg" size="lg" asChild>
-              <Link to="/onboarding/1">Get Started</Link>
-            </Button> */}
+            <Button className="w-full py-6 text-lg" size="lg" asChild>
+              <Link to="/onboarding/0">Get Started</Link>
+            </Button>
 
             <Button
               variant="outline"
@@ -38,7 +39,7 @@ const Welcome = () => {
               size="lg"
               asChild
             >
-              <Link to="/auth/login">Sign In</Link>
+              <Link to="/onboarding/4">Sign In</Link>
             </Button>
           </div>
         </div>

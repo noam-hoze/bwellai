@@ -1,5 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import {
+  useNavigate,
+  Link,
+  useSearchParams,
+  useParams,
+} from "react-router-dom";
 import OnboardingLayout from "@/components/onboarding/OnboardingLayout";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -23,6 +28,8 @@ import GoogleRedirectLoginButton from "@/components/auth/GoogleRedirectLoginButt
 import GoalsStep from "@/components/onboarding/GoalsStep";
 
 const OnboardingScreen = () => {
+  const { step } = useParams();
+
   const [currentStep, setCurrentStep] = useState(0);
   const [otp, setOtp] = useState("");
   const [selectedGoals, setSelectedGoals] = useState<string[]>([]);
@@ -62,6 +69,19 @@ const OnboardingScreen = () => {
     isSuccess: createProfileIsSuccess,
     error: createProfileError,
   } = useGetCreateProfile();
+
+  useEffect(() => {
+    if (step) {
+      const stepIndex = parseInt(step, 10);
+      if (!isNaN(stepIndex) && stepIndex >= 0 && stepIndex < steps.length) {
+        console.log(stepIndex);
+
+        setCurrentStep(stepIndex);
+      } else {
+        navigate("/welcome");
+      }
+    }
+  }, [step]);
 
   const nextStep = () => {
     setCurrentStep((prev) => Math.min(prev + 1, steps.length - 1));

@@ -107,7 +107,7 @@ const Index = () => {
       } catch (error) {
         if (error) {
           console.log(error);
-          navigate("/onboarding/0");
+          navigate("/onboarding/4");
         }
       } finally {
         // setLoading(false);
@@ -121,8 +121,8 @@ const Index = () => {
     console.log({ code });
   }, [code]);
 
-  if (!code && !localStorage.getItem("token")) {
-    return <Navigate to="/onboarding/0" replace />;
+  if (!code && !isAuthenticated) {
+    return <Navigate to="/welcome" replace />;
   }
 
   // http://localhost:8080/dashboard
