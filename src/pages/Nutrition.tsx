@@ -44,8 +44,6 @@ const Nutrition = () => {
     isAuthenticated,
   });
 
-  console.log(favouriteFoodData);
-
   const { mutate: deleteUserFoodData, isSuccess: deleteUserFoodDataIsSuccess } =
     useGetDeleteUserFoodDataFetcher();
 
