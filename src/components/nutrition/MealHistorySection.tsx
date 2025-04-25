@@ -184,6 +184,7 @@ const MealHistorySection = ({
   totalDailyRequiredCalories,
   requiredMicronutrientsBalance,
   deleteUserFoodData,
+  favouriteFoodData,
 }) => {
   const navigate = useNavigate();
   const [expanded, setExpanded] = useState(false);
@@ -309,8 +310,6 @@ const MealHistorySection = ({
   };
 
   const handleMealClick = (meal: any) => {
-    console.log(meal);
-
     const completeMeal = {
       ...meal,
       totalDailyCalories,
@@ -387,7 +386,7 @@ const MealHistorySection = ({
       </div>
 
       {/* Favorites Section */}
-      {loggedMealData?.filter((meal) => meal.is_favourite)?.length > 0 && (
+      {favouriteFoodData?.length > 0 && (
         <div className="mb-6">
           <div className="flex items-center mb-3">
             <Star className="h-5 w-5 text-yellow-500 fill-current mr-2" />
@@ -395,22 +394,20 @@ const MealHistorySection = ({
           </div>
           <Carousel className="w-full">
             <CarouselContent className="-ml-2 md:-ml-4">
-              {loggedMealData
-                ?.filter((meal) => meal.is_favourite)
-                ?.map((meal) => (
-                  <CarouselItem
-                    key={`fav-${meal.id}`}
-                    className="pl-2 md:pl-4 basis-auto"
-                  >
-                    <FavoriteMealCard
-                      id={meal.id}
-                      meal={meal}
-                      name={meal?.ai_response?.food_name}
-                      type={meal?.meal_type}
-                      onMealClick={handleMealClick}
-                    />
-                  </CarouselItem>
-                ))}
+              {favouriteFoodData?.map((meal) => (
+                <CarouselItem
+                  key={`fav-${meal.id}`}
+                  className="pl-2 md:pl-4 basis-auto"
+                >
+                  <FavoriteMealCard
+                    id={meal.id}
+                    meal={meal}
+                    name={meal?.ai_response?.food_name}
+                    type={meal?.meal_type}
+                    onMealClick={handleMealClick}
+                  />
+                </CarouselItem>
+              ))}
             </CarouselContent>
           </Carousel>
         </div>

@@ -6,6 +6,7 @@ import {
   getLogFoodDataV4Fetcher,
   getSaveUserFoodProfileDataFetcher,
   getUserDefaultFoodReportUploadFetcher,
+  getUserFavouriteFoodv4Fetcher,
   getUserFoodGraphDetailsFetcher,
   getUserFoodProfileListFetcher,
   getUserFoodReportBarCodeDataByReportIdFetcher,
@@ -247,6 +248,24 @@ export const useGetUserFoodReportBarCodeDataByReportIdV4 = ({
         language,
       }),
     enabled: isAuthenticated && reportId ? true : false,
+    retry: 0,
+  });
+
+  return {
+    data: data?.data,
+    error: error,
+    isError,
+    isLoading,
+    isSuccess,
+    refetch,
+  };
+};
+
+export const useGetUserFavouriteFoodV4 = ({ isAuthenticated }) => {
+  const { data, error, isError, isLoading, isSuccess, refetch } = useQuery({
+    queryKey: ["get-user-favourite-food-v4"],
+    queryFn: () => getUserFavouriteFoodv4Fetcher(),
+    enabled: isAuthenticated,
     retry: 0,
   });
 

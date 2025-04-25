@@ -11,6 +11,7 @@ import TrendsInsightsSection from "@/components/nutrition/TrendsInsightsSection"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import {
   useGetDeleteUserFoodDataFetcher,
+  useGetUserFavouriteFoodV4,
   useGetUserFoodReportUpload,
   useGetUserLoggedMealDataFetcherV4,
 } from "@/service/hooks/nutrition/useGetFoodReportUpload";
@@ -38,6 +39,12 @@ const Nutrition = () => {
     isSuccess: getProfileIsSuccess,
     refetch: getUserProfileRefetch,
   } = useGetUserProfile({ isAuthenticated });
+
+  const { data: favouriteFoodData, isSuccess } = useGetUserFavouriteFoodV4({
+    isAuthenticated,
+  });
+
+  console.log(favouriteFoodData);
 
   const { mutate: deleteUserFoodData, isSuccess: deleteUserFoodDataIsSuccess } =
     useGetDeleteUserFoodDataFetcher();
@@ -179,6 +186,7 @@ const Nutrition = () => {
                 totalDailyRequiredCalories={totalDailyRequiredCalories}
                 requiredMicronutrientsBalance={requiredMicronutrientsBalance}
                 deleteUserFoodData={deleteUserFoodData}
+                favouriteFoodData={favouriteFoodData}
               />
               {activeTab === "trends" && <TrendsInsightsSection />}
             </TabsContent>

@@ -117,8 +117,6 @@ const Index = () => {
     if (code) {
       handleSuccess(code);
     }
-
-    console.log({ code });
   }, [code]);
 
   if (!code && !isAuthenticated) {

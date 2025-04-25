@@ -24,6 +24,8 @@ const getUserFoodReportBarCodeDataByReportId = ({ report_id, language }) =>
 const getUserFoodReportBarCodeDataByReportIdv4 = ({ report_id, language }) =>
   `/food/v4/detail?report_id=${report_id}&language=${language}`;
 
+const getUserFavouriteFoodv4 = () => `/food/favourite/v4`;
+
 const getSaveUserFoodProfileData = (reportId) =>
   `/food/profile?report_id=${reportId}`;
 const getFoodTrackerUpload = () => `/food/tracker/upload`;
@@ -77,6 +79,9 @@ export const getUserFoodReportBarCodeDataByReportIdV4Fetcher = ({
   return Client.get(
     getUserFoodReportBarCodeDataByReportIdv4({ report_id, language })
   );
+};
+export const getUserFavouriteFoodv4Fetcher = () => {
+  return Client.get(getUserFavouriteFoodv4());
 };
 export const getUserLatestFoodReportUploadFetcher = () => {
   return Client.get(getUserLatestFoodReportUpload());
