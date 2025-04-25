@@ -84,32 +84,49 @@ const HealthOverview = ({ wearableWeeklyData }) => {
         <div className="grid grid-cols-4 gap-4">
           <HealthScore
             title="Overall"
-            score={userFaceScoreHealthData?.averageScore || "N/A"}
-            change={userFaceScoreHealthData?.scoreDifferencePercentage || 0}
+            score={userFaceScoreHealthData?.averageScore?.toFixed(0) || "N/A"}
+            change={
+              userFaceScoreHealthData?.scoreDifferencePercentage?.toFixed(0) ||
+              0
+            }
             icon={<Heart className="h-5 w-5 text-rose-600" />}
             color="bg-rose-100"
             delay={0.1}
           />
           <HealthScore
             title="Activity"
-            score={userFaceScoreActivityData?.averageScore || "N/A"}
-            change={userFaceScoreActivityData?.scoreDifferencePercentage || 0}
+            score={userFaceScoreActivityData?.averageScore?.toFixed(0) || "N/A"}
+            change={
+              userFaceScoreActivityData?.scoreDifferencePercentage?.toFixed(
+                0
+              ) || 0
+            }
             icon={<Activity className="h-5 w-5 text-green-600" />}
             color="bg-green-100"
             delay={0.2}
           />
           <HealthScore
             title="Sleep"
-            score={wearableWeeklyData?.weeklyAverageSleepScore || "N/A"}
-            change={userFaceScoreSleepData?.scoreDifferencePercentage || 0}
+            score={
+              wearableWeeklyData?.weeklyAverageSleepScore?.toFixed(0) || "N/A"
+            }
+            change={
+              userFaceScoreSleepData?.scoreDifferencePercentage?.toFixed(0) || 0
+            }
             icon={<Moon className="h-5 w-5 text-purple-600" />}
             color="bg-purple-100"
             delay={0.3}
           />
           <HealthScore
             title="Nutrition"
-            score={userFaceScoreNutritionData?.averageScore || "N/A"}
-            change={userFaceScoreNutritionData?.scoreDifferencePercentage || 0}
+            score={
+              userFaceScoreNutritionData?.averageScore?.toFixed(0) || "N/A"
+            }
+            change={
+              userFaceScoreNutritionData?.scoreDifferencePercentage?.toFixed(
+                0
+              ) || 0
+            }
             icon={<Leaf className="h-5 w-5 text-amber-600" />}
             color="bg-amber-100"
             delay={0.4}
