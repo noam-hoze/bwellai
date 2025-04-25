@@ -121,7 +121,7 @@ const Index = () => {
     console.log({ code });
   }, [code]);
 
-  if (!code && !localStorage.getItem("token")) {
+  if (!code && !isAuthenticated) {
     return <Navigate to="/welcome" replace />;
   }
 
