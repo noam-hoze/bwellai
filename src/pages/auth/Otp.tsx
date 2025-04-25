@@ -86,7 +86,7 @@ const OTP = () => {
 
   useEffect(() => {
     if (otpValidationError) {
-      navigate("/onboarding/0");
+      navigate("/onboarding/4");
     }
   }, [otpValidationError]);
 

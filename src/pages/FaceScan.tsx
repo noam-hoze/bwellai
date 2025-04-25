@@ -1931,7 +1931,7 @@ const FaceScan = () => {
 
   const { isAuthenticated, loading } = useAuth();
   if (!loading && !isAuthenticated) {
-    return <Navigate to="/onboarding/0" replace />;
+    return <Navigate to="/welcome" replace />;
   }
 
   return (

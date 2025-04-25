@@ -173,7 +173,7 @@ const Activity = () => {
   }, [connectedDevicesData, debouncedSearch]);
 
   if (!loading && !isAuthenticated) {
-    return <Navigate to="/onboarding/0" replace />;
+    return <Navigate to="/welcome" replace />;
   }
 
   return (

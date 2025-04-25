@@ -236,7 +236,7 @@ const Wallet = () => {
   };
 
   if (!loading && !isAuthenticated) {
-    return <Navigate to="/onboarding/0" replace />;
+    return <Navigate to="/welcome" replace />;
   }
 
   return (
