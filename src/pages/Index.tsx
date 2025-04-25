@@ -37,23 +37,6 @@ const Index = () => {
     refetch: getUserProfileRefetch,
   } = useGetUserProfile({ isAuthenticated });
 
-  const { data: userFaceScoreHealthData } = useGetUserFaceScore(
-    isAuthenticated,
-    "HEALTH"
-  );
-  const { data: userFaceScoreActivityData } = useGetUserFaceScore(
-    isAuthenticated,
-    "ACTIVITY"
-  );
-  const { data: userFaceScoreSleepData } = useGetUserFaceScore(
-    isAuthenticated,
-    "SLEEP"
-  );
-  const { data: userFaceScoreNutritionData } = useGetUserFaceScore(
-    isAuthenticated,
-    "NUTRITION"
-  );
-
   const handleGoogleSignIn = (loggedInData) => {
     if (loggedInData) {
       toast({
