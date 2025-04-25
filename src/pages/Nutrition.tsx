@@ -40,7 +40,11 @@ const Nutrition = () => {
     refetch: getUserProfileRefetch,
   } = useGetUserProfile({ isAuthenticated });
 
-  const { data: favouriteFoodData, isSuccess } = useGetUserFavouriteFoodV4({
+  const {
+    data: favouriteFoodData,
+    isSuccess,
+    refetch: favouriteFoodRefetch,
+  } = useGetUserFavouriteFoodV4({
     isAuthenticated,
   });
 
