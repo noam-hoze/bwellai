@@ -21,6 +21,14 @@ import { useJourneyDialog } from "@/hooks/use-journey-dialog";
 import axios from "axios";
 import { useGetUserProfile } from "@/service/hooks/profile/useGetUserProfile";
 import { useGetUserFaceScore } from "@/service/hooks/shenai/useShenaiFaceScore";
+import {
+  useGetUserInfoTerraData,
+  useGetWearableWeeklyDataV4,
+} from "@/service/hooks/wearable/terra/useGetUserInfo";
+
+const formatDate = (date: Date) => {
+  return date.toISOString().split("T")[0]; // Extract YYYY-MM-DD
+};
 
 const Index = () => {
   const { toast } = useToast();
@@ -36,6 +44,20 @@ const Index = () => {
     isSuccess: getProfileIsSuccess,
     refetch: getUserProfileRefetch,
   } = useGetUserProfile({ isAuthenticated });
+
+  const { data: connectedDevicesData, refetch: connectedDevicesRefetch } =
+    useGetUserInfoTerraData({ isAuthenticated });
+
+  const {
+    data: wearableWeeklyData,
+    isSuccess: wearableWeeklyIsSuccess,
+    isLoading: wearableWeeklyIsLoading,
+  } = useGetWearableWeeklyDataV4({
+    resource: connectedDevicesData?.[0]?.device,
+    isEnable:
+      connectedDevicesData?.length > 0 ? connectedDevicesData?.[0]?.device : "",
+    startDate: formatDate(new Date()),
+  });
 
   const handleGoogleSignIn = (loggedInData) => {
     if (loggedInData) {
