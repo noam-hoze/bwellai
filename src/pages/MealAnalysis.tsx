@@ -154,8 +154,6 @@ const MealAnalysisPage = () => {
   const fatPercentage = Math.round((meal?.fat / totalMacrosGrams) * 100);
   const carbsPercentage = Math.round((meal?.carbs / totalMacrosGrams) * 100);
 
-  console.log(meal?.ai_response, ingredients);
-
   return (
     <Layout>
       <div className="container mx-auto px-4 pb-16">
