@@ -200,7 +200,7 @@ const Index = () => {
           />
         </div>
 
-        <HealthOverview />
+        <HealthOverview wearableWeeklyData={wearableWeeklyData} />
 
         <HealthNavigator />
 

@@ -23,6 +23,42 @@ import {
 } from "@/utils/utils";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
+import { Star, Utensils } from "lucide-react";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+} from "@/components/ui/carousel";
+import { Card, CardContent } from "@/components/ui/card";
+
+const FavoriteMealCard = ({
+  id,
+  name,
+  type,
+  meal,
+  onMealClick,
+}: Omit<any, "time" | "calories" | "protein"> & {
+  name: string;
+  type: string;
+}) => {
+  // const meal = { id, type, name, calories: 0, protein: 0 };
+
+  return (
+    <Card
+      className="w-36 flex-shrink-0 cursor-pointer hover:shadow-md transition-shadow border-gray-100 bg-wellness-light-green"
+      onClick={() => onMealClick(meal)}
+    >
+      <CardContent className="p-3 flex flex-col items-center text-center">
+        <div className="bg-wellness-bright-green rounded-full p-2 mb-2">
+          <Utensils className="h-5 w-5 text-white" />
+        </div>
+        <h4 className="text-sm font-medium line-clamp-1">{name}</h4>
+        <span className="text-xs text-gray-500">{type}</span>
+        <Star className="h-4 w-4 text-yellow-500 fill-current mt-1" />
+      </CardContent>
+    </Card>
+  );
+};
 
 const Nutrition = () => {
   const { isAuthenticated, loading } = useAuth();
@@ -65,6 +101,24 @@ const Nutrition = () => {
   const [totalDailyProtein, setTotalDailyProtein] = useState(0);
   const [totalDailyFats, setTotalDailyFats] = useState(0);
   const [totalDailyCarbs, setTotalDailyCarbs] = useState(0);
+
+  const handleMealClick = (meal: any) => {
+    const completeMeal = {
+      ...meal,
+      totalDailyCalories,
+      totalDailyProtein,
+      totalDailyCarbs,
+      carbs: meal?.ai_response?.carbohydrates?.quantity,
+      fat: meal?.ai_response?.fats?.quantity,
+      ingredients: meal?.ingredients?.map((ingredient) => ingredient?.name),
+      notes: "Quick breakfast option",
+      totalDailyRequiredCalories,
+      requiredMicronutrientsBalance,
+      totalDailyFats,
+    };
+
+    navigate("/meal-analysis", { state: { meal: completeMeal } });
+  };
 
   const [totalDailyRequiredCalories, setTotalDailyRequiredCalories] =
     useState(0);
@@ -161,6 +215,34 @@ const Nutrition = () => {
             totalDailyRequiredCalories={totalDailyRequiredCalories}
             requiredMicronutrientsBalance={requiredMicronutrientsBalance}
           />
+
+          {/* Favorites Section */}
+          {favouriteFoodData?.length > 0 && (
+            <div className="mb-6">
+              <div className="flex items-center mb-3">
+                <Star className="h-5 w-5 text-yellow-500 fill-current mr-2" />
+                <h3 className="text-lg font-semibold">Favorite Meals</h3>
+              </div>
+              <Carousel className="w-full">
+                <CarouselContent className="-ml-2 md:-ml-4">
+                  {favouriteFoodData?.map((meal) => (
+                    <CarouselItem
+                      key={`fav-${meal.id}`}
+                      className="pl-2 md:pl-4 basis-auto"
+                    >
+                      <FavoriteMealCard
+                        id={meal.id}
+                        meal={meal}
+                        name={meal?.ai_response?.food_name}
+                        type={meal?.meal_type}
+                        onMealClick={handleMealClick}
+                      />
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+              </Carousel>
+            </div>
+          )}
 
           <Tabs
             defaultValue="meals"
