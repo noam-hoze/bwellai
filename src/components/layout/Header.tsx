@@ -1,7 +1,17 @@
-
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { UserCircle, Home, FileText, Gauge, Moon, Activity, Leaf, Wallet, Settings, Menu } from "lucide-react";
+import {
+  UserCircle,
+  Home,
+  FileText,
+  Gauge,
+  Moon,
+  Activity,
+  Leaf,
+  Wallet,
+  Settings,
+  Menu,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
@@ -9,7 +19,7 @@ const Header = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
-  
+
   const isActive = (path: string) => {
     return location.pathname === path;
   };
@@ -22,30 +32,30 @@ const Header = () => {
     { path: "/activity", label: "Activity", icon: Activity },
     { path: "/nutrition", label: "Nutrition", icon: Leaf },
     { path: "/risk-score", label: "Risk Score", icon: Activity },
-    { path: "/wallet", label: "Wallet", icon: Wallet }
+    { path: "/wallet", label: "Wallet", icon: Wallet },
   ];
 
   return (
-    <header className="sticky top-0 z-10 bg-white/80 backdrop-blur-sm border-b border-gray-100">
+    <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-sm border-b border-gray-100">
       <div className="container flex items-center justify-between py-4 max-w-7xl mx-auto px-4">
         <div className="flex items-center space-x-8">
           <Link to="/" className="flex items-center">
-            <img 
-              src="/lovable-uploads/765ffe1f-7f04-4b14-88a1-feb2561263a2.png" 
-              alt="B-Well Logo" 
-              className="h-8" 
+            <img
+              src="/lovable-uploads/765ffe1f-7f04-4b14-88a1-feb2561263a2.png"
+              alt="B-Well Logo"
+              className="h-8"
             />
           </Link>
-          
+
           <nav className="hidden md:flex space-x-2">
             {navLinks.map((link) => (
-              <Link 
+              <Link
                 key={link.path}
-                to={link.path} 
+                to={link.path}
                 className={cn(
-                  "nav-link flex items-center gap-1", 
-                  isActive(link.path) 
-                    ? "text-wellness-bright-green after:bg-wellness-bright-green" 
+                  "nav-link flex items-center gap-1",
+                  isActive(link.path)
+                    ? "text-wellness-bright-green after:bg-wellness-bright-green"
                     : "text-gray-600 hover:text-wellness-bright-green"
                 )}
               >
@@ -55,7 +65,7 @@ const Header = () => {
             ))}
           </nav>
         </div>
-        
+
         <div className="flex items-center gap-2">
           {/* Mobile Menu */}
           <Sheet open={isOpen} onOpenChange={setIsOpen}>
@@ -64,7 +74,10 @@ const Header = () => {
                 <Menu className="h-5 w-5" />
               </button>
             </SheetTrigger>
-            <SheetContent side="left" className="w-[80%] sm:w-[350px] pt-12 bg-white">
+            <SheetContent
+              side="left"
+              className="w-[80%] sm:w-[350px] pt-12 bg-white"
+            >
               <div className="flex flex-col space-y-4 mt-8">
                 {navLinks.map((link) => (
                   <Link
@@ -72,8 +85,8 @@ const Header = () => {
                     to={link.path}
                     className={cn(
                       "flex items-center gap-3 px-4 py-3 rounded-lg transition-colors",
-                      isActive(link.path) 
-                        ? "bg-wellness-light-green text-wellness-bright-green font-medium" 
+                      isActive(link.path)
+                        ? "bg-wellness-light-green text-wellness-bright-green font-medium"
                         : "text-gray-600 hover:bg-wellness-light-green hover:text-wellness-bright-green"
                     )}
                     onClick={() => setIsOpen(false)}
@@ -82,14 +95,14 @@ const Header = () => {
                     <span>{link.label}</span>
                   </Link>
                 ))}
-                
+
                 {/* Add Profile Link to mobile menu */}
                 <Link
                   to="/profile"
                   className={cn(
                     "flex items-center gap-3 px-4 py-3 rounded-lg transition-colors",
-                    isActive("/profile") 
-                      ? "bg-wellness-light-green text-wellness-bright-green font-medium" 
+                    isActive("/profile")
+                      ? "bg-wellness-light-green text-wellness-bright-green font-medium"
                       : "text-gray-600 hover:bg-wellness-light-green hover:text-wellness-bright-green"
                   )}
                   onClick={() => setIsOpen(false)}
@@ -102,9 +115,9 @@ const Header = () => {
           </Sheet>
 
           {/* Profile button - only visible on desktop */}
-          <button 
+          <button
             className="hidden md:flex rounded-full bg-wellness-light-green p-2 hover:bg-wellness-green/20 transition-colors"
-            onClick={() => navigate('/profile')}
+            onClick={() => navigate("/profile")}
           >
             <UserCircle className="h-6 w-6 text-wellness-bright-green" />
           </button>
