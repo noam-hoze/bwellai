@@ -227,7 +227,7 @@ const DailyIntakeSection = ({
       <h2 className="text-2xl font-bold mb-6">
         Today's intake (update your profile page for optimal accuracy){" "}
       </h2>
-      <div className="flex justify-between items-center gap-4">
+      <div className="flex flex-col md:flex-row justify-between items-center gap-4">
         {/* <NutrientProgress
           label="Fat"
           value={Number(
