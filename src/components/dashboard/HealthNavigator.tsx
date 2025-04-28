@@ -391,7 +391,13 @@ const HealthNavigator = ({ getProfileIsData, userPreviousData }) => {
                   <div className="divide-y divide-gray-100">
                     <div className="p-3">
                       <div className="font-medium text-gray-800 mb-2">
-                        {organData?.[activeOrgan]?.description}
+                        <p>
+                          {organData?.[activeOrgan]?.description}
+
+                          <span className="px-2 py-0.5 bg-gray-100 text-gray-600 text-xs font-medium rounded-full inline-flex items-center mt-1">
+                            Sample Data
+                          </span>
+                        </p>
                       </div>
                       <div
                         className="flex items-center justify-between text-sm p-1 bg-gray-200 rounded mb-1 cursor-pointer"
