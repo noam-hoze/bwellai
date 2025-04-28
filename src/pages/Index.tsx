@@ -25,6 +25,7 @@ import {
   useGetUserInfoTerraData,
   useGetWearableWeeklyDataV4,
 } from "@/service/hooks/wearable/terra/useGetUserInfo";
+import { useGetUserPreviousReportData } from "@/service/hooks/ocr/useGetReportById";
 
 const formatDate = (date: Date) => {
   return date.toISOString().split("T")[0]; // Extract YYYY-MM-DD
@@ -58,6 +59,13 @@ const Index = () => {
       connectedDevicesData?.length > 0 ? connectedDevicesData?.[0]?.device : "",
     startDate: formatDate(new Date()),
   });
+
+  const { data: userPreviousData } = useGetUserPreviousReportData(
+    "MODERN_MEDICINE",
+    "",
+    true,
+    "English"
+  );
 
   const handleGoogleSignIn = (loggedInData) => {
     if (loggedInData) {
@@ -202,7 +210,10 @@ const Index = () => {
 
         <HealthOverview wearableWeeklyData={wearableWeeklyData} />
 
-        <HealthNavigator getProfileIsData={getProfileIsData} />
+        <HealthNavigator
+          getProfileIsData={getProfileIsData}
+          userPreviousData={userPreviousData}
+        />
 
         <div className="grid gap-6 md:grid-cols-2 mt-6 space-y-6">
           <ProtocolTracker />

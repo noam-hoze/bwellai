@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   ChevronRight,
@@ -13,6 +13,16 @@ import {
 import { Lungs } from "@/components/icons/Lungs";
 import ManBody from "./ManBody";
 import WomanBody from "./WomanBody";
+import { profileNameToBodyPartObject } from "@/modules/constant/report-data/body-profile-data";
+import { useNavigate } from "react-router-dom";
+
+const organColorMap: Record<string, string> = {
+  Liver: "#f59e0b",
+  Kidneys: "#3b82f6",
+  "Nervous System & Brain": "#9b87f5",
+  Lungs: "#4db6ac",
+  Other: "#6b7280",
+};
 
 type Organ = "Lungs" | "Nervous System & Brain" | "Liver" | "Kidneys" | null;
 
@@ -179,8 +189,11 @@ const organData: Record<NonNullable<Organ>, OrganData> = {
   },
 };
 
-const HealthNavigator = ({ getProfileIsData }) => {
+const HealthNavigator = ({ getProfileIsData, userPreviousData }) => {
+  const navigate = useNavigate();
+
   const [activeOrgan, setActiveOrgan] = useState<Organ>(null);
+  const [formatedData, setFormatedData] = useState({});
 
   const handleOrganClick = (organ: Organ) => {
     // console.log(
@@ -214,6 +227,39 @@ const HealthNavigator = ({ getProfileIsData }) => {
     }
   };
 
+  useEffect(() => {
+    if (userPreviousData) {
+      const organData = {};
+
+      userPreviousData?.data?.resultData?.forEach((item) => {
+        const profile = item.profile;
+        const biomarkers = item.biomarker;
+        const pn = profileNameToBodyPartObject?.[profile?.name];
+
+        if (!organData[pn]) {
+          organData[pn] = {
+            title: pn,
+            color: organColorMap[pn] || "#6b7280",
+            description: `${pn} Health Status`,
+            stats: [],
+          };
+        }
+
+        biomarkers.forEach((bio: any) => {
+          organData?.[pn]?.stats?.push({
+            icon: "",
+            value: bio?.testResultValue ?? "N/A",
+            unit: bio?.testMeasuringUnit ?? "",
+            label: bio?.testName ?? "Unknown Test",
+            status: bio?.colorIndicator || "unknown",
+          });
+        });
+      });
+
+      setFormatedData(organData);
+    }
+  }, [userPreviousData]);
+
   return (
     <Card className="wellness-card border-l-4 border-l-blue-400 mt-6">
       <CardHeader className="pb-2">
@@ -238,14 +284,16 @@ const HealthNavigator = ({ getProfileIsData }) => {
             </div>
 
             <div className="w-full md:w-1/2 mt-6 md:mt-0 md:pl-6">
-              {organData?.[activeOrgan] ? (
+              {formatedData?.[activeOrgan] ? (
                 <div className="bg-white rounded-lg shadow-md overflow-hidden border border-gray-200">
                   <div
                     className="p-3 text-white font-medium flex justify-between items-center"
-                    style={{ backgroundColor: organData?.[activeOrgan]?.color }}
+                    style={{
+                      backgroundColor: formatedData?.[activeOrgan]?.color,
+                    }}
                   >
                     <span className="text-xl">
-                      {organData?.[activeOrgan]?.title}
+                      {formatedData?.[activeOrgan]?.title}
                     </span>
                     <ChevronRight className="w-5 h-5" />
                   </div>
@@ -253,9 +301,14 @@ const HealthNavigator = ({ getProfileIsData }) => {
                   <div className="divide-y divide-gray-100">
                     <div className="p-3">
                       <div className="font-medium text-gray-800 mb-2">
-                        {organData?.[activeOrgan]?.description}
+                        {formatedData?.[activeOrgan]?.description}
                       </div>
-                      <div className="flex items-center justify-between text-sm py-1 px-2 bg-gray-50 rounded mb-1">
+                      <div
+                        className="flex items-center justify-between text-sm p-1 bg-gray-200 rounded mb-1 cursor-pointer"
+                        onClick={() => {
+                          navigate(`/report/${userPreviousData?.reportId}`);
+                        }}
+                      >
                         <span>View detailed health metrics</span>
                         <ChevronRight className="w-4 h-4 text-gray-600" />
                       </div>
@@ -265,12 +318,16 @@ const HealthNavigator = ({ getProfileIsData }) => {
                       <div className="flex items-center text-gray-800 mb-2">
                         <div className="flex flex-col items-center mr-2">
                           <span
-                            style={{ color: organData?.[activeOrgan]?.color }}
+                            style={{
+                              color: formatedData?.[activeOrgan]?.color,
+                            }}
                           >
                             ▲
                           </span>
                           <span
-                            style={{ color: organData?.[activeOrgan]?.color }}
+                            style={{
+                              color: formatedData?.[activeOrgan]?.color,
+                            }}
                           >
                             ▼
                           </span>
@@ -279,27 +336,29 @@ const HealthNavigator = ({ getProfileIsData }) => {
                       </div>
 
                       <div className="space-y-3">
-                        {organData?.[activeOrgan]?.stats?.map((stat, index) => (
-                          <div key={index} className="flex items-start">
-                            <div className="mr-2 mt-1">{stat.icon}</div>
-                            <div>
-                              <div className="flex items-baseline">
-                                <span className="text-lg font-bold text-gray-900">
-                                  {stat.value}
-                                </span>
-                                {stat.unit && (
-                                  <span className="ml-1 text-sm text-gray-600">
-                                    {stat.unit}
+                        {formatedData?.[activeOrgan]?.stats?.map(
+                          (stat, index) => (
+                            <div key={index} className="flex items-start">
+                              <div className="mr-2 mt-1">{stat.icon}</div>
+                              <div>
+                                <div className="flex items-baseline">
+                                  <span className="text-lg font-bold text-gray-900">
+                                    {stat.value}
                                   </span>
-                                )}
-                                {getStatusBadge(stat.status)}
-                              </div>
-                              <div className="text-xs text-gray-700">
-                                {stat.label}
+                                  {stat.unit && (
+                                    <span className="ml-1 text-sm text-gray-600">
+                                      {stat.unit}
+                                    </span>
+                                  )}
+                                  {getStatusBadge(stat.status)}
+                                </div>
+                                <div className="text-xs text-gray-700">
+                                  {stat.label}
+                                </div>
                               </div>
                             </div>
-                          </div>
-                        ))}
+                          )
+                        )}
                       </div>
                     </div>
                   </div>
