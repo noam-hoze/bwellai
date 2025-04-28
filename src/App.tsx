@@ -62,7 +62,7 @@ const App = () => (
 
                   {/* App Routes */}
                   <Route path="/dashboard" element={<Index />} />
-                  {/* <Route path="/dashboard" element={<DashboardFirstTime />} /> */}
+                  {/* <Route path="/dashboard-first" element={<DashboardFirstTime />} /> */}
                   <Route path="/reports" element={<Reports />} />
                   <Route path="/report/:id" element={<ReportDetail />} />
                   <Route path="/body-metrics" element={<BodyMetrics />} />
