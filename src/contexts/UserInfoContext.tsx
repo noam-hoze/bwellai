@@ -11,8 +11,8 @@ export const UserInfoProvider = ({ children }) => {
     gender: "", // 'male', 'female', 'other', etc.
     height: "", // in cm or ft+inches (you can customize format)
     weight: "", // in kg or lbs
-    weightUnit: "kg", // 'kg' or 'lb'
-    heightUnit: "cm", // 'cm' or 'ft+inches'
+    weightUnit: "lb", // 'kg' or 'lb'
+    heightUnit: "ft", // 'cm' or 'ft+inches'
     privacyConsent: false, // User's consent for privacy policy
   });
 
