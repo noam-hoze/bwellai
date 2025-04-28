@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Accordion,
   AccordionContent,
@@ -28,7 +28,7 @@ import TestResultTrendHistoryGraphRechart from "../test-result/TestResultTrendHi
 import { getReportSignalTextCalc } from "@/utils/utils";
 
 interface AbnormalTestsListProps {
-  abnormalResults: any[];
+  abnormalResults: any;
   biomarkerResponses: any[];
   perspective: string;
   panelAnalysisResponses?: any;
@@ -43,6 +43,10 @@ const AbnormalTestsList = ({
   latestResultByDateData,
 }: AbnormalTestsListProps) => {
   const [expandedTests, setExpandedTests] = useState<string[]>([]);
+  const accordionRef = useRef<HTMLDivElement>(null);
+  const [openAccordion, setOpenAccordion] = useState<string | undefined>(
+    undefined
+  );
 
   const toggleTestExpansion = (testId: string) => {
     setExpandedTests((prev) =>
@@ -105,6 +109,36 @@ const AbnormalTestsList = ({
     );
   };
 
+  useEffect(() => {
+    const hash = window.location.hash; // example: #Liver-Profile
+
+    if (hash) {
+      const cleanedHash = decodeURIComponent(hash.replace("#", ""));
+      let sp = "";
+      let p = "";
+
+      abnormalResults?.forEach((item) => {
+        if (item?.profile?.svgIcon?.includes(cleanedHash)) {
+          sp = item?.profile?.svgIcon?.split(".")?.[0];
+          p = item?.profile?.name;
+        }
+      });
+
+      if (cleanedHash === sp) {
+        console.log(cleanedHash === sp, cleanedHash, sp, p);
+        setOpenAccordion(p);
+
+        // Scroll into view
+        setTimeout(() => {
+          accordionRef.current?.scrollIntoView({
+            behavior: "smooth",
+            block: "start",
+          });
+        }, 800); // small delay so Accordion is rendered first
+      }
+    }
+  }, [abnormalResults]);
+
   if (abnormalResults?.length === 0) {
     return (
       <Card>
@@ -124,7 +158,7 @@ const AbnormalTestsList = ({
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4" ref={accordionRef}>
       {abnormalResults?.map(
         (biomarkerData) =>
           biomarkerData?.biomarker?.length > 0 && (
@@ -132,6 +166,8 @@ const AbnormalTestsList = ({
               key={biomarkerData?.profile?.name}
               type="single"
               collapsible
+              value={openAccordion}
+              onValueChange={(value) => setOpenAccordion(value)}
               className="bg-white rounded-lg border shadow-sm"
             >
               <AccordionItem

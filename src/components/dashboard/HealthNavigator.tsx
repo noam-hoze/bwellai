@@ -196,15 +196,12 @@ const HealthNavigator = ({ getProfileIsData, userPreviousData }) => {
   const [formatedData, setFormatedData] = useState({});
 
   const handleOrganClick = (organ: Organ) => {
-    // console.log(
-    //   organ,
-    //   organData?.[organ]?.stats
-    // );
-
     setActiveOrgan(organ);
   };
 
-  const getStatusBadge = (status: "normal" | "caution" | "warning") => {
+  const getStatusBadge = (
+    status: "normal" | "caution" | "warning" | "abnormal" | "high"
+  ) => {
     switch (status) {
       case "normal":
         return (
@@ -212,10 +209,16 @@ const HealthNavigator = ({ getProfileIsData, userPreviousData }) => {
             Normal
           </span>
         );
-      case "caution":
+      case "abnormal":
         return (
           <span className="ml-auto text-xs px-2 py-0.5 bg-amber-100 text-amber-800 rounded-full">
             Caution
+          </span>
+        );
+      case "high":
+        return (
+          <span className="ml-auto text-xs px-2 py-0.5 bg-amber-100 text-amber-800 rounded-full">
+            High
           </span>
         );
       case "warning":
@@ -242,6 +245,7 @@ const HealthNavigator = ({ getProfileIsData, userPreviousData }) => {
             color: organColorMap[pn] || "#6b7280",
             description: `${pn} Health Status`,
             stats: [],
+            profileName: item?.profile?.svgIcon?.split(".")?.[0],
           };
         }
 
@@ -251,7 +255,7 @@ const HealthNavigator = ({ getProfileIsData, userPreviousData }) => {
             value: bio?.testResultValue ?? "N/A",
             unit: bio?.testMeasuringUnit ?? "",
             label: bio?.testName ?? "Unknown Test",
-            status: bio?.colorIndicator || "unknown",
+            signalText: bio?.signalText || "unknown",
           });
         });
       });
@@ -306,7 +310,9 @@ const HealthNavigator = ({ getProfileIsData, userPreviousData }) => {
                       <div
                         className="flex items-center justify-between text-sm p-1 bg-gray-200 rounded mb-1 cursor-pointer"
                         onClick={() => {
-                          navigate(`/report/${userPreviousData?.reportId}`);
+                          navigate(
+                            `/report/${userPreviousData?.reportId}#${formatedData?.[activeOrgan]?.profileName}`
+                          );
                         }}
                       >
                         <span>View detailed health metrics</span>
@@ -350,7 +356,7 @@ const HealthNavigator = ({ getProfileIsData, userPreviousData }) => {
                                       {stat.unit}
                                     </span>
                                   )}
-                                  {getStatusBadge(stat.status)}
+                                  {getStatusBadge(stat.signalText)}
                                 </div>
                                 <div className="text-xs text-gray-700">
                                   {stat.label}

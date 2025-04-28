@@ -40,7 +40,7 @@ import { n } from "node_modules/framer-motion/dist/types.d-B50aGbjN";
 const ReportDetail = () => {
   const { id } = useParams();
   const [activeTab, setActiveTab] = useState("report");
-  const [secondaryTab, setSecondaryTab] = useState("key-findings");
+  const [secondaryTab, setSecondaryTab] = useState("all-tests");
   const [perspective, setPerspective] = useState("MODERN_MEDICINE");
   const navigate = useNavigate();
 
@@ -556,7 +556,7 @@ const ReportDetail = () => {
             {/* {report.type === "blood-test" && (
             )} */}
             <Tabs
-              defaultValue="key-findings"
+              defaultValue="all-tests"
               value={secondaryTab}
               onValueChange={setSecondaryTab}
               className="w-full mb-6"
