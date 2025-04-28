@@ -376,8 +376,6 @@ const Reports = () => {
       if (scrollTop + clientHeight >= scrollHeight - 150) {
         isFetchingRef.current = true; // block further triggers
 
-        console.log("✅ Near end — triggering API");
-
         if (fetchNextPage) fetchNextPage();
 
         // Cooldown to prevent flooding (1.5s delay)
@@ -423,8 +421,6 @@ const Reports = () => {
       isSuccess: false,
       isError: false,
     });
-    // This would be implemented with actual file upload functionality
-    console.log("Report processing completed");
   };
 
   const handleDeleteReport = (id: number) => {

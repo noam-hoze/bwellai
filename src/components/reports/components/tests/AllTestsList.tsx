@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Accordion,
   AccordionContent,
@@ -37,6 +37,10 @@ const AllTestsList = ({
   latestResultByDateData,
 }: any) => {
   const [expandedTests, setExpandedTests] = useState<string[]>([]);
+  const accordionRef = useRef<HTMLDivElement>(null);
+  const [openAccordion, setOpenAccordion] = useState<string | undefined>(
+    undefined
+  );
 
   const toggleTestExpansion = (testId: string) => {
     setExpandedTests((prev) =>
@@ -46,13 +50,37 @@ const AllTestsList = ({
     );
   };
 
+  useEffect(() => {
+    const hash = window.location.hash; // example: #Liver-Profile
+
+    if (hash) {
+      const cleanedHash = decodeURIComponent(hash.replace("#", ""));
+
+      if (
+        cleanedHash === resultsCategories?.profile?.svgIcon?.split(".")?.[0]
+      ) {
+        setOpenAccordion(resultsCategories?.profile?.name);
+
+        // Scroll into view
+        setTimeout(() => {
+          accordionRef.current?.scrollIntoView({
+            behavior: "smooth",
+            block: "start",
+          });
+        }, 800); // small delay so Accordion is rendered first
+      }
+    }
+  }, [resultsCategories]);
+
   return (
     <div className="space-y-4 mt-3">
       <Accordion
         key={resultsCategories?.profile?.name}
         type="single"
         collapsible
-        className="bg-white rounded-lg border shadow-sm"
+        value={openAccordion}
+        onValueChange={(value) => setOpenAccordion(value)}
+        className="bg-white rounded-lg border shadow-sm scroll-m-20"
       >
         <AccordionItem
           value={resultsCategories?.profile?.name}
