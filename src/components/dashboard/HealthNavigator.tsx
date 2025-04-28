@@ -30,6 +30,7 @@ interface OrganData {
   title: string;
   color: string;
   description: string;
+  profileName?: string;
   stats: {
     icon: React.ReactNode;
     value: string;
@@ -44,6 +45,7 @@ const organData: Record<NonNullable<Organ>, OrganData> = {
     title: "Respiratory System",
     color: "#4db6ac",
     description: "Current Respiratory Health Status",
+    profileName: "",
     stats: [
       {
         icon: <Droplet className="w-5 h-5 text-blue-600" />,
@@ -93,6 +95,7 @@ const organData: Record<NonNullable<Organ>, OrganData> = {
     title: "Brain & Nervous System",
     color: "#9b87f5",
     description: "Central Nervous System",
+    profileName: "",
     stats: [
       {
         icon: <Activity className="w-5 h-5 text-purple-600" />,
@@ -121,6 +124,7 @@ const organData: Record<NonNullable<Organ>, OrganData> = {
     title: "Liver",
     color: "#f59e0b",
     description: "Digestive & Metabolic Health",
+    profileName: "",
     stats: [
       {
         icon: <Activity className="w-5 h-5 text-amber-600" />,
@@ -170,6 +174,7 @@ const organData: Record<NonNullable<Organ>, OrganData> = {
     title: "Kidneys",
     color: "#3b82f6",
     description: "Urinary System",
+    profileName: "",
     stats: [
       {
         icon: <Droplet className="w-5 h-5 text-blue-600" />,
@@ -251,7 +256,7 @@ const HealthNavigator = ({ getProfileIsData, userPreviousData }) => {
 
         biomarkers.forEach((bio: any) => {
           organData?.[pn]?.stats?.push({
-            icon: "",
+            icon: <Info className="w-5 h-5 text-amber-500" />,
             value: bio?.testResultValue ?? "N/A",
             unit: bio?.testMeasuringUnit ?? "",
             label: bio?.testName ?? "Unknown Test",
@@ -365,6 +370,85 @@ const HealthNavigator = ({ getProfileIsData, userPreviousData }) => {
                             </div>
                           )
                         )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ) : organData?.[activeOrgan] ? (
+                <div className="bg-white rounded-lg shadow-md overflow-hidden border border-gray-200">
+                  <div
+                    className="p-3 text-white font-medium flex justify-between items-center"
+                    style={{
+                      backgroundColor: organData?.[activeOrgan]?.color,
+                    }}
+                  >
+                    <span className="text-xl">
+                      {organData?.[activeOrgan]?.title}
+                    </span>
+                    <ChevronRight className="w-5 h-5" />
+                  </div>
+
+                  <div className="divide-y divide-gray-100">
+                    <div className="p-3">
+                      <div className="font-medium text-gray-800 mb-2">
+                        {organData?.[activeOrgan]?.description}
+                      </div>
+                      <div
+                        className="flex items-center justify-between text-sm p-1 bg-gray-200 rounded mb-1 cursor-pointer"
+                        onClick={() => {
+                          navigate(
+                            `/report/${userPreviousData?.reportId}#${organData?.[activeOrgan]?.profileName}`
+                          );
+                        }}
+                      >
+                        <span>View detailed health metrics</span>
+                        <ChevronRight className="w-4 h-4 text-gray-600" />
+                      </div>
+                    </div>
+
+                    <div className="p-3">
+                      <div className="flex items-center text-gray-800 mb-2">
+                        <div className="flex flex-col items-center mr-2">
+                          <span
+                            style={{
+                              color: organData?.[activeOrgan]?.color,
+                            }}
+                          >
+                            ▲
+                          </span>
+                          <span
+                            style={{
+                              color: organData?.[activeOrgan]?.color,
+                            }}
+                          >
+                            ▼
+                          </span>
+                        </div>
+                        <span className="font-medium">Current Metrics</span>
+                      </div>
+
+                      <div className="space-y-3">
+                        {organData?.[activeOrgan]?.stats?.map((stat, index) => (
+                          <div key={index} className="flex items-start">
+                            <div className="mr-2 mt-1">{stat.icon}</div>
+                            <div>
+                              <div className="flex items-baseline">
+                                <span className="text-lg font-bold text-gray-900">
+                                  {stat.value}
+                                </span>
+                                {stat.unit && (
+                                  <span className="ml-1 text-sm text-gray-600">
+                                    {stat.unit}
+                                  </span>
+                                )}
+                                {getStatusBadge(stat.signalText || "normal")}
+                              </div>
+                              <div className="text-xs text-gray-700">
+                                {stat.label}
+                              </div>
+                            </div>
+                          </div>
+                        ))}
                       </div>
                     </div>
                   </div>
