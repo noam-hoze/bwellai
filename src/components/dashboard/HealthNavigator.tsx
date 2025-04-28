@@ -287,7 +287,8 @@ const HealthNavigator = ({ getProfileIsData, userPreviousData }) => {
                 <ManBody handleOrganClick={handleOrganClick} />
               )}
 
-              {getProfileIsData?.gender === "female" && (
+              {(getProfileIsData?.gender === "female" ||
+                !getProfileIsData?.gender) && (
                 <WomanBody handleOrganClick={handleOrganClick} />
               )}
             </div>
