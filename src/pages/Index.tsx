@@ -63,7 +63,7 @@ const Index = () => {
   const { data: userPreviousData } = useGetUserPreviousReportData(
     "MODERN_MEDICINE",
     "",
-    true,
+    isAuthenticated,
     "English"
   );
 
