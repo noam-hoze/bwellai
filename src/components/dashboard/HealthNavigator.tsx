@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { Lungs } from "@/components/icons/Lungs";
 import ManBody from "./ManBody";
+import WomanBody from "./WomanBody";
 
 type Organ = "Lungs" | "Nervous System & Brain" | "Liver" | "Kidneys" | null;
 
@@ -178,7 +179,7 @@ const organData: Record<NonNullable<Organ>, OrganData> = {
   },
 };
 
-const HealthNavigator = () => {
+const HealthNavigator = ({ getProfileIsData }) => {
   const [activeOrgan, setActiveOrgan] = useState<Organ>(null);
 
   const handleOrganClick = (organ: Organ) => {
@@ -227,7 +228,13 @@ const HealthNavigator = () => {
 
           <div className="relative flex flex-col md:flex-row items-start">
             <div className="w-full flex items-center justify-center overflow-hidden">
-              <ManBody handleOrganClick={handleOrganClick} />
+              {getProfileIsData?.gender === "male" && (
+                <ManBody handleOrganClick={handleOrganClick} />
+              )}
+
+              {getProfileIsData?.gender === "female" && (
+                <WomanBody handleOrganClick={handleOrganClick} />
+              )}
             </div>
 
             <div className="w-full md:w-1/2 mt-6 md:mt-0 md:pl-6">

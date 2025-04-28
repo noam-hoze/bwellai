@@ -27,6 +27,7 @@ import {
   TrendingUp,
   TrendingDown,
   Activity,
+  Loader2,
 } from "lucide-react";
 import {
   Collapsible,
@@ -1366,8 +1367,11 @@ const FaceScan = () => {
       refetch: userFaceDataLatestRefetch,
     } = useGetUserFaceDataLatest(localStorage.getItem("token") ? true : false);
 
-    const { mutate: saveDataSaveMutate, isSuccess: saveDataSaveIsSuccess } =
-      useGetUserFaceDataSave();
+    const {
+      mutate: saveDataSaveMutate,
+      isSuccess: saveDataSaveIsSuccess,
+      isPending: saveDataSaveIsPending,
+    } = useGetUserFaceDataSave();
 
     useEffect(() => {
       if (saveDataSaveIsSuccess) {
@@ -1433,9 +1437,19 @@ const FaceScan = () => {
               onClick={SaveResultHandle}
               variant="secondary"
               className="w-full"
+              disabled={saveDataSaveIsPending}
             >
-              <Save className="mr-2 h-4 w-4" />
-              Save Results
+              {saveDataSaveIsPending ? (
+                <div className="flex items-center justify-center">
+                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                  Saving...
+                </div>
+              ) : (
+                <>
+                  <Save className="mr-2 h-4 w-4" />
+                  Save Results
+                </>
+              )}
             </Button>
           </div>
         </div>

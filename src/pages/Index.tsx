@@ -180,9 +180,6 @@ const Index = () => {
       <Header />
 
       <main className="container max-w-7xl mx-auto px-4 py-6">
-        <FriendlyGreeting />
-        <StartJourneyBanner />
-
         <div className="flex justify-between items-center mb-6 animate-fade-in">
           <Button
             onClick={handleScanFace}
@@ -200,9 +197,12 @@ const Index = () => {
           />
         </div>
 
+        <FriendlyGreeting />
+        <StartJourneyBanner />
+
         <HealthOverview wearableWeeklyData={wearableWeeklyData} />
 
-        <HealthNavigator />
+        <HealthNavigator getProfileIsData={getProfileIsData} />
 
         <div className="grid gap-6 md:grid-cols-2 mt-6 space-y-6">
           <ProtocolTracker />

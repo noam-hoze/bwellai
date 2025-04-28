@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import { Card, CardContent } from "@/components/ui/card";
 import { useGetUserFaceScore } from "@/service/hooks/shenai/useShenaiFaceScore";
 import { useAuth } from "@/contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 interface HealthScoreProps {
   title: string;
@@ -12,6 +13,7 @@ interface HealthScoreProps {
   icon: React.ReactNode;
   color: string;
   delay?: number;
+  route: string;
 }
 
 const HealthScore = ({
@@ -20,9 +22,11 @@ const HealthScore = ({
   change,
   icon,
   color,
+  route,
   delay = 0,
 }: HealthScoreProps) => {
   const [showScore, setShowScore] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -34,8 +38,11 @@ const HealthScore = ({
 
   return (
     <div
-      className="flex flex-col items-center"
+      className="flex flex-col items-center cursor-pointer"
       style={{ animationDelay: `${delay}s` }}
+      onClick={() => {
+        navigate(route);
+      }}
     >
       <div className={cn("rounded-full p-2 mb-2", color)}>{icon}</div>
       <div className="text-sm font-medium text-gray-500">{title}</div>
@@ -92,6 +99,7 @@ const HealthOverview = ({ wearableWeeklyData }) => {
             icon={<Heart className="h-5 w-5 text-rose-600" />}
             color="bg-rose-100"
             delay={0.1}
+            route="/dashboard"
           />
           <HealthScore
             title="Activity"
@@ -104,6 +112,7 @@ const HealthOverview = ({ wearableWeeklyData }) => {
             icon={<Activity className="h-5 w-5 text-green-600" />}
             color="bg-green-100"
             delay={0.2}
+            route="/activity"
           />
           <HealthScore
             title="Sleep"
@@ -116,6 +125,7 @@ const HealthOverview = ({ wearableWeeklyData }) => {
             icon={<Moon className="h-5 w-5 text-purple-600" />}
             color="bg-purple-100"
             delay={0.3}
+            route="/sleep"
           />
           <HealthScore
             title="Nutrition"
@@ -130,6 +140,7 @@ const HealthOverview = ({ wearableWeeklyData }) => {
             icon={<Leaf className="h-5 w-5 text-amber-600" />}
             color="bg-amber-100"
             delay={0.4}
+            route="/nutrition"
           />
         </div>
       </CardContent>
