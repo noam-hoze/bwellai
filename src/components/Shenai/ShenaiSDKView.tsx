@@ -78,7 +78,7 @@ export const ShenaiSDKView = ({ setStep }) => {
       operatingMode: shenaiSDK.OperatingMode.POSITIONING,
       measurementPreset: shenaiSDK.MeasurementPreset.ONE_MINUTE_BETA_METRICS,
       cameraMode: shenaiSDK.CameraMode.FACING_USER,
-      onboardingMode: shenaiSDK.OnboardingMode.SHOW_ONCE,
+      onboardingMode: shenaiSDK.OnboardingMode.HIDDEN,
       showUserInterface: true,
       showFacePositioningOverlay: true,
       showVisualWarnings: true,

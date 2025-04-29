@@ -9,6 +9,7 @@ import {
   ArrowRight,
   ArrowLeft,
   X,
+  UserRound,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
@@ -24,15 +25,26 @@ const JourneyDialog = ({
   open,
   onOpenChange,
   journeyList,
+  getProfileIsData,
+  getUserOverallStatusIsData,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   journeyList?: string[];
+  getUserOverallStatusIsData: any;
+  getProfileIsData: any;
 }) => {
   const [currentStep, setCurrentStep] = useState(0);
   const navigate = useNavigate();
 
   const steps: StepProps[] = [
+    {
+      title: "Complete Your Health Profile",
+      description: "Help us personalize your health journey",
+      icon: <UserRound className="h-12 w-12 text-indigo-500" />,
+      path: "/profile",
+      actionText: "Update Profile",
+    },
     {
       title: "Connect Your Wearable Device",
       description:
@@ -102,6 +114,22 @@ const JourneyDialog = ({
 
   // Usage
   const sortedSteps = getSortedSteps(journeyList || []);
+
+  if (getUserOverallStatusIsData?.faceScan) {
+    sortedSteps.splice(4, 1);
+  }
+  if (getUserOverallStatusIsData?.nutrition) {
+    sortedSteps.splice(3, 1);
+  }
+  if (getUserOverallStatusIsData?.reportUpload) {
+    sortedSteps.splice(2, 1);
+  }
+  if (getUserOverallStatusIsData?.wearable) {
+    sortedSteps.splice(1, 1);
+  }
+  if (getProfileIsData?.onBoarding) {
+    sortedSteps.splice(0, 1);
+  }
 
   const handleNext = () => {
     if (currentStep < steps.length - 1) {

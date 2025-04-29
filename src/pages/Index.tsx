@@ -19,7 +19,10 @@ import StartJourneyBanner from "@/components/first-time/StartJourneyBanner";
 import JourneyDialog from "@/components/first-time/JourneyDialog";
 import { useJourneyDialog } from "@/hooks/use-journey-dialog";
 import axios from "axios";
-import { useGetUserProfile } from "@/service/hooks/profile/useGetUserProfile";
+import {
+  useGetUserOverallStatus,
+  useGetUserProfile,
+} from "@/service/hooks/profile/useGetUserProfile";
 import { useGetUserFaceScore } from "@/service/hooks/shenai/useShenaiFaceScore";
 import {
   useGetUserInfoTerraData,
@@ -45,6 +48,11 @@ const Index = () => {
     isSuccess: getProfileIsSuccess,
     refetch: getUserProfileRefetch,
   } = useGetUserProfile({ isAuthenticated });
+
+  const {
+    data: getUserOverallStatusIsData,
+    refetch: getUserUserOverallStatusRefetch,
+  } = useGetUserOverallStatus({ isAuthenticated });
 
   const { data: connectedDevicesData, refetch: connectedDevicesRefetch } =
     useGetUserInfoTerraData({ isAuthenticated });
@@ -168,6 +176,10 @@ const Index = () => {
     navigate("/face-scan");
   };
 
+  const overallDataStatus =
+    getUserOverallStatusIsData &&
+    Object.values(getUserOverallStatusIsData)?.some((value) => value === false);
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -206,9 +218,16 @@ const Index = () => {
         </div>
 
         <FriendlyGreeting />
-        <StartJourneyBanner />
+        {(overallDataStatus || !getProfileIsData?.onBoarding) && (
+          <StartJourneyBanner
+            getUserOverallStatusIsData={getUserOverallStatusIsData}
+          />
+        )}
 
-        <HealthOverview wearableWeeklyData={wearableWeeklyData} />
+        {getUserOverallStatusIsData?.nutrition &&
+          getUserOverallStatusIsData?.wearable && (
+            <HealthOverview wearableWeeklyData={wearableWeeklyData} />
+          )}
 
         <HealthNavigator
           getProfileIsData={getProfileIsData}
@@ -235,6 +254,8 @@ const Index = () => {
       <JourneyDialog
         open={isOpen}
         onOpenChange={closeJourney}
+        getUserOverallStatusIsData={getUserOverallStatusIsData}
+        getProfileIsData={getProfileIsData}
         journeyList={
           getProfileIsData?.additionalDetails?.["What Are You Aiming For?"]
             ?.answersArray || []
