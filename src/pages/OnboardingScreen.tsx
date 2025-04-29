@@ -45,6 +45,14 @@ const OnboardingScreen = () => {
   const { toast } = useToast();
 
   const { userInfo, updateUserInfo } = useUserInfo();
+  const [errors, setErrors] = useState({
+    age: "",
+    gender: "",
+    weight: "",
+    height: "",
+  });
+
+  console.log(userInfo);
 
   const { loginWithOTP } = useAuth();
 
@@ -74,8 +82,6 @@ const OnboardingScreen = () => {
     if (step) {
       const stepIndex = parseInt(step, 10);
       if (!isNaN(stepIndex) && stepIndex >= 0 && stepIndex < steps.length) {
-        console.log(stepIndex);
-
         setCurrentStep(stepIndex);
       } else {
         navigate("/welcome");
@@ -84,7 +90,23 @@ const OnboardingScreen = () => {
   }, [step]);
 
   const nextStep = () => {
-    setCurrentStep((prev) => Math.min(prev + 1, steps.length - 1));
+    if (
+      currentStep === 2 &&
+      userInfo?.age?.length > 0 &&
+      userInfo?.gender?.length > 0 &&
+      userInfo?.height?.length > 0 &&
+      userInfo?.weight?.length > 0
+    ) {
+      setCurrentStep((prev) => Math.min(prev + 1, steps.length - 1));
+    } else if (currentStep !== 2) {
+      setCurrentStep((prev) => Math.min(prev + 1, steps.length - 1));
+    }
+  };
+
+  const handleBlur = (key, value) => {
+    if (!value) {
+      setErrors((prev) => ({ ...prev, [key]: "This field is required" }));
+    }
   };
 
   const prevStep = () => {
@@ -206,6 +228,7 @@ const OnboardingScreen = () => {
           weight: Number(userInfo?.weight),
           heightUnit: userInfo?.heightUnit,
           weightUnit: userInfo?.weightUnit,
+          onBoarding: true,
         });
       }
 
@@ -284,6 +307,7 @@ const OnboardingScreen = () => {
           weight: Number(userInfo?.weight),
           heightUnit: userInfo?.heightUnit,
           weightUnit: userInfo?.weightUnit,
+          onBoarding: true,
         });
       }
       setTimeout(() => {
@@ -361,7 +385,7 @@ const OnboardingScreen = () => {
             <div className="w-full space-y-4 mb-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Age
+                  Age <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
                   <input
@@ -371,24 +395,31 @@ const OnboardingScreen = () => {
                     value={userInfo?.age}
                     onChange={(e) => {
                       updateUserInfo("age", Number(e.target.value));
+                      setErrors((prev) => ({ ...prev, ["age"]: "" })); // clear error on change
                     }}
+                    onBlur={(e) => handleBlur("age", e.target.value)}
                   />
                 </div>
                 <p className="mt-1 text-xs text-gray-500">
                   For age-appropriate recommendations
                 </p>
+                {errors.age && (
+                  <p className="text-red-500 text-sm mt-1">{errors.age}</p>
+                )}
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Gender
+                  Gender<span className="text-red-500">*</span>
                 </label>
                 <select
                   className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
                   value={userInfo?.gender}
                   onChange={(e) => {
                     updateUserInfo("gender", e.target.value);
+                    setErrors((prev) => ({ ...prev, ["gender"]: "" })); //
                   }}
+                  onBlur={(e) => handleBlur("gender", e.target.value)}
                 >
                   <option value="">Select gender</option>
                   <option value="male">Male</option>
@@ -398,11 +429,14 @@ const OnboardingScreen = () => {
                 <p className="mt-1 text-xs text-gray-500">
                   For more relevant health information
                 </p>
+                {errors.gender && (
+                  <p className="text-red-500 text-sm mt-1">{errors.gender}</p>
+                )}
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Height
+                  Height<span className="text-red-500">*</span>
                 </label>
                 <div className="relative flex items-center gap-2">
                   <input
@@ -412,7 +446,9 @@ const OnboardingScreen = () => {
                     value={userInfo?.height}
                     onChange={(e) => {
                       updateUserInfo("height", e.target.value);
+                      setErrors((prev) => ({ ...prev, ["height"]: "" })); //
                     }}
+                    onBlur={(e) => handleBlur("height", e.target.value)}
                   />
 
                   <select
@@ -435,11 +471,14 @@ const OnboardingScreen = () => {
                 <p className="mt-1 text-xs text-gray-500">
                   Example: 5.11ft (5ft 11inchs)
                 </p>
+                {errors.height && (
+                  <p className="text-red-500 text-sm mt-1">{errors.height}</p>
+                )}
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Weight
+                  Weight<span className="text-red-500">*</span>
                 </label>
                 <div className="relative flex items-center gap-2">
                   <input
@@ -449,7 +488,9 @@ const OnboardingScreen = () => {
                     value={userInfo?.weight}
                     onChange={(e) => {
                       updateUserInfo("weight", e.target.value);
+                      setErrors((prev) => ({ ...prev, ["weight"]: "" }));
                     }}
+                    onBlur={(e) => handleBlur("weight", e.target.value)}
                   />
 
                   <select
@@ -472,6 +513,9 @@ const OnboardingScreen = () => {
                 <p className="mt-1 text-xs text-gray-500">
                   For nutrition and activity recommendations
                 </p>
+                {errors.weight && (
+                  <p className="text-red-500 text-sm mt-1">{errors.weight}</p>
+                )}
               </div>
             </div>
           </div>

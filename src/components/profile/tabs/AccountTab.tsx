@@ -118,10 +118,10 @@ const AccountTab = ({ getProfileIsData }) => {
                   />
                 </div>
                 <div>
-                  <div className="font-semibold text-gray-800">
+                  {/* <div className="font-semibold text-gray-800">
                     {getProfileIsData?.fullName || "john doe"}
-                  </div>
-                  <div className="flex items-center text-gray-500">
+                  </div> */}
+                  <div className="font-semibold flex items-center text-gray-800">
                     <Mail size={14} className="mr-1" />
                     <span> {getProfileIsData?.email || "john doe"}</span>
                   </div>

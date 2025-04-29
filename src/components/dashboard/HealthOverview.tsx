@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 
 interface HealthScoreProps {
   title: string;
-  score: number;
+  score: string;
   change: number;
   icon: React.ReactNode;
   color: string;
@@ -103,7 +103,10 @@ const HealthOverview = ({ wearableWeeklyData }) => {
           />
           <HealthScore
             title="Activity"
-            score={userFaceScoreActivityData?.averageScore?.toFixed(0) || "N/A"}
+            score={
+              (userFaceScoreActivityData?.averageScore / 100)?.toFixed(0) ||
+              "N/A"
+            }
             change={
               userFaceScoreActivityData?.scoreDifferencePercentage?.toFixed(
                 0
