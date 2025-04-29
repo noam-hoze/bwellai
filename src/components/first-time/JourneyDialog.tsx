@@ -86,6 +86,23 @@ const JourneyDialog = ({
     "lab-reports": "Upload Your Lab Reports",
   };
 
+  // Usage
+  if (getUserOverallStatusIsData?.faceScan) {
+    steps.splice(4, 1);
+  }
+  if (getUserOverallStatusIsData?.nutrition) {
+    steps.splice(3, 1);
+  }
+  if (getUserOverallStatusIsData?.reportUpload) {
+    steps.splice(2, 1);
+  }
+  if (getUserOverallStatusIsData?.wearable) {
+    steps.splice(1, 1);
+  }
+  if (getProfileIsData?.onBoarding) {
+    steps.splice(0, 1);
+  }
+
   // Step sorting logic
   // Keep track of already added step titles
   const getSortedSteps = (apiOrder: string[]): StepProps[] => {
@@ -112,24 +129,7 @@ const JourneyDialog = ({
     return [...orderedSteps, ...remainingSteps];
   };
 
-  // Usage
   const sortedSteps = getSortedSteps(journeyList || []);
-
-  if (getUserOverallStatusIsData?.faceScan) {
-    sortedSteps.splice(4, 1);
-  }
-  if (getUserOverallStatusIsData?.nutrition) {
-    sortedSteps.splice(3, 1);
-  }
-  if (getUserOverallStatusIsData?.reportUpload) {
-    sortedSteps.splice(2, 1);
-  }
-  if (getUserOverallStatusIsData?.wearable) {
-    sortedSteps.splice(1, 1);
-  }
-  if (getProfileIsData?.onBoarding) {
-    sortedSteps.splice(0, 1);
-  }
 
   const handleNext = () => {
     if (currentStep < steps.length - 1) {
