@@ -174,7 +174,7 @@ const Sleep = () => {
                 <DailyTabContent
                   selectedDate={debouncedSearch}
                   wearableDailyRecommendationData={
-                    wearableDailyRecommendationData?.ai_response?.insights
+                    wearableDailyRecommendationData?.aiResponse?.insights
                   }
                   wearableDailyData={wearableDailyData}
                   getProfileIsData={getProfileIsData}
@@ -185,7 +185,7 @@ const Sleep = () => {
                 <WeeklyTabContent
                   selectedDate={debouncedSearch}
                   wearableWeeklyRecommendationData={
-                    wearableWeeklyRecommendationData?.ai_response?.insights
+                    wearableWeeklyRecommendationData?.aiResponse?.insights
                   }
                   wearableWeeklyData={wearableWeeklyData}
                   getProfileIsData={getProfileIsData}
@@ -196,7 +196,7 @@ const Sleep = () => {
                 <MonthlyTabContent
                   selectedDate={debouncedSearch}
                   wearableMonthlyRecommendationData={
-                    wearableMonthlyRecommendationData?.ai_response?.insights
+                    wearableMonthlyRecommendationData?.aiResponse?.insights
                   }
                   wearableMonthlyData={wearableMonthlyData}
                   getProfileIsData={getProfileIsData}
