@@ -1,4 +1,4 @@
-import { useState, useEffect, lazy, Suspense } from "react";
+import { useState, useEffect, lazy, Suspense, useRef } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -80,6 +80,10 @@ import {
 } from "@/service/hooks/shenai/useShenaiFaceScore";
 import { filterFaceScanData } from "@/utils/shenaiHelper";
 import { useAuth } from "@/contexts/AuthContext";
+import { useToast } from "@/hooks/use-toast";
+import { useGetUserProfile } from "@/service/hooks/profile/useGetUserProfile";
+import { useGetReportDetails } from "@/service/hooks/risk-score/useGetReportData";
+import { handleConvertCholesterolValue } from "@/utils/utils";
 
 const ShenaiApp = lazy(() => import("@/components/Shenai/ShenaiApp"));
 
@@ -137,22 +141,107 @@ const RenderPersonalFactorsForm = ({ setAnalysisProgress, setStep }) => {
 
   const personalFactorsForm = useForm<z.infer<typeof personalFactorsSchema>>({
     resolver: zodResolver(personalFactorsSchema),
-    defaultValues: {
-      age: "46",
-      gender: "female",
-      height: "167",
-      weight: "60",
-      diabetes: false,
-      smoker: false,
-      hypertensionTreatment: false,
-      totalCholesterol: "138",
-      hdlCholesterol: "43",
-      systolicPressure: "",
-      waistCircumference: "",
-      physicalActivity: "moderate",
-      ethnicity: "",
-    },
   });
+
+  const { isAuthenticated, loading } = useAuth();
+
+  const { mutate: saveScoreSaveMutate, isSuccess: saveScoreSaveIsSuccess } =
+    useGetUserFaceScoreSave();
+
+  const {
+    data: getProfileIsData,
+    isSuccess: getProfileIsSuccess,
+    refetch: getUserProfileRefetch,
+  } = useGetUserProfile({ isAuthenticated });
+
+  const { data: reportDetailsDataHDL } = useGetReportDetails({
+    testName: "hdl_cholesterol",
+    isAuthenticated,
+  });
+  const { data: reportDetailsDataTotalCholesterol } = useGetReportDetails({
+    testName: "total_cholesterol",
+    isAuthenticated,
+  });
+
+  useEffect(() => {
+    personalFactorsForm.reset({
+      age: String(getProfileIsData?.age ?? ""),
+      gender: getProfileIsData?.gender ?? "female",
+      height: String(getProfileIsData?.height ?? ""),
+      weight: String(getProfileIsData?.weight ?? ""),
+
+      diabetes: getProfileIsData?.additionalDetails?.[
+        "Are you currently taking any medications?"
+      ]?.answersArray?.includes("Diabetes")
+        ? true
+        : false,
+      smoker:
+        getProfileIsData?.additionalDetails?.[
+          "Do you smoke or use tobacco products?"
+        ]?.answersArray?.[0] === "yes" ||
+        getProfileIsData?.additionalDetails?.[
+          "Do you smoke or use tobacco products?"
+        ]?.answersArray?.[0] === "occasionally"
+          ? true
+          : false,
+      hypertensionTreatment: getProfileIsData?.hypertensionTreatment ?? false,
+      totalCholesterol:
+        reportDetailsDataTotalCholesterol?.result?.unit?.toLowerCase() ===
+        "mg/dl"
+          ? reportDetailsDataTotalCholesterol?.result?.result
+          : handleConvertCholesterolValue(
+              "mmol/l",
+              "mg/dl",
+              reportDetailsDataTotalCholesterol?.result?.result
+            ),
+      hdlCholesterol:
+        reportDetailsDataHDL?.result?.unit?.toLowerCase() === "mg/dl"
+          ? reportDetailsDataHDL?.result?.result
+          : handleConvertCholesterolValue(
+              "mmol/l",
+              "mg/dl",
+              reportDetailsDataHDL?.result?.result
+            ),
+      systolicPressure: getProfileIsData?.systolicPressure ?? "",
+      waistCircumference: getProfileIsData?.waistCircumference ?? "",
+      physicalActivity: getProfileIsData?.physicalActivity ?? "moderate",
+      ethnicity: getProfileIsData?.ethnicity ?? "",
+    });
+  }, [
+    getProfileIsSuccess,
+    getProfileIsData,
+    reportDetailsDataHDL,
+    reportDetailsDataTotalCholesterol,
+  ]);
+
+  const getExerciseIntensity = (exercise: string) => {
+    switch (true) {
+      case exercise?.includes("None"):
+        return shenaiSDK.PhysicalActivity.SEDENTARY;
+      case exercise?.includes("Light"):
+        return shenaiSDK.PhysicalActivity.LIGHTLY_ACTIVE;
+      case exercise?.includes("Moderate"):
+        return shenaiSDK.PhysicalActivity.MODERATELY;
+      case exercise?.includes("Intense"):
+        return shenaiSDK.PhysicalActivity.VERY_ACTIVE;
+      case exercise?.includes("Very"):
+        return shenaiSDK.PhysicalActivity.EXTRA_ACTIVE;
+      default:
+        return shenaiSDK.PhysicalActivity.SEDENTARY;
+    }
+  };
+  const getRace = (race: string) => {
+    switch (true) {
+      case race?.includes("white"):
+        return shenaiSDK.Race.WHITE;
+      case race?.includes("african-american"):
+        return shenaiSDK.Race.AFRICAN_AMERICAN;
+      case race?.includes("other"):
+        return shenaiSDK.Race.OTHER;
+      default:
+        return shenaiSDK.Race.OTHER;
+    }
+  };
 
   const handleSubmitPersonalFactors = (
     values: z.infer<typeof personalFactorsSchema>
@@ -177,20 +266,97 @@ const RenderPersonalFactorsForm = ({ setAnalysisProgress, setStep }) => {
           : values.gender === "female"
           ? shenaiSDK.Gender.FEMALE
           : shenaiSDK.Gender.OTHER,
-      country: "US",
-      race: ethnicityMap[values?.ethnicity],
 
-      physicalActivity: Number(values.physicalActivity),
+      country: "US",
+      race: getRace(values?.ethnicity),
+
+      physicalActivity: getExerciseIntensity(values.physicalActivity),
     });
 
-    console.log("Personal factors submitted:", values);
+    console.log("Personal factors submitted:", {
+      age: Number(values.age),
+      cholesterol: Number(values.totalCholesterol),
+      cholesterolHdl: Number(values.hdlCholesterol),
+      sbp: Number(values.systolicPressure),
+
+      isSmoker: values.smoker,
+      hypertensionTreatment: values.hypertensionTreatment,
+      hasDiabetes: values.diabetes,
+
+      bodyHeight: Number(values.height),
+      bodyWeight: Number(values.weight),
+      waistCircumference: Number(values.waistCircumference),
+
+      gender:
+        values.gender === "male"
+          ? shenaiSDK.Gender.MALE
+          : values.gender === "female"
+          ? shenaiSDK.Gender.FEMALE
+          : shenaiSDK.Gender.OTHER,
+
+      country: "US",
+      race: getRace(values?.ethnicity),
+
+      physicalActivity: getExerciseIntensity(values.physicalActivity),
+    });
     console.log("this is calculate value", computedHealthRisksData);
 
     setWellnessData(computedHealthRisksData);
 
+    saveScoreSaveMutate({
+      wellnessScore: computedHealthRisksData?.wellnessScore || 0,
+      hardAndFatalEvents: {
+        coronaryDeathEventRisk:
+          computedHealthRisksData?.hardAndFatalEvents?.coronaryDeathEventRisk ||
+          0,
+        fatalStrokeEventRisk:
+          computedHealthRisksData?.hardAndFatalEvents?.fatalStrokeEventRisk ||
+          0,
+        totalCVMortalityRisk:
+          computedHealthRisksData?.hardAndFatalEvents?.totalCVMortalityRisk ||
+          0,
+        hardCVEventRisk:
+          computedHealthRisksData?.hardAndFatalEvents?.hardCVEventRisk || 0,
+      },
+      cvDiseases: {
+        overallRisk: computedHealthRisksData?.cvDiseases?.overallRisk || 0,
+        coronaryHeartDiseaseRisk:
+          computedHealthRisksData?.cvDiseases?.coronaryHeartDiseaseRisk || 0,
+        strokeRisk: computedHealthRisksData?.cvDiseases?.strokeRisk || 0,
+        heartFailureRisk:
+          computedHealthRisksData?.cvDiseases?.heartFailureRisk || 0,
+        peripheralVascularDiseaseRisk:
+          computedHealthRisksData?.cvDiseases?.peripheralVascularDiseaseRisk ||
+          0,
+      },
+      vascularAge: computedHealthRisksData?.vascularAge || 0,
+      scores: {
+        ageScore: computedHealthRisksData?.scores?.ageScore || 0,
+        sbpScore: computedHealthRisksData?.scores?.sbpScore || 0,
+        smokingScore: computedHealthRisksData?.scores?.smokingScore || 0,
+        diabetesScore: computedHealthRisksData?.scores?.diabetesScore || 0,
+        bmiScore: computedHealthRisksData?.scores?.bmiScore || 0,
+        cholesterolScore:
+          computedHealthRisksData?.scores?.cholesterolScore || 0,
+        cholesterolHdlScore:
+          computedHealthRisksData?.scores?.cholesterolHdlScore || 0,
+        totalScore: computedHealthRisksData?.scores?.totalScore || 0,
+      },
+      waistToHeightRatio: computedHealthRisksData?.waistToHeightRatio || 0,
+      bodyFatPercentage: computedHealthRisksData?.bodyFatPercentage || 0,
+      basalMetabolicRate: computedHealthRisksData?.basalMetabolicRate || 0,
+      bodyRoundnessIndex: computedHealthRisksData?.bodyRoundnessIndex || 0,
+      conicityIndex: computedHealthRisksData?.conicityIndex || 0,
+      aBodyShapeIndex: computedHealthRisksData?.aBodyShapeIndex || 0,
+      totalDailyEnergyExpenditure:
+        computedHealthRisksData?.totalDailyEnergyExpenditure || 0,
+    });
+
     // In a real application, you would save these values and use them
     setAnalysisProgress(0);
-    setStep("results-processing");
+    setTimeout(() => {
+      setStep("results-processing");
+    }, 200);
   };
   return (
     <div className="container max-w-md mx-auto p-4">
@@ -255,39 +421,42 @@ const RenderPersonalFactorsForm = ({ setAnalysisProgress, setStep }) => {
                 <FormField
                   control={personalFactorsForm.control}
                   name="gender"
-                  render={({ field }) => (
-                    <FormItem>
-                      <div className="flex items-center justify-between">
-                        <FormLabel>Gender</FormLabel>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <HelpCircle className="h-4 w-4 text-gray-400" />
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p className="w-52">
-                              Health risk factors can vary by gender.
-                            </p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </div>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select gender" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="male">Male</SelectItem>
-                          <SelectItem value="female">Female</SelectItem>
-                          <SelectItem value="other">Other</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
+                  render={({ field }) => {
+                    return (
+                      <FormItem>
+                        <div className="flex items-center justify-between">
+                          <FormLabel>Gender</FormLabel>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <HelpCircle className="h-4 w-4 text-gray-400" />
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p className="w-52">
+                                Health risk factors can vary by gender.
+                              </p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </div>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                          value={field.value}
+                        >
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select gender" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="male">Male</SelectItem>
+                            <SelectItem value="female">Female</SelectItem>
+                            <SelectItem value="other">Other</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    );
+                  }}
                 />
 
                 <div className="grid grid-cols-2 gap-4">
@@ -350,12 +519,12 @@ const RenderPersonalFactorsForm = ({ setAnalysisProgress, setStep }) => {
 
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 w-full">
                     <FormField
                       control={personalFactorsForm.control}
                       name="diabetes"
                       render={({ field }) => (
-                        <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
+                        <FormItem className="flex flex-row items-center justify-between w-full rounded-lg border p-3 shadow-sm">
                           <div className="space-y-0.5">
                             <FormLabel>Diabetes</FormLabel>
                           </div>
@@ -368,16 +537,12 @@ const RenderPersonalFactorsForm = ({ setAnalysisProgress, setStep }) => {
                         </FormItem>
                       )}
                     />
-                  </div>
-                </div>
 
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
                     <FormField
                       control={personalFactorsForm.control}
                       name="smoker"
                       render={({ field }) => (
-                        <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
+                        <FormItem className="flex flex-row items-center justify-between w-full rounded-lg border p-3 shadow-sm">
                           <div className="space-y-0.5">
                             <FormLabel>Smoker</FormLabel>
                           </div>
@@ -394,12 +559,12 @@ const RenderPersonalFactorsForm = ({ setAnalysisProgress, setStep }) => {
                 </div>
 
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 w-full">
                     <FormField
                       control={personalFactorsForm.control}
                       name="hypertensionTreatment"
                       render={({ field }) => (
-                        <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
+                        <FormItem className="flex flex-row items-center justify-between w-full rounded-lg border p-3 shadow-sm">
                           <div className="space-y-0.5">
                             <FormLabel>Hypertension Treatment</FormLabel>
                           </div>
@@ -597,11 +762,17 @@ const RenderPersonalFactorsForm = ({ setAnalysisProgress, setStep }) => {
                           <SelectItem value="sedentary">
                             Sedentary (little or no exercise)
                           </SelectItem>
-                          <SelectItem value="moderate">
-                            Moderate (exercise 1-3 times/week)
+                          <SelectItem value="lightly">
+                            Lightly (exercise 1-3 times/week)
                           </SelectItem>
-                          <SelectItem value="active">
-                            Active (exercise 4+ times/week)
+                          <SelectItem value="moderatly">
+                            Moderatly (exercise 4+ times/week)
+                          </SelectItem>
+                          <SelectItem value="very-active">
+                            Very Active (exercise 6-7 times/week)
+                          </SelectItem>
+                          <SelectItem value="super-active">
+                            Super Active (exercise 2x/day)
                           </SelectItem>
                         </SelectContent>
                       </Select>
@@ -642,17 +813,6 @@ const RenderPersonalFactorsForm = ({ setAnalysisProgress, setStep }) => {
                           <SelectItem value="african-american">
                             African American
                           </SelectItem>
-                          <SelectItem value="asian">Asian</SelectItem>
-                          <SelectItem value="caucasian">Caucasian</SelectItem>
-                          <SelectItem value="hispanic">
-                            Hispanic/Latino
-                          </SelectItem>
-                          <SelectItem value="middleeastern">
-                            Middle Eastern
-                          </SelectItem>
-                          <SelectItem value="pacificislander">
-                            Pacific Islander
-                          </SelectItem>
                           <SelectItem value="other">Other</SelectItem>
                         </SelectContent>
                       </Select>
@@ -687,12 +847,15 @@ const RenderPersonalFactorsForm = ({ setAnalysisProgress, setStep }) => {
 };
 
 const FaceScan = () => {
+  const { toast } = useToast();
   const navigate = useNavigate();
   const [step, setStep] = useState<ScanStep>("intro");
   const [scanProgress, setScanProgress] = useState(0);
   const [processingProgress, setProcessingProgress] = useState(0);
   const [analysisProgress, setAnalysisProgress] = useState(0);
   const [openSection, setOpenSection] = useState<string>("vitals");
+  const personalFactorsRef = useRef(null);
+  const [isShenaiInitialized, setIsShenaiInitialized] = useState(false);
 
   // Real-time vitals that update during scan
   const [heartRate, setHeartRate] = useState<number | null>(null);
@@ -892,6 +1055,10 @@ const FaceScan = () => {
 
   const handleAddPersonalFactors = () => {
     setStep("personal-factors");
+
+    setTimeout(() => {
+      personalFactorsRef.current?.scrollIntoView({ behavior: "smooth" });
+    }, 300); // slight delay to ensure the element is mounted
   };
 
   const handleRetakeScan = () => {
@@ -1316,7 +1483,10 @@ const FaceScan = () => {
             ></iframe>  */}
 
             <Suspense>
-              <ShenaiApp setStep={setStep} />
+              <ShenaiApp
+                setStep={setStep}
+                setIsShenaiInitialized={setIsShenaiInitialized}
+              />
             </Suspense>
           </div>
 
@@ -1368,6 +1538,7 @@ const FaceScan = () => {
     } = useGetUserFaceDataLatest(localStorage.getItem("token") ? true : false);
 
     const {
+      data: savedData,
       mutate: saveDataSaveMutate,
       isSuccess: saveDataSaveIsSuccess,
       isPending: saveDataSaveIsPending,
@@ -1376,8 +1547,12 @@ const FaceScan = () => {
     useEffect(() => {
       if (saveDataSaveIsSuccess) {
         userFaceDataLatestRefetch();
+        toast({
+          title: "",
+          description: "You have successfully Saved.",
+        });
       }
-    }, [saveDataSaveIsSuccess]);
+    }, [savedData, saveDataSaveIsSuccess]);
 
     const SaveResultHandle = () => {
       if (results) {
@@ -1673,6 +1848,7 @@ const FaceScan = () => {
   const RenderAnalysisResults = () => {
     const { wellnessData } = useWellness();
     const { results } = useFaceScan();
+    const healthScoreAnalysisRef = useRef(null);
 
     const { mutate: saveScoreSaveMutate, isSuccess: saveScoreSaveIsSuccess } =
       useGetUserFaceScoreSave();
@@ -1729,8 +1905,17 @@ const FaceScan = () => {
       }
     }, [saveScoreSaveIsSuccess]);
 
+    useEffect(() => {
+      setTimeout(() => {
+        healthScoreAnalysisRef.current?.scrollIntoView({ behavior: "smooth" });
+      }, 100); // slight delay to ensure the element is mounted
+    }, []);
+
     return (
-      <div className="container max-w-md mx-auto p-4">
+      <div
+        className="container max-w-md mx-auto p-4"
+        ref={healthScoreAnalysisRef}
+      >
         <div className="flex flex-col items-center space-y-6">
           <div className="text-center mb-2">
             <div className="bg-gradient-to-r from-blue-50 to-indigo-50 h-32 w-32 rounded-full flex items-center justify-center mx-auto mb-2 border-4 border-blue-100">
@@ -1976,10 +2161,12 @@ const FaceScan = () => {
             {step === "details" && renderHealthDetails()}
             {step === "analysis" && renderAnalysis()}
             {step === "personal-factors" && (
-              <RenderPersonalFactorsForm
-                setAnalysisProgress={setAnalysisProgress}
-                setStep={setStep}
-              />
+              <div ref={personalFactorsRef}>
+                <RenderPersonalFactorsForm
+                  setAnalysisProgress={setAnalysisProgress}
+                  setStep={setStep}
+                />
+              </div>
             )}
             {step === "results-processing" && renderResultsProcessing()}
             {step === "analysis-results" && <RenderAnalysisResults />}
