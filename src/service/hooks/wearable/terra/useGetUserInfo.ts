@@ -2,6 +2,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import {
   getDeleteUserWearableDeviceFetcher,
   getDeviceAuthURLFetcher,
+  getExcludeDataV4Fetcher,
   getUpdateConnectedDeviceFetcher,
   getUserInfoFetcher,
   getWearableDailyDataV4Fetcher,
@@ -304,4 +305,11 @@ export const useGetWearableElasticSearchHistoricalData = (
   });
 
   return { data: data?.data, error, isError, isLoading, isSuccess, refetch };
+};
+export const useGetExcludeDataV4 = () => {
+  const { data, error, isError, isPending, isSuccess, mutate } = useMutation({
+    mutationFn: getExcludeDataV4Fetcher,
+  });
+
+  return { data: data?.data, error, isError, isPending, isSuccess, mutate };
 };

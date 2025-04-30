@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import Layout from "@/components/layout/Layout";
 import DateNavigation from "@/components/sleep/DateNavigation";
@@ -14,6 +14,7 @@ import {
 } from "@/components/sleep/SleepDateUtils";
 import { TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
+  useGetExcludeDataV4,
   useGetUserInfoTerraData,
   useGetWearableDailyDataV4,
   useGetWearableDailyRecommendationDataV4,
@@ -26,6 +27,7 @@ import { useGetUserProfile } from "@/service/hooks/profile/useGetUserProfile";
 import { Navigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useDebounce } from "@/hooks/use-debounce";
+import { useToast } from "@/hooks/use-toast";
 
 type ViewType = "day" | "week" | "month";
 
@@ -34,11 +36,12 @@ const formatDate = (date: Date) => {
 };
 
 const Sleep = () => {
+  const { toast } = useToast();
   const { isAuthenticated, loading } = useAuth();
 
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const debouncedSearch = useDebounce(selectedDate, 700);
-
+  const [excludeActionType, setExcludeActionType] = useState("");
   const [viewType, setViewType] = useState<ViewType>("day");
 
   const { data: connectedDevicesData, refetch: connectedDevicesRefetch } =
@@ -59,6 +62,7 @@ const Sleep = () => {
     data: wearableDailyData,
     isSuccess: wearableDailyIsSuccess,
     isLoading: wearableDailyIsLoading,
+    refetch: wearableDailyRefetch,
   } = useGetWearableDailyDataV4({
     resource: connectedDevicesData?.[0]?.device,
     startDate: formatDate(debouncedSearch),
@@ -110,6 +114,29 @@ const Sleep = () => {
 
   const { data: getProfileIsData } = useGetUserProfile({ isAuthenticated });
 
+  const { mutate: excludeMutate, isSuccess: excludeIsSuccess } =
+    useGetExcludeDataV4();
+
+  const handleExcludeMutate = ({ type }) => {
+    setExcludeActionType(type);
+    excludeMutate({
+      data_type: "sleep",
+      date: formatDate(debouncedSearch),
+      type,
+    });
+  };
+
+  useEffect(() => {
+    if (excludeIsSuccess) {
+      wearableDailyRefetch();
+
+      toast({
+        title: "",
+        description: `Data ${excludeActionType}d successfully`,
+      });
+    }
+  }, [excludeIsSuccess]);
+
   const handlePrevious = () => {
     setSelectedDate((prev) => goToPreviousDate(prev, viewType));
   };
@@ -142,6 +169,8 @@ const Sleep = () => {
               onNext={handleNext}
               onToday={handleToday}
               isToday={isTodaySelected}
+              wearableDailyData={wearableDailyData}
+              handleExcludeMutate={handleExcludeMutate}
             />
 
             <Tabs

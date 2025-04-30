@@ -52,6 +52,16 @@ const getWearableMonthlyDataV4 = ({
   resource: string;
   startDate: string;
 }) => `wearable/v4/monthly?resource=${resource}&date=${startDate}`;
+const getExcludeDataV4 = ({
+  date,
+  data_type,
+  type,
+}: {
+  date: string;
+  data_type: string;
+  type: string;
+}) =>
+  `wearable/v4/exclude/list?date=${date}&data_type=${data_type}&type=${type}`;
 
 const getWearableWeeklyRecommendationDataV4 = ({
   language,
@@ -237,4 +247,15 @@ export const getWearableMonthlyRecommendationDataV4Fetcher = (
   return Client.get(
     getWearableMonthlyRecommendationDataV4({ language, startDate })
   );
+};
+export const getExcludeDataV4Fetcher = ({
+  data_type,
+  date,
+  type,
+}: {
+  data_type: string;
+  date: string;
+  type: string;
+}) => {
+  return Client.post(getExcludeDataV4({ data_type, date, type }), {});
 };
