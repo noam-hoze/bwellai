@@ -355,8 +355,8 @@ const RenderPersonalFactorsForm = ({ setAnalysisProgress, setStep }) => {
     // In a real application, you would save these values and use them
     setAnalysisProgress(0);
     setTimeout(() => {
-      setStep("results-processing");
-    }, 200);
+      setStep("analysis-results");
+    }, 100);
   };
   return (
     <div className="container max-w-md mx-auto p-4">
