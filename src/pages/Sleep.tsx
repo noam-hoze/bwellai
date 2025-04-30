@@ -171,6 +171,7 @@ const Sleep = () => {
               isToday={isTodaySelected}
               wearableDailyData={wearableDailyData}
               handleExcludeMutate={handleExcludeMutate}
+              viewType={viewType}
             />
 
             <Tabs

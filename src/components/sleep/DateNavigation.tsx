@@ -10,6 +10,7 @@ interface DateNavigationProps {
   isToday: boolean;
   wearableDailyData: any;
   handleExcludeMutate: any;
+  viewType: string;
 }
 
 const DateNavigation = ({
@@ -20,10 +21,9 @@ const DateNavigation = ({
   isToday,
   wearableDailyData,
   handleExcludeMutate,
+  viewType,
 }: DateNavigationProps) => {
   const isMobile = useIsMobile();
-
-  console.log(wearableDailyData?.type);
 
   return (
     <div className="flex items-center justify-between bg-white rounded-lg shadow-sm p-4 border border-gray-100">
@@ -49,18 +49,20 @@ const DateNavigation = ({
       </div>
 
       <div className="flex justify-between items-center gap-5">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => {
-            handleExcludeMutate({
-              type:
-                wearableDailyData?.type === "exclude" ? "include" : "exclude",
-            });
-          }}
-        >
-          {wearableDailyData?.type === "exclude" ? "Include" : "Exclude"}
-        </Button>
+        {viewType === "day" && (
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              handleExcludeMutate({
+                type:
+                  wearableDailyData?.type === "exclude" ? "include" : "exclude",
+              });
+            }}
+          >
+            {wearableDailyData?.type === "exclude" ? "Include" : "Exclude"}
+          </Button>
+        )}
         <Button
           variant="outline"
           size="sm"
