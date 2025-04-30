@@ -52,8 +52,6 @@ const OnboardingScreen = () => {
     height: "",
   });
 
-  console.log(userInfo);
-
   const { loginWithOTP } = useAuth();
 
   const {
@@ -318,7 +316,6 @@ const OnboardingScreen = () => {
 
   const handleGoogleSignInFailure = () => {
     // navigate("/dashboard");
-    console.log();
   };
 
   const steps = [
@@ -394,7 +391,7 @@ const OnboardingScreen = () => {
                     placeholder="Your age"
                     value={userInfo?.age}
                     onChange={(e) => {
-                      updateUserInfo("age", Number(e.target.value));
+                      updateUserInfo("age", e.target.value);
                       setErrors((prev) => ({ ...prev, ["age"]: "" })); // clear error on change
                     }}
                     onBlur={(e) => handleBlur("age", e.target.value)}
@@ -773,7 +770,7 @@ const OnboardingScreen = () => {
               onClick={nextStep}
               disabled={currentStep === 3 && !userInfo?.privacyConsent}
             >
-              Continue
+              Continue {currentStep}
             </button>
           </div>
         ) : null}
