@@ -770,7 +770,7 @@ const OnboardingScreen = () => {
               onClick={nextStep}
               disabled={currentStep === 3 && !userInfo?.privacyConsent}
             >
-              Continue {currentStep}
+              Continue
             </button>
           </div>
         ) : null}
