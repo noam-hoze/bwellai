@@ -41,6 +41,7 @@ const Index = () => {
   const code = searchParams.get("code");
   const navigate = useNavigate();
   const { isOpen, closeJourney } = useJourneyDialog();
+  const [callbackLoading, setCallbackLoading] = useState(false);
   const { isAuthenticated, loginWithOTP, loading } = useAuth();
 
   const {
@@ -112,6 +113,7 @@ const Index = () => {
         // const { credential } = response;
         // console.log(credential);
         // Send the credential to your backend for verification and authentication
+        setCallbackLoading(true);
 
         const backendResponse = await axios.get(
           `${import.meta.env.VITE_API_BASE_URL}/user/auth/google/callback`,
@@ -125,7 +127,9 @@ const Index = () => {
         if (backendResponse.data.payload) {
           handleGoogleSignIn(backendResponse.data.payload);
         }
+        setCallbackLoading(false);
       } catch (error) {
+        setCallbackLoading(false);
         if (error) {
           console.log(error);
           navigate("/onboarding/4");
@@ -180,7 +184,7 @@ const Index = () => {
     getUserOverallStatusIsData &&
     Object.values(getUserOverallStatusIsData)?.some((value) => value === false);
 
-  if (loading) {
+  if (loading || callbackLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-pulse text-center">
