@@ -125,6 +125,35 @@ export const calorieNumberDisplayed = ({
   return bmr * multiplier;
 };
 
+export const handleConvertCholesterolValue = (
+  prevUnit: string,
+  newUnit: string,
+  value: number
+): number => {
+  // if prev value is mg/dl
+  if (prevUnit === "mg/dl" && newUnit === "mmol/l") {
+    return value / 18;
+  }
+  if (prevUnit === "mg/dl" && newUnit === "percentile") {
+    return value;
+  }
+  // if prev value is mmol/l
+  if (prevUnit === "mmol/l" && newUnit === "mg/dl") {
+    return value * 18;
+  }
+  if (prevUnit === "mmol/l" && newUnit === "percentile") {
+    return value;
+  }
+  // if prev value is percentile
+  if (prevUnit === "percentile" && newUnit === "mg/dl") {
+    return value;
+  }
+  if (prevUnit === "percentile" && newUnit === "mmol/l") {
+    return value;
+  }
+  return 0;
+};
+
 const MicronutrientsBalanceMap = {
   ObeseBMI: {
     fat: 45, // 45

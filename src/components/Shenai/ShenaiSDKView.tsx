@@ -7,7 +7,7 @@ import { Button } from "../ui/button";
 import { useFaceScan } from "@/contexts/FaceScanContext";
 import { Progress } from "../ui/progress";
 
-export const ShenaiSDKView = ({ setStep }) => {
+export const ShenaiSDKView = ({ setStep, setIsShenaiInitialized }) => {
   // const hr = useRealtimeHeartRate();
   const shenaiSDK = useShenaiSdk();
 
