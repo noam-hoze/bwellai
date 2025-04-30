@@ -29,7 +29,10 @@ const NutrientProgressv2 = ({
   const [showCalories, setShowCalories] = useState(false);
 
   // Calculate percentage of goal reached
-  const percentage = Math.round((currentAmount / goalAmount) * 100);
+  const percentage =
+    currentAmount > 0 && goalAmount > 0
+      ? Math.round((currentAmount / goalAmount) * 100)
+      : 0;
 
   const getcolor = getCalorieColor(percentage);
 

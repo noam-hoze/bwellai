@@ -713,14 +713,14 @@ const OnboardingScreen = () => {
           )}
         </div>
         <div className="flex flex-wrap gap-2">
-          {!isMobile && currentStep < steps.length - 1 && (
+          {/* {!isMobile && currentStep < steps.length - 1 && (
             <button
               className="text-gray-500 hover:text-green-700 text-sm font-medium"
               onClick={nextStep}
             >
               Skip this part
             </button>
-          )}
+          )} */}
           {!isMobile && currentStep < steps.length - 1 && (
             <button
               className="bg-green-800 text-white px-4 py-1 rounded-full text-sm font-medium hover:bg-green-700"
