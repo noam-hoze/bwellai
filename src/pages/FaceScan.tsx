@@ -1593,13 +1593,15 @@ const FaceScan = () => {
           />
 
           <div className="flex flex-col gap-3 w-full">
-            <Button
-              onClick={handleAddPersonalFactors}
-              className="w-full bg-gradient-to-r from-blue-500 to-blue-600"
-            >
-              <Plus className="mr-2 h-4 w-4" />
-              Add Personal Factors for Better Analysis
-            </Button>
+            {isShenaiInitialized && (
+              <Button
+                onClick={handleAddPersonalFactors}
+                className="w-full bg-gradient-to-r from-blue-500 to-blue-600"
+              >
+                <Plus className="mr-2 h-4 w-4" />
+                Add Personal Factors for Better Analysis
+              </Button>
+            )}
             <Button
               variant="outline"
               onClick={handleRetakeScan}

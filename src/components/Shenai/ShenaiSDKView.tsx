@@ -93,6 +93,7 @@ export const ShenaiSDKView = ({ setStep, setIsShenaiInitialized }) => {
       showTrialMetricLabels: true,
       enableFullFrameProcessing: false,
     };
+    setIsShenaiInitialized(true);
     setInitializationSettings(settings);
   }, [shenaiSDK]);
 
