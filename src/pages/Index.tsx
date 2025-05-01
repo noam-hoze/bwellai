@@ -225,6 +225,7 @@ const Index = () => {
         {(overallDataStatus || !getProfileIsData?.onBoarding) && (
           <StartJourneyBanner
             getUserOverallStatusIsData={getUserOverallStatusIsData}
+            getProfileIsData={getProfileIsData}
           />
         )}
 

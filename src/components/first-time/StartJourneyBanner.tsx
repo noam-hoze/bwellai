@@ -3,12 +3,18 @@ import { useJourneyDialog } from "@/hooks/use-journey-dialog";
 import { ArrowRight } from "lucide-react";
 import { useEffect, useState } from "react";
 
-const StartJourneyBanner = ({ getUserOverallStatusIsData }) => {
+const StartJourneyBanner = ({
+  getUserOverallStatusIsData,
+  getProfileIsData,
+}) => {
   const { openJourney } = useJourneyDialog();
   const [isAnimating, setIsAnimating] = useState(false);
   const currentText =
-    getUserOverallStatusIsData &&
-    Object.values(getUserOverallStatusIsData)?.some((value) => value === true);
+    getProfileIsData?.onBoarding ||
+    (getUserOverallStatusIsData &&
+      Object.values(getUserOverallStatusIsData)?.some(
+        (value) => value === true
+      ));
 
   useEffect(() => {
     // First blink
