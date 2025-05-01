@@ -308,31 +308,34 @@ const MealAnalysisPage = () => {
                 </h2>
 
                 {ingredients?.map((ingredient, idx) => (
-                  <div key={idx} className="flex items-center mb-2">
-                    {ingredient?.category === "Good" ? (
-                      <Check size={16} className="mr-2 text-green-500" />
-                    ) : (
-                      <AlertTriangle
-                        size={16}
-                        className="mr-2 text-yellow-500"
-                      />
-                    )}
-                    <span
-                      className={`text-gray-800 ${
-                        idx === 0 ? "font-medium" : ""
-                      }`}
-                    >
-                      {ingredient?.name}
-                    </span>
-                    {/* <span className="ml-auto text-sm text-gray-500">
+                  <div className="mb-3">
+                    <div key={idx} className="flex items-center">
+                      {ingredient?.category === "Good" ? (
+                        <Check size={16} className="mr-2 text-green-500" />
+                      ) : (
+                        <AlertTriangle
+                          size={16}
+                          className="mr-2 text-yellow-500"
+                        />
+                      )}
+                      <span
+                        className={`text-gray-800 ${
+                          idx === 0 ? "font-medium" : ""
+                        }`}
+                      >
+                        {ingredient?.name}
+                      </span>
+                      {/* <span className="ml-auto text-sm text-gray-500">
                       {idx === 0
-                        ? "High in added sugar"
-                        : idx === 1
-                        ? "Good source of fiber"
-                        : idx === 2
-                        ? "Rich in antioxidants"
-                        : "High in vitamin C"}
-                    </span> */}
+                      ? "High in added sugar"
+                      : idx === 1
+                      ? "Good source of fiber"
+                      : idx === 2
+                      ? "Rich in antioxidants"
+                      : "High in vitamin C"}
+                      </span> */}
+                    </div>
+                    <p className="ml-6">{ingredient?.reason_for_category}</p>
                   </div>
                 ))}
               </div>
