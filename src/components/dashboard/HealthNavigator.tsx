@@ -376,11 +376,13 @@ const HealthNavigator = ({ getProfileIsData, userPreviousData }) => {
                             // ]?.metric?.includes(stat.label);
 
                             console.log(
+                              stat?.metric,
                               formatedData2?.[stat?.metric?.toUpperCase()]
-                                ?.signalText
                             );
 
-                            return (
+                            return formatedData2?.[
+                              stat?.metric?.toUpperCase()
+                            ] ? (
                               <div key={index} className="flex items-start">
                                 <div className="mr-2 mt-1">{stat?.icon}</div>
                                 <div>
@@ -411,11 +413,39 @@ const HealthNavigator = ({ getProfileIsData, userPreviousData }) => {
                                     )}
                                   </div>
                                   <div className="text-xs text-gray-700">
-                                    {
+                                    {formatedData2?.[
+                                      stat?.metric?.toUpperCase()
+                                    ]?.label?.toLowerCase()}
+                                  </div>
+                                </div>
+                              </div>
+                            ) : (
+                              <div key={index} className="flex items-start">
+                                <div className="mr-2 mt-1">{stat?.icon}</div>
+                                <div>
+                                  <div className="flex items-baseline">
+                                    <span className="text-lg font-bold text-gray-900">
+                                      No Data
+                                    </span>
+                                    {formatedData2?.[
+                                      stat?.metric?.toUpperCase()
+                                    ]?.unit && (
+                                      <span className="ml-1 text-sm text-gray-600">
+                                        {
+                                          formatedData2?.[
+                                            stat?.metric?.toUpperCase()
+                                          ].unit
+                                        }
+                                      </span>
+                                    )}
+                                    {getStatusBadge(
                                       formatedData2?.[
                                         stat?.metric?.toUpperCase()
-                                      ]?.label
-                                    }
+                                      ]?.signalText
+                                    )}
+                                  </div>
+                                  <div className="text-xs text-gray-700">
+                                    {stat?.metric}
                                   </div>
                                 </div>
                               </div>
