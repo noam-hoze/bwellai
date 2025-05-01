@@ -14,6 +14,7 @@ import { Lungs } from "@/components/icons/Lungs";
 import ManBody from "./ManBody";
 import WomanBody from "./WomanBody";
 import {
+  healthMetrics,
   healthMetricsArray,
   profileNameToBodyPartObject,
 } from "@/modules/constant/report-data/body-profile-data";
@@ -202,6 +203,7 @@ const HealthNavigator = ({ getProfileIsData, userPreviousData }) => {
 
   const [activeOrgan, setActiveOrgan] = useState<Organ>(null);
   const [formatedData, setFormatedData] = useState({});
+  const [formatedData2, setFormatedData2] = useState({});
 
   const handleOrganClick = (organ: Organ) => {
     setActiveOrgan(organ);
@@ -258,6 +260,18 @@ const HealthNavigator = ({ getProfileIsData, userPreviousData }) => {
         }
 
         biomarkers.forEach((bio: any) => {
+          setFormatedData2((p) => {
+            return {
+              ...p,
+              [bio?.testName]: {
+                unit: bio?.testMeasuringUnit ?? "",
+                value: bio?.testResultValue ?? "No Data",
+                signalText: bio?.signalText || "unknown",
+                icon: <Info className="w-5 h-5 text-amber-500" />,
+                label: bio?.testName ?? "Unknown Test",
+              },
+            };
+          });
           organData?.[pn]?.stats?.push({
             icon: <Info className="w-5 h-5 text-amber-500" />,
             value: bio?.testResultValue ?? "N/A",
@@ -271,6 +285,8 @@ const HealthNavigator = ({ getProfileIsData, userPreviousData }) => {
       setFormatedData(organData);
     }
   }, [userPreviousData]);
+
+  console.log(activeOrgan);
 
   return (
     <Card className="wellness-card border-l-4 border-l-blue-400 mt-6">
@@ -353,36 +369,58 @@ const HealthNavigator = ({ getProfileIsData, userPreviousData }) => {
                       </div>
 
                       <div className="space-y-3">
-                        {formatedData?.[activeOrgan]?.stats?.map(
-                          (stat, index) => {
-                            const isShowData = healthMetricsArray?.[
-                              activeOrgan
-                            ]?.metric?.includes(stat.label);
-                            return isShowData ? (
+                        {formatedData2 &&
+                          healthMetrics?.[activeOrgan]?.map((stat, index) => {
+                            // const isShowData = healthMetricsArray?.[
+                            //   activeOrgan
+                            // ]?.metric?.includes(stat.label);
+
+                            console.log(
+                              formatedData2?.[stat?.metric?.toUpperCase()]
+                                ?.signalText
+                            );
+
+                            return (
                               <div key={index} className="flex items-start">
-                                <div className="mr-2 mt-1">{stat.icon}</div>
+                                <div className="mr-2 mt-1">{stat?.icon}</div>
                                 <div>
                                   <div className="flex items-baseline">
                                     <span className="text-lg font-bold text-gray-900">
-                                      {stat.value}
+                                      {formatedData2?.[
+                                        stat?.metric?.toUpperCase()
+                                      ]?.value ||
+                                        formatedData2?.[
+                                          stat?.metric?.toUpperCase()
+                                        ]?.noDataMessage}
                                     </span>
-                                    {stat.unit && (
+                                    {formatedData2?.[
+                                      stat?.metric?.toUpperCase()
+                                    ]?.unit && (
                                       <span className="ml-1 text-sm text-gray-600">
-                                        {stat.unit}
+                                        {
+                                          formatedData2?.[
+                                            stat?.metric?.toUpperCase()
+                                          ].unit
+                                        }
                                       </span>
                                     )}
-                                    {getStatusBadge(stat.signalText)}
+                                    {getStatusBadge(
+                                      formatedData2?.[
+                                        stat?.metric?.toUpperCase()
+                                      ]?.signalText
+                                    )}
                                   </div>
                                   <div className="text-xs text-gray-700">
-                                    {stat.label}
+                                    {
+                                      formatedData2?.[
+                                        stat?.metric?.toUpperCase()
+                                      ]?.label
+                                    }
                                   </div>
                                 </div>
                               </div>
-                            ) : (
-                              <></>
                             );
-                          }
-                        )}
+                          })}
                       </div>
                     </div>
                   </div>

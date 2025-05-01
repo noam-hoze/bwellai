@@ -120,7 +120,7 @@ export const healthMetrics = {
   ],
   Liver: [
     {
-      metric: "ALT",
+      metric: "ALT (SGPT)",
       source: "Blood test (Liver function panel)",
       noDataMessage:
         "No liver enzyme data available. [Upload lab results] for liver function tests.",
@@ -128,7 +128,7 @@ export const healthMetrics = {
       icon: "🧪",
     },
     {
-      metric: "AST",
+      metric: "AST (SGOT)",
       source: "Blood test (Liver function panel)",
       noDataMessage:
         "No liver enzyme data available. [Upload lab results] for liver function tests.",
@@ -136,7 +136,7 @@ export const healthMetrics = {
       icon: "🧪",
     },
     {
-      metric: "Bilirubin",
+      metric: "Bilirubin, Direct",
       source: "Blood test (Liver function panel)",
       noDataMessage:
         "No bilirubin data available. [Upload lab results] for liver function tests.",
@@ -220,7 +220,7 @@ export const healthMetrics = {
       icon: "✅",
     },
   ],
-  "Heart & Cardiovascular": [
+  "Heart & Cardiovascular System": [
     {
       metric: "Resting heart rate",
       source: "Wearable device (e.g., Garmin)",
@@ -238,7 +238,7 @@ export const healthMetrics = {
       icon: "📊",
     },
     {
-      metric: "Cholesterol (LDL, HDL)",
+      metric: "Cholesterol",
       source: "Blood test (Lipid panel)",
       noDataMessage:
         "No cholesterol data available. [Upload lipid panel results] for cholesterol levels.",
@@ -339,7 +339,7 @@ export const healthMetricsArray = {
   Liver: {
     metric: [
       "ALT",
-      // "ALP",
+      "ALP",
       "Normal ALT Range",
       "Normal AST Range",
       "AST",
