@@ -18,7 +18,7 @@ import {
 const plansFeatures = {
   alternative_perspectives: "Alternative Perspectives",
   diagnostics_report_upload: "Diagnostics Report Upload",
-  food_barcode_scan: "food Barcode Scan",
+  food_barcode_scan: "Food Barcode Scan",
   food_image_scan: "Food Image Scan",
   risk_calculator: "Risk Calculator",
 };

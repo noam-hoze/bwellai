@@ -13,7 +13,10 @@ import {
 import { Lungs } from "@/components/icons/Lungs";
 import ManBody from "./ManBody";
 import WomanBody from "./WomanBody";
-import { profileNameToBodyPartObject } from "@/modules/constant/report-data/body-profile-data";
+import {
+  healthMetricsArray,
+  profileNameToBodyPartObject,
+} from "@/modules/constant/report-data/body-profile-data";
 import { useNavigate } from "react-router-dom";
 
 const organColorMap: Record<string, string> = {
@@ -316,9 +319,11 @@ const HealthNavigator = ({ getProfileIsData, userPreviousData }) => {
                       <div
                         className="flex items-center justify-between text-sm p-1 bg-gray-200 rounded mb-1 cursor-pointer"
                         onClick={() => {
-                          navigate(
-                            `/report/${userPreviousData?.reportId}#${formatedData?.[activeOrgan]?.profileName}`
-                          );
+                          if (userPreviousData?.reportId) {
+                            navigate(
+                              `/report/${userPreviousData?.reportId}#${formatedData?.[activeOrgan]?.profileName}`
+                            );
+                          }
                         }}
                       >
                         <span>View detailed health metrics</span>
@@ -349,27 +354,34 @@ const HealthNavigator = ({ getProfileIsData, userPreviousData }) => {
 
                       <div className="space-y-3">
                         {formatedData?.[activeOrgan]?.stats?.map(
-                          (stat, index) => (
-                            <div key={index} className="flex items-start">
-                              <div className="mr-2 mt-1">{stat.icon}</div>
-                              <div>
-                                <div className="flex items-baseline">
-                                  <span className="text-lg font-bold text-gray-900">
-                                    {stat.value}
-                                  </span>
-                                  {stat.unit && (
-                                    <span className="ml-1 text-sm text-gray-600">
-                                      {stat.unit}
+                          (stat, index) => {
+                            const isShowData = healthMetricsArray?.[
+                              activeOrgan
+                            ]?.metric?.includes(stat.label);
+                            return isShowData ? (
+                              <div key={index} className="flex items-start">
+                                <div className="mr-2 mt-1">{stat.icon}</div>
+                                <div>
+                                  <div className="flex items-baseline">
+                                    <span className="text-lg font-bold text-gray-900">
+                                      {stat.value}
                                     </span>
-                                  )}
-                                  {getStatusBadge(stat.signalText)}
-                                </div>
-                                <div className="text-xs text-gray-700">
-                                  {stat.label}
+                                    {stat.unit && (
+                                      <span className="ml-1 text-sm text-gray-600">
+                                        {stat.unit}
+                                      </span>
+                                    )}
+                                    {getStatusBadge(stat.signalText)}
+                                  </div>
+                                  <div className="text-xs text-gray-700">
+                                    {stat.label}
+                                  </div>
                                 </div>
                               </div>
-                            </div>
-                          )
+                            ) : (
+                              <></>
+                            );
+                          }
                         )}
                       </div>
                     </div>
@@ -435,27 +447,35 @@ const HealthNavigator = ({ getProfileIsData, userPreviousData }) => {
                       </div>
 
                       <div className="space-y-3">
-                        {organData?.[activeOrgan]?.stats?.map((stat, index) => (
-                          <div key={index} className="flex items-start">
-                            <div className="mr-2 mt-1">{stat.icon}</div>
-                            <div>
-                              <div className="flex items-baseline">
-                                <span className="text-lg font-bold text-gray-900">
-                                  {stat.value}
-                                </span>
-                                {stat.unit && (
-                                  <span className="ml-1 text-sm text-gray-600">
-                                    {stat.unit}
+                        {organData?.[activeOrgan]?.stats?.map((stat, index) => {
+                          const isShowData = healthMetricsArray?.[
+                            activeOrgan
+                          ]?.metric?.includes(stat.label);
+
+                          return isShowData ? (
+                            <div key={index} className="flex items-start">
+                              <div className="mr-2 mt-1">{stat.icon}</div>
+                              <div>
+                                <div className="flex items-baseline">
+                                  <span className="text-lg font-bold text-gray-900">
+                                    {stat.value}
                                   </span>
-                                )}
-                                {getStatusBadge(stat.signalText || "normal")}
-                              </div>
-                              <div className="text-xs text-gray-700">
-                                {stat.label}
+                                  {stat.unit && (
+                                    <span className="ml-1 text-sm text-gray-600">
+                                      {stat.unit}
+                                    </span>
+                                  )}
+                                  {getStatusBadge(stat.signalText || "normal")}
+                                </div>
+                                <div className="text-xs text-gray-700">
+                                  {stat.label}
+                                </div>
                               </div>
                             </div>
-                          </div>
-                        ))}
+                          ) : (
+                            <></>
+                          );
+                        })}
                       </div>
                     </div>
                   </div>
