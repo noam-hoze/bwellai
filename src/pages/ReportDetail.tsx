@@ -454,10 +454,8 @@ const ReportDetail = () => {
               <Button
                 variant="outline"
                 size="sm"
-                disabled={true}
                 onClick={() => setShareModalOpen(true)}
               >
-                <Lock />
                 <Share2 className="h-4 w-4 mr-1" /> Share
               </Button>
             </div>
@@ -471,21 +469,23 @@ const ReportDetail = () => {
               <DialogHeader>
                 <div className="bg-muted p-3 m-3 mt-10 rounded-md flex items-center justify-between">
                   <code className="text-sm font-mono">
-                    https://app-dev2.bwellai.com/report/{id}
+                    {import.meta.env.VITE_WEB_URL}/shared-report/{id}
                   </code>
                   <Button
                     variant="ghost"
                     size="sm"
                     onClick={() =>
                       handleCopyToClipboard(
-                        `https://app-dev2.bwellai.com/report/${id}`
+                        `${import.meta.env.VITE_WEB_URL}/shared-report/${id}`
                       )
                     }
                   >
                     <Copy size={16} />
                   </Button>
                   <a
-                    href={`https://api.whatsapp.com/send?text=${"https://app-dev2.bwellai.com"}/report/${id}`}
+                    href={`https://api.whatsapp.com/send?text=${
+                      import.meta.env.VITE_WEB_URL
+                    }/shared-report/${id}`}
                     target="_blank"
                     className="bg-muted rounded-md flex items-center justify-between"
                   >

@@ -100,7 +100,7 @@ const NutrientProgressv2 = ({
             ) : (
               <div className="text-center">
                 {currentAmount?.toFixed()}
-                {unit} / {goalAmount}
+                {unit} / {goalAmount < 0 ? 0 : goalAmount}
                 {unit}
               </div>
             )}
@@ -197,7 +197,10 @@ const DailyIntakeSection = ({
   const caloriePercentage = Math.round(
     (totalDailyCalories / totalDailyRequiredCalories) * 100
   );
-  const colorGradient = getCalorieProgressColor(caloriePercentage);
+
+  const colorGradient = caloriePercentage
+    ? getCalorieProgressColor(caloriePercentage)
+    : 0;
 
   // Calculate if over target
   const isOverTarget = totalDailyCalories > totalDailyRequiredCalories;

@@ -31,6 +31,7 @@ import { UserInfoProvider } from "./contexts/UserInfoContext";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { ProfileProvider } from "./contexts/BodyProfileContext";
 import RiskScore from "./pages/RiskScore";
+import SharedReport from "./pages/SharedReport";
 
 const queryClient = new QueryClient();
 
@@ -84,6 +85,11 @@ const App = () => (
                   <Route
                     path="/subscription-plans"
                     element={<SubscriptionPlans />}
+                  />
+                  {/* Public Shared Report Route - No Auth Required */}
+                  <Route
+                    path="/shared-report/:reportId"
+                    element={<SharedReport />}
                   />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
