@@ -28,7 +28,7 @@ const DualProgressBar = ({
   // Format the display values
   const formattedCurrent = currentValue.toFixed(0);
   const formattedAfterLog = (currentValue + addedValue).toFixed(0);
-  const formattedMax = maxValue.toFixed(0);
+  const formattedMax = maxValue > 0 ? maxValue.toFixed(0) : 0;
 
   return (
     <div className={cn("space-y-1", className)}>

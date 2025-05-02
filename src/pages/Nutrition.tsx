@@ -208,11 +208,13 @@ const Nutrition = () => {
             requiredMicronutrientsBalance={requiredMicronutrientsBalance}
           />
           <DailyIntakeSection
-            totalDailyCalories={totalDailyCalories}
+            totalDailyCalories={totalDailyCalories > 0 ? totalDailyCalories : 0}
             totalDailyProtein={totalDailyProtein}
             totalDailyCarbs={totalDailyCarbs}
             totalDailyFats={totalDailyFats}
-            totalDailyRequiredCalories={totalDailyRequiredCalories}
+            totalDailyRequiredCalories={
+              totalDailyRequiredCalories > 0 ? totalDailyRequiredCalories : 0
+            }
             requiredMicronutrientsBalance={requiredMicronutrientsBalance}
           />
 
