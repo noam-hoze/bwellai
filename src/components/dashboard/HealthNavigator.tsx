@@ -286,8 +286,6 @@ const HealthNavigator = ({ getProfileIsData, userPreviousData }) => {
     }
   }, [userPreviousData]);
 
-  console.log(activeOrgan);
-
   return (
     <Card className="wellness-card border-l-4 border-l-blue-400 mt-6">
       <CardHeader className="pb-2">
@@ -374,11 +372,6 @@ const HealthNavigator = ({ getProfileIsData, userPreviousData }) => {
                             // const isShowData = healthMetricsArray?.[
                             //   activeOrgan
                             // ]?.metric?.includes(stat.label);
-
-                            console.log(
-                              stat?.metric,
-                              formatedData2?.[stat?.metric?.toUpperCase()]
-                            );
 
                             return formatedData2?.[
                               stat?.metric?.toUpperCase()

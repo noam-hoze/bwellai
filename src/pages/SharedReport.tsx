@@ -84,7 +84,6 @@ const SharedReport = () => {
       }
     });
   });
-  console.log(abnormalResultsList);
 
   useEffect(() => {
     const processBiomarkers = async () => {
@@ -389,7 +388,6 @@ const SharedReport = () => {
                 minParameterValue: result?.minParameterValue,
                 maxParameterValue: result?.maxParameterValue,
               });
-              console.log(signalText);
 
               return (
                 signalText !== "normal" && (

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
 import AccountTab from "./tabs/AccountTab";
 import PreferencesTab from "./tabs/PreferencesTab";
@@ -14,6 +14,9 @@ import {
 } from "@/utils/utils";
 
 const ProfileTabs = ({ getProfileIsData, getUserProfileRefetch }) => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const tabValue = searchParams.get("tab");
+
   const [activeMainTab, setActiveMainTab] = useState("profile");
   const [weightUnit, setWeightUnit] = useState("kg");
   const [heightUnit, setHeightUnit] = useState("cm");
@@ -94,6 +97,12 @@ const ProfileTabs = ({ getProfileIsData, getUserProfileRefetch }) => {
       });
     }
   };
+
+  useEffect(() => {
+    if (tabValue === "health-profile") {
+      handleProfileTabChange(tabValue);
+    }
+  }, [tabValue]);
 
   useEffect(() => {
     if (getProfileIsData) {
