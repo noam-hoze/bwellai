@@ -143,6 +143,7 @@ const Reports = () => {
     data: userLastReportIDsData,
     isSuccess: userLastReportIDsSuccess,
     refetch: userPreviousIsRefetch,
+    isFetching: userPreviousIsFetching,
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
@@ -529,7 +530,7 @@ const Reports = () => {
                 </SelectContent>
               </Select> */}
 
-              <Select value={filterYear} onValueChange={setFilterYear}>
+              {/* <Select value={filterYear} onValueChange={setFilterYear}>
                 <SelectTrigger className="w-[100px]">
                   <SelectValue placeholder="Year" />
                 </SelectTrigger>
@@ -538,7 +539,7 @@ const Reports = () => {
                   <SelectItem value="2025">2025</SelectItem>
                   <SelectItem value="2024">2024</SelectItem>
                 </SelectContent>
-              </Select>
+              </Select> */}
 
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -583,6 +584,11 @@ const Reports = () => {
                     <FileText className="h-12 w-12 mx-auto mb-3 text-gray-300" />
                     <p className="text-lg font-medium">No reports found</p>
                     <p className="mt-1">Upload a new report to get started</p>
+                  </div>
+                )}
+                {userPreviousIsFetching && (
+                  <div className="p-8 text-center text-gray-500 border border-gray-500 rounded-md">
+                    <p>Loading Reports</p>
                   </div>
                 )}
                 {initialReports.map((report) => (

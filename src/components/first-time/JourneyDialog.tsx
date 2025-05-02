@@ -42,7 +42,7 @@ const JourneyDialog = ({
       title: "Complete Your Health Profile",
       description: "Help us personalize your health journey",
       icon: <UserRound className="h-12 w-12 text-indigo-500" />,
-      path: "/profile",
+      path: "/profile?tab=health-profile",
       actionText: "Update Profile",
     },
     {
@@ -155,7 +155,7 @@ const JourneyDialog = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-[500px] p-10">
         <div className="w-full bg-gray-200 h-1 mb-8 rounded-full">
           <div
             className="bg-blue-500 h-1 rounded-full transition-all duration-300"
@@ -193,16 +193,27 @@ const JourneyDialog = ({
               >
                 {sortedSteps?.[currentStep]?.actionText}
               </Button>
-              <Button
-                variant="outline"
-                onClick={handleNext}
-                className="w-32 flex justify-center"
-              >
-                <span className="mx-auto flex items-center">
-                  Next Option
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </span>
-              </Button>
+
+              {steps?.length !== 1 ? (
+                <Button
+                  variant="outline"
+                  onClick={handleNext}
+                  className="w-32 flex justify-center"
+                >
+                  <span className="mx-auto flex items-center">
+                    Next Option
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </span>
+                </Button>
+              ) : (
+                <Button
+                  variant="outline"
+                  onClick={handleBackToHome}
+                  className="w-32 flex justify-center"
+                >
+                  <span className="mx-auto">Home</span>
+                </Button>
+              )}
             </>
           ) : currentStep === steps.length - 1 ? (
             <>

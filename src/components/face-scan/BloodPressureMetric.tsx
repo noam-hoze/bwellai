@@ -52,15 +52,17 @@ const BloodPressureMetric = ({
               threshold={129}
             />
           </div>
-          <div className="border border-gray-100 rounded-lg p-2 bg-white">
-            <ScanHistoryTrends
-              data={diastolicData}
-              label="Diastolic Blood Pressure"
-              unit=" mmHg"
-              color="#3b82f6"
-              threshold={84}
-            />
-          </div>
+          {diastolicData && (
+            <div className="border border-gray-100 rounded-lg p-2 bg-white">
+              <ScanHistoryTrends
+                data={diastolicData}
+                label="Diastolic Blood Pressure"
+                unit=" mmHg"
+                color="#3b82f6"
+                threshold={84}
+              />
+            </div>
+          )}
         </div>
       </div>
     </Card>

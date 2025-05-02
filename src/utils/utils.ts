@@ -55,7 +55,7 @@ const ageGroupToSleepMap = {
 
 export const calculatedSleepPercentage = ({
   totalSleep,
-  age = 20,
+  age,
   actualSleepHr,
   sleepType,
 }: {
@@ -78,6 +78,7 @@ export const calculatedSleepPercentage = ({
 
   const calculatedSleepRequired =
     (totalSleep * ageGroupToSleepMap?.[ageGroup]?.[sleepType]) / 100;
+
   return (actualSleepHr / calculatedSleepRequired) * 100;
 };
 

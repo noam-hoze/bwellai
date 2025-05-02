@@ -80,7 +80,7 @@ const SleepPieChart: React.FC<SleepPieChartProps> = ({
       radius: calculateRingRadius(0),
       circumference: calculateCircumference(calculateRingRadius(0)),
       offset: calculateOffset(
-        lightSleep,
+        lightSleep > 100 ? 100 : lightSleep,
         calculateCircumference(calculateRingRadius(0))
       ),
       color: "#FEDF89", // Light Sleep - Yellow
@@ -89,7 +89,7 @@ const SleepPieChart: React.FC<SleepPieChartProps> = ({
       radius: calculateRingRadius(1),
       circumference: calculateCircumference(calculateRingRadius(1)),
       offset: calculateOffset(
-        deepSleep,
+        deepSleep > 100 ? 100 : deepSleep,
         calculateCircumference(calculateRingRadius(1))
       ),
       color: "#53A15E", // Deep Sleep - Green
@@ -98,7 +98,7 @@ const SleepPieChart: React.FC<SleepPieChartProps> = ({
       radius: calculateRingRadius(2),
       circumference: calculateCircumference(calculateRingRadius(2)),
       offset: calculateOffset(
-        remSleep,
+        remSleep > 100 ? 100 : remSleep,
         calculateCircumference(calculateRingRadius(2))
       ),
       color: "#0EA5E9", // REM Sleep - Blue
