@@ -156,7 +156,7 @@ const DailyTabContent = ({
               <CarouselItem>
                 <SleepScoreCard
                   score={
-                    wearableDailyData?.finalDailySpikeSleepDataV4?.efficiency
+                    wearableDailyData?.finalDailySpikeSleepDataV4?.source_specific_sleep_score
                   }
                   bedtime={
                     wearableDailyData?.finalDailySpikeSleepDataV4?.bedtime_start?.split(
@@ -313,7 +313,7 @@ const DailyTabContent = ({
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
           <SleepScoreCard
-            score={wearableDailyData?.finalDailySpikeSleepDataV4?.efficiency}
+            score={wearableDailyData?.finalDailySpikeSleepDataV4?.source_specific_sleep_score}
             bedtime={
               wearableDailyData?.finalDailySpikeSleepDataV4?.bedtime_start?.split(
                 "T"
