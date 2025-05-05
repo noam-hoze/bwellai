@@ -91,7 +91,7 @@ const HealthOverview = ({ wearableWeeklyData }) => {
         <div className="grid grid-cols-4 gap-4">
           <HealthScore
             title="Overall"
-            score={userFaceScoreHealthData?.averageScore?.toFixed(0) || "N/A"}
+            score={userFaceScoreHealthData?.averageScore?.toFixed(0) || "0"}
             change={
               userFaceScoreHealthData?.scoreDifferencePercentage?.toFixed(0) ||
               0
@@ -104,8 +104,7 @@ const HealthOverview = ({ wearableWeeklyData }) => {
           <HealthScore
             title="Activity"
             score={
-              (userFaceScoreActivityData?.averageScore / 100)?.toFixed(0) ||
-              "N/A"
+              (userFaceScoreActivityData?.averageScore / 100)?.toFixed(0) || "0"
             }
             change={
               userFaceScoreActivityData?.scoreDifferencePercentage?.toFixed(
@@ -120,7 +119,7 @@ const HealthOverview = ({ wearableWeeklyData }) => {
           <HealthScore
             title="Sleep"
             score={
-              wearableWeeklyData?.weeklyAverageSleepScore?.toFixed(0) || "N/A"
+              wearableWeeklyData?.weeklyAverageSleepScore?.toFixed(0) || "0"
             }
             change={
               userFaceScoreSleepData?.scoreDifferencePercentage?.toFixed(0) || 0
@@ -132,9 +131,7 @@ const HealthOverview = ({ wearableWeeklyData }) => {
           />
           <HealthScore
             title="Nutrition"
-            score={
-              userFaceScoreNutritionData?.averageScore?.toFixed(0) || "N/A"
-            }
+            score={userFaceScoreNutritionData?.averageScore?.toFixed(0) || "0"}
             change={
               userFaceScoreNutritionData?.scoreDifferencePercentage?.toFixed(
                 0
