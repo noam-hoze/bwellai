@@ -83,7 +83,11 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { useGetUserProfile } from "@/service/hooks/profile/useGetUserProfile";
 import { useGetReportDetails } from "@/service/hooks/risk-score/useGetReportData";
-import { handleConvertCholesterolValue } from "@/utils/utils";
+import {
+  convertHeightValueUnits,
+  convertWeightValueUnits,
+  handleConvertCholesterolValue,
+} from "@/utils/utils";
 
 const ShenaiApp = lazy(() => import("@/components/Shenai/ShenaiApp"));
 
@@ -167,8 +171,19 @@ const RenderPersonalFactorsForm = ({ setAnalysisProgress, setStep }) => {
     personalFactorsForm.reset({
       age: String(getProfileIsData?.age ?? ""),
       gender: getProfileIsData?.gender ?? "female",
-      height: String(getProfileIsData?.height ?? ""),
-      weight: String(getProfileIsData?.weight ?? ""),
+
+      height:
+        getProfileIsData?.heightUnit === "cm"
+          ? String(getProfileIsData?.height ?? "")
+          : String(
+              convertHeightValueUnits("ft", "cm", getProfileIsData?.height || 0)
+            ),
+      weight:
+        getProfileIsData?.weightUnit === "kg"
+          ? String(getProfileIsData?.weight ?? "")
+          : String(
+              convertWeightValueUnits("lb", "kg", getProfileIsData?.weight || 0)
+            ),
 
       diabetes: getProfileIsData?.additionalDetails?.[
         "Are you currently taking any medications?"
@@ -476,7 +491,7 @@ const RenderPersonalFactorsForm = ({ setAnalysisProgress, setStep }) => {
                               className="flex-1"
                             />
                             <span className="flex items-center ml-2 text-gray-500">
-                              cm
+                              {getProfileIsData?.heightUnit}
                             </span>
                           </div>
                         </FormControl>
@@ -501,7 +516,7 @@ const RenderPersonalFactorsForm = ({ setAnalysisProgress, setStep }) => {
                               className="flex-1"
                             />
                             <span className="flex items-center ml-2 text-gray-500">
-                              kg
+                              {getProfileIsData?.weightUnit}
                             </span>
                           </div>
                         </FormControl>
