@@ -203,19 +203,19 @@ const RenderPersonalFactorsForm = ({ setAnalysisProgress, setStep }) => {
       totalCholesterol:
         reportDetailsDataTotalCholesterol?.result?.unit?.toLowerCase() ===
         "mg/dl"
-          ? reportDetailsDataTotalCholesterol?.result?.result
+          ? reportDetailsDataTotalCholesterol?.result?.result || 0
           : handleConvertCholesterolValue(
               "mmol/l",
               "mg/dl",
-              reportDetailsDataTotalCholesterol?.result?.result
+              reportDetailsDataTotalCholesterol?.result?.result || 0
             ),
       hdlCholesterol:
         reportDetailsDataHDL?.result?.unit?.toLowerCase() === "mg/dl"
-          ? reportDetailsDataHDL?.result?.result
+          ? reportDetailsDataHDL?.result?.result || 0
           : handleConvertCholesterolValue(
               "mmol/l",
               "mg/dl",
-              reportDetailsDataHDL?.result?.result
+              reportDetailsDataHDL?.result?.result || 0
             ),
       systolicPressure: getProfileIsData?.systolicPressure ?? "",
       waistCircumference: getProfileIsData?.waistCircumference ?? "",
