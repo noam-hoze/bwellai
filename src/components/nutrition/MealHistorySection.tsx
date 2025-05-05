@@ -118,7 +118,8 @@ const MealItem = ({
               </div>
               <h4 className="text-xl mb-1">{name}</h4>
               <p className="text-gray-600">
-                {calories} kcal • {protein}g protein
+                {calories} kcal • {protein}g protein{" "}
+                {meal?.amount && ` • ${meal?.amount} ${meal?.portion}`}
               </p>
             </div>
 

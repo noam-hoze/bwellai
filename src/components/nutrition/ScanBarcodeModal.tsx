@@ -137,6 +137,7 @@ const ScanBarcodeModal = ({
       image: "",
       score: foodReportBarCodeAIData?.jsonNode?.general_food_quality_rating,
       rating: foodReportBarCodeAIData?.jsonNode?.categorySpecificRating,
+      general_summary: foodReportBarCodeAIData?.jsonNode?.general_summary,
       // concerns: [
       //   {
       //     name: "",

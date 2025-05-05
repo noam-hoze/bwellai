@@ -292,7 +292,8 @@ const FoodScanAnalysis = () => {
               </span>
             </div>
             <p className="text-sm text-gray-600 mt-1">
-              {product.brand} • {product.category}
+              {/* {product.brand} • {product.category} */}
+              {product?.general_summary}
             </p>
           </div>
         </div>

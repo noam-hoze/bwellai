@@ -15,7 +15,10 @@ const BalanceCard = () => {
     isAuthenticated: true,
   });
 
-  const { data: walletMothlyBalanceData } = useGetUserWalletMonthlyBalance();
+  const {
+    data: walletMothlyBalanceData,
+    isLoading: walletMothlyBalanceIsLoading,
+  } = useGetUserWalletMonthlyBalance();
 
   return (
     <div>
@@ -29,7 +32,10 @@ const BalanceCard = () => {
               <div>
                 <p className="text-sm text-muted-foreground">YOUR BALANCE</p>
                 <h2 className="text-3xl font-bold">
-                  {walletBalanceData?.balances?.[0]?.balance} Coins
+                  {walletMothlyBalanceIsLoading && "Calculating..."}
+                  {walletBalanceData?.balances?.[0]?.balance &&
+                    walletBalanceData?.balances?.[0]?.balance}{" "}
+                  Coins
                 </h2>
               </div>
             </div>
@@ -37,7 +43,7 @@ const BalanceCard = () => {
               <p className="text-sm text-muted-foreground">NEXT REWARD AT</p>
               <p className="font-medium">
                 {getNextGoalValue({
-                  current: walletBalanceData?.balances?.[0]?.balance,
+                  current: walletBalanceData?.balances?.[0]?.balance || 0,
                   skipValue: priceStepper,
                 })}
                 Coins
@@ -50,10 +56,11 @@ const BalanceCard = () => {
               <span>Current: {walletBalanceData?.balances?.[0]?.balance}</span>
               <span>
                 Goal:{" "}
-                {getNextGoalValue({
-                  current: walletBalanceData?.balances?.[0]?.balance,
-                  skipValue: priceStepper,
-                })}
+                {walletBalanceData?.balances?.[0]?.balance &&
+                  getNextGoalValue({
+                    current: walletBalanceData?.balances?.[0]?.balance || 0,
+                    skipValue: priceStepper,
+                  })}
               </span>
             </div>
             <Progress
