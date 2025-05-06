@@ -30,7 +30,10 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import DualProgressBar from "@/components/nutrition/DualProgressBar";
-import { useGetLogFoodDataV4Fetcher } from "@/service/hooks/nutrition/useGetFoodReportUpload";
+import {
+  useGetDeleteUserFoodDataFetcher,
+  useGetLogFoodDataV4Fetcher,
+} from "@/service/hooks/nutrition/useGetFoodReportUpload";
 
 interface MealData {
   id: number;
@@ -53,6 +56,7 @@ const MealAnalysisPage = () => {
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [mealType, setMealType] = useState("");
   const [isFavorite, setIsFavorite] = useState(false);
+  const [userActionType, setUserActionType] = useState("");
   const isMobile = useIsMobile();
 
   const dailyGoals = {
@@ -68,12 +72,17 @@ const MealAnalysisPage = () => {
     mutate: logMealMutate,
   } = useGetLogFoodDataV4Fetcher();
 
+  const {
+    mutate: deleteUserFoodDataMutate,
+    isSuccess: deleteUserFoodDataIsSuccess,
+  } = useGetDeleteUserFoodDataFetcher();
+
   useEffect(() => {
-    if (logMealIsSuccess && logMealData) {
-      toast.success(`${meal?.name} logged successfully!`);
-      navigate("/nutrition");
+    if (logMealIsSuccess && logMealData && userActionType === "log_action") {
+      // toast.success(`${meal?.name} logged successfully!`);
+      toast.success(`logged successfully!`);
     }
-  }, [logMealIsSuccess, logMealData]);
+  }, [logMealIsSuccess, logMealData, userActionType]);
 
   useEffect(() => {
     if (location.state?.meal) {
@@ -85,6 +94,7 @@ const MealAnalysisPage = () => {
 
       setMeal(mealData);
       setMealType(mealData.meal_type || "Breakfast");
+      setIsFavorite(mealData?.is_favourite);
     } else {
       navigate("/nutrition");
       toast.error("No meal data found");
@@ -96,6 +106,7 @@ const MealAnalysisPage = () => {
   };
 
   const handleLogMeal = () => {
+    setUserActionType("log_action");
     const mealToLog = meal
       ? {
           ...meal,
@@ -127,8 +138,17 @@ const MealAnalysisPage = () => {
   };
 
   const handleToggleFavorite = () => {
-    logMealMutate({ es_id: meal?.id, meal_type: mealType, type: "favourite" });
-    setIsFavorite(!isFavorite);
+    if (isFavorite) {
+      setUserActionType("favourite_action");
+      deleteUserFoodDataMutate({ esId: meal?.id, type: "nutrition_favourite" });
+    } else {
+      logMealMutate({
+        es_id: meal?.id,
+        meal_type: mealType,
+        type: "favourite",
+      });
+    }
+    setIsFavorite((isFavoritePrev) => !isFavoritePrev);
     toast.success(
       !isFavorite ? "Added to favorites!" : "Removed from favorites"
     );
@@ -453,16 +473,16 @@ const MealAnalysisPage = () => {
                 variant="outline"
                 size={isMobile ? "icon" : "default"}
                 className={`${isMobile ? "flex-none" : "flex-1"} ${
-                  meal.is_favourite ? "text-yellow-500" : ""
+                  isFavorite ? "text-yellow-500" : ""
                 }`}
                 onClick={handleToggleFavorite}
               >
                 <Star
                   className={`h-4 w-4 ${!isMobile && "mr-1"} ${
-                    meal.is_favourite ? "fill-current" : ""
+                    isFavorite ? "fill-current" : ""
                   }`}
                 />
-                {!isMobile && (meal.is_favourite ? "Favorited" : "Favorites")}
+                {!isMobile && (isFavorite ? "Favorited" : "Favorites")}
               </Button>
               <Button
                 variant="outline"
