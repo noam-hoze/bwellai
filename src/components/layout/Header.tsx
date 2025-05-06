@@ -27,11 +27,11 @@ const Header = () => {
   const navLinks = [
     { path: "/", label: "Home", icon: Home },
     { path: "/reports", label: "Reports", icon: FileText },
-    { path: "/body-metrics", label: "Body Metrics", icon: Gauge },
+    // { path: "/body-metrics", label: "Body Metrics", icon: Gauge },
     { path: "/sleep", label: "Sleep", icon: Moon },
     { path: "/activity", label: "Activity", icon: Activity },
     { path: "/nutrition", label: "Nutrition", icon: Leaf },
-    { path: "/risk-score", label: "Risk Score", icon: Activity },
+    // { path: "/risk-score", label: "Risk Score", icon: Activity },
     { path: "/wallet", label: "Wallet", icon: Wallet },
   ];
 

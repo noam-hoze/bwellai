@@ -29,6 +29,7 @@ import {
   useGetWearableWeeklyDataV4,
 } from "@/service/hooks/wearable/terra/useGetUserInfo";
 import { useGetUserPreviousReportData } from "@/service/hooks/ocr/useGetReportById";
+import ChatbotWidget from "@/components/chatbot/ChatbotWidget";
 
 const formatDate = (date: Date) => {
   return date.toISOString().split("T")[0]; // Extract YYYY-MM-DD
@@ -202,6 +203,7 @@ const Index = () => {
   return (
     <div className={`min-h-screen bg-gray-50 ${isOpen ? "opacity-95" : ""}`}>
       <Header />
+      {/* <ChatbotWidget /> */}
 
       <main className="container max-w-7xl mx-auto px-4 py-6">
         <div className="flex justify-between items-center mb-6 animate-fade-in">
