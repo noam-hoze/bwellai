@@ -471,36 +471,21 @@ const FoodScanAnalysis = () => {
           <div className="bg-white rounded-lg shadow-sm p-4">
             <h2 className="text-xl font-semibold mb-3">Ingredients Analysis</h2>
 
-            {product.ingredients &&
-              product.ingredients.map((ingredient, idx) => (
-                <div key={idx} className="flex items-center mb-2">
-                  {/* {ingredient.toLowerCase().includes("sugar") ? (
-                    <AlertTriangle size={16} className="mr-2 text-yellow-500" />
-                  ) : (
-                  )} */}
-                  <Check size={16} className="mr-2 text-green-500" />
-                  <span
-                    className={`text-gray-800 ${
-                      ingredient.toLowerCase().includes("sugar")
-                        ? "font-medium"
-                        : ""
-                    }`}
-                  >
-                    {ingredient}
-                  </span>
-                  {/* <span className="ml-auto text-sm text-gray-500">
-                    {ingredient.toLowerCase().includes("sugar")
-                      ? "High in added sugar"
-                      : ingredient.toLowerCase().includes("grain")
-                      ? "Good source of fiber"
-                      : ingredient.toLowerCase().includes("honey")
-                      ? "Natural sweetener"
-                      : ingredient.toLowerCase().includes("oat")
-                      ? "Rich in beta-glucans"
-                      : ingredient === "Tripotassium Phosphate"
-                      ? "Food additive"
-                      : "Nutritious ingredient"}
-                  </span> */}
+            {product?.ingredients &&
+              product?.ingredients?.map((ingredient, idx) => (
+                <div className="mb-2">
+                  <div key={idx} className="flex items-center">
+                    {ingredient?.category === "Good" ? (
+                      <Check size={16} className="mr-2 text-green-500" />
+                    ) : (
+                      <AlertTriangle
+                        size={16}
+                        className="mr-2 text-yellow-500"
+                      />
+                    )}
+                    <span className={`text-gray-800 `}>{ingredient?.name}</span>
+                  </div>
+                  <p className="ml-6">{ingredient?.reason_for_category}</p>
                 </div>
               ))}
           </div>
