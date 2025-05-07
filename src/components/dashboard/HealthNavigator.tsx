@@ -205,6 +205,8 @@ const HealthNavigator = ({ getProfileIsData, userPreviousData }) => {
   const [formatedData, setFormatedData] = useState({});
   const [formatedData2, setFormatedData2] = useState({});
 
+  console.log(formatedData);
+
   const handleOrganClick = (organ: Organ) => {
     setActiveOrgan(organ);
   };
@@ -265,7 +267,7 @@ const HealthNavigator = ({ getProfileIsData, userPreviousData }) => {
               ...p,
               [bio?.testName]: {
                 unit: bio?.testMeasuringUnit ?? "",
-                value: bio?.testResultValue ?? "No Data",
+                value: bio?.testResultValue,
                 signalText: bio?.signalText || "unknown",
                 icon: <Info className="w-5 h-5 text-amber-500" />,
                 label: bio?.testName ?? "Unknown Test",
@@ -310,7 +312,7 @@ const HealthNavigator = ({ getProfileIsData, userPreviousData }) => {
               )}
             </div>
 
-            <div className="w-full md:w-1/2 mt-6 md:mt-0 md:pl-6">
+            <div className="w-[25em] md:w-[35em] mt-6 md:mt-0 md:pl-6">
               {formatedData?.[activeOrgan] ? (
                 <div className="bg-white rounded-lg shadow-md overflow-hidden border border-gray-200">
                   <div
@@ -383,10 +385,7 @@ const HealthNavigator = ({ getProfileIsData, userPreviousData }) => {
                                     <span className="text-lg font-bold text-gray-900">
                                       {formatedData2?.[
                                         stat?.metric?.toUpperCase()
-                                      ]?.value ||
-                                        formatedData2?.[
-                                          stat?.metric?.toUpperCase()
-                                        ]?.noDataMessage}
+                                      ]?.value || stat?.noDataMessage}
                                     </span>
                                     {formatedData2?.[
                                       stat?.metric?.toUpperCase()
@@ -418,7 +417,7 @@ const HealthNavigator = ({ getProfileIsData, userPreviousData }) => {
                                 <div>
                                   <div className="flex items-baseline">
                                     <span className="text-lg font-bold text-gray-900">
-                                      No Data
+                                      {stat?.noDataMessage}
                                     </span>
                                     {formatedData2?.[
                                       stat?.metric?.toUpperCase()
@@ -440,6 +439,11 @@ const HealthNavigator = ({ getProfileIsData, userPreviousData }) => {
                                   <div className="text-xs text-gray-700">
                                     {stat?.metric}
                                   </div>
+                                </div>
+                                <div>
+                                  <span className="ml-auto text-xs px-2 py-0.5 bg-gray-100 text-gray-800 rounded-full text-nowrap">
+                                    No Data
+                                  </span>
                                 </div>
                               </div>
                             );
