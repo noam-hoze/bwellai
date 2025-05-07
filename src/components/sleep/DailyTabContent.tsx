@@ -23,6 +23,8 @@ import { useGetUserProfile } from "@/service/hooks/profile/useGetUserProfile";
 import SleepCycleAnimated from "./SleepCycleAnimated";
 import SleepCycleClock from "./SleepCycleClock";
 import { SleepStage } from "./SleepCycleRing";
+import SleepSummaryCard from "./SleepSummaryCard";
+import SleepImprovementCard from "./SleepImprovementCard";
 
 function formatTo12Hour(timeString: string): string {
   if (!timeString) return "";
@@ -139,6 +141,8 @@ const DailyTabContent = ({
     remSleep: 18,
     awake: 6,
   };
+
+  console.log(wearableDailyRecommendationData);
 
   const formattedSleepData = convertAndGroupSleepData(
     wearableDailyData?.finalDailySpikeSleepDataV4?.levels
@@ -446,8 +450,22 @@ const DailyTabContent = ({
         </div>
       )}
 
+      {/* Sleep Summary and Improvement Cards */}
+      {wearableDailyRecommendationData?.sleep_summary && (
+        <SleepSummaryCard
+          sleep_summary={wearableDailyRecommendationData?.sleep_summary}
+        />
+      )}
+      {wearableDailyRecommendationData?.improve_sleep_recommendation && (
+        <SleepImprovementCard
+          improve_sleep_recommendation={
+            wearableDailyRecommendationData?.improve_sleep_recommendation
+          }
+        />
+      )}
+
       {/* Combined Insights & Suggestions Card */}
-      <Card className="wellness-card border-l-4 border-l-wellness-deep-orange">
+      {/* <Card className="wellness-card border-l-4 border-l-wellness-deep-orange">
         <CardHeader className="pb-2">
           <CardTitle className="flex items-center gap-2 text-lg text-wellness-muted-black">
             <Lightbulb className="h-5 w-5 text-wellness-bright-green" />
@@ -461,9 +479,6 @@ const DailyTabContent = ({
                 <div className="flex items-start gap-2">
                   <UtensilsCrossed className="h-5 w-5 text-wellness-bright-green mt-2 flex-shrink-0" />
                   <div>
-                    {/* <p className="text-wellness-muted-black font-bold">
-                      Actionable Tip
-                    </p> */}
                     <p className="text-wellness-muted-black">
                       {Object.entries(
                         wearableDailyRecommendationData?.[0]
@@ -496,9 +511,6 @@ const DailyTabContent = ({
                 <div className="flex items-start gap-2">
                   <Dumbbell className="h-5 w-5 text-wellness-bright-green mt-2 flex-shrink-0" />
                   <div>
-                    {/* <p className="text-wellness-muted-black font-bold">
-                      Alternative Cause
-                    </p> */}
                     <p className="text-wellness-muted-black">
                       {Object.entries(
                         wearableDailyRecommendationData?.[1]
@@ -531,9 +543,6 @@ const DailyTabContent = ({
                 <div className="flex items-start gap-2">
                   <HeartPulse className="h-5 w-5 text-wellness-bright-green mt-2 flex-shrink-0" />
                   <div>
-                    {/* <p className="text-wellness-muted-black font-bold">
-                      Observation
-                    </p> */}
                     <p className="text-wellness-muted-black">
                       {Object.entries(
                         wearableDailyRecommendationData?.[2]
@@ -562,7 +571,7 @@ const DailyTabContent = ({
             )}
           </div>
         </CardContent>
-      </Card>
+      </Card> */}
     </div>
   );
 };
