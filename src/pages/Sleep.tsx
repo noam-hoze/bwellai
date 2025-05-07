@@ -204,7 +204,7 @@ const Sleep = () => {
                 <DailyTabContent
                   selectedDate={debouncedSearch}
                   wearableDailyRecommendationData={
-                    wearableDailyRecommendationData?.aiResponse?.insights
+                    wearableDailyRecommendationData?.aiResponse
                   }
                   wearableDailyData={wearableDailyData}
                   getProfileIsData={getProfileIsData}
