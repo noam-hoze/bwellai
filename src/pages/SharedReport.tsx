@@ -205,7 +205,7 @@ const SharedReport = () => {
                     <tr>
                       <td className="py-1 pr-4 text-gray-600">Patient Name:</td>
                       <td className="py-1 font-medium">
-                        {reportFileShareData?.data?.minimalData?.name}
+                        {reportFileShareData?.data?.minimalData?.name || "N/A"}
                       </td>
                     </tr>
                     <tr>
@@ -213,19 +213,21 @@ const SharedReport = () => {
                         Date of Birth:
                       </td>
                       <td className="py-1 font-medium">
-                        {reportFileShareData?.data?.minimalData?.dateOfBirth}
+                        {reportFileShareData?.data?.minimalData?.dateOfBirth ||
+                          "N/A"}
                       </td>
                     </tr>
                     <tr>
                       <td className="py-1 pr-4 text-gray-600">Gender:</td>
                       <td className="py-1 font-medium">
-                        {reportFileShareData?.data?.minimalData?.gender}
+                        {reportFileShareData?.data?.minimalData?.gender ||
+                          "N/A"}
                       </td>
                     </tr>
                     <tr>
                       <td className="py-1 pr-4 text-gray-600">Patient ID:</td>
                       <td className="py-1 font-medium">
-                        {reportFileShareData?.reportId}
+                        {reportFileShareData?.reportId || "N/A"}
                       </td>
                     </tr>
                   </tbody>
@@ -240,7 +242,8 @@ const SharedReport = () => {
                       <td className="py-1 font-medium">
                         {new Date(
                           reportFileShareData?.uploadTime
-                        )?.toLocaleString("en-GB", { timeZone: "UTC" })}
+                        )?.toLocaleString("en-GB", { timeZone: "UTC" }) ||
+                          "N/A"}
                       </td>
                     </tr>
                     {/* <tr>
@@ -254,14 +257,12 @@ const SharedReport = () => {
                     <tr>
                       <td className="py-1 pr-4 text-gray-600">Order Number:</td>
                       <td className="py-1 font-medium">
-                        {reportFileShareData?.reportId}
+                        {reportFileShareData?.reportId || "N/A"}
                       </td>
                     </tr>
                     <tr>
                       <td className="py-1 pr-4 text-gray-600">Report Type:</td>
-                      <td className="py-1 font-medium">
-                        Comprehensive Blood Panel
-                      </td>
+                      <td className="py-1 font-medium">N/A</td>
                     </tr>
                   </tbody>
                 </table>
@@ -276,31 +277,33 @@ const SharedReport = () => {
           <Card>
             <CardContent className="pt-6">
               <p className="mb-4 text-sm">
-                This comprehensive blood panel reveals {abnormalResults?.length}{" "}
-                abnormal result{abnormalResults?.length !== 1 ? "s" : ""}
+                This comprehensive blood panel reveals{" "}
+                {abnormalResultsList?.length} abnormal result
+                {abnormalResultsList?.length !== 1 ? "s" : ""}
                 requiring attention. The patient shows{" "}
-                {abnormalResults?.some((r) => r.status === "critical")
-                  ? "critical"
-                  : "moderate"}
+                {abnormalResultsList?.some((r) => r.status === "critical")
+                  ? " critical "
+                  : " moderate "}
                 abnormalities in certain parameters, particularly:
               </p>
 
               <ul className="list-disc pl-5 mb-4 space-y-1 text-sm">
-                {abnormalResults?.slice(0, 3).map((result) => (
+                {abnormalResultsList?.slice(0, 3).map((result) => (
                   <li key={result.id}>
-                    <span className="font-medium">{result.name}:</span>{" "}
-                    {result.value} {result.unit}
+                    <span className="font-medium">{result?.testName}:</span>{" "}
+                    {result.testResultValue} {result.testResultUnit}
                     <span
-                      style={{ color: getStatusColor(result.status) }}
+                      style={{ color: getStatusColor(result.signalText) }}
                       className="ml-1.5 font-medium"
                     >
-                      ({result.value > result.max ? "High" : "Low"})
+                      ({result.signalText})
                     </span>
                   </li>
                 ))}
-                {abnormalResults?.length > 3 && (
+                {abnormalResultsList?.length > 3 && (
                   <li>
-                    And {abnormalResults?.length - 3} other abnormal result(s)
+                    And {abnormalResultsList?.length - 3} other abnormal
+                    result(s)
                   </li>
                 )}
               </ul>
@@ -324,54 +327,70 @@ const SharedReport = () => {
         <div className="mb-8">
           <h2 className="text-xl font-bold mb-4">Complete Test Results</h2>
 
-          {reportFileShareData?.data?.resultData?.map((reportInfo) => (
-            <div key={reportInfo?.profile?.name} className="mb-8">
-              <h3 className="text-lg font-bold mb-3">
-                {reportInfo?.profile?.name}
-              </h3>
-              <Card className="overflow-hidden">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead className="w-[250px]">Test Name</TableHead>
-                      <TableHead>Result</TableHead>
-                      <TableHead>Reference Range</TableHead>
-                      <TableHead>Status</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {reportInfo?.biomarker?.map((result) => (
-                      <TableRow key={result.testName}>
-                        <TableCell className="font-medium">
-                          {result.testName}
-                        </TableCell>
-                        <TableCell>
-                          {result.testResultValue} {result.testMeasuringUnit}
-                        </TableCell>
-                        <TableCell>
-                          {result.minParameterValue} -{" "}
-                          {result.maxParameterValue} {result.testMeasuringUnit}
-                        </TableCell>
-                        <TableCell>
-                          <span
-                            className="px-2 py-1 rounded-full text-xs font-medium"
-                            style={{
-                              backgroundColor: `${getStatusColor(
-                                result.signalText
-                              )}20`,
-                              color: getStatusColor(result.signalText),
-                            }}
-                          >
-                            {getStatusLabel(result.signalText)}
-                          </span>
-                        </TableCell>
+          {reportFileShareData?.data?.resultData?.map((reportInfo) => {
+            return (
+              <div key={reportInfo?.profile?.name} className="mb-8">
+                <h3 className="text-lg font-bold mb-3">
+                  {reportInfo?.profile?.name}
+                </h3>
+                <Card className="overflow-hidden">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead className="w-[250px]">Test Name</TableHead>
+                        <TableHead>Result</TableHead>
+                        <TableHead>Reference Range</TableHead>
+                        <TableHead>Status</TableHead>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </Card>
-            </div>
-          ))}
+                    </TableHeader>
+                    <TableBody>
+                      {reportInfo?.biomarker?.map((result) => {
+                        const signalText = getReportSignalTextCalc({
+                          testResultValue: result?.testResultValue,
+                          minParameterValue: result?.minParameterValue,
+                          maxParameterValue: result?.maxParameterValue,
+                        });
+
+                        return (
+                          <TableRow key={result.testName}>
+                            <TableCell className="font-medium">
+                              {result.testName}
+                            </TableCell>
+                            <TableCell>
+                              {result.testResultValue}{" "}
+                              {result.testMeasuringUnit}
+                            </TableCell>
+                            <TableCell>
+                              {result.minParameterValue} -{" "}
+                              {result.maxParameterValue}{" "}
+                              {result.testMeasuringUnit}
+                            </TableCell>
+                            <TableCell>
+                              <span
+                                className="px-2 py-1 rounded-full text-xs font-medium"
+                                style={{
+                                  backgroundColor: `${getStatusColor(
+                                    result.signalText
+                                  )}20`,
+                                  color: getStatusColor(
+                                    result.signalText || signalText
+                                  ),
+                                }}
+                              >
+                                {getStatusLabel(
+                                  result.signalText || signalText
+                                )}
+                              </span>
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })}
+                    </TableBody>
+                  </Table>
+                </Card>
+              </div>
+            );
+          })}
         </div>
 
         {/* Selected Parameter Details */}
