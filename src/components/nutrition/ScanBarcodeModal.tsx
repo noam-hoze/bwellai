@@ -155,11 +155,7 @@ const ScanBarcodeModal = ({
           details: "",
         },
       ],
-      ingredients: foodReportBarCodeAIData?.jsonNode?.ingredients?.map(
-        (list) => {
-          return list?.name;
-        }
-      ),
+      ingredients: foodReportBarCodeAIData?.jsonNode?.ingredients,
       allergens: [],
       alternatives: [],
       healthImpact: foodReportBarCodeAIData?.jsonNode?.health_impact,

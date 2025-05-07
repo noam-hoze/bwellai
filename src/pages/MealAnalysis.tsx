@@ -345,17 +345,8 @@ const MealAnalysisPage = () => {
                       >
                         {ingredient?.name}
                       </span>
-                      {/* <span className="ml-auto text-sm text-gray-500">
-                      {idx === 0
-                      ? "High in added sugar"
-                      : idx === 1
-                      ? "Good source of fiber"
-                      : idx === 2
-                      ? "Rich in antioxidants"
-                      : "High in vitamin C"}
-                      </span> */}
+                      <p className="ml-6">{ingredient?.reason_for_category}</p>
                     </div>
-                    <p className="ml-6">{ingredient?.reason_for_category}</p>
                   </div>
                 ))}
               </div>
