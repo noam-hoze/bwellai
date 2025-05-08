@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -50,6 +50,12 @@ const CreditLimitModal: React.FC<CreditLimitModalProps> = ({
     trigger,
     "diagnostics_report_upload"
   );
+
+  useEffect(() => {
+    if (isOpen) {
+      setTrigger((p) => !p);
+    }
+  }, [isOpen]);
 
   const { color, percentage } = getColor(
     getUserSubscriptionQuotaData?.usageCount,
