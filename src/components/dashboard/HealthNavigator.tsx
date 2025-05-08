@@ -205,8 +205,6 @@ const HealthNavigator = ({ getProfileIsData, userPreviousData }) => {
   const [formatedData, setFormatedData] = useState({});
   const [formatedData2, setFormatedData2] = useState({});
 
-  console.log(formatedData);
-
   const handleOrganClick = (organ: Organ) => {
     setActiveOrgan(organ);
   };
@@ -328,7 +326,7 @@ const HealthNavigator = ({ getProfileIsData, userPreviousData }) => {
                   </div>
 
                   <div className="divide-y divide-gray-100">
-                    <div className="p-3">
+                    {/* <div className="p-3">
                       <div className="font-medium text-gray-800 mb-2">
                         {formatedData?.[activeOrgan]?.description}
                       </div>
@@ -345,10 +343,10 @@ const HealthNavigator = ({ getProfileIsData, userPreviousData }) => {
                         <span>View detailed health metrics</span>
                         <ChevronRight className="w-4 h-4 text-gray-600" />
                       </div>
-                    </div>
+                    </div> */}
 
                     <div className="p-3">
-                      <div className="flex items-center text-gray-800 mb-2">
+                      {/* <div className="flex items-center text-gray-800 mb-2">
                         <div className="flex flex-col items-center mr-2">
                           <span
                             style={{
@@ -366,7 +364,7 @@ const HealthNavigator = ({ getProfileIsData, userPreviousData }) => {
                           </span>
                         </div>
                         <span className="font-medium">Current Metrics</span>
-                      </div>
+                      </div> */}
 
                       <div className="space-y-3">
                         {formatedData2 &&
@@ -438,6 +436,12 @@ const HealthNavigator = ({ getProfileIsData, userPreviousData }) => {
                                   </div>
                                   <div className="text-xs text-gray-700">
                                     {stat?.metric}
+                                  </div>
+                                  <div
+                                    className="text-xs text-blue-700 cursor-pointer"
+                                    onClick={() => navigate(`${stat.link}`)}
+                                  >
+                                    {stat.linkText}
                                   </div>
                                 </div>
                                 <div>
@@ -534,6 +538,9 @@ const HealthNavigator = ({ getProfileIsData, userPreviousData }) => {
                                 </div>
                                 <div className="text-xs text-gray-700">
                                   {stat.label}
+                                </div>
+                                <div className="text-xs text-gray-700">
+                                  {stat.linkText}
                                 </div>
                               </div>
                             </div>

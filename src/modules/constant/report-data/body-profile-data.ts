@@ -57,6 +57,8 @@ export const healthMetrics = {
       noDataMessage: "Support immune health and bone strength",
       format: "45 ng/mL (Normal: 30-50)",
       icon: "💧",
+      linkText: "[Upload lab results]",
+      link: "/reports",
     },
     {
       metric: "Skin hydration",
@@ -64,6 +66,8 @@ export const healthMetrics = {
       noDataMessage: "Improve skin elasticity and health",
       format: "65% (Good)",
       icon: "💦",
+      linkText: "[Connect Wearable device]",
+      link: "/connections",
     },
     {
       metric: "UV exposure",
@@ -71,6 +75,8 @@ export const healthMetrics = {
       noDataMessage: "Protect skin from sun damage",
       format: "Moderate (3.2 index)",
       icon: "☀️",
+      linkText: "[Connect Wearable device]",
+      link: "/connections",
     },
     {
       metric: "Temperature regulation",
@@ -78,6 +84,8 @@ export const healthMetrics = {
       noDataMessage: "Detect potential health issues",
       format: "Normal",
       icon: "🌡️",
+      linkText: "[Connect Wearable device]",
+      link: "/connections",
     },
   ],
   "Thyroid & Adrenal": [
@@ -87,6 +95,8 @@ export const healthMetrics = {
       noDataMessage: "Optimize energy levels and metabolism",
       format: "2.1 mIU/L (Normal: 0.4-4.0)",
       icon: "🦋",
+      linkText: "[Upload lab results]",
+      link: "/reports",
     },
     {
       metric: "T3, T4",
@@ -94,6 +104,8 @@ export const healthMetrics = {
       noDataMessage: "Balance your metabolic function",
       format: "Within normal range",
       icon: "📊",
+      linkText: "[Upload lab results]",
+      link: "/reports",
     },
     {
       metric: "Stress levels",
@@ -101,6 +113,8 @@ export const healthMetrics = {
       noDataMessage: "Improve recovery and prevent burnou",
       format: "Low (monitored via HRV)",
       icon: "😌",
+      linkText: "[Connect Wearable device]",
+      link: "/connections",
     },
     {
       metric: "Metabolic rate",
@@ -108,6 +122,8 @@ export const healthMetrics = {
       noDataMessage: "Optimize your nutrition and energy",
       format: "1,620 calories/day",
       icon: "🔥",
+      linkText: "[Connect Wearable device]",
+      link: "/connections",
     },
   ],
   Liver: [
@@ -117,6 +133,8 @@ export const healthMetrics = {
       noDataMessage: "Monitor overall liver function",
       format: "22 U/L (Normal: <35)",
       icon: "🧪",
+      linkText: "[Upload lab results]",
+      link: "/reports",
     },
     {
       metric: "AST (SGOT)",
@@ -124,6 +142,8 @@ export const healthMetrics = {
       noDataMessage: "Maintain optimal liver health",
       format: "18 U/L (Normal: <35)",
       icon: "🧪",
+      linkText: "[Upload lab results]",
+      link: "/reports",
     },
     {
       metric: "Bilirubin, Direct",
@@ -131,6 +151,8 @@ export const healthMetrics = {
       noDataMessage: "Complete your liver health profile",
       format: "0.8 mg/dL (Normal: 0.1-1.2)",
       icon: "🧫",
+      linkText: "[Upload lab results]",
+      link: "/reports",
     },
     {
       metric: "Hydration status",
@@ -138,6 +160,8 @@ export const healthMetrics = {
       noDataMessage: "Support liver detoxification processes",
       format: "Optimal",
       icon: "💧",
+      linkText: "[Connect Wearable device]",
+      link: "/connections",
     },
   ],
   Lungs: [
@@ -147,6 +171,8 @@ export const healthMetrics = {
       noDataMessage: "Ensure optimal cellular function",
       format: "98% (Excellent)",
       icon: "💧",
+      linkText: "[Connect Wearable device]",
+      link: "/connections",
     },
     {
       metric: "Respiratory rate",
@@ -154,6 +180,8 @@ export const healthMetrics = {
       noDataMessage: "Assess your respiratory efficiency",
       format: "14 breaths/min (Normal)",
       icon: "📈",
+      linkText: "[Connect Wearable device]",
+      link: "/connections",
     },
     {
       metric: "Breathing pattern",
@@ -161,6 +189,8 @@ export const healthMetrics = {
       noDataMessage: "Improve breathing effectiveness",
       format: "Deep (Normal)",
       icon: "💨",
+      linkText: "[Connect Wearable device]",
+      link: "/connections",
     },
     {
       metric: "Environmental exposure",
@@ -168,6 +198,8 @@ export const healthMetrics = {
       noDataMessage: "Protect your lung health",
       format: "Low risk",
       icon: "🌬️",
+      linkText: "[Upload lab results]",
+      link: "/reports",
     },
   ],
   Reproductive: [
@@ -177,6 +209,8 @@ export const healthMetrics = {
       noDataMessage: "Balance your reproductive health",
       format: "Within normal range",
       icon: "🧪",
+      linkText: "[Upload lab results]",
+      link: "/reports",
     },
     {
       metric: "Menstrual cycle",
@@ -184,6 +218,8 @@ export const healthMetrics = {
       noDataMessage: "Understand your body's rhythms",
       format: "Regular, 28-day cycle",
       icon: "📅",
+      linkText: "[Connect Wearable device]",
+      link: "/connections",
     },
     {
       metric: "Fertility window",
@@ -191,6 +227,8 @@ export const healthMetrics = {
       noDataMessage: "Support your family planning needs",
       format: "5 days from now",
       icon: "🌱",
+      linkText: "[Connect Wearable device]",
+      link: "/connections",
     },
     {
       metric: "Sexual health markers",
@@ -198,6 +236,8 @@ export const healthMetrics = {
       noDataMessage: "Monitor your overall wellness",
       format: "Normal",
       icon: "✅",
+      linkText: "[Upload lab results]",
+      link: "/reports",
     },
   ],
   "Heart & Cardiovascular System": [
@@ -207,6 +247,8 @@ export const healthMetrics = {
       noDataMessage: "Track cardiovascular fitness",
       format: "68 bpm (Good)",
       icon: "❤️",
+      linkText: "[Connect Wearable device]",
+      link: "/connections",
     },
     {
       metric: "Blood pressure",
@@ -214,6 +256,8 @@ export const healthMetrics = {
       noDataMessage: "Maintain heart health and function",
       format: "118/76 mmHg (Normal)",
       icon: "📊",
+      linkText: "[Face Scan]",
+      link: "/face-scan",
     },
     {
       metric: "Cholesterol",
@@ -221,6 +265,8 @@ export const healthMetrics = {
       noDataMessage: "Assess heart disease risk factors",
       format: "LDL 110, HDL 55 (Healthy ratio)",
       icon: "🧪",
+      linkText: "[Upload lab results]",
+      link: "/reports",
     },
     {
       metric: "HRV (Heart Rate Variability)",
@@ -228,6 +274,8 @@ export const healthMetrics = {
       noDataMessage: "Monitor recovery and stress balance",
       format: "45ms (Good recovery state)",
       icon: "📈",
+      linkText: "[Connect Wearable device]",
+      link: "/connections",
     },
   ],
   "Nervous System & Brain": [
@@ -237,6 +285,8 @@ export const healthMetrics = {
       noDataMessage: "Support brain health and recovery",
       format: "7.5 hrs/night (Good)",
       icon: "😴",
+      linkText: "[Connect Wearable device]",
+      link: "/connections",
     },
     {
       metric: "Cognitive performance",
@@ -244,6 +294,8 @@ export const healthMetrics = {
       noDataMessage: "Maintain optimal brain function",
       format: "Above average",
       icon: "🧠",
+      linkText: "[Cognitive assessment]",
+      link: "",
     },
     {
       metric: "Stress level",
@@ -251,6 +303,8 @@ export const healthMetrics = {
       noDataMessage: "Improve mental wellbeing",
       format: "Low (22/100)",
       icon: "😌",
+      linkText: "[Connect Wearable device]",
+      link: "/connections",
     },
     {
       metric: "Reaction time",
@@ -258,6 +312,8 @@ export const healthMetrics = {
       noDataMessage: "Monitor neurological health",
       format: "250ms (Normal)",
       icon: "⚡",
+      linkText: "[In-app assessment]",
+      link: "",
     },
   ],
   Kidneys: [
@@ -267,6 +323,8 @@ export const healthMetrics = {
       noDataMessage: "Monitor kidney filtration efficiency",
       format: "0.9 mg/dL (Normal)",
       icon: "🧪",
+      linkText: "[Upload lab results]",
+      link: "/reports",
     },
     {
       metric: "BUN",
@@ -274,6 +332,8 @@ export const healthMetrics = {
       noDataMessage: "Assess overall kidney function",
       format: "15 mg/dL (Normal)",
       icon: "🧪",
+      linkText: "[Upload lab results]",
+      link: "/reports",
     },
     {
       metric: "Electrolytes",
@@ -281,6 +341,8 @@ export const healthMetrics = {
       noDataMessage: "Maintain optimal cell function",
       format: "Within normal ranges",
       icon: "⚡",
+      linkText: "[Upload lab results]",
+      link: "/reports",
     },
     {
       metric: "Hydration",
@@ -288,6 +350,8 @@ export const healthMetrics = {
       noDataMessage: "Support healthy kidney function",
       format: "98% optimal fluid balance",
       icon: "💧",
+      linkText: "[Connect Wearable device]",
+      link: "/connections",
     },
   ],
 };

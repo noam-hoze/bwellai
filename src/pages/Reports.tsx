@@ -31,6 +31,8 @@ import {
   useGetUserPanelAnalysisReportData,
   useUserReportFileUpload,
 } from "@/service/hooks/ocr/useFileUpload";
+import CreditLimitModal from "@/components/reports/CreditLimitModal";
+import ReportTypeSelectionModal from "@/components/reports/ReportTypeSelectionModal";
 
 // Sample report data
 const initialReports = [
@@ -105,6 +107,8 @@ const Reports = () => {
 
   const [biomarkerResponses, setBiomarkerResponses] = useState({});
   const [panelAnalysisResponses, setPanelAnalysisResponses] = useState({});
+  const [creditLimitModalOpen, setCreditLimitModalOpen] = useState(false);
+  const [reportTypeModalOpen, setReportTypeModalOpen] = useState(false);
 
   const [chunkApiStatus, setChunkApiStatus] = useState(false);
   const [chunkPanelAnalysisApiStatus, setChunkPanelAnalysisApiStatus] =
@@ -400,8 +404,8 @@ const Reports = () => {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      userReportFileUploadMutate({ PdfFile: file, language: "English" });
       setSelectedFile(file);
+      setReportTypeModalOpen(true);
     }
   };
 
@@ -413,6 +417,28 @@ const Reports = () => {
 
   const handleFileClick = (e) => {
     e.target.value = "";
+    setSelectedFile(null);
+  };
+
+  const handleContinueAnyway = () => {
+    setCreditLimitModalOpen(false);
+    setReportTypeModalOpen(true);
+  };
+
+  const handleCreditLimitModalClose = () => {
+    setCreditLimitModalOpen(false);
+  };
+
+  const handleReportTypeSelected = (reportType: string) => {
+    setReportTypeModalOpen(false);
+    // setProcessingReport(true);
+    userReportFileUploadMutate({ PdfFile: selectFile, language: "English" });
+
+    // In a real app, this would initiate the upload flow for the selected report type
+    toast({
+      title: "Upload initiated",
+      description: `Starting upload for ${reportType} report...`,
+    });
   };
 
   const handleProcessingComplete = () => {
@@ -446,6 +472,11 @@ const Reports = () => {
       ) {
         setChunkApiStatus(true);
         setChunkPanelAnalysisApiStatus(true);
+      }
+
+      if (userReportFileUploadData?.code === 403) {
+        setCreditLimitModalOpen(true);
+        setProcessingReport(false);
       }
     }
   }, [userReportFileUploadData, userReportFileUploadSuccess]);
@@ -511,6 +542,20 @@ const Reports = () => {
             onProcessingComplete={handleProcessingComplete}
           />
         )}
+
+        {/* Credit Limit Modal */}
+        <CreditLimitModal
+          isOpen={creditLimitModalOpen}
+          onClose={handleCreditLimitModalClose}
+          onContinue={handleContinueAnyway}
+        />
+
+        {/* Report Type Selection Modal */}
+        <ReportTypeSelectionModal
+          isOpen={reportTypeModalOpen}
+          onClose={() => setReportTypeModalOpen(false)}
+          onTypeSelect={handleReportTypeSelected}
+        />
 
         {/* All Reports Section */}
         <div className="mb-10 animate-fade-in">
@@ -591,13 +636,13 @@ const Reports = () => {
                     <p>Loading Reports</p>
                   </div>
                 )}
-                {initialReports.map((report) => (
+                {/* {initialReports.map((report) => (
                   <ReportListItem
                     key={report.id}
                     report={report}
                     onDelete={handleDeleteReport}
                   />
-                ))}
+                ))} */}
               </div>
             </ScrollArea>
           </Card>
