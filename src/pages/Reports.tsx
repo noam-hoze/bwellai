@@ -405,7 +405,7 @@ const Reports = () => {
     const file = e.target.files?.[0];
     if (file) {
       setSelectedFile(file);
-      setReportTypeModalOpen(true);
+      setCreditLimitModalOpen(true);
     }
   };
 
@@ -472,6 +472,9 @@ const Reports = () => {
       ) {
         setChunkApiStatus(true);
         setChunkPanelAnalysisApiStatus(true);
+      } else {
+        setProcessingReport(false);
+        userPreviousIsRefetch();
       }
 
       if (userReportFileUploadData?.code === 403) {
