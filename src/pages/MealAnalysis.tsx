@@ -34,6 +34,7 @@ import {
   useGetDeleteUserFoodDataFetcher,
   useGetLogFoodDataV4Fetcher,
 } from "@/service/hooks/nutrition/useGetFoodReportUpload";
+import IngredientsAnalysis from "@/components/meal-analysis/IngredientsAnalysis";
 
 interface MealData {
   id: number;
@@ -58,6 +59,8 @@ const MealAnalysisPage = () => {
   const [isFavorite, setIsFavorite] = useState(false);
   const [userActionType, setUserActionType] = useState("");
   const isMobile = useIsMobile();
+
+  console.log(meal);
 
   const dailyGoals = {
     calories: { current: 1000, max: 2200 },
@@ -322,34 +325,17 @@ const MealAnalysisPage = () => {
             </div>
 
             {ingredients?.length > 0 && (
-              <div className="bg-white rounded-lg shadow-sm p-4 mb-4">
-                <h2 className="text-xl font-semibold mb-3">
-                  Ingredients Analysis
-                </h2>
-
-                {ingredients?.map((ingredient, idx) => (
-                  <div className="mb-3">
-                    <div key={idx} className="flex items-center">
-                      {ingredient?.category === "Good" ? (
-                        <Check size={16} className="mr-2 text-green-500" />
-                      ) : (
-                        <AlertTriangle
-                          size={16}
-                          className="mr-2 text-yellow-500"
-                        />
-                      )}
-                      <span
-                        className={`text-gray-800 ${
-                          idx === 0 ? "font-medium" : ""
-                        }`}
-                      >
-                        {ingredient?.name}
-                      </span>
-                      <p className="ml-6">{ingredient?.reason_for_category}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
+              <IngredientsAnalysis
+                beneficialIngredients={ingredients?.filter(
+                  (a) => a.category === "Good"
+                )}
+                neutralIngredients={ingredients?.filter(
+                  (a) => a.category === "Neutral"
+                )}
+                moderateIngredients={ingredients?.filter(
+                  (a) => a.category === "Bad"
+                )}
+              />
             )}
 
             <div className="wellness-card border-l-4 border-l-wellness-bright-green bg-white p-4 mb-4">
