@@ -116,12 +116,6 @@ const CreditLimitModal: React.FC<CreditLimitModalProps> = ({
         </div>
 
         <DialogFooter className="flex sm:flex-row gap-2">
-          {getUserSubscriptionQuotaData?.usageCount !==
-            getUserSubscriptionQuotaData?.usageLimit && (
-            <Button variant="outline" onClick={onContinue} className="flex-1">
-              Continue Anyway
-            </Button>
-          )}
           <Button
             onClick={handleUpgrade}
             className="bg-green-600 hover:bg-green-700 flex-1"

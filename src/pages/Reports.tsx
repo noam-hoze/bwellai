@@ -33,6 +33,9 @@ import {
 } from "@/service/hooks/ocr/useFileUpload";
 import CreditLimitModal from "@/components/reports/CreditLimitModal";
 import ReportTypeSelectionModal from "@/components/reports/ReportTypeSelectionModal";
+import { useGetUserSubscriptionQuota } from "@/service/hooks/subscription/useUserSubscription";
+import { useAuth } from "@/contexts/AuthContext";
+
 
 // Sample report data
 const initialReports = [
@@ -158,6 +161,17 @@ const Reports = () => {
 
   const { mutateAsync: userPanelAnalysisReportMutate } =
     useGetUserPanelAnalysisReportData();
+  
+    const { isAuthenticated } = useAuth();
+
+    const {
+        data: getUserSubscriptionQuotaData,
+        isSuccess: getUserSubscriptionQuotaIsSuccess,
+      } = useGetUserSubscriptionQuota(
+        isAuthenticated,
+        true,
+        "diagnostics_report_upload"
+      );
 
   useEffect(() => {
     const processBiomarkers = async () => {
@@ -405,7 +419,13 @@ const Reports = () => {
     const file = e.target.files?.[0];
     if (file) {
       setSelectedFile(file);
-      setCreditLimitModalOpen(true);
+      if(getUserSubscriptionQuotaData?.usageCount >=
+        getUserSubscriptionQuotaData?.usageLimit){
+          setCreditLimitModalOpen(true);
+        }
+        else{
+      handleContinueAnyway();
+    }
     }
   };
 
