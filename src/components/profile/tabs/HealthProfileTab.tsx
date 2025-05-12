@@ -114,7 +114,7 @@ const HealthProfileTab = ({
   language,
   getUserProfileRefetch,
 }) => {
-  const [age, setAge] = useState<number>(30);
+  const [age, setAge] = useState<string>("");
   const [gender, setGender] = useState<string>("male");
   const [bmi, setBmi] = useState<number>(0);
   const [smoker, setSmoker] = useState<string>("no");
@@ -404,7 +404,7 @@ const HealthProfileTab = ({
                   id="age"
                   type="number"
                   value={age}
-                  onChange={(e) => setAge(parseInt(e.target.value) || 0)}
+                  onChange={(e) => setAge(e.target.value)}
                   min={1}
                   max={120}
                 />
