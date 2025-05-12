@@ -448,8 +448,6 @@ const HealthNavigator = ({ getProfileIsData, userPreviousData }) => {
     }
   }, [userPreviousData]);
 
-  console.log(formatedData, activeOrgan, formatedData);
-
   return (
     <Card className="wellness-card border-l-4 border-l-blue-400 mt-6">
       <CardHeader className="pb-2">
