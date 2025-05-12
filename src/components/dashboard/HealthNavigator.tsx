@@ -44,7 +44,18 @@ interface OrganData {
   }[];
 }
 
-const organData: Record<NonNullable<Organ>, OrganData> = {
+const initOrgamData = {
+  Skin: [],
+  "Thyroid & Adrenal": [],
+  Liver: [],
+  Lungs: [],
+  Reproductive: [],
+  "Heart & Cardiovascular System": [],
+  "Nervous System & Brain": [],
+  Kidneys: [],
+};
+
+const organData: any = {
   Lungs: {
     title: "Respiratory System",
     color: "#4db6ac",
@@ -95,8 +106,137 @@ const organData: Record<NonNullable<Organ>, OrganData> = {
       },
     ],
   },
+  Skin: {
+    title: "Skin",
+    color: "#4db6ac",
+    description: "Current Respiratory Health Status",
+    profileName: "",
+    stats: [
+      {
+        icon: <Droplet className="w-5 h-5 text-blue-600" />,
+        value: "98.2",
+        unit: "%",
+        label: "Oxygen saturation (SpO2)",
+        status: "normal",
+      },
+      {
+        icon: <Activity className="w-5 h-5 text-blue-600" />,
+        value: "14",
+        unit: "breaths/min",
+        label: "Resting respiratory rate",
+        status: "normal",
+      },
+      {
+        icon: <Wind className="w-5 h-5 text-blue-600" />,
+        value: "Deep",
+        unit: "",
+        label: "Breathing pattern",
+        status: "normal",
+      },
+      {
+        icon: <AlertTriangle className="w-5 h-5 text-amber-500" />,
+        value: "Moderate",
+        unit: "",
+        label: "Pollution exposure risk",
+        status: "caution",
+      },
+      {
+        icon: <Activity className="w-5 h-5 text-green-600" />,
+        value: "22",
+        unit: "breaths/min",
+        label: "Active respiratory rate",
+        status: "normal",
+      },
+      {
+        icon: <Thermometer className="w-5 h-5 text-green-600" />,
+        value: "Low",
+        unit: "",
+        label: "Infection risk level",
+        status: "normal",
+      },
+    ],
+  },
+  "Thyroid & Adrenal": {
+    title: "Thyroid & Adrenal",
+    color: "#4db6ac",
+    description: "Current Respiratory Health Status",
+    profileName: "",
+    stats: [
+      {
+        icon: <Droplet className="w-5 h-5 text-blue-600" />,
+        value: "98.2",
+        unit: "%",
+        label: "Oxygen saturation (SpO2)",
+        status: "normal",
+      },
+      {
+        icon: <Activity className="w-5 h-5 text-blue-600" />,
+        value: "14",
+        unit: "breaths/min",
+        label: "Resting respiratory rate",
+        status: "normal",
+      },
+      {
+        icon: <Wind className="w-5 h-5 text-blue-600" />,
+        value: "Deep",
+        unit: "",
+        label: "Breathing pattern",
+        status: "normal",
+      },
+      {
+        icon: <AlertTriangle className="w-5 h-5 text-amber-500" />,
+        value: "Moderate",
+        unit: "",
+        label: "Pollution exposure risk",
+        status: "caution",
+      },
+      {
+        icon: <Activity className="w-5 h-5 text-green-600" />,
+        value: "22",
+        unit: "breaths/min",
+        label: "Active respiratory rate",
+        status: "normal",
+      },
+      {
+        icon: <Thermometer className="w-5 h-5 text-green-600" />,
+        value: "Low",
+        unit: "",
+        label: "Infection risk level",
+        status: "normal",
+      },
+    ],
+  },
   "Nervous System & Brain": {
     title: "Brain & Nervous System",
+    color: "#9b87f5",
+    description: "Central Nervous System",
+    profileName: "",
+    stats: [
+      {
+        icon: <Activity className="w-5 h-5 text-purple-600" />,
+        value: "Normal",
+        unit: "",
+        label: "Neurological activity",
+        status: "normal",
+      },
+      {
+        icon: <Brain className="w-5 h-5 text-purple-600" />,
+        value: "68",
+        unit: "ms",
+        label: "Reaction time",
+        status: "normal",
+      },
+      {
+        icon: <AlertTriangle className="w-5 h-5 text-purple-600" />,
+        value: "7.5",
+        unit: "hrs/night",
+        label: "Sleep quality",
+        status: "normal",
+      },
+    ],
+  },
+  "Heart & Cardiovascular System": {
+    title: "Heart & Cardiovascular System",
     color: "#9b87f5",
     description: "Central Nervous System",
     profileName: "",
@@ -196,13 +336,35 @@ const organData: Record<NonNullable<Organ>, OrganData> = {
       },
     ],
   },
+  Reproductive: {
+    title: "Reproductive",
+    color: "#3b82f6",
+    description: "Urinary System",
+    profileName: "",
+    stats: [
+      {
+        icon: <Droplet className="w-5 h-5 text-blue-600" />,
+        value: "Normal",
+        unit: "",
+        label: "Filtration rate",
+        status: "normal",
+      },
+      {
+        icon: <Activity className="w-5 h-5 text-blue-600" />,
+        value: "Good",
+        unit: "",
+        label: "Electrolyte balance",
+        status: "normal",
+      },
+    ],
+  },
 };
 
 const HealthNavigator = ({ getProfileIsData, userPreviousData }) => {
   const navigate = useNavigate();
 
   const [activeOrgan, setActiveOrgan] = useState<Organ>(null);
-  const [formatedData, setFormatedData] = useState({});
+  const [formatedData, setFormatedData] = useState(initOrgamData);
   const [formatedData2, setFormatedData2] = useState({});
 
   const handleOrganClick = (organ: Organ) => {
@@ -242,7 +404,7 @@ const HealthNavigator = ({ getProfileIsData, userPreviousData }) => {
 
   useEffect(() => {
     if (userPreviousData) {
-      const organData = {};
+      const organData = initOrgamData;
 
       userPreviousData?.data?.resultData?.forEach((item) => {
         const profile = item.profile;
@@ -286,6 +448,8 @@ const HealthNavigator = ({ getProfileIsData, userPreviousData }) => {
     }
   }, [userPreviousData]);
 
+  console.log(formatedData, activeOrgan, formatedData);
+
   return (
     <Card className="wellness-card border-l-4 border-l-blue-400 mt-6">
       <CardHeader className="pb-2">
@@ -316,11 +480,11 @@ const HealthNavigator = ({ getProfileIsData, userPreviousData }) => {
                   <div
                     className="p-3 text-white font-medium flex justify-between items-center"
                     style={{
-                      backgroundColor: formatedData?.[activeOrgan]?.color,
+                      backgroundColor: organData?.[activeOrgan]?.color,
                     }}
                   >
                     <span className="text-xl">
-                      {formatedData?.[activeOrgan]?.title}
+                      {organData?.[activeOrgan]?.title}
                     </span>
                     <ChevronRight className="w-5 h-5" />
                   </div>
