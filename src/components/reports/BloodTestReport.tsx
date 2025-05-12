@@ -45,6 +45,7 @@ import PerspectiveLoadingOverlay from "../reports/PerspectiveLoadingOverlay";
 import AbnormalTestsList from "./components/tests/AbnormalTestsList";
 import RecommendedActions from "./components/actions/RecommendedActions";
 import { useGetUserReportLatestResultByDate } from "@/service/hooks/ocr/useGetAlternativePerspectiveUserReport";
+import { getReportSignalTextCalc } from "@/utils/utils";
 
 interface BloodTestResult {
   id: string;
@@ -447,7 +448,15 @@ const getAbnormalResults = (results: any): any[] => {
   return results?.data?.resultData?.map((data) => {
     return {
       profile: data?.profile,
-      biomarker: data?.biomarker?.filter((r) => r?.signalText !== "normal"),
+      biomarker: data?.biomarker?.filter((r) => {
+        return (
+          getReportSignalTextCalc({
+            testResultValue: r?.testResultValue,
+            minParameterValue: r?.minParameterValue,
+            maxParameterValue: r?.maxParameterValue,
+          }) !== "normal" && r?.signalText !== "normal"
+        );
+      }),
     };
   });
 };
@@ -791,6 +800,8 @@ const BloodTestReport = ({
   const handleCancelPerspectiveChange = () => {
     setLoading(false);
   };
+
+  console.log(abnormalResults);
 
   return (
     <div className="animate-fade-in relative">
