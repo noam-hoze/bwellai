@@ -142,8 +142,6 @@ const DailyTabContent = ({
     awake: 6,
   };
 
-  console.log(wearableDailyRecommendationData);
-
   const formattedSleepData = convertAndGroupSleepData(
     wearableDailyData?.finalDailySpikeSleepDataV4?.levels
   );
@@ -160,7 +158,8 @@ const DailyTabContent = ({
               <CarouselItem>
                 <SleepScoreCard
                   score={
-                    wearableDailyData?.finalDailySpikeSleepDataV4?.source_specific_sleep_score
+                    wearableDailyData?.finalDailySpikeSleepDataV4
+                      ?.source_specific_sleep_score
                   }
                   bedtime={
                     wearableDailyData?.finalDailySpikeSleepDataV4?.bedtime_start?.split(
@@ -317,7 +316,10 @@ const DailyTabContent = ({
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
           <SleepScoreCard
-            score={wearableDailyData?.finalDailySpikeSleepDataV4?.source_specific_sleep_score}
+            score={
+              wearableDailyData?.finalDailySpikeSleepDataV4
+                ?.source_specific_sleep_score
+            }
             bedtime={
               wearableDailyData?.finalDailySpikeSleepDataV4?.bedtime_start?.split(
                 "T"

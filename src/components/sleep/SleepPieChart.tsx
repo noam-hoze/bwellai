@@ -31,9 +31,35 @@ const SleepPieChart: React.FC<SleepPieChartProps> = ({
     return Math.min(Math.round((actual / ideal) * 100), 150); // Cap at 150% of ideal
   };
 
+  // Determine status color based on percentage
+  const getStatusColor = (percentage: number) => {
+    if (percentage >= 95 && percentage <= 105) return "text-blue-500";
+    if (percentage > 105) return "text-green-500";
+    return "text-amber-500";
+  };
+
+  // Determine status text based on percentage
+  const getStatusText = (percentage: number) => {
+    if (percentage >= 95 && percentage <= 105) return "Within ideal";
+    if (percentage > 105) return "Above ideal";
+    return "Below ideal";
+  };
+
+  const lightRing = { color: "#FEDF89" }; // Light - Yellow (outer)
+  const deepRing = { color: "#53A15E" }; // Deep - Green (middle)
+  const remRing = { color: "#0EA5E9" }; // REM - Blue (inner)
+
   const lightSleepPercentage = calculatePercentage(lightSleep, idealLightSleep);
   const deepSleepPercentage = calculatePercentage(deepSleep, idealDeepSleep);
   const remSleepPercentage = calculatePercentage(remSleep, idealRemSleep);
+
+  const lightStatusColor = getStatusColor(lightSleep);
+  const deepStatusColor = getStatusColor(deepSleep);
+  const remStatusColor = getStatusColor(remSleep);
+
+  const lightStatus = getStatusText(lightSleep);
+  const deepStatus = getStatusText(deepSleep);
+  const remStatus = getStatusText(remSleep);
 
   // States to cycle through sleep stages for the center display
   const sleepStages = [
@@ -143,7 +169,7 @@ const SleepPieChart: React.FC<SleepPieChartProps> = ({
       </div>
 
       {/* Legend - moved closer to rings */}
-      <div className="flex justify-center items-center gap-8 mt-2">
+      {/* <div className="flex justify-center items-center gap-8 mt-2">
         <div className="flex items-center gap-2">
           <div className="w-4 h-4 rounded-full bg-[#FEDF89]"></div>
           <span className="text-sm text-gray-700">
@@ -167,6 +193,74 @@ const SleepPieChart: React.FC<SleepPieChartProps> = ({
             <br />
             {remSleep?.toFixed(0)}% <p>{remHR} H</p>
           </span>
+        </div>
+      </div> */}
+
+      <div className="grid grid-cols-3 gap-2 w-full mt-2">
+        {/* Light sleep */}
+        <div className="bg-gray-50 p-3 rounded-lg flex flex-col items-center">
+          <div className="flex items-center gap-2">
+            <div
+              className="w-4 h-4 rounded-full"
+              style={{ backgroundColor: lightRing.color }}
+            ></div>
+            <span className="text-sm font-medium">Light</span>
+          </div>
+          <div className="text-xl font-bold mt-1">
+            {/* {formatTimeValue(lightSleep)} */}
+            <p>{lightHR?.split(":")?.[0]}h</p>
+            <p>{lightHR?.split(":")?.[1]}m</p>
+          </div>
+          <div className="text-xs text-gray-500">
+            {lightSleep?.toFixed(0)}% of target
+          </div>
+          <div className={`text-xs font-medium ${lightStatusColor}`}>
+            {lightStatus}
+          </div>
+        </div>
+
+        {/* Deep sleep */}
+        <div className="bg-gray-50 p-3 rounded-lg flex flex-col items-center">
+          <div className="flex items-center gap-2">
+            <div
+              className="w-4 h-4 rounded-full"
+              style={{ backgroundColor: deepRing.color }}
+            ></div>
+            <span className="text-sm font-medium">Deep</span>
+          </div>
+          <div className="text-xl font-bold mt-1">
+            {/* {formatTimeValue(deepSleep)} */}
+            <p>{deepHR?.split(":")?.[0]}h</p>
+            <p>{deepHR?.split(":")?.[1]}m</p>
+          </div>
+          <div className="text-xs text-gray-500">
+            {deepSleep?.toFixed(0)}% of target
+          </div>
+          <div className={`text-xs font-medium ${deepStatusColor}`}>
+            {deepStatus}
+          </div>
+        </div>
+
+        {/* REM sleep */}
+        <div className="bg-gray-50 p-3 rounded-lg flex flex-col items-center">
+          <div className="flex items-center gap-2">
+            <div
+              className="w-4 h-4 rounded-full"
+              style={{ backgroundColor: remRing.color }}
+            ></div>
+            <span className="text-sm font-medium">REM</span>
+          </div>
+          <div className="text-xl font-bold mt-1">
+            {/* {formatTimeValue(remSleep)} */}
+            <p>{remHR?.split(":")?.[0]}h</p>
+            <p>{remHR?.split(":")?.[1]}m</p>
+          </div>
+          <div className="text-xs text-gray-500">
+            {remSleep?.toFixed(0)}% of target
+          </div>
+          <div className={`text-xs font-medium ${remStatusColor}`}>
+            {remStatus}
+          </div>
         </div>
       </div>
     </div>
