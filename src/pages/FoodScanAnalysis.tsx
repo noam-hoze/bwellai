@@ -33,6 +33,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "sonner";
 import { useGetLogFoodDataV4Fetcher } from "@/service/hooks/nutrition/useGetFoodReportUpload";
 import DualProgressBar from "@/components/nutrition/DualProgressBar";
+import IngredientsAnalysis from "@/components/meal-analysis/IngredientsAnalysis";
 
 interface ProductData {
   id: string;
@@ -468,27 +469,47 @@ const FoodScanAnalysis = () => {
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow-sm p-4">
-            <h2 className="text-xl font-semibold mb-3">Ingredients Analysis</h2>
+          {product?.ingredients?.length > 0 && (
+            <IngredientsAnalysis
+              beneficialIngredients={product?.ingredients?.filter(
+                (a) => a.category === "Good"
+              )}
+              neutralIngredients={product?.ingredients?.filter(
+                (a) => a.category === "Neutral"
+              )}
+              moderateIngredients={product?.ingredients?.filter(
+                (a) => a.category === "Bad"
+              )}
+            />
+          )}
 
-            {product?.ingredients &&
-              product?.ingredients?.map((ingredient, idx) => (
-                <div className="mb-2">
-                  <div key={idx} className="flex items-center">
-                    {ingredient?.category === "Good" ? (
-                      <Check size={16} className="mr-2 text-green-500" />
-                    ) : (
-                      <AlertTriangle
-                        size={16}
-                        className="mr-2 text-yellow-500"
-                      />
-                    )}
-                    <span className={`text-gray-800 `}>{ingredient?.name}</span>
-                  </div>
-                  <p className="ml-6">{ingredient?.reason_for_category}</p>
-                </div>
-              ))}
-          </div>
+          {product?.suggestion?.length > 0 && (
+            <div className="wellness-card border-l-4 border-l-wellness-bright-green bg-white p-4 mb-4">
+              <div className="flex items-center gap-2 text-lg text-wellness-muted-black mb-2">
+                <Info className="h-5 w-5 text-wellness-bright-green" />
+                <h2 className="text-xl font-semibold">
+                  Suggestions for Improvement
+                </h2>
+              </div>
+
+              <div className="space-y-4">
+                {product?.suggestion?.map((s) => {
+                  return (
+                    <div className="rounded-lg border bg-white p-4">
+                      <div className="flex items-start gap-2">
+                        <UtensilsCrossed className="h-5 w-5 text-wellness-bright-green mt-1 flex-shrink-0" />
+                        <div>
+                          <p className="text-wellness-muted-black font-bold">
+                            {s}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
 
           <div className="wellness-card border-l-4 border-l-wellness-bright-green bg-white p-4 mb-4">
             <div className="flex items-center gap-2 text-lg text-wellness-muted-black mb-2">
