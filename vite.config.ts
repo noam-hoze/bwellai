@@ -16,7 +16,7 @@ export default defineConfig(({ mode }) => ({
       //"Cross-Origin-Embedder-Policy": "require-corp",
       "Cross-Origin-Resource-Policy": "cross-origin",
     },
-    middlewareMode: true,
+    // middlewareMode: true, // important if you want custom middleware
     configureServer: (server: any) => {
       server.middlewares.use((req: any, res: any, next: any) => {
         if (req.url.includes("/face-scan")) {
