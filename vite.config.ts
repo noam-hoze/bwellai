@@ -14,7 +14,7 @@ export default defineConfig(({ mode }) => ({
     headers: {
       //"Cross-Origin-Opener-Policy": "same-origin",
       //"Cross-Origin-Embedder-Policy": "require-corp",
-      "Cross-Origin-Resource-Policy": "cross-origin",
+      // "Cross-Origin-Resource-Policy": "cross-origin",
     },
     // middlewareMode: true, // important if you want custom middleware
     configureServer: (server: any) => {
@@ -22,8 +22,8 @@ export default defineConfig(({ mode }) => ({
         if (req.url.includes("/face-scan")) {
           res.setHeader("Cross-Origin-Opener-Policy", "same-origin");
           res.setHeader("Cross-Origin-Embedder-Policy", "require-corp");
+          res.setHeader("Cross-Origin-Resource-Policy", "cross-origin");
         }
-        res.setHeader("Cross-Origin-Resource-Policy", "cross-origin");
         next();
       });
     },
