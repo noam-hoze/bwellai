@@ -242,6 +242,7 @@ export function convertSecondsToTime(
 }
 
 export const convertDateTimeToTime = (dateString: string) => {
+  if (!dateString) return;
   const date = new Date(dateString);
 
   const hours = date.getHours(); // returns number without leading 0
