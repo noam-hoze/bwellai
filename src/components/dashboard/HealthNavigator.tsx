@@ -53,6 +53,7 @@ const initOrgamData = {
   "Heart & Cardiovascular System": [],
   "Nervous System & Brain": [],
   Kidneys: [],
+  "Bladder & Urinary System": [],
 };
 
 const organData: any = {
@@ -336,6 +337,28 @@ const organData: any = {
       },
     ],
   },
+  "Bladder & Urinary System": {
+    title: "Bladder & Urinary System",
+    color: "#3b82f6",
+    description: "Urinary System",
+    profileName: "",
+    stats: [
+      {
+        icon: <Droplet className="w-5 h-5 text-blue-600" />,
+        value: "Normal",
+        unit: "",
+        label: "Filtration rate",
+        status: "normal",
+      },
+      {
+        icon: <Activity className="w-5 h-5 text-blue-600" />,
+        value: "Good",
+        unit: "",
+        label: "Electrolyte balance",
+        status: "normal",
+      },
+    ],
+  },
   Reproductive: {
     title: "Reproductive",
     color: "#3b82f6",
@@ -366,6 +389,8 @@ const HealthNavigator = ({ getProfileIsData, userPreviousData }) => {
   const [activeOrgan, setActiveOrgan] = useState<Organ>(null);
   const [formatedData, setFormatedData] = useState(initOrgamData);
   const [formatedData2, setFormatedData2] = useState({});
+
+  console.log(activeOrgan);
 
   const handleOrganClick = (organ: Organ) => {
     setActiveOrgan(organ);

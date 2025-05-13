@@ -16,7 +16,8 @@ import {
 } from "@/components/ui/carousel";
 import {
   calculatedSleepPercentage,
-  convertSecondsToHHMM,
+  convertDateTimeToTime,
+  convertSecondsToTime,
   convertUnderscoresToCapitalizeHeading,
 } from "@/utils/utils";
 import { useGetUserProfile } from "@/service/hooks/profile/useGetUserProfile";
@@ -161,36 +162,31 @@ const DailyTabContent = ({
                     wearableDailyData?.finalDailySpikeSleepDataV4
                       ?.source_specific_sleep_score
                   }
-                  bedtime={
-                    wearableDailyData?.finalDailySpikeSleepDataV4?.bedtime_start?.split(
-                      "T"
-                    )?.[1]
-                  }
-                  wakeup={
-                    wearableDailyData?.finalDailySpikeSleepDataV4?.bedtime_end?.split(
-                      "T"
-                    )?.[1]
-                  }
-                  totalSleep={convertSecondsToHHMM(
-                    wearableDailyData?.finalDailySpikeSleepDataV4
-                      ?.total_sleep || 0
+                  bedtime={convertDateTimeToTime(
+                    wearableDailyData?.finalDailySpikeSleepDataV4?.bedtime_start
+                  )}
+                  wakeup={convertDateTimeToTime(
+                    wearableDailyData?.finalDailySpikeSleepDataV4?.bedtime_end
+                  )}
+                  totalSleep={convertSecondsToTime(
+                    wearableDailyData?.finalDailySpikeSleepDataV4?.total_sleep
                   )}
                   wakeupCount={wearableDailyData?.wakeUpTimes}
                 />
               </CarouselItem>
               <CarouselItem>
                 <SleepDistributionCard
-                  lightHR={convertSecondsToHHMM(
-                    wearableDailyData?.finalDailySpikeSleepDataV4?.light || 0
+                  lightHR={convertSecondsToTime(
+                    wearableDailyData?.finalDailySpikeSleepDataV4?.light
                   )}
-                  deepHR={convertSecondsToHHMM(
-                    wearableDailyData?.finalDailySpikeSleepDataV4?.deep || 0
+                  deepHR={convertSecondsToTime(
+                    wearableDailyData?.finalDailySpikeSleepDataV4?.deep
                   )}
-                  remHR={convertSecondsToHHMM(
-                    wearableDailyData?.finalDailySpikeSleepDataV4?.rem || 0
+                  remHR={convertSecondsToTime(
+                    wearableDailyData?.finalDailySpikeSleepDataV4?.rem
                   )}
-                  awakeHR={convertSecondsToHHMM(
-                    wearableDailyData?.finalDailySpikeSleepDataV4?.awake || 0
+                  awakeHR={convertSecondsToTime(
+                    wearableDailyData?.finalDailySpikeSleepDataV4?.awake
                   )}
                   lightSleep={calculatedSleepPercentage({
                     totalSleep:
@@ -229,17 +225,20 @@ const DailyTabContent = ({
               </CarouselItem>
               <CarouselItem>
                 <SleepQualityCard
-                  lightHR={convertSecondsToHHMM(
-                    wearableDailyData?.finalDailySpikeSleepDataV4?.light || 0
+                  totalSleep={
+                    wearableDailyData?.finalDailySpikeSleepDataV4?.total_sleep
+                  }
+                  lightHR={convertSecondsToTime(
+                    wearableDailyData?.finalDailySpikeSleepDataV4?.light
                   )}
-                  deepHR={convertSecondsToHHMM(
-                    wearableDailyData?.finalDailySpikeSleepDataV4?.deep || 0
+                  deepHR={convertSecondsToTime(
+                    wearableDailyData?.finalDailySpikeSleepDataV4?.deep
                   )}
-                  remHR={convertSecondsToHHMM(
-                    wearableDailyData?.finalDailySpikeSleepDataV4?.rem || 0
+                  remHR={convertSecondsToTime(
+                    wearableDailyData?.finalDailySpikeSleepDataV4?.rem
                   )}
-                  awakeHR={convertSecondsToHHMM(
-                    wearableDailyData?.finalDailySpikeSleepDataV4?.awake || 0
+                  awakeHR={convertSecondsToTime(
+                    wearableDailyData?.finalDailySpikeSleepDataV4?.awake
                   )}
                   lightSleep={calculatedSleepPercentage({
                     totalSleep:
@@ -287,9 +286,8 @@ const DailyTabContent = ({
                   endTime={formatTo12Hour(
                     wearableDailyData?.finalDailySpikeSleepDataV4?.bedtime_end
                   )}
-                  totalSleep={convertSecondsToHHMM(
-                    wearableDailyData?.finalDailySpikeSleepDataV4
-                      ?.total_sleep || 0
+                  totalSleep={convertSecondsToTime(
+                    wearableDailyData?.finalDailySpikeSleepDataV4?.total_sleep
                   )}
                 />
               </CarouselItem>
@@ -302,9 +300,8 @@ const DailyTabContent = ({
                   endTime={formatTo12Hour(
                     wearableDailyData?.finalDailySpikeSleepDataV4?.bedtime_end
                   )}
-                  totalSleep={convertSecondsToHHMM(
-                    wearableDailyData?.finalDailySpikeSleepDataV4
-                      ?.total_sleep || 0
+                  totalSleep={convertSecondsToTime(
+                    wearableDailyData?.finalDailySpikeSleepDataV4?.total_sleep
                   )}
                 />
               </CarouselItem>
@@ -320,35 +317,29 @@ const DailyTabContent = ({
               wearableDailyData?.finalDailySpikeSleepDataV4
                 ?.source_specific_sleep_score
             }
-            bedtime={
-              wearableDailyData?.finalDailySpikeSleepDataV4?.bedtime_start?.split(
-                "T"
-              )?.[1]
-            }
-            wakeup={
-              wearableDailyData?.finalDailySpikeSleepDataV4?.bedtime_end?.split(
-                "T"
-              )?.[1]
-            }
-            totalSleep={
-              convertSecondsToHHMM(
-                wearableDailyData?.finalDailySpikeSleepDataV4?.total_sleep || 0
-              ) + " H"
-            }
+            bedtime={convertDateTimeToTime(
+              wearableDailyData?.finalDailySpikeSleepDataV4?.bedtime_start
+            )}
+            wakeup={convertDateTimeToTime(
+              wearableDailyData?.finalDailySpikeSleepDataV4?.bedtime_end
+            )}
+            totalSleep={convertSecondsToTime(
+              wearableDailyData?.finalDailySpikeSleepDataV4?.total_sleep
+            )}
             wakeupCount={wearableDailyData?.wakeUpTimes}
           />
           {/* <SleepDistributionCard
-            lightHR={convertSecondsToHHMM(
-              wearableDailyData?.finalDailySpikeSleepDataV4?.light || 0
+            lightHR={convertSecondsToTime(
+              wearableDailyData?.finalDailySpikeSleepDataV4?.light
             )}
-            deepHR={convertSecondsToHHMM(
-              wearableDailyData?.finalDailySpikeSleepDataV4?.deep || 0
+            deepHR={convertSecondsToTime(
+              wearableDailyData?.finalDailySpikeSleepDataV4?.deep
             )}
-            remHR={convertSecondsToHHMM(
-              wearableDailyData?.finalDailySpikeSleepDataV4?.rem || 0
+            remHR={convertSecondsToTime(
+              wearableDailyData?.finalDailySpikeSleepDataV4?.rem
             )}
-            awakeHR={convertSecondsToHHMM(
-              wearableDailyData?.finalDailySpikeSleepDataV4?.awake || 0
+            awakeHR={convertSecondsToTime(
+              wearableDailyData?.finalDailySpikeSleepDataV4?.awake
             )}
             lightSleep={calculatedSleepPercentage({
               totalSleep:
@@ -390,23 +381,26 @@ const DailyTabContent = ({
             endTime={formatTo12Hour(
               wearableDailyData?.finalDailySpikeSleepDataV4?.bedtime_end
             )}
-            totalSleep={convertSecondsToHHMM(
-              wearableDailyData?.finalDailySpikeSleepDataV4?.total_sleep || 0
+            totalSleep={convertSecondsToTime(
+              wearableDailyData?.finalDailySpikeSleepDataV4?.total_sleep
             )}
           />
 
           <SleepQualityCard
-            lightHR={convertSecondsToHHMM(
-              wearableDailyData?.finalDailySpikeSleepDataV4?.light || 0
+            totalSleep={
+              wearableDailyData?.finalDailySpikeSleepDataV4?.total_sleep
+            }
+            lightHR={convertSecondsToTime(
+              wearableDailyData?.finalDailySpikeSleepDataV4?.light
             )}
-            deepHR={convertSecondsToHHMM(
-              wearableDailyData?.finalDailySpikeSleepDataV4?.deep || 0
+            deepHR={convertSecondsToTime(
+              wearableDailyData?.finalDailySpikeSleepDataV4?.deep
             )}
-            remHR={convertSecondsToHHMM(
-              wearableDailyData?.finalDailySpikeSleepDataV4?.rem || 0
+            remHR={convertSecondsToTime(
+              wearableDailyData?.finalDailySpikeSleepDataV4?.rem
             )}
-            awakeHR={convertSecondsToHHMM(
-              wearableDailyData?.finalDailySpikeSleepDataV4?.awake || 0
+            awakeHR={convertSecondsToTime(
+              wearableDailyData?.finalDailySpikeSleepDataV4?.awake
             )}
             lightSleep={calculatedSleepPercentage({
               totalSleep:
@@ -445,8 +439,8 @@ const DailyTabContent = ({
             endTime={formatTo12Hour(
               wearableDailyData?.finalDailySpikeSleepDataV4?.bedtime_end
             )}
-            totalSleep={convertSecondsToHHMM(
-              wearableDailyData?.finalDailySpikeSleepDataV4?.total_sleep || 0
+            totalSleep={convertSecondsToTime(
+              wearableDailyData?.finalDailySpikeSleepDataV4?.total_sleep
             )}
           />
         </div>

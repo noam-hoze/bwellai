@@ -1,3 +1,4 @@
+import { convertSecondsToTime } from "@/utils/utils";
 import React from "react";
 
 interface SleepPieChartProps {
@@ -9,9 +10,11 @@ interface SleepPieChartProps {
   deepHR?;
   remHR?;
   awakeHR?;
+  totalSleep?;
 }
 
 const SleepPieChart: React.FC<SleepPieChartProps> = ({
+  totalSleep,
   lightSleep,
   deepSleep,
   remSleep,
@@ -131,11 +134,13 @@ const SleepPieChart: React.FC<SleepPieChartProps> = ({
     },
   ];
 
+  console.log(totalSleep);
+
   return (
     <div className="h-full w-full flex flex-col items-center justify-start py-4 space-y-4">
       <div className="flex-shrink-0 pt-4">
         {/* Multi-ring progress circles - moved upward */}
-        <svg className="w-56 h-56 transform -rotate-90" viewBox="0 0 200 200">
+        <svg className="w-56 h-56" viewBox="0 0 200 200">
           {/* Background circles */}
           {rings.map((ring, index) => (
             <circle
@@ -149,22 +154,48 @@ const SleepPieChart: React.FC<SleepPieChartProps> = ({
             />
           ))}
 
-          {/* Progress circles */}
-          {rings.map((ring, index) => (
-            <circle
-              key={`progress-${index}`}
-              cx="100"
-              cy="100"
-              r={ring.radius}
-              fill="transparent"
-              stroke={ring.color}
-              strokeWidth={strokeWidth}
-              strokeDasharray={ring.circumference}
-              strokeDashoffset={ring.offset}
-              strokeLinecap="round"
-              className="transition-all duration-500 ease-out"
-            />
-          ))}
+          <g transform="rotate(-90 100 100)">
+            {/* Progress circles */}
+            {rings.map((ring, index) => (
+              <circle
+                key={`progress-${index}`}
+                cx="100"
+                cy="100"
+                r={ring.radius}
+                fill="transparent"
+                stroke={ring.color}
+                strokeWidth={strokeWidth}
+                strokeDasharray={ring.circumference}
+                strokeDashoffset={ring.offset}
+                strokeLinecap="round"
+                className="transition-all duration-500 ease-out"
+              />
+            ))}
+          </g>
+
+          {/* Labels */}
+          {totalSleep && (
+            <>
+              <text
+                x="50%"
+                y="45%"
+                textAnchor="middle"
+                dominantBaseline="middle"
+                className="text-xs fill-gray-600"
+              >
+                Total
+              </text>
+              <text
+                x="50%"
+                y="53%"
+                textAnchor="middle"
+                dominantBaseline="middle"
+                className="text-sm font-bold fill-gray-800"
+              >
+                {convertSecondsToTime(totalSleep)}
+              </text>
+            </>
+          )}
         </svg>
       </div>
 
@@ -208,8 +239,8 @@ const SleepPieChart: React.FC<SleepPieChartProps> = ({
           </div>
           <div className="text-xl font-bold mt-1">
             {/* {formatTimeValue(lightSleep)} */}
-            <p>{lightHR?.split(":")?.[0]}h</p>
-            <p>{lightHR?.split(":")?.[1]}m</p>
+            <p>{lightHR?.split(":")?.[0]}</p>
+            <p>{lightHR?.split(":")?.[1]}</p>
           </div>
           <div className="text-xs text-gray-500">
             {lightSleep?.toFixed(0)}% of target
@@ -230,8 +261,8 @@ const SleepPieChart: React.FC<SleepPieChartProps> = ({
           </div>
           <div className="text-xl font-bold mt-1">
             {/* {formatTimeValue(deepSleep)} */}
-            <p>{deepHR?.split(":")?.[0]}h</p>
-            <p>{deepHR?.split(":")?.[1]}m</p>
+            <p>{deepHR?.split(":")?.[0]}</p>
+            <p>{deepHR?.split(":")?.[1]}</p>
           </div>
           <div className="text-xs text-gray-500">
             {deepSleep?.toFixed(0)}% of target
@@ -252,8 +283,8 @@ const SleepPieChart: React.FC<SleepPieChartProps> = ({
           </div>
           <div className="text-xl font-bold mt-1">
             {/* {formatTimeValue(remSleep)} */}
-            <p>{remHR?.split(":")?.[0]}h</p>
-            <p>{remHR?.split(":")?.[1]}m</p>
+            <p>{remHR?.split(":")?.[0]}</p>
+            <p>{remHR?.split(":")?.[1]}</p>
           </div>
           <div className="text-xs text-gray-500">
             {remSleep?.toFixed(0)}% of target

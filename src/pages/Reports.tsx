@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import Header from "@/components/layout/Header";
 import { Card } from "@/components/ui/card";
-import { Upload, Eye, FileText, Shield } from "lucide-react";
+import { Upload, Eye, FileText, Shield, FileX } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { throttle } from "lodash";
@@ -12,6 +12,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogAction,
+} from "@/components/ui/alert-dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -35,7 +44,6 @@ import CreditLimitModal from "@/components/reports/CreditLimitModal";
 import ReportTypeSelectionModal from "@/components/reports/ReportTypeSelectionModal";
 import { useGetUserSubscriptionQuota } from "@/service/hooks/subscription/useUserSubscription";
 import { useAuth } from "@/contexts/AuthContext";
-
 
 // Sample report data
 const initialReports = [
@@ -91,6 +99,8 @@ const initialReports = [
   },
 ];
 
+const supportedFileTypes = ["pdf", "jpeg", "jpg", "png", "doc", "docx"];
+
 const Reports = () => {
   const viewportRef = useRef<HTMLDivElement>(null);
   const isFetchingRef = useRef(false); // cooldown flag
@@ -112,6 +122,10 @@ const Reports = () => {
   const [panelAnalysisResponses, setPanelAnalysisResponses] = useState({});
   const [creditLimitModalOpen, setCreditLimitModalOpen] = useState(false);
   const [reportTypeModalOpen, setReportTypeModalOpen] = useState(false);
+
+  const [unsupportedFileModalOpen, setUnsupportedFileModalOpen] =
+    useState(false);
+  const [unsupportedFileType, setUnsupportedFileType] = useState("");
 
   const [chunkApiStatus, setChunkApiStatus] = useState(false);
   const [chunkPanelAnalysisApiStatus, setChunkPanelAnalysisApiStatus] =
@@ -161,17 +175,17 @@ const Reports = () => {
 
   const { mutateAsync: userPanelAnalysisReportMutate } =
     useGetUserPanelAnalysisReportData();
-  
-    const { isAuthenticated } = useAuth();
 
-    const {
-        data: getUserSubscriptionQuotaData,
-        isSuccess: getUserSubscriptionQuotaIsSuccess,
-      } = useGetUserSubscriptionQuota(
-        isAuthenticated,
-        true,
-        "diagnostics_report_upload"
-      );
+  const { isAuthenticated } = useAuth();
+
+  const {
+    data: getUserSubscriptionQuotaData,
+    isSuccess: getUserSubscriptionQuotaIsSuccess,
+  } = useGetUserSubscriptionQuota(
+    isAuthenticated,
+    true,
+    "diagnostics_report_upload"
+  );
 
   useEffect(() => {
     const processBiomarkers = async () => {
@@ -418,14 +432,23 @@ const Reports = () => {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      const fileExtension = file.name.split(".").pop()?.toLowerCase() || "";
+
+      if (!supportedFileTypes.includes(fileExtension)) {
+        setUnsupportedFileType(fileExtension);
+        setUnsupportedFileModalOpen(true);
+        return;
+      }
+
       setSelectedFile(file);
-      if(getUserSubscriptionQuotaData?.usageCount >=
-        getUserSubscriptionQuotaData?.usageLimit){
-          setCreditLimitModalOpen(true);
-        }
-        else{
-      handleContinueAnyway();
-    }
+      if (
+        getUserSubscriptionQuotaData?.usageCount >=
+        getUserSubscriptionQuotaData?.usageLimit
+      ) {
+        setCreditLimitModalOpen(true);
+      } else {
+        handleContinueAnyway();
+      }
     }
   };
 
@@ -579,6 +602,47 @@ const Reports = () => {
           onClose={() => setReportTypeModalOpen(false)}
           onTypeSelect={handleReportTypeSelected}
         />
+
+        {/* Unsupported File Type Alert Dialog */}
+        <AlertDialog
+          open={unsupportedFileModalOpen}
+          onOpenChange={setUnsupportedFileModalOpen}
+        >
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle className="flex items-center">
+                <FileX className="text-red-500 mr-2 h-5 w-5" />
+                Unsupported File Format
+              </AlertDialogTitle>
+              <AlertDialogDescription>
+                <p className="mt-2">
+                  {unsupportedFileType &&
+                    `The file format ".${unsupportedFileType}" is not supported.`}
+                </p>
+                <p className="mt-4 font-medium">
+                  Please upload one of these supported formats:
+                </p>
+                <div className="mt-2 grid grid-cols-2 gap-2">
+                  {supportedFileTypes.map((type) => (
+                    <div
+                      key={type}
+                      className="bg-gray-100 rounded px-3 py-1 text-center text-sm"
+                    >
+                      .{type}
+                    </div>
+                  ))}
+                </div>
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogAction
+                onClick={() => setUnsupportedFileModalOpen(false)}
+              >
+                Try Again
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
 
         {/* All Reports Section */}
         <div className="mb-10 animate-fade-in">

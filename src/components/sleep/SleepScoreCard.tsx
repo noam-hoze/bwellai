@@ -23,9 +23,9 @@ interface SleepScoreCardProps {
 const SleepScoreCard = ({
   score,
   className,
-  bedtime = "N/A",
-  wakeup = "N/A",
-  totalSleep = "N/A",
+  bedtime,
+  wakeup,
+  totalSleep,
   wakeupCount = 0,
 }: SleepScoreCardProps) => {
   // Get color based on sleep score

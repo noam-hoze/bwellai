@@ -18,9 +18,11 @@ interface SleepQualityCardProps {
   deepHR?;
   remHR?;
   awakeHR?;
+  totalSleep?;
 }
 
 const SleepQualityCard = ({
+  totalSleep,
   lightSleep,
   deepSleep,
   remSleep,
@@ -76,6 +78,7 @@ const SleepQualityCard = ({
       </CardHeader>
       <CardContent className="pt-0 h-full">
         <SleepPieChart
+          totalSleep={totalSleep}
           lightSleep={lightSleep || 0}
           deepSleep={deepSleep || 0}
           remSleep={remSleep || 0}

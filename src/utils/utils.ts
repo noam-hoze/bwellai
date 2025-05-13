@@ -221,15 +221,36 @@ export const requiredMicronutrientsBalanceDisplayed = ({
   }
 };
 
-export function convertSecondsToHHMM(seconds: number): string {
+export function convertSecondsToTime(
+  seconds: number,
+  format: "colon" | "text" = "text"
+): string {
   const hours = Math.floor(seconds / 3600);
   const minutes = Math.floor((seconds % 3600) / 60);
 
-  return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(
-    2,
-    "0"
-  )}`;
+  if (format === "colon") {
+    // Format like 6:52 (no leading zero for hours)
+    return `${hours}:${String(minutes).padStart(2, "0")}`;
+  }
+
+  // Format like 7h 2m or 31m
+  const parts = [];
+  if (hours > 0) parts.push(`${hours}h`);
+  if (minutes > 0 || hours === 0) parts.push(`${minutes}m`);
+
+  return parts.join(" ");
 }
+
+export const convertDateTimeToTime = (dateString: string) => {
+  if (!dateString) return;
+  const date = new Date(dateString);
+
+  const hours = date.getHours(); // returns number without leading 0
+  const minutes = date.getMinutes().toString().padStart(2, "0");
+
+  const time = `${hours}:${minutes}`; // "6:50"
+  return time;
+};
 
 export const handleCopyToClipboard = (text) => {
   navigator.clipboard

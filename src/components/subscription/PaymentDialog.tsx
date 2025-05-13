@@ -18,7 +18,7 @@ interface PaymentDialogProps {
   onClose: () => void;
   planName: string;
   planPrice: string;
-  planTokens?: string;
+  planTokens?: number;
   walletBalanceData?;
   setIsSuccessDialogOpen?;
   selectedPlanId?;
@@ -39,13 +39,6 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({
   );
   const [promoCode, setPromoCode] = useState("");
   const [showPromoInput, setShowPromoInput] = useState(false);
-  console.log(
-    planName,
-    planPrice,
-    planTokens,
-    walletBalanceData,
-    selectedPlanId
-  );
 
   const {
     data: addSelectedSubscriptionData,
@@ -85,8 +78,6 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({
 
   const handleConfirm = () => {
     // Here you would integrate with a payment processor or token system
-    console.log("Processing payment with method:", paymentMethod);
-    console.log("Promo code:", promoCode);
 
     let payload: any = {
       subscription_id: selectedPlanId,
@@ -101,8 +92,6 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({
         currencyType: "USD",
       };
     }
-
-    console.log(payload);
 
     handleSelectSubscription(payload);
   };
@@ -155,6 +144,10 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({
                 checked={paymentMethod === "tokens"}
                 onChange={() => setPaymentMethod("tokens")}
                 className="h-5 w-5 text-blue-600"
+                disabled={
+                  planTokens >=
+                  parseInt(walletBalanceData?.balances?.[0]?.balance)
+                }
               />
               <Label htmlFor="tokens" className="flex-1 cursor-pointer">
                 <div className="flex items-center">
@@ -190,12 +183,12 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({
           <div className="text-sm text-gray-500 mb-4">
             {planTokens ? (
               <p>
-                You are subscribing to {planName} for {planTokens} or{" "}
+                You are subscribing to {planName} for {planTokens} tokens or $
                 {planPrice}.
               </p>
             ) : (
               <p>
-                You are subscribing to {planName} for {planPrice}.
+                You are subscribing to {planName} for ${planPrice}.
               </p>
             )}
           </div>

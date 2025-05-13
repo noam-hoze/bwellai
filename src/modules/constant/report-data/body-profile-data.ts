@@ -354,6 +354,44 @@ export const healthMetrics = {
       link: "/connections",
     },
   ],
+  "Bladder & Urinary System": [
+    {
+      metric: "Creatinine",
+      source: "Blood test (Metabolic/Kidney panel)",
+      noDataMessage: "Monitor kidney filtration efficiency",
+      format: "0.9 mg/dL (Normal)",
+      icon: "🧪",
+      linkText: "[Upload lab results]",
+      link: "/reports",
+    },
+    {
+      metric: "BUN",
+      source: "Blood test (Metabolic/Kidney panel)",
+      noDataMessage: "Assess overall kidney function",
+      format: "15 mg/dL (Normal)",
+      icon: "🧪",
+      linkText: "[Upload lab results]",
+      link: "/reports",
+    },
+    {
+      metric: "Electrolytes",
+      source: "Blood test (Electrolyte panel)",
+      noDataMessage: "Maintain optimal cell function",
+      format: "Within normal ranges",
+      icon: "⚡",
+      linkText: "[Upload lab results]",
+      link: "/reports",
+    },
+    {
+      metric: "Hydration",
+      source: "Wearable device / Hydration tracker",
+      noDataMessage: "Support healthy kidney function",
+      format: "98% optimal fluid balance",
+      icon: "💧",
+      linkText: "[Connect Wearable device]",
+      link: "/connections",
+    },
+  ],
 };
 
 export const healthMetricsArray = {
