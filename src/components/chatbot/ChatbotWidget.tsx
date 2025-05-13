@@ -13,7 +13,7 @@ const ChatbotWidget = () => {
     const script = document.createElement("script");
     script.type = "text/javascript";
     script.async = true;
-    script.src = "https://cdn.voiceflow.com/widget-next/bundle.mjs";
+    script.src = "https://app-dev2.bwellai.com/widget-next/bundle.mjs";
 
     // Add the onload handler
     script.onload = () => {
