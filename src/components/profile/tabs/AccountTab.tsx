@@ -113,17 +113,17 @@ const AccountTab = ({ getProfileIsData }) => {
                 <div className="w-12 h-12 rounded-full overflow-hidden bg-wellness-light-green flex-shrink-0 mr-3">
                   <img
                     src="/lovable-uploads/b53703fa-3d8b-4f5f-9ff3-a4b1773d5701.png"
-                    alt="John Doe"
+                    alt="user-profile-image"
                     className="w-full h-full object-cover"
                   />
                 </div>
                 <div>
                   {/* <div className="font-semibold text-gray-800">
-                    {getProfileIsData?.fullName || "john doe"}
+                    {getProfileIsData?.fullName}
                   </div> */}
                   <div className="font-semibold flex items-center text-gray-800">
                     <Mail size={14} className="mr-1" />
-                    <span> {getProfileIsData?.email || "john doe"}</span>
+                    <span> {getProfileIsData?.email}</span>
                   </div>
                 </div>
               </div>

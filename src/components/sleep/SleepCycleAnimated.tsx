@@ -360,7 +360,7 @@ const SleepCycleAnimated: React.FC<SleepCycleAnimatedProps> = ({
                       fontSize="22"
                       fontWeight="bold"
                     >
-                      {totalSleep?.split(":")[0]}h {totalSleep?.split(":")[1]}m
+                      {totalSleep?.split(":")[0]} {totalSleep?.split(":")[1]}
                     </text>
                     <text
                       x="100"
@@ -458,7 +458,7 @@ const SleepCycleAnimated: React.FC<SleepCycleAnimatedProps> = ({
             </div> */}
             <div className="bg-gray-50 p-2 rounded-md">
               <div className="font-medium">
-                {totalSleep?.split(":")[0]}h {totalSleep?.split(":")[1]}m
+                {totalSleep?.split(":")[0]} {totalSleep?.split(":")[1]}
               </div>
               <div className="text-gray-500">Sleep</div>
             </div>
