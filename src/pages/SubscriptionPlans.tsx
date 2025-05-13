@@ -1,10 +1,14 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { ArrowLeft, Check, Star, Info, Rocket } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import PaymentDialog from "@/components/subscription/PaymentDialog";
-import { useGetUserSubscriptionCatalog } from "@/service/hooks/subscription/useUserSubscription";
+import {
+  useGetUserOrderStatusFetcher,
+  useGetUserSelectedSubscription,
+  useGetUserSubscriptionCatalog,
+} from "@/service/hooks/subscription/useUserSubscription";
 import { useGetUserWalletBalance } from "@/service/hooks/wallet/useGetUserWalletData";
 
 import {
@@ -99,14 +103,48 @@ const planToExtraDetails = {
 
 const SubscriptionPlans = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const paymentSuccessStatus = searchParams.get("success");
+  const paymentCancelStatus = searchParams.get("cancel");
+  const paymentSessionId = searchParams.get("session_id");
+  const paymentOrderId = searchParams.get("order_id");
+
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [isSuccessDialogOpen, setIsSuccessDialogOpen] = useState(false);
+  const [userOrderStatusIsEnabled, setUserOrderStatusIsEnabled] =
+    useState<boolean>(false);
   const { isAuthenticated } = useAuth();
 
   const {
     data: subscriptionCatalogData,
     isSuccess: subscriptionCatalogIsSuccess,
   } = useGetUserSubscriptionCatalog();
+
+  const {
+    data: selectedSubscriptionCatalogData,
+    isSuccess: selectedSubscriptionCatalogIsSuccess,
+    isError: selectedSubscriptionCatalogIsError,
+    refetch: selectedSubscriptionCatalogRefetch,
+  } = useGetUserSelectedSubscription(isAuthenticated);
+
+  const {
+    // data: getUserOrderStatusData,
+    // refetch: getUserOrderStatusRefetch,
+    isSuccess: getUserOrderStatusIsSuccess,
+    isError: getUserOrderStatusIsError,
+  } = useGetUserOrderStatusFetcher({
+    sessionId: paymentSessionId,
+    orderId: paymentOrderId,
+    isEnabled: userOrderStatusIsEnabled,
+  });
+
+  useEffect(() => {
+    if (paymentSessionId && paymentOrderId && paymentSuccessStatus === "true") {
+      setUserOrderStatusIsEnabled(true);
+    }
+  }, [paymentSessionId, paymentOrderId, paymentSuccessStatus]);
+
+  console.log(selectedSubscriptionCatalogData?.subscriptionId);
 
   const {
     data: walletBalanceData,
@@ -130,7 +168,12 @@ const SubscriptionPlans = () => {
     setSelectedPlan(null);
   };
 
-  console.log(selectedPlan);
+  useEffect(() => {
+    if (getUserOrderStatusIsSuccess) {
+      setUserOrderStatusIsEnabled(false);
+      selectedSubscriptionCatalogRefetch();
+    }
+  }, [getUserOrderStatusIsSuccess]);
 
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
@@ -269,6 +312,9 @@ const SubscriptionPlans = () => {
                       backgroundColor: planToExtraDetails?.[plan.name]?.color,
                     }}
                     onClick={() => handlePlanSelection(plan)}
+                    disabled={
+                      plan.id <= selectedSubscriptionCatalogData?.subscriptionId
+                    }
                   >
                     {planToExtraDetails?.[plan.name]?.buttonText}
                   </button>
