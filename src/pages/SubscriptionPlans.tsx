@@ -14,6 +14,7 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
+import { useAuth } from "@/contexts/AuthContext";
 
 const plansFeatures = {
   alternative_perspectives: "Alternative Perspectives",
@@ -100,6 +101,7 @@ const SubscriptionPlans = () => {
   const navigate = useNavigate();
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [isSuccessDialogOpen, setIsSuccessDialogOpen] = useState(false);
+  const { isAuthenticated } = useAuth();
 
   const {
     data: subscriptionCatalogData,
@@ -112,14 +114,14 @@ const SubscriptionPlans = () => {
     // isLoading: walletBalanceIsLoading,
   } = useGetUserWalletBalance({
     refetchIntervalInBackground: false,
-    isAuthenticated: localStorage.getItem("token") ? true : false,
+    isAuthenticated,
   });
 
   const handlePlanSelection = (plan) => {
     setSelectedPlan({
       name: plan.name,
       price: plan.price,
-      tokenOption: plan.bwellTokenPrice,
+      bwellTokenPrice: plan.bwellTokenPrice,
       id: plan.id,
     });
   };
@@ -127,6 +129,8 @@ const SubscriptionPlans = () => {
   const handleCloseDialog = () => {
     setSelectedPlan(null);
   };
+
+  console.log(selectedPlan);
 
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
