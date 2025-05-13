@@ -11,7 +11,10 @@ import { RadioGroup } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { CreditCard, Tag, Wallet } from "lucide-react";
-import { useGetAddUserSelectedSubscription } from "@/service/hooks/subscription/useUserSubscription";
+import {
+  useGetAddUserSelectedSubscription,
+  useGetSubscriptionPaymentCheckoutPage,
+} from "@/service/hooks/subscription/useUserSubscription";
 
 interface PaymentDialogProps {
   isOpen: boolean;
@@ -48,6 +51,14 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({
     mutate: addSelectedSubscriptionCatalogMutate,
   } = useGetAddUserSelectedSubscription();
 
+  const {
+    data: getSubscriptionPaymentCheckoutPageData,
+    // isError: getSubscriptionPaymentCheckoutPageIsError,
+    // error: getSubscriptionPaymentCheckoutPageError,
+    isSuccess: getSubscriptionPaymentCheckoutPagesSuccess,
+    mutate: getSubscriptionPaymentCheckoutPageMutate,
+  } = useGetSubscriptionPaymentCheckoutPage();
+
   useEffect(() => {
     if (
       addSelectedSubscriptionData &&
@@ -59,41 +70,47 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({
     }
   }, [addSelectedSubscriptionData, addSelectedSubscriptionCatalogIsSuccess]);
 
-  const handleSelectSubscription = ({
-    promo_code,
-    subscription_id,
-    currencyType,
-    paymentType,
-  }: any) => {
-    addSelectedSubscriptionCatalogMutate({
-      promo_code,
-      subscription_id,
-      currencyType,
-      paymentType,
-      promoDetails: {},
-    });
-  };
+  useEffect(() => {
+    if (
+      getSubscriptionPaymentCheckoutPagesSuccess &&
+      getSubscriptionPaymentCheckoutPageData?.sessionUrl
+    ) {
+      window.location.href = getSubscriptionPaymentCheckoutPageData?.sessionUrl;
+    }
+  }, [
+    getSubscriptionPaymentCheckoutPagesSuccess,
+    getSubscriptionPaymentCheckoutPageData,
+  ]);
 
   // Mocked available tokens - in a real app, this would come from a user's account
 
   const handleConfirm = () => {
     // Here you would integrate with a payment processor or token system
-
-    let payload: any = {
-      subscription_id: selectedPlanId,
-      currencyType: "BWELLAI_TOKEN",
-      promo_code: promoCode,
-    };
-
-    if (paymentMethod === "credit-card") {
-      payload = {
+    if (promoCode?.length > 3) {
+      addSelectedSubscriptionCatalogMutate({
+        promo_code: promoCode,
         subscription_id: selectedPlanId,
-        paymentType: "PG",
-        currencyType: "USD",
-      };
-    }
+        currencyType: "PROMO",
+        promoDetails: {},
+      });
+    } else {
+      if (paymentMethod === "credit-card") {
+        getSubscriptionPaymentCheckoutPageMutate({
+          subscriptionId: selectedPlanId,
+          paymentType: "PG",
+          currencyType: "USD",
+        });
+      }
 
-    handleSelectSubscription(payload);
+      if (paymentMethod === "tokens") {
+        addSelectedSubscriptionCatalogMutate({
+          promo_code: promoCode,
+          subscription_id: selectedPlanId,
+          currencyType: "BWELLAI_TOKEN",
+          promoDetails: {},
+        });
+      }
+    }
   };
 
   return (
