@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { Navigate, useNavigate, useSearchParams } from "react-router-dom";
 import { ArrowLeft, Check, Star, Info, Loader2, CheckIcon } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import PaymentDialog from "@/components/subscription/PaymentDialog";
@@ -119,7 +119,7 @@ const SubscriptionPlans = () => {
     useState<boolean>(false);
   const [openFreePremiumRequest, setOpenFreePremiumRequest] =
     useState<boolean>(false);
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, loading } = useAuth();
 
   const {
     data: subscriptionCatalogData,
@@ -210,6 +210,10 @@ const SubscriptionPlans = () => {
       selectedSubscriptionCatalogRefetch();
     }
   }, [getUserOrderStatusIsSuccess]);
+
+  if (!loading && !isAuthenticated) {
+    return <Navigate to="/welcome" replace />;
+  }
 
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
