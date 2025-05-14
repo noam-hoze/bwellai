@@ -283,7 +283,8 @@ const SubscriptionPlans = () => {
                     {plan?.name}
                   </h2>
                   <div className="mt-4 mb-2">
-                    {plan?.bwellTokenPrice && plan?.name !== "Beta" ? (
+                    {plan?.bwellTokenPrice &&
+                    plan?.name !== "Beta Tester Plan" ? (
                       <>
                         <div
                           className="text-3xl font-bold"
@@ -299,7 +300,9 @@ const SubscriptionPlans = () => {
                       </>
                     ) : (
                       <div className="text-3xl font-bold text-gray-800">
-                        {plan?.name !== "Beta" ? `$${plan.price}` : "Free"}
+                        {plan?.name !== "Beta Tester Plan"
+                          ? `$${plan.price}`
+                          : "Free"}
                       </div>
                     )}
                     {plan.description && (
