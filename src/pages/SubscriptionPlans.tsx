@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
+import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { ArrowLeft, Check, Star, Info, Rocket } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import PaymentDialog from "@/components/subscription/PaymentDialog";
 import {
+  useGetAddRequestFreePremiumSubscriptionFetcher,
   useGetUserOrderStatusFetcher,
   useGetUserSelectedSubscription,
   useGetUserSubscriptionCatalog,
@@ -59,7 +61,7 @@ const planToExtraDetails = {
       { name: "How to Join", value: "Activate Plan" },
     ],
     popular: true,
-    buttonText: "Upgrade to Premium",
+    buttonText: "Get Premium Access",
     developmentStage: "Innovation Phase",
   },
   Pro: {
@@ -76,10 +78,10 @@ const planToExtraDetails = {
       { name: "How to Join", value: "Activate Plan" },
     ],
     popular: false,
-    buttonText: "Go Pro",
+    buttonText: "Get Pro Access",
     developmentStage: "Innovation Phase",
   },
-  Beta: {
+  "Beta Tester Plan": {
     name: "Beta Tester Plan",
     price: "Free",
     subtitle: "in exchange for feedback",
@@ -102,6 +104,8 @@ const planToExtraDetails = {
 };
 
 const SubscriptionPlans = () => {
+  const { toast } = useToast();
+
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const paymentSuccessStatus = searchParams.get("success");
@@ -112,6 +116,8 @@ const SubscriptionPlans = () => {
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [isSuccessDialogOpen, setIsSuccessDialogOpen] = useState(false);
   const [userOrderStatusIsEnabled, setUserOrderStatusIsEnabled] =
+    useState<boolean>(false);
+  const [openFreePremiumRequest, setOpenFreePremiumRequest] =
     useState<boolean>(false);
   const { isAuthenticated } = useAuth();
 
@@ -138,13 +144,42 @@ const SubscriptionPlans = () => {
     isEnabled: userOrderStatusIsEnabled,
   });
 
+  const {
+    isError: AddRequestFreePremiumSubscriptionIsError,
+    isSuccess: AddRequestFreePremiumSubscriptionIsSuccess,
+    mutate: AddRequestFreePremiumSubscriptionMutate,
+  } = useGetAddRequestFreePremiumSubscriptionFetcher();
+
+  const freePremiumRequestHandler = () => {
+    AddRequestFreePremiumSubscriptionMutate();
+  };
+  const handleOpenFreePremiumRequestDialog = () => {
+    setOpenFreePremiumRequest(true);
+  };
+  const handleCloseFreePremiumRequestDialog = () => {
+    setOpenFreePremiumRequest(false);
+  };
+
+  useEffect(() => {
+    if (AddRequestFreePremiumSubscriptionIsSuccess) {
+      handleOpenFreePremiumRequestDialog();
+    }
+    if (AddRequestFreePremiumSubscriptionIsError) {
+      toast({
+        title: "Code already used!",
+        description: "It's looks you have already used your free premium code.",
+      });
+    }
+  }, [
+    AddRequestFreePremiumSubscriptionIsSuccess,
+    AddRequestFreePremiumSubscriptionIsError,
+  ]);
+
   useEffect(() => {
     if (paymentSessionId && paymentOrderId && paymentSuccessStatus === "true") {
       setUserOrderStatusIsEnabled(true);
     }
   }, [paymentSessionId, paymentOrderId, paymentSuccessStatus]);
-
-  console.log(selectedSubscriptionCatalogData?.subscriptionId);
 
   const {
     data: walletBalanceData,
@@ -248,7 +283,8 @@ const SubscriptionPlans = () => {
                     {plan?.name}
                   </h2>
                   <div className="mt-4 mb-2">
-                    {plan?.bwellTokenPrice && plan?.name !== "Beta" ? (
+                    {plan?.bwellTokenPrice &&
+                    plan?.name !== "Beta Tester Plan" ? (
                       <>
                         <div
                           className="text-3xl font-bold"
@@ -264,7 +300,9 @@ const SubscriptionPlans = () => {
                       </>
                     ) : (
                       <div className="text-3xl font-bold text-gray-800">
-                        {plan?.name !== "Beta" ? `$${plan.price}` : "Free"}
+                        {plan?.name !== "Beta Tester Plan"
+                          ? `$${plan.price}`
+                          : "Free"}
                       </div>
                     )}
                     {plan.description && (
@@ -311,7 +349,13 @@ const SubscriptionPlans = () => {
                     style={{
                       backgroundColor: planToExtraDetails?.[plan.name]?.color,
                     }}
-                    onClick={() => handlePlanSelection(plan)}
+                    onClick={() => {
+                      if (plan.id !== 4) {
+                        handlePlanSelection(plan);
+                      } else {
+                        freePremiumRequestHandler();
+                      }
+                    }}
                     disabled={
                       plan.id <= selectedSubscriptionCatalogData?.subscriptionId
                     }
@@ -363,6 +407,28 @@ const SubscriptionPlans = () => {
         />
       )}
 
+      <Dialog
+        open={openFreePremiumRequest}
+        onOpenChange={(open) => !open && setOpenFreePremiumRequest(false)}
+      >
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-xl">Free Premium Access</DialogTitle>
+          </DialogHeader>
+
+          <p>An email has been sent to you with all the details.</p>
+
+          <DialogFooter className="flex justify-end sm:justify-end">
+            <Button
+              variant="ghost"
+              onClick={handleCloseFreePremiumRequestDialog}
+              className="text-purple-600 hover:text-purple-700"
+            >
+              Close
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
       <Dialog
         open={isSuccessDialogOpen}
         onOpenChange={(open) => !open && setIsSuccessDialogOpen(false)}
