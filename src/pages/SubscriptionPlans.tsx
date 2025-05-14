@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import { ArrowLeft, Check, Star, Info, Rocket } from "lucide-react";
+import { Navigate, useNavigate, useSearchParams } from "react-router-dom";
+import { ArrowLeft, Check, Star, Info, Loader2, CheckIcon } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import PaymentDialog from "@/components/subscription/PaymentDialog";
 import {
+  useGetAddRequestFreePremiumSubscriptionFetcher,
   useGetUserOrderStatusFetcher,
   useGetUserSelectedSubscription,
   useGetUserSubscriptionCatalog,
@@ -59,7 +61,7 @@ const planToExtraDetails = {
       { name: "How to Join", value: "Activate Plan" },
     ],
     popular: true,
-    buttonText: "Upgrade to Premium",
+    buttonText: "Get Premium Access",
     developmentStage: "Innovation Phase",
   },
   Pro: {
@@ -76,10 +78,10 @@ const planToExtraDetails = {
       { name: "How to Join", value: "Activate Plan" },
     ],
     popular: false,
-    buttonText: "Go Pro",
+    buttonText: "Get Pro Access",
     developmentStage: "Innovation Phase",
   },
-  Beta: {
+  "Beta Tester Plan": {
     name: "Beta Tester Plan",
     price: "Free",
     subtitle: "in exchange for feedback",
@@ -102,6 +104,8 @@ const planToExtraDetails = {
 };
 
 const SubscriptionPlans = () => {
+  const { toast } = useToast();
+
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const paymentSuccessStatus = searchParams.get("success");
@@ -113,7 +117,9 @@ const SubscriptionPlans = () => {
   const [isSuccessDialogOpen, setIsSuccessDialogOpen] = useState(false);
   const [userOrderStatusIsEnabled, setUserOrderStatusIsEnabled] =
     useState<boolean>(false);
-  const { isAuthenticated } = useAuth();
+  const [openFreePremiumRequest, setOpenFreePremiumRequest] =
+    useState<boolean>(false);
+  const { isAuthenticated, loading } = useAuth();
 
   const {
     data: subscriptionCatalogData,
@@ -124,6 +130,7 @@ const SubscriptionPlans = () => {
     data: selectedSubscriptionCatalogData,
     isSuccess: selectedSubscriptionCatalogIsSuccess,
     isError: selectedSubscriptionCatalogIsError,
+    isLoading: selectedSubscriptionCatalogIsLoading,
     refetch: selectedSubscriptionCatalogRefetch,
   } = useGetUserSelectedSubscription(isAuthenticated);
 
@@ -138,13 +145,42 @@ const SubscriptionPlans = () => {
     isEnabled: userOrderStatusIsEnabled,
   });
 
+  const {
+    isError: AddRequestFreePremiumSubscriptionIsError,
+    isSuccess: AddRequestFreePremiumSubscriptionIsSuccess,
+    mutate: AddRequestFreePremiumSubscriptionMutate,
+  } = useGetAddRequestFreePremiumSubscriptionFetcher();
+
+  const freePremiumRequestHandler = () => {
+    AddRequestFreePremiumSubscriptionMutate();
+  };
+  const handleOpenFreePremiumRequestDialog = () => {
+    setOpenFreePremiumRequest(true);
+  };
+  const handleCloseFreePremiumRequestDialog = () => {
+    setOpenFreePremiumRequest(false);
+  };
+
+  useEffect(() => {
+    if (AddRequestFreePremiumSubscriptionIsSuccess) {
+      handleOpenFreePremiumRequestDialog();
+    }
+    if (AddRequestFreePremiumSubscriptionIsError) {
+      toast({
+        title: "Code already used!",
+        description: "It's looks you have already used your free premium code.",
+      });
+    }
+  }, [
+    AddRequestFreePremiumSubscriptionIsSuccess,
+    AddRequestFreePremiumSubscriptionIsError,
+  ]);
+
   useEffect(() => {
     if (paymentSessionId && paymentOrderId && paymentSuccessStatus === "true") {
       setUserOrderStatusIsEnabled(true);
     }
   }, [paymentSessionId, paymentOrderId, paymentSuccessStatus]);
-
-  console.log(selectedSubscriptionCatalogData?.subscriptionId);
 
   const {
     data: walletBalanceData,
@@ -175,6 +211,10 @@ const SubscriptionPlans = () => {
     }
   }, [getUserOrderStatusIsSuccess]);
 
+  if (!loading && !isAuthenticated) {
+    return <Navigate to="/welcome" replace />;
+  }
+
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
       <div className="max-w-6xl mx-auto">
@@ -191,22 +231,42 @@ const SubscriptionPlans = () => {
 
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-gray-800 mb-4">
-            Choose Your Wellness Journey
+            Choose Your Access Level
           </h1>
           <p className="text-xl text-gray-600 mb-2">
-            Select the plan that best fits your health improvement goals
+            Select the membership that best fits your health improvement goals
           </p>
-          <div className="bg-blue-50 p-4 rounded-lg inline-block mt-2">
-            <p className="text-lg text-blue-800 flex items-center justify-center">
-              <Rocket className="mr-2 h-5 w-5" />
-              <span className="font-bold">Innovation Phase:</span> We're still
-              developing! Your support helps us grow.
+
+          <div className="bg-blue-100 border border-blue-300 p-4 rounded-lg inline-block mt-4 mb-8">
+            <p className="text-lg text-blue-800 flex items-center justify-center font-bold">
+              <Info className="mr-2 h-5 w-5" />
+              Phase 1 - Innovation Preview
             </p>
             <p className="text-blue-700 mt-1">
-              Earn tokens by using the app or invest directly to unlock premium
-              features.
+              During this initial phase, all memberships are one-time purchases
+              with no recurring fees.
             </p>
           </div>
+
+          {selectedSubscriptionCatalogIsLoading ? (
+            <div className="flex items-center justify-center mt-4 mb-2">
+              <Loader2 className="h-6 w-6 animate-spin mr-2" />
+              <span>Loading your access level...</span>
+            </div>
+          ) : (
+            selectedSubscriptionCatalogData?.subscriptionId && (
+              <div className="bg-green-50 border border-green-200 p-4 rounded-lg inline-block mt-2 mb-4">
+                <p className="text-lg text-green-800 flex items-center justify-center">
+                  <Check className="mr-2 h-5 w-5" />
+                  <span className="font-bold">Your Current Access:</span>{" "}
+                  {selectedSubscriptionCatalogData?.name}
+                </p>
+                <p className="text-green-700 mt-1">
+                  You can upgrade or change your access level below
+                </p>
+              </div>
+            )
+          )}
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -223,6 +283,12 @@ const SubscriptionPlans = () => {
                 <div className="bg-blue-500 text-white text-center py-1 font-semibold flex items-center justify-center">
                   <Star className="mr-1 h-4 w-4" />
                   MOST POPULAR
+                </div>
+              )}
+              {selectedSubscriptionCatalogData?.subscriptionId === plan.id && (
+                <div className="bg-green-500 text-white text-center py-1 font-semibold flex items-center justify-center">
+                  <CheckIcon className="mr-1 h-4 w-4" />
+                  CURRENT PLAN
                 </div>
               )}
 
@@ -248,7 +314,8 @@ const SubscriptionPlans = () => {
                     {plan?.name}
                   </h2>
                   <div className="mt-4 mb-2">
-                    {plan?.bwellTokenPrice && plan?.name !== "Beta" ? (
+                    {plan?.bwellTokenPrice &&
+                    plan?.name !== "Beta Tester Plan" ? (
                       <>
                         <div
                           className="text-3xl font-bold"
@@ -264,7 +331,9 @@ const SubscriptionPlans = () => {
                       </>
                     ) : (
                       <div className="text-3xl font-bold text-gray-800">
-                        {plan?.name !== "Beta" ? `$${plan.price}` : "Free"}
+                        {plan?.name !== "Beta Tester Plan"
+                          ? `$${plan.price}`
+                          : "Free"}
                       </div>
                     )}
                     {plan.description && (
@@ -311,7 +380,13 @@ const SubscriptionPlans = () => {
                     style={{
                       backgroundColor: planToExtraDetails?.[plan.name]?.color,
                     }}
-                    onClick={() => handlePlanSelection(plan)}
+                    onClick={() => {
+                      if (plan.id !== 4) {
+                        handlePlanSelection(plan);
+                      } else {
+                        freePremiumRequestHandler();
+                      }
+                    }}
                     disabled={
                       plan.id <= selectedSubscriptionCatalogData?.subscriptionId
                     }
@@ -363,6 +438,28 @@ const SubscriptionPlans = () => {
         />
       )}
 
+      <Dialog
+        open={openFreePremiumRequest}
+        onOpenChange={(open) => !open && setOpenFreePremiumRequest(false)}
+      >
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-xl">Free Premium Access</DialogTitle>
+          </DialogHeader>
+
+          <p>An email has been sent to you with all the details.</p>
+
+          <DialogFooter className="flex justify-end sm:justify-end">
+            <Button
+              variant="ghost"
+              onClick={handleCloseFreePremiumRequestDialog}
+              className="text-purple-600 hover:text-purple-700"
+            >
+              Close
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
       <Dialog
         open={isSuccessDialogOpen}
         onOpenChange={(open) => !open && setIsSuccessDialogOpen(false)}
