@@ -435,6 +435,9 @@ const SubscriptionPlans = () => {
           selectedPlanId={selectedPlan.id}
           walletBalanceData={walletBalanceData}
           setIsSuccessDialogOpen={setIsSuccessDialogOpen}
+          selectedSubscriptionCatalogRefetch={
+            selectedSubscriptionCatalogRefetch
+          }
         />
       )}
 
