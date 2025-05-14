@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { ArrowLeft, Check, Star, Info, Rocket } from "lucide-react";
+import { ArrowLeft, Check, Star, Info, Loader2, CheckIcon } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import PaymentDialog from "@/components/subscription/PaymentDialog";
 import {
@@ -130,6 +130,7 @@ const SubscriptionPlans = () => {
     data: selectedSubscriptionCatalogData,
     isSuccess: selectedSubscriptionCatalogIsSuccess,
     isError: selectedSubscriptionCatalogIsError,
+    isLoading: selectedSubscriptionCatalogIsLoading,
     refetch: selectedSubscriptionCatalogRefetch,
   } = useGetUserSelectedSubscription(isAuthenticated);
 
@@ -226,22 +227,42 @@ const SubscriptionPlans = () => {
 
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-gray-800 mb-4">
-            Choose Your Wellness Journey
+            Choose Your Access Level
           </h1>
           <p className="text-xl text-gray-600 mb-2">
-            Select the plan that best fits your health improvement goals
+            Select the membership that best fits your health improvement goals
           </p>
-          <div className="bg-blue-50 p-4 rounded-lg inline-block mt-2">
-            <p className="text-lg text-blue-800 flex items-center justify-center">
-              <Rocket className="mr-2 h-5 w-5" />
-              <span className="font-bold">Innovation Phase:</span> We're still
-              developing! Your support helps us grow.
+
+          <div className="bg-blue-100 border border-blue-300 p-4 rounded-lg inline-block mt-4 mb-8">
+            <p className="text-lg text-blue-800 flex items-center justify-center font-bold">
+              <Info className="mr-2 h-5 w-5" />
+              Phase 1 - Innovation Preview
             </p>
             <p className="text-blue-700 mt-1">
-              Earn tokens by using the app or invest directly to unlock premium
-              features.
+              During this initial phase, all memberships are one-time purchases
+              with no recurring fees.
             </p>
           </div>
+
+          {selectedSubscriptionCatalogIsLoading ? (
+            <div className="flex items-center justify-center mt-4 mb-2">
+              <Loader2 className="h-6 w-6 animate-spin mr-2" />
+              <span>Loading your access level...</span>
+            </div>
+          ) : (
+            selectedSubscriptionCatalogData?.subscriptionId && (
+              <div className="bg-green-50 border border-green-200 p-4 rounded-lg inline-block mt-2 mb-4">
+                <p className="text-lg text-green-800 flex items-center justify-center">
+                  <Check className="mr-2 h-5 w-5" />
+                  <span className="font-bold">Your Current Access:</span>{" "}
+                  {selectedSubscriptionCatalogData?.name}
+                </p>
+                <p className="text-green-700 mt-1">
+                  You can upgrade or change your access level below
+                </p>
+              </div>
+            )
+          )}
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -258,6 +279,12 @@ const SubscriptionPlans = () => {
                 <div className="bg-blue-500 text-white text-center py-1 font-semibold flex items-center justify-center">
                   <Star className="mr-1 h-4 w-4" />
                   MOST POPULAR
+                </div>
+              )}
+              {selectedSubscriptionCatalogData?.subscriptionId === plan.id && (
+                <div className="bg-green-500 text-white text-center py-1 font-semibold flex items-center justify-center">
+                  <CheckIcon className="mr-1 h-4 w-4" />
+                  CURRENT PLAN
                 </div>
               )}
 
