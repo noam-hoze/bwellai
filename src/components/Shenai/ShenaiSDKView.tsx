@@ -42,9 +42,14 @@ export const ShenaiSDKView = ({ setStep, setIsShenaiInitialized }) => {
         onSuccess?.();
         // scrollToCanvas();
       } else {
-        message.error(
-          "License initialization problem: " +
-            getEnumName(shenaiSDK.InitializationResult, res, "UNKNOWN")
+        // message.error(
+        //   "License initialization problem: " +
+        //     getEnumName(shenaiSDK.InitializationResult, res, "UNKNOWN")
+        // );
+
+        console.log(
+          res,
+          getEnumName(shenaiSDK.InitializationResult, res, "UNKNOWN")
         );
       }
       setPendingInitialization(false);
@@ -54,7 +59,7 @@ export const ShenaiSDKView = ({ setStep, setIsShenaiInitialized }) => {
   const initialize = () => {
     // if (isAuthenticated) {
     initializeSdk(
-      "54b5be95e558424984258cac146a1fbf",
+      import.meta.env.VITE_SHENAI_KEY,
       initializationSettings ?? {},
       () => {
         if (!shenaiSDK) return;
