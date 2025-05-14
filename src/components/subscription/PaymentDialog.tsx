@@ -25,6 +25,7 @@ interface PaymentDialogProps {
   walletBalanceData?;
   setIsSuccessDialogOpen?;
   selectedPlanId?;
+  selectedSubscriptionCatalogRefetch?;
 }
 
 const PaymentDialog: React.FC<PaymentDialogProps> = ({
@@ -36,6 +37,7 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({
   walletBalanceData,
   setIsSuccessDialogOpen,
   selectedPlanId,
+  selectedSubscriptionCatalogRefetch,
 }) => {
   const [paymentMethod, setPaymentMethod] = useState<string | undefined>(
     undefined
@@ -66,6 +68,7 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({
     ) {
       // Close the dialog after payment processing
       setIsSuccessDialogOpen(true);
+      selectedSubscriptionCatalogRefetch();
       onClose();
     }
   }, [addSelectedSubscriptionData, addSelectedSubscriptionCatalogIsSuccess]);
