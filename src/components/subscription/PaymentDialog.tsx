@@ -141,7 +141,14 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({
                 <Input
                   placeholder="Promo Code"
                   value={promoCode}
-                  onChange={(e) => setPromoCode(e.target.value)}
+                  onChange={(e) => {
+                    setPromoCode(e.target.value);
+                    if (e.target.value?.length > 3) {
+                      setPaymentMethod("promo");
+                    } else {
+                      setPaymentMethod("");
+                    }
+                  }}
                   className="w-full"
                 />
               </div>
@@ -153,13 +160,33 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({
             onValueChange={setPaymentMethod}
             className="space-y-4"
           >
+            {/* <div className="flex items-center space-x-3 border p-4 rounded-md cursor-pointer">
+              <input
+                type="radio"
+                id="promo"
+                value="promo"
+                checked={paymentMethod === "promo"}
+                onChange={() => setPaymentMethod("promo")}
+                className="h-5 w-5 text-blue-600"
+              />
+              <Label htmlFor="promo" className="flex-1 cursor-pointer">
+                <div className="flex items-center">
+                  <CreditCard className="mr-2 h-5 w-5 text-blue-500" />
+                  <span className="text-lg">Pay with credit card</span>
+                </div>
+              </Label>
+            </div> */}
+
             <div className="flex items-center space-x-3 border p-4 rounded-md cursor-pointer">
               <input
                 type="radio"
                 id="tokens"
                 value="tokens"
                 checked={paymentMethod === "tokens"}
-                onChange={() => setPaymentMethod("tokens")}
+                onChange={() => {
+                  setPaymentMethod("tokens");
+                  setPromoCode("");
+                }}
                 className="h-5 w-5 text-blue-600"
                 disabled={
                   planTokens >=
@@ -183,7 +210,10 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({
                 id="credit-card"
                 value="credit-card"
                 checked={paymentMethod === "credit-card"}
-                onChange={() => setPaymentMethod("credit-card")}
+                onChange={() => {
+                  setPaymentMethod("credit-card");
+                  setPromoCode("");
+                }}
                 className="h-5 w-5 text-blue-600"
               />
               <Label htmlFor="credit-card" className="flex-1 cursor-pointer">
