@@ -24,11 +24,11 @@ import {
 import { formatDateToShortMonth } from "@/utils/utils";
 
 interface Report {
-  id?: number;
+  id?: string;
   title?: string;
   description?: string;
 
-  reportId: number;
+  reportId: string;
   reportName: string;
   createdAt: string;
   testDate: string;
@@ -40,7 +40,7 @@ interface Report {
 
 interface ReportListItemProps {
   report: Report;
-  onDelete?: (id: number) => void;
+  onDelete?: (id: string) => void;
 }
 
 const ReportListItem = ({ report, onDelete }: ReportListItemProps) => {
