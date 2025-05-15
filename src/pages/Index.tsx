@@ -112,7 +112,6 @@ const Index = () => {
     const handleSuccess = async (response) => {
       try {
         // const { credential } = response;
-        // console.log(credential);
         // Send the credential to your backend for verification and authentication
         setCallbackLoading(true);
 
