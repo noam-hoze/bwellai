@@ -242,10 +242,8 @@ const ManBody = ({ handleOrganClick }) => {
   return (
     <div
       style={{
-        // width: "30em",
         position: "relative",
         display: "inline-block",
-        // border: "2px solid black",
       }}
     >
       <img
@@ -257,8 +255,8 @@ const ManBody = ({ handleOrganClick }) => {
           // width: "100%",
           position: "relative",
           // left: isVisible ? "-100px" : "0px",
+          left: "0px",
           // transition: "left 0.5s ease-in-out, opacity 0.4s ease-in-out",
-          transition: "opacity 0.4s ease-in-out",
           opacity: isFading ? 0.9 : 1,
           outline: "none",
           userSelect: "none",

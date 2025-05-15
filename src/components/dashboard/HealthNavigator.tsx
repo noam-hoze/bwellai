@@ -497,7 +497,7 @@ const HealthNavigator = ({ getProfileIsData, userPreviousData }) => {
               )}
             </div>
 
-            <div className="w-[25em] md:w-[35em] mt-6 md:mt-0 md:pl-6">
+            <div className="w-full md:w-1/2 mt-6 md:mt-0 md:pl-6">
               {formatedData?.[activeOrgan] ? (
                 <div className="bg-white rounded-lg shadow-md overflow-hidden border border-gray-200">
                   <div
