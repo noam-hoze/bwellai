@@ -1,8 +1,7 @@
 export * from "./util/src/index";
 
 export interface ShenaiArguments {
-  onRuntimeInitialized?: () => void;
-  locateFile?: (filename: string) => string;
+  onRuntimeInitialized: () => void;
 }
 
 export const enum InitializationResult {
@@ -33,7 +32,7 @@ export const enum InitializationMode {
   MEASUREMENT,
   CALIBRATION,
   CALIBRATED_MEASUREMENT,
-  CLINICAL_TRIAL_BP,
+  CLINICAL_TRIAL_BP
 }
 
 export const enum Screen {
@@ -46,7 +45,8 @@ export const enum Screen {
   HEALTH_RISKS_EDIT,
   CALIBRATION_FINISH,
   CALIBRATION_ONBOARDING,
-  CALIBRATION_DATA_ENTRY,
+  ENTERID,
+  CALIBRATION_DATA_ENTRY
 }
 
 export const enum Metric {
@@ -61,24 +61,6 @@ export const enum Metric {
   AGE,
   BMI,
   BLOOD_PRESSURE,
-}
-
-export const enum HealthIndex {
-  WELLNESS_SCORE = 0,
-  VASCULAR_AGE,
-  CARDIOVASCULAR_DISEASE_RISK,
-  HARD_AND_FATAL_EVENTS_RISKS,
-  CARDIOVASCULAR_RISK_SCORE,
-  WAIST_TO_HEIGHT_RATIO,
-  BODY_FAT_PERCENTAGE,
-  BODY_ROUNDNESS_INDEX,
-  A_BODY_SHAPE_INDEX,
-  CONICITY_INDEX,
-  BASAL_METABOLIC_RATE,
-  TOTAL_DAILY_ENERGY_EXPENDITURE,
-  HYPERTENSION_RISK,
-  DIABETES_RISK,
-  NON_ALCOHOLIC_FATTY_LIVER_DISEASE_RISK
 }
 
 export const enum MeasurementPreset {
@@ -149,23 +131,12 @@ export interface MeasurementResults {
   average_signal_quality: number;
 }
 
-export interface MeasurementResultsWithMetadata {
-  measurement_results: MeasurementResults;
-  epoch_timestamp: number;
-  is_calibration: boolean;
-}
-
-export interface MeasurementResultsHistory {
-  history: MeasurementResultsWithMetadata[];
-}
-
 export interface CustomMeasurementConfig {
   durationSeconds?: number;
   infiniteMeasurement?: boolean;
 
   instantMetrics?: Metric[];
   summaryMetrics?: Metric[];
-  healthIndices?: HealthIndex[];
 
   realtimeHrPeriodSeconds?: number;
   realtimeHrvPeriodSeconds?: number;
@@ -228,30 +199,6 @@ export const enum Race {
   OTHER,
 }
 
-export const enum HypertensionTreatment {
-  NOT_NEEDED = 0,
-  NO,
-  YES,
-}
-
-export const enum ParentalHistory {
-  NONE = 0,
-  ONE,
-  BOTH,
-}
-
-export const enum FamilyHistory {
-  NONE = 0,
-  NONE_FIRST_DEGREE,
-  FIRST_DEGREE,
-}
-
-export const enum NAFLDRisk {
-  LOW = 0,
-  MODERATE,
-  HIGH,
-}
-
 interface HardAndFatalEventsRisks {
   coronaryDeathEventRisk: number | null;
   fatalStrokeEventRisk: number | null;
@@ -291,9 +238,6 @@ export interface HealthRisks {
   aBodyShapeIndex: number | null;
   totalDailyEnergyExpenditure: number | null;
   scores: RisksFactorsScores;
-  hypertensionRisk?: number | null;
-  diabetesRisk?: number | null;
-  nonAlcoholicFattyLiverDiseaseRisk?: NAFLDRisk | null;
 }
 
 export interface RisksFactors {
@@ -301,9 +245,8 @@ export interface RisksFactors {
   cholesterol?: number;
   cholesterolHdl?: number;
   sbp?: number;
-  dbp?: number;
   isSmoker?: boolean;
-  hypertensionTreatment?: HypertensionTreatment;
+  hypertensionTreatment?: boolean;
   hasDiabetes?: boolean;
   bodyHeight?: number; // in centimeters
   bodyWeight?: number; // in kilograms
@@ -312,13 +255,6 @@ export interface RisksFactors {
   physicalActivity?: PhysicalActivity;
   country?: string; // country name ISO code: https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2
   race?: Race;
-  vegetableFruitDiet?: boolean;
-  historyOfHypertension?: boolean;
-  historyOfHighGlucose?: boolean;
-  fastingGlucose?: number;
-  triglyceride?: number;
-  parentalHypertension?: ParentalHistory;
-  familyDiabetes?: FamilyHistory;
 }
 
 export type EventName =
@@ -347,7 +283,6 @@ export interface InitializationSettings {
   enableHealthRisks?: boolean;
   showOutOfRangeResultIndicators?: boolean;
   showSignalQualityIndicator?: boolean;
-  showSignalTile?: boolean;
   showTrialMetricLabels?: boolean;
   enableFullFrameProcessing?: boolean;
   language?: string;
@@ -413,9 +348,6 @@ export interface ShenaiSDK {
   Metric: {
     [P in keyof typeof Metric]: Metric;
   };
-  HealthIndex: {
-    [P in keyof typeof HealthIndex]: HealthIndex;
-  };
   MeasurementPreset: {
     [P in keyof typeof MeasurementPreset]: MeasurementPreset;
   };
@@ -440,34 +372,22 @@ export interface ShenaiSDK {
   Race: {
     [P in keyof typeof Race]: Race;
   };
-  NAFLDRisk: {
-    [P in keyof typeof NAFLDRisk]: NAFLDRisk;
-  };
-  HypertensionTreatment: {
-    [P in keyof typeof HypertensionTreatment]: HypertensionTreatment;
-  };
-  FamilyHistory: {
-    [P in keyof typeof FamilyHistory]: FamilyHistory;
-  };
-  ParentalHistory: {
-    [P in keyof typeof ParentalHistory]: ParentalHistory;
-  };
+
   getVersion: () => string;
 
   initialize: (
-    apiKey: string,
-    userId: string,
-    initializationSettings: InitializationSettings,
+    api_key: string,
+    user_id: string,
+    initialization_settings: InitializationSettings,
     onResult: (result: InitializationResult) => void
   ) => void;
   isInitialized: () => boolean;
   deinitialize: () => void;
-  destroyRuntime: () => void;
 
   attachToCanvas: (canvas: string, exclusive?: boolean) => void;
 
   // Calibration state
-  getUserCalibrationState: (userId: string) => CalibrationState;
+  getUserCalibrationState: (userId: string) => CalibrationState
 
   // SDK operating mode
   setOperatingMode: (mode: OperatingMode) => void;
@@ -542,9 +462,8 @@ export interface ShenaiSDK {
   getRealtimeHeartRate: () => number | null;
   getRealtimeHrvSdnn: () => number | null;
   getRealtimeCardiacStress: () => number | null;
-  getRealtimeMetrics: (periodSec: number) => MeasurementResults | null;
+  getRealtimeMetrics: (period_sec: number) => MeasurementResults | null;
   getMeasurementResults: () => MeasurementResults | null;
-  getMeasurementResultsHistory: () => MeasurementResultsHistory | null;
 
   // SDK health risks
   getHealthRisksFactors: () => RisksFactors;
@@ -557,7 +476,7 @@ export interface ShenaiSDK {
   // SDK signals
   getHeartRateHistory10s: (maxTimeSec?: number) => MomentaryHrValue[];
   getHeartRateHistory4s: (maxTimeSec?: number) => MomentaryHrValue[];
-  getRealtimeHeartbeats: (periodSec?: number) => Heartbeat[];
+  getRealtimeHeartbeats: (maxTimeSec?: number) => Heartbeat[];
   getFullPpgSignal: () => number[];
 
   // SDK recording
@@ -590,9 +509,9 @@ export interface ShenaiSDK {
 
   // SDK configuration
   getSDKConfigString: () => string;
-  applySDKConfig(configJson: string): void;
+  applySDKConfig(config_json: string): void;
 }
 
-export function createPreloadDisplay(canvasId: string): void;
+export function createPreloadDisplay(canvas_id: string): void;
 
 export default function (args: ShenaiArguments): Promise<ShenaiSDK>;

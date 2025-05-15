@@ -34,15 +34,17 @@ export default defineConfig(({ mode }) => ({
       configureServer: (server: any) => {
         server.middlewares.use((req: any, res: any, next: any) => {
           try {
-            if (req.url.includes("/face-scan")) {
-              res.setHeader("Cross-Origin-Embedder-Policy", "require-corp");
-              res.setHeader("Cross-Origin-Opener-Policy", "same-origin");
-            } else {
-              res.removeHeader("Cross-Origin-Embedder-Policy");
-              res.removeHeader("Cross-Origin-Opener-Policy");
-              // console.log("🔍 remove header:");
-            }
+            // if (req.url.includes("/face-scan")) {
+            //   res.setHeader("Cross-Origin-Embedder-Policy", "credentialless");
+            //   res.setHeader("Cross-Origin-Opener-Policy", "same-origin");
+            // } else {
+            //   res.removeHeader("Cross-Origin-Embedder-Policy");
+            //   res.removeHeader("Cross-Origin-Opener-Policy");
+            //   // console.log("🔍 remove header:");
+            // }
 
+            res.setHeader("Cross-Origin-Embedder-Policy", "credentialless");
+            res.setHeader("Cross-Origin-Opener-Policy", "same-origin");
             res.setHeader("Cross-Origin-Resource-Policy", "same-origin");
 
             next();
