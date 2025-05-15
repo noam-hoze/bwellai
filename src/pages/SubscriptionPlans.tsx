@@ -31,8 +31,8 @@ const plansFeatures = {
 };
 
 const planToExtraDetails = {
-  Free: {
-    name: "Free Plan",
+  "Free Access": {
+    name: "Free Access",
     price: "$0",
     color: "#6c757d",
     features: [
@@ -41,14 +41,14 @@ const planToExtraDetails = {
       { name: "Food Image Scans", value: "Up to 10 / month" },
       { name: "Barcode Scans", value: "Up to 3 / month" },
       { name: "Alternative Health Insights", value: "Not included" },
-      { name: "How to Join", value: "No signup needed" },
+      { name: "How to Join: ", value: "No signup needed" },
     ],
     popular: false,
     buttonText: "Start Free",
     developmentStage: "Early Access",
   },
-  Premium: {
-    name: "Premium Plan",
+  "Premium Access": {
+    name: "Premium Access",
     price: "$10 / month",
     tokenOption: "100 TOKENS",
     color: "#007bff",
@@ -58,14 +58,15 @@ const planToExtraDetails = {
       { name: "Food Image Scans", value: "Up to 100 / month" },
       { name: "Barcode Scans", value: "Up to 1,000 / month" },
       { name: "Alternative Health Insights", value: "25 insights / month" },
-      { name: "How to Join", value: "Activate Plan" },
+      { name: "How to Join: ", value: "One-time activation" },
     ],
     popular: true,
     buttonText: "Get Premium Access",
     developmentStage: "Innovation Phase",
+    extraInfo: "Phase 1 preview access",
   },
-  Pro: {
-    name: "Pro Plan",
+  "Pro Access": {
+    name: "Pro Access",
     price: "$100 / month",
     tokenOption: "1000 TOKENS",
     color: "#28a745",
@@ -75,14 +76,15 @@ const planToExtraDetails = {
       { name: "Food Image Scans", value: "Unlimited" },
       { name: "Barcode Scans", value: "Unlimited" },
       { name: "Alternative Health Insights", value: "Unlimited" },
-      { name: "How to Join", value: "Activate Plan" },
+      { name: "How to Join: ", value: "One-time activation" },
     ],
     popular: false,
     buttonText: "Get Pro Access",
     developmentStage: "Innovation Phase",
+    extraInfo: "Phase 1 full feature access",
   },
-  "Beta Tester Plan": {
-    name: "Beta Tester Plan",
+  "Beta Tester Access": {
+    name: "Beta Tester Access",
     price: "Free",
     subtitle: "in exchange for feedback",
     color: "#6f42c1",
@@ -93,7 +95,7 @@ const planToExtraDetails = {
       { name: "Barcode Scans", value: "Up to 1,000 / month" },
       { name: "Alternative Health Insights", value: "25 insights / month" },
       {
-        name: "How to Join",
+        name: "How to Join: ",
         value: "Submit feedback weekly + one monthly call",
       },
     ],
@@ -237,17 +239,6 @@ const SubscriptionPlans = () => {
             Select the membership that best fits your health improvement goals
           </p>
 
-          <div className="bg-blue-100 border border-blue-300 p-4 rounded-lg inline-block mt-4 mb-8">
-            <p className="text-lg text-blue-800 flex items-center justify-center font-bold">
-              <Info className="mr-2 h-5 w-5" />
-              Phase 1 - Innovation Preview
-            </p>
-            <p className="text-blue-700 mt-1">
-              During this initial phase, all memberships are one-time purchases
-              with no recurring fees.
-            </p>
-          </div>
-
           {selectedSubscriptionCatalogIsLoading ? (
             <div className="flex items-center justify-center mt-4 mb-2">
               <Loader2 className="h-6 w-6 animate-spin mr-2" />
@@ -259,7 +250,7 @@ const SubscriptionPlans = () => {
                 <p className="text-lg text-green-800 flex items-center justify-center">
                   <Check className="mr-2 h-5 w-5" />
                   <span className="font-bold">Your Current Access:</span>{" "}
-                  {selectedSubscriptionCatalogData?.name}
+                  {selectedSubscriptionCatalogData?.name} Plan
                 </p>
                 <p className="text-green-700 mt-1">
                   You can upgrade or change your access level below
@@ -267,6 +258,17 @@ const SubscriptionPlans = () => {
               </div>
             )
           )}
+
+          <div className="bg-blue-100 border border-blue-300 p-4 rounded-lg inline-block mt-4 mb-8">
+            <p className="text-lg text-blue-800 flex items-center justify-center font-bold">
+              <Info className="mr-2 h-5 w-5" />
+              Phase 1 - Innovation Preview
+            </p>
+            <p className="text-blue-700 mt-1">
+              During this initial phase, all memberships are one-time purchases
+              with no recurring fees.
+            </p>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -274,12 +276,12 @@ const SubscriptionPlans = () => {
             <div
               key={index}
               className={`rounded-lg overflow-hidden shadow-lg transition-transform duration-300 hover:transform hover:scale-105 ${
-                planToExtraDetails?.[plan.name].popular
+                planToExtraDetails?.[plan.name]?.popular
                   ? "border-4 border-blue-500"
                   : "border border-gray-200"
               }`}
             >
-              {planToExtraDetails?.[plan.name].popular && (
+              {planToExtraDetails?.[plan.name]?.popular && (
                 <div className="bg-blue-500 text-white text-center py-1 font-semibold flex items-center justify-center">
                   <Star className="mr-1 h-4 w-4" />
                   MOST POPULAR
@@ -315,7 +317,7 @@ const SubscriptionPlans = () => {
                   </h2>
                   <div className="mt-4 mb-2">
                     {plan?.bwellTokenPrice &&
-                    plan?.name !== "Beta Tester Plan" ? (
+                    plan?.name !== "Beta Tester Access" ? (
                       <>
                         <div
                           className="text-3xl font-bold"
@@ -323,7 +325,7 @@ const SubscriptionPlans = () => {
                             color: planToExtraDetails?.[plan.name]?.color,
                           }}
                         >
-                          {plan.bwellTokenPrice} Tokens
+                          {plan.bwellTokenPrice} TOKENS
                         </div>
                         <div className="text-sm font-medium text-gray-600 mt-1">
                           or ${plan.price}
@@ -331,7 +333,7 @@ const SubscriptionPlans = () => {
                       </>
                     ) : (
                       <div className="text-3xl font-bold text-gray-800">
-                        {plan?.name !== "Beta Tester Plan"
+                        {plan?.name !== "Beta Tester Access"
                           ? `$${plan.price}`
                           : "Free"}
                       </div>
@@ -372,6 +374,27 @@ const SubscriptionPlans = () => {
                       </div>
                     )
                   )}
+                  <div className="flex items-start">
+                    <Check className="h-5 w-5 text-green-500 mt-0.5 mr-2 shrink-0" />
+                    <div>
+                      <span className="font-medium text-gray-700">
+                        {
+                          planToExtraDetails?.[plan.name]?.features?.[
+                            planToExtraDetails?.[plan.name]?.features?.length -
+                              1
+                          ]?.name
+                        }
+                      </span>
+                      <span className="text-gray-600">
+                        {
+                          planToExtraDetails?.[plan.name]?.features?.[
+                            planToExtraDetails?.[plan.name]?.features?.length -
+                              1
+                          ]?.value
+                        }
+                      </span>
+                    </div>
+                  </div>
                 </div>
 
                 <div className="mt-6">
@@ -399,6 +422,14 @@ const SubscriptionPlans = () => {
                       {plan.name === "Premium"
                         ? "Support our innovation phase"
                         : "Invest in our future development"}
+                    </div>
+                  )}
+
+                  {planToExtraDetails?.[plan.name]?.extraInfo && (
+                    <div className="text-center text-sm text-gray-600 mt-2">
+                      <span className="bg-blue-100 text-blue-700 px-2 py-0.5 rounded text-xs font-medium">
+                        {planToExtraDetails?.[plan.name]?.extraInfo}
+                      </span>
                     </div>
                   )}
                 </div>

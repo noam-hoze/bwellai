@@ -44,6 +44,7 @@ import CreditLimitModal from "@/components/reports/CreditLimitModal";
 import ReportTypeSelectionModal from "@/components/reports/ReportTypeSelectionModal";
 import { useGetUserSubscriptionQuota } from "@/service/hooks/subscription/useUserSubscription";
 import { useAuth } from "@/contexts/AuthContext";
+import { useGetDeleteUserFoodDataFetcher } from "@/service/hooks/nutrition/useGetFoodReportUpload";
 
 // Sample report data
 const initialReports = [
@@ -186,6 +187,12 @@ const Reports = () => {
     true,
     "diagnostics_report_upload"
   );
+
+  const {
+    mutate: deleteUserFoodDataMutate,
+    isSuccess: deleteUserFoodDataIsSuccess,
+    isError: deleteUserFoodDataIsError,
+  } = useGetDeleteUserFoodDataFetcher();
 
   useEffect(() => {
     const processBiomarkers = async () => {
@@ -493,13 +500,26 @@ const Reports = () => {
     });
   };
 
-  const handleDeleteReport = (id: number) => {
-    setReports(reports.filter((report) => report.id !== id));
-    toast({
-      title: "Report deleted",
-      description: "The report has been deleted successfully.",
-    });
+  const handleDeleteReport = (id: string) => {
+    deleteUserFoodDataMutate({ esId: id, type: "lab_report" });
   };
+
+  useEffect(() => {
+    if (deleteUserFoodDataIsSuccess) {
+      toast({
+        title: "Report deleted",
+        description: "The report has been deleted successfully.",
+      });
+      userPreviousIsRefetch();
+    }
+    if (deleteUserFoodDataIsError) {
+      toast({
+        title: "Unable to delete Report",
+        description: "Something went wrong!",
+      });
+      userPreviousIsRefetch();
+    }
+  }, [deleteUserFoodDataIsSuccess, deleteUserFoodDataIsError]);
 
   useEffect(() => {
     if (userReportFileUploadPending) {

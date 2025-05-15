@@ -24,11 +24,11 @@ import {
 import { formatDateToShortMonth } from "@/utils/utils";
 
 interface Report {
-  id?: number;
+  id?: string;
   title?: string;
   description?: string;
 
-  reportId: number;
+  reportId: string;
   reportName: string;
   createdAt: string;
   testDate: string;
@@ -40,7 +40,7 @@ interface Report {
 
 interface ReportListItemProps {
   report: Report;
-  onDelete?: (id: number) => void;
+  onDelete?: (id: string) => void;
 }
 
 const ReportListItem = ({ report, onDelete }: ReportListItemProps) => {
@@ -101,11 +101,11 @@ const ReportListItem = ({ report, onDelete }: ReportListItemProps) => {
           </div>
         </Link>
         <div className="flex items-center gap-2">
-          <Link to={`/report/${report?.reportId}`}>
+          {/* <Link to={`/report/${report?.reportId}`}>
             <Button variant="ghost" size="icon" aria-label="View report">
               <Eye className="h-5 w-5 text-gray-500" />
             </Button>
-          </Link>
+          </Link> */}
 
           <AlertDialog>
             <AlertDialogTrigger asChild>
