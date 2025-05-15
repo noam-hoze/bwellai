@@ -1,1 +1,1 @@
-export function makeResponseWithLoading(response_promise: any): Promise<any>;
+export function makeResponseWithLoading(response: any): Response;
