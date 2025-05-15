@@ -239,17 +239,6 @@ const SubscriptionPlans = () => {
             Select the membership that best fits your health improvement goals
           </p>
 
-          <div className="bg-blue-100 border border-blue-300 p-4 rounded-lg inline-block mt-4 mb-8">
-            <p className="text-lg text-blue-800 flex items-center justify-center font-bold">
-              <Info className="mr-2 h-5 w-5" />
-              Phase 1 - Innovation Preview
-            </p>
-            <p className="text-blue-700 mt-1">
-              During this initial phase, all memberships are one-time purchases
-              with no recurring fees.
-            </p>
-          </div>
-
           {selectedSubscriptionCatalogIsLoading ? (
             <div className="flex items-center justify-center mt-4 mb-2">
               <Loader2 className="h-6 w-6 animate-spin mr-2" />
@@ -269,6 +258,17 @@ const SubscriptionPlans = () => {
               </div>
             )
           )}
+
+          <div className="bg-blue-100 border border-blue-300 p-4 rounded-lg inline-block mt-4 mb-8">
+            <p className="text-lg text-blue-800 flex items-center justify-center font-bold">
+              <Info className="mr-2 h-5 w-5" />
+              Phase 1 - Innovation Preview
+            </p>
+            <p className="text-blue-700 mt-1">
+              During this initial phase, all memberships are one-time purchases
+              with no recurring fees.
+            </p>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">

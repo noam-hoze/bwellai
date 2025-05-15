@@ -43,7 +43,7 @@ const getDeleteUserFoodData = ({
 }: {
   esId: string;
   type: string;
-}) => `/food/delete/v4?es_id=${esId}&type=${type}`;
+}) => `/delete/v4?es_id=${esId}&type=${type}`;
 
 export const getUserFoodReportUploadFetcher = ({
   PdfFile,
