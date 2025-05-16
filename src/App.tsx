@@ -32,74 +32,87 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 import { ProfileProvider } from "./contexts/BodyProfileContext";
 import RiskScore from "./pages/RiskScore";
 import SharedReport from "./pages/SharedReport";
+import { useEffect } from "react";
+import { initializeGTag } from "./utils/gtagmanager";
 
 const queryClient = new QueryClient();
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_OAUTH_CLIENT_ID}>
-      <AuthProvider>
-        <UserInfoProvider>
-          <ProfileProvider>
-            <TooltipProvider>
-              <Toaster />
-              <Sonner />
-              <BrowserRouter>
-                <Routes>
-                  {/* Auth & Onboarding Routes */}
-                  <Route path="/welcome" element={<Welcome />} />
-                  <Route
-                    path="/"
-                    element={<Navigate to="/dashboard" replace />}
-                  />
+const App = () => {
+  useEffect(() => {
+    initializeGTag();
+  }, []);
 
-                  <Route
-                    path="/onboarding/:step"
-                    element={<OnboardingScreen />}
-                  />
-                  <Route path="/auth/signup" element={<SignUp />} />
-                  <Route path="/auth/login" element={<Login />} />
-                  <Route path="/auth/otp" element={<OTP />} />
+  return (
+    <QueryClientProvider client={queryClient}>
+      <GoogleOAuthProvider
+        clientId={import.meta.env.VITE_GOOGLE_OAUTH_CLIENT_ID}
+      >
+        <AuthProvider>
+          <UserInfoProvider>
+            <ProfileProvider>
+              <TooltipProvider>
+                <Toaster />
+                <Sonner />
+                <BrowserRouter>
+                  <Routes>
+                    {/* Auth & Onboarding Routes */}
+                    <Route path="/welcome" element={<Welcome />} />
+                    <Route
+                      path="/"
+                      element={<Navigate to="/dashboard" replace />}
+                    />
 
-                  {/* App Routes */}
-                  <Route path="/dashboard" element={<Index />} />
-                  {/* <Route path="/dashboard-first" element={<DashboardFirstTime />} /> */}
-                  <Route path="/reports" element={<Reports />} />
-                  <Route path="/report/:id" element={<ReportDetail />} />
-                  <Route path="/body-metrics" element={<BodyMetrics />} />
-                  <Route path="/sleep" element={<Sleep />} />
-                  <Route path="/activity" element={<Activity />} />
-                  <Route path="/nutrition" element={<Nutrition />} />
-                  <Route path="/meal-analysis" element={<MealAnalysisPage />} />
-                  <Route path="/meal-edit" element={<MealEditPage />} />
-                  <Route
-                    path="/food-scan-analysis"
-                    element={<FoodScanAnalysis />}
-                  />
-                  <Route path="/risk-score" element={<RiskScore />} />
-                  <Route path="/connections" element={<Connections />} />
-                  <Route path="/wallet" element={<Wallet />} />
-                  <Route path="/settings" element={<Settings />} />
-                  <Route path="/profile" element={<Profile />} />
-                  <Route path="/face-scan" element={<FaceScan />} />
-                  <Route
-                    path="/subscription-plans"
-                    element={<SubscriptionPlans />}
-                  />
-                  {/* Public Shared Report Route - No Auth Required */}
-                  <Route
-                    path="/shared-report/:reportId"
-                    element={<SharedReport />}
-                  />
-                  <Route path="*" element={<NotFound />} />
-                </Routes>
-              </BrowserRouter>
-            </TooltipProvider>
-          </ProfileProvider>
-        </UserInfoProvider>
-      </AuthProvider>
-    </GoogleOAuthProvider>
-  </QueryClientProvider>
-);
+                    <Route
+                      path="/onboarding/:step"
+                      element={<OnboardingScreen />}
+                    />
+                    <Route path="/auth/signup" element={<SignUp />} />
+                    <Route path="/auth/login" element={<Login />} />
+                    <Route path="/auth/otp" element={<OTP />} />
+
+                    {/* App Routes */}
+                    <Route path="/dashboard" element={<Index />} />
+                    {/* <Route path="/dashboard-first" element={<DashboardFirstTime />} /> */}
+                    <Route path="/reports" element={<Reports />} />
+                    <Route path="/report/:id" element={<ReportDetail />} />
+                    <Route path="/body-metrics" element={<BodyMetrics />} />
+                    <Route path="/sleep" element={<Sleep />} />
+                    <Route path="/activity" element={<Activity />} />
+                    <Route path="/nutrition" element={<Nutrition />} />
+                    <Route
+                      path="/meal-analysis"
+                      element={<MealAnalysisPage />}
+                    />
+                    <Route path="/meal-edit" element={<MealEditPage />} />
+                    <Route
+                      path="/food-scan-analysis"
+                      element={<FoodScanAnalysis />}
+                    />
+                    <Route path="/risk-score" element={<RiskScore />} />
+                    <Route path="/connections" element={<Connections />} />
+                    <Route path="/wallet" element={<Wallet />} />
+                    <Route path="/settings" element={<Settings />} />
+                    <Route path="/profile" element={<Profile />} />
+                    <Route path="/face-scan" element={<FaceScan />} />
+                    <Route
+                      path="/subscription-plans"
+                      element={<SubscriptionPlans />}
+                    />
+                    {/* Public Shared Report Route - No Auth Required */}
+                    <Route
+                      path="/shared-report/:reportId"
+                      element={<SharedReport />}
+                    />
+                    <Route path="*" element={<NotFound />} />
+                  </Routes>
+                </BrowserRouter>
+              </TooltipProvider>
+            </ProfileProvider>
+          </UserInfoProvider>
+        </AuthProvider>
+      </GoogleOAuthProvider>
+    </QueryClientProvider>
+  );
+};
 
 export default App;
