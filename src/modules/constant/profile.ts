@@ -98,6 +98,10 @@ export const CommonGeneVariantsDataDescriptionMapping = {
 
 export const CommonGeneVariantsData = [
   {
+    title: "None",
+    description: "",
+  },
+  {
     title: `APOE ε4 Allele`,
     description: `APOE ε4 Allele (Apolipoprotein E ε4, APOE4, Alzheimer's Risk Gene)
 Associated Risks: Higher risk for late-onset Alzheimer's disease and cardiovascular disease.

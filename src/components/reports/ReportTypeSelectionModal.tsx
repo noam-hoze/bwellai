@@ -1,6 +1,19 @@
-
-import { FileCheck, FileSpreadsheet, FileText, FileX, Image, Microscope, Stethoscope } from "lucide-react";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  FileCheck,
+  FileSpreadsheet,
+  FileText,
+  FileX,
+  Image,
+  Microscope,
+  Stethoscope,
+} from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 
 interface ReportType {
@@ -13,9 +26,9 @@ interface ReportType {
 
 const reportTypes: ReportType[] = [
   {
-    id: "blood-test",
-    name: "Blood Test Report",
-    description: "Upload comprehensive blood panel results",
+    id: "lab-test",
+    name: "Lab Test Report",
+    description: "Upload comprehensive Lab panel results",
     icon: FileText,
     available: true,
   },
@@ -76,7 +89,7 @@ const ReportTypeSelectionModal = ({
             Choose the type of medical report you'd like to upload
           </DialogDescription>
         </DialogHeader>
-        
+
         <div className="grid grid-cols-2 gap-3 mt-4">
           {reportTypes.map((type) => (
             <div
@@ -91,7 +104,7 @@ const ReportTypeSelectionModal = ({
               <type.icon className="h-8 w-8 mb-1 text-gray-600" />
               <div className="font-medium">{type.name}</div>
               <p className="text-xs text-gray-500">{type.description}</p>
-              
+
               {!type.available && (
                 <Badge variant="coming-soon" className="absolute top-2 right-2">
                   Coming Soon
