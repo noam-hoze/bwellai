@@ -1009,7 +1009,7 @@ const HealthProfileTab = ({
               </Select>
             </div>
 
-            {geneVariant && (
+            {geneVariant && geneVariant !== "None" && (
               <div className="p-4 bg-wellness-light-green rounded-lg mt-4">
                 <h4 className="font-medium mb-1">{geneVariant}</h4>
                 <p className="text-sm">
