@@ -250,7 +250,7 @@ const SubscriptionPlans = () => {
                 <p className="text-lg text-green-800 flex items-center justify-center">
                   <Check className="mr-2 h-5 w-5" />
                   <span className="font-bold">Your Current Access:</span>{" "}
-                  {selectedSubscriptionCatalogData?.name} Plan
+                  {selectedSubscriptionCatalogData?.name} 
                 </p>
                 <p className="text-green-700 mt-1">
                   You can upgrade or change your access level below
