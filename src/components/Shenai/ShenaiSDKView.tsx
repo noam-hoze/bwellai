@@ -7,7 +7,11 @@ import { Button } from "../ui/button";
 import { useFaceScan } from "@/contexts/FaceScanContext";
 import { Progress } from "../ui/progress";
 
-export const ShenaiSDKView = ({ setStep, setIsShenaiInitialized }) => {
+export const ShenaiSDKView = ({
+  setStep,
+  setIsShenaiInitialized,
+  setShenAiSDK,
+}) => {
   // const hr = useRealtimeHeartRate();
   const shenaiSDK = useShenaiSdk();
 
@@ -37,6 +41,7 @@ export const ShenaiSDKView = ({ setStep, setIsShenaiInitialized }) => {
     setPendingInitialization(true);
     shenaiSDK.initialize(apiKey, "", settings, (res) => {
       if (res === shenaiSDK.InitializationResult.OK) {
+        setShenAiSDK(shenaiSDK);
         console.log("Shen.AI License result: ", res);
         shenaiSDK.attachToCanvas("#mxcanvas");
         onSuccess?.();
