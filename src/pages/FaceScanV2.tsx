@@ -716,15 +716,15 @@ const FaceScanV2 = () => {
     };
 
     return (
-      <div className="container max-w-md mx-auto p-4">
+      <div className="container max-w-3xl mx-auto p-4">
         <div className="flex flex-col items-center space-y-6">
           <h1 className="text-2xl font-bold mb-4">Face Scan Complete</h1>
 
           {/* Action buttons */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 w-full gap-4 mb-6">
             <Button
               onClick={SaveResultHandle}
-              className="flex items-center justify-center gap-2 bg-green-500 hover:bg-green-600"
+              className="flex items-center justify-center w-full  gap-2 bg-green-500 hover:bg-green-600"
             >
               <Save className="h-5 w-5" />
               Keep & Add to Trends
@@ -733,7 +733,7 @@ const FaceScanV2 = () => {
             <Button
               onClick={handleRetakeScan}
               variant="outline"
-              className="flex items-center justify-center gap-2"
+              className="flex items-center justify-center gap-2 w-full"
             >
               <RefreshCw className="h-5 w-5" />
               Re-take Scan
@@ -741,7 +741,7 @@ const FaceScanV2 = () => {
           </div>
 
           {/* Information banner */}
-          <div className="bg-blue-50 border border-blue-100 rounded-md p-4 mb-6">
+          <div className="bg-blue-50 border border-blue-100 rounded-md p-4 mb-6 w-full">
             <div className="flex items-start">
               <div className="mr-2 text-blue-500">
                 <svg
