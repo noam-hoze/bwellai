@@ -34,6 +34,7 @@ import RiskScore from "./pages/RiskScore";
 import SharedReport from "./pages/SharedReport";
 import { useEffect } from "react";
 import { initializeGTag } from "./utils/gtagmanager";
+import FaceScanV2 from "./pages/FaceScanV2";
 
 const queryClient = new QueryClient();
 
@@ -93,7 +94,8 @@ const App = () => {
                     <Route path="/wallet" element={<Wallet />} />
                     <Route path="/settings" element={<Settings />} />
                     <Route path="/profile" element={<Profile />} />
-                    <Route path="/face-scan" element={<FaceScan />} />
+                    {/* <Route path="/face-scan" element={<FaceScan />} /> */}
+                    <Route path="/face-scan" element={<FaceScanV2 />} />
                     <Route
                       path="/subscription-plans"
                       element={<SubscriptionPlans />}
