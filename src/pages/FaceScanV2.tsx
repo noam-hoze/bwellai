@@ -119,7 +119,7 @@ interface HealthMetric {
   trendValue?: string;
 }
 
-const RenderResults = ({ handleRetakeScan }) => {
+const RenderResults = ({ handleRetakeScan, step }) => {
   const { toast } = useToast();
 
   const { results } = useFaceScan();
@@ -179,33 +179,35 @@ const RenderResults = ({ handleRetakeScan }) => {
     }
   };
 
-  console.log(isFaceScanSaved);
-
   return (
     <div className="container max-w-3xl mx-auto p-4">
       <div className="flex flex-col items-center space-y-6">
-        <h1 className="text-2xl font-bold mb-4">Face Scan Complete</h1>
+        {step !== "intro" && step !== "preparation" && (
+          <h1 className="text-2xl font-bold mb-4">Face Scan Complete</h1>
+        )}
 
         {/* Action buttons */}
-        <div className="grid grid-cols-1 md:grid-cols-2 w-full gap-4 mb-6">
-          <Button
-            onClick={SaveResultHandle}
-            className="flex items-center justify-center w-full  gap-2 bg-green-500 hover:bg-green-600"
-            disabled={isFaceScanSaved}
-          >
-            <Save className="h-5 w-5" />
-            Keep & Add to Trends
-          </Button>
+        {step !== "intro" && step !== "preparation" && (
+          <div className="grid grid-cols-1 md:grid-cols-2 w-full gap-4 mb-6">
+            <Button
+              onClick={SaveResultHandle}
+              className="flex items-center justify-center w-full  gap-2 bg-green-500 hover:bg-green-600"
+              disabled={isFaceScanSaved}
+            >
+              <Save className="h-5 w-5" />
+              Keep & Add to Trends
+            </Button>
 
-          <Button
-            onClick={handleRetakeScan}
-            variant="outline"
-            className="flex items-center justify-center gap-2 w-full"
-          >
-            <RefreshCw className="h-5 w-5" />
-            Re-take Scan
-          </Button>
-        </div>
+            <Button
+              onClick={handleRetakeScan}
+              variant="outline"
+              className="flex items-center justify-center gap-2 w-full"
+            >
+              <RefreshCw className="h-5 w-5" />
+              Re-take Scan
+            </Button>
+          </div>
+        )}
 
         {/* Information banner */}
         <div className="bg-blue-50 border border-blue-100 rounded-md p-4 mb-6 w-full">
@@ -820,10 +822,10 @@ const FaceScanV2 = () => {
           {/* {step === "capture" && renderCaptureScreen()} */}
           {/* {step === "processing" && renderProcessingScreen()} */}
           {/* {step === "results" && renderResultsScreen()} */}
-          {step === "results" && (
+          {/* {step === "results" && (
             <RenderResults handleRetakeScan={handleRetakeScan} />
-          )}
-          {/* {<RenderResults />} */}
+          )} */}
+          {<RenderResults handleRetakeScan={handleRetakeScan} step={step} />}
         </main>
       </div>
     </FaceScanProvider>
