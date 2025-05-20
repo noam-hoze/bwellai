@@ -34,7 +34,8 @@ export const filterFaceScanData = ({ userFaceDataLatest, key }) => {
         date: item?.createdAtUTC,
       };
     })
-    ?.slice(-20);
+    ?.slice(-20)
+    .reverse();
 
   const date = userFaceDataLatest
     ?.filter(
