@@ -35,6 +35,8 @@ import SharedReport from "./pages/SharedReport";
 import { useEffect } from "react";
 import { initializeGTag } from "./utils/gtagmanager";
 import FaceScanV2 from "./pages/FaceScanV2";
+import MyGoals from "./pages/MyGoals";
+import GoalDetail from "./pages/GoalDetail";
 
 const queryClient = new QueryClient();
 
@@ -100,6 +102,8 @@ const App = () => {
                       path="/subscription-plans"
                       element={<SubscriptionPlans />}
                     />
+                    <Route path="/goals" element={<MyGoals />} />
+                    <Route path="/goal-detail/:id" element={<GoalDetail />} />
                     {/* Public Shared Report Route - No Auth Required */}
                     <Route
                       path="/shared-report/:reportId"
