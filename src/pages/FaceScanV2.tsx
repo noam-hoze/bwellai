@@ -119,8 +119,137 @@ interface HealthMetric {
   trendValue?: string;
 }
 
-const FaceScanV2 = () => {
+const RenderResults = ({ handleRetakeScan }) => {
   const { toast } = useToast();
+
+  const { results } = useFaceScan();
+  const [selectedOption, setSelectedOption] = useState("before_bedtime");
+  const { isAuthenticated } = useAuth();
+  const [isFaceScanSaved, setIsFaceScanSaved] = useState(false);
+
+  const {
+    data: userFaceDataLatest,
+    isSuccess: userFaceDataLatestIsSuccess,
+    refetch: userFaceDataLatestRefetch,
+  } = useGetUserFaceDataLatest(isAuthenticated);
+
+  const {
+    data: savedData,
+    mutate: saveDataSaveMutate,
+    isSuccess: saveDataSaveIsSuccess,
+    isPending: saveDataSaveIsPending,
+  } = useGetUserFaceDataSave();
+
+  useEffect(() => {
+    if (saveDataSaveIsSuccess) {
+      console.log("setting something ture");
+
+      setIsFaceScanSaved(true);
+      userFaceDataLatestRefetch();
+      toast({
+        title: "",
+        description: "You have successfully Saved.",
+      });
+    }
+  }, [saveDataSaveIsSuccess]);
+
+  const SaveResultHandle = () => {
+    if (results) {
+      saveDataSaveMutate({
+        hr10s: Number(results.hr10s?.toFixed(0)) || 0,
+        hr4s: Number(results.hr4s?.toFixed(0)) || 0,
+        heart_rate_bpm: Number(results?.heart_rate_bpm.toFixed(0)) || 0,
+        hrv_sdnn_ms: Number(results?.hrv_sdnn_ms?.toFixed(0)) || 0,
+        hrv_lnrmssd_ms: Number(results?.hrv_lnrmssd_ms?.toFixed(1)) || 0,
+        breathing_rate_bpm:
+          Number(results?.breathing_rate_bpm?.toFixed(0)) || 0,
+        age_years: Number(results?.age_years?.toFixed(0)) || 0,
+        bmi_kg_per_m2: Number(results?.bmi_kg_per_m2?.toFixed(2)) || 0,
+        stress_index: Number(results?.stress_index?.toFixed(1)) || 0,
+        parasympathetic_activity:
+          Number(results?.parasympathetic_activity?.toFixed(0)) || 0,
+        systolic_blood_pressure_mmhg:
+          Number(results?.systolic_blood_pressure_mmhg?.toFixed(0)) || 0,
+        diastolic_blood_pressure_mmhg:
+          Number(results?.diastolic_blood_pressure_mmhg?.toFixed(0)) || 0,
+        cardiac_workload_mmhg_per_sec:
+          Number(results?.cardiac_workload_mmhg_per_sec?.toFixed(0)) || 0,
+        tag: selectedOption,
+      });
+    }
+  };
+
+  console.log(isFaceScanSaved);
+
+  return (
+    <div className="container max-w-3xl mx-auto p-4">
+      <div className="flex flex-col items-center space-y-6">
+        <h1 className="text-2xl font-bold mb-4">Face Scan Complete</h1>
+
+        {/* Action buttons */}
+        <div className="grid grid-cols-1 md:grid-cols-2 w-full gap-4 mb-6">
+          <Button
+            onClick={SaveResultHandle}
+            className="flex items-center justify-center w-full  gap-2 bg-green-500 hover:bg-green-600"
+            disabled={isFaceScanSaved}
+          >
+            <Save className="h-5 w-5" />
+            Keep & Add to Trends
+          </Button>
+
+          <Button
+            onClick={handleRetakeScan}
+            variant="outline"
+            className="flex items-center justify-center gap-2 w-full"
+          >
+            <RefreshCw className="h-5 w-5" />
+            Re-take Scan
+          </Button>
+        </div>
+
+        {/* Information banner */}
+        <div className="bg-blue-50 border border-blue-100 rounded-md p-4 mb-6 w-full">
+          <div className="flex items-start">
+            <div className="mr-2 text-blue-500">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="h-5 w-5"
+              >
+                <path d="M3 9a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9z"></path>
+                <path d="M8 13h.01"></path>
+                <path d="M12 13h.01"></path>
+                <path d="M16 13h.01"></path>
+              </svg>
+            </div>
+            <p className="text-blue-700 text-sm">
+              These results will be added to your health trends if you select
+              "Keep & Add to Trends"
+            </p>
+          </div>
+        </div>
+
+        <h2 className="text-xl font-semibold text-center">
+          Health Check Results
+        </h2>
+
+        <HealthMetrics
+          facescanResult={results}
+          userFaceDataLatest={userFaceDataLatest}
+        />
+      </div>
+    </div>
+  );
+};
+
+const FaceScanV2 = () => {
   const navigate = useNavigate();
 
   const [step, setStep] = useState<ScanStep>("intro");
@@ -661,127 +790,6 @@ const FaceScanV2 = () => {
     );
   };
 
-  const RenderResults = () => {
-    const { results } = useFaceScan();
-    const [selectedOption, setSelectedOption] = useState("before_bedtime");
-    const { isAuthenticated } = useAuth();
-
-    const {
-      data: userFaceDataLatest,
-      isSuccess: userFaceDataLatestIsSuccess,
-      refetch: userFaceDataLatestRefetch,
-    } = useGetUserFaceDataLatest(isAuthenticated);
-
-    const {
-      data: savedData,
-      mutate: saveDataSaveMutate,
-      isSuccess: saveDataSaveIsSuccess,
-      isPending: saveDataSaveIsPending,
-    } = useGetUserFaceDataSave();
-
-    useEffect(() => {
-      if (saveDataSaveIsSuccess) {
-        userFaceDataLatestRefetch();
-        toast({
-          title: "",
-          description: "You have successfully Saved.",
-        });
-      }
-    }, [savedData, saveDataSaveIsSuccess]);
-
-    const SaveResultHandle = () => {
-      if (results) {
-        saveDataSaveMutate({
-          hr10s: Number(results.hr10s?.toFixed(0)) || 0,
-          hr4s: Number(results.hr4s?.toFixed(0)) || 0,
-          heart_rate_bpm: Number(results?.heart_rate_bpm.toFixed(0)) || 0,
-          hrv_sdnn_ms: Number(results?.hrv_sdnn_ms?.toFixed(0)) || 0,
-          hrv_lnrmssd_ms: Number(results?.hrv_lnrmssd_ms?.toFixed(1)) || 0,
-          breathing_rate_bpm:
-            Number(results?.breathing_rate_bpm?.toFixed(0)) || 0,
-          age_years: Number(results?.age_years?.toFixed(0)) || 0,
-          bmi_kg_per_m2: Number(results?.bmi_kg_per_m2?.toFixed(2)) || 0,
-          stress_index: Number(results?.stress_index?.toFixed(1)) || 0,
-          parasympathetic_activity:
-            Number(results?.parasympathetic_activity?.toFixed(0)) || 0,
-          systolic_blood_pressure_mmhg:
-            Number(results?.systolic_blood_pressure_mmhg?.toFixed(0)) || 0,
-          diastolic_blood_pressure_mmhg:
-            Number(results?.diastolic_blood_pressure_mmhg?.toFixed(0)) || 0,
-          cardiac_workload_mmhg_per_sec:
-            Number(results?.cardiac_workload_mmhg_per_sec?.toFixed(0)) || 0,
-          tag: selectedOption,
-        });
-      }
-    };
-
-    return (
-      <div className="container max-w-3xl mx-auto p-4">
-        <div className="flex flex-col items-center space-y-6">
-          <h1 className="text-2xl font-bold mb-4">Face Scan Complete</h1>
-
-          {/* Action buttons */}
-          <div className="grid grid-cols-1 md:grid-cols-2 w-full gap-4 mb-6">
-            <Button
-              onClick={SaveResultHandle}
-              className="flex items-center justify-center w-full  gap-2 bg-green-500 hover:bg-green-600"
-            >
-              <Save className="h-5 w-5" />
-              Keep & Add to Trends
-            </Button>
-
-            <Button
-              onClick={handleRetakeScan}
-              variant="outline"
-              className="flex items-center justify-center gap-2 w-full"
-            >
-              <RefreshCw className="h-5 w-5" />
-              Re-take Scan
-            </Button>
-          </div>
-
-          {/* Information banner */}
-          <div className="bg-blue-50 border border-blue-100 rounded-md p-4 mb-6 w-full">
-            <div className="flex items-start">
-              <div className="mr-2 text-blue-500">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="h-5 w-5"
-                >
-                  <path d="M3 9a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9z"></path>
-                  <path d="M8 13h.01"></path>
-                  <path d="M12 13h.01"></path>
-                  <path d="M16 13h.01"></path>
-                </svg>
-              </div>
-              <p className="text-blue-700 text-sm">
-                These results will be added to your health trends if you select
-                "Keep & Add to Trends"
-              </p>
-            </div>
-          </div>
-
-          <h2 className="text-xl font-semibold text-center">
-            Health Check Results
-          </h2>
-
-          <HealthMetrics
-            facescanResult={results}
-            userFaceDataLatest={userFaceDataLatest}
-          />
-        </div>
-      </div>
-    );
-  };
-
   // Main render function to determine which step to render
   const renderStep = () => {
     switch (step) {
@@ -812,7 +820,9 @@ const FaceScanV2 = () => {
           {/* {step === "capture" && renderCaptureScreen()} */}
           {/* {step === "processing" && renderProcessingScreen()} */}
           {/* {step === "results" && renderResultsScreen()} */}
-          {step === "results" && <RenderResults />}
+          {step === "results" && (
+            <RenderResults handleRetakeScan={handleRetakeScan} />
+          )}
           {/* {<RenderResults />} */}
         </main>
       </div>
