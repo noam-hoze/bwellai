@@ -8,10 +8,13 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { useNavigate } from "react-router-dom";
 import { Progress } from "@/components/ui/progress";
 import { format, addDays } from "date-fns";
+import { useGetSavedUserGoal } from "@/service/hooks/goal/useGetGoal";
 
 const MyGoals = () => {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const navigate = useNavigate();
+
+  const { data, isLoading, refetch } = useGetSavedUserGoal();
 
   // In a real app, this would come from an API
   const mockGoals = [
