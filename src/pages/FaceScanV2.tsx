@@ -142,8 +142,6 @@ const RenderResults = ({ handleRetakeScan, step }) => {
 
   useEffect(() => {
     if (saveDataSaveIsSuccess) {
-      console.log("setting something ture");
-
       setIsFaceScanSaved(true);
       userFaceDataLatestRefetch();
       toast({
@@ -210,42 +208,50 @@ const RenderResults = ({ handleRetakeScan, step }) => {
         )}
 
         {/* Information banner */}
-        <div className="bg-blue-50 border border-blue-100 rounded-md p-4 mb-6 w-full">
-          <div className="flex items-start">
-            <div className="mr-2 text-blue-500">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="h-5 w-5"
-              >
-                <path d="M3 9a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9z"></path>
-                <path d="M8 13h.01"></path>
-                <path d="M12 13h.01"></path>
-                <path d="M16 13h.01"></path>
-              </svg>
+        {step !== "intro" && step !== "preparation" && (
+          <div className="bg-blue-50 border border-blue-100 rounded-md p-4 mb-6 w-full">
+            <div className="flex items-start">
+              <div className="mr-2 text-blue-500">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="h-5 w-5"
+                >
+                  <path d="M3 9a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9z"></path>
+                  <path d="M8 13h.01"></path>
+                  <path d="M12 13h.01"></path>
+                  <path d="M16 13h.01"></path>
+                </svg>
+              </div>
+              <p className="text-blue-700 text-sm">
+                These results will be added to your health trends if you select
+                "Keep & Add to Trends"
+              </p>
             </div>
-            <p className="text-blue-700 text-sm">
-              These results will be added to your health trends if you select
-              "Keep & Add to Trends"
-            </p>
           </div>
-        </div>
+        )}
 
         <h2 className="text-xl font-semibold text-center">
           Health Check Results
         </h2>
 
-        <HealthMetrics
-          facescanResult={results}
-          userFaceDataLatest={userFaceDataLatest}
-        />
+        <div
+          className={`${
+            step !== "intro" && step !== "preparation" ? "w-full" : "max-w-md"
+          }`}
+        >
+          <HealthMetrics
+            facescanResult={results}
+            userFaceDataLatest={userFaceDataLatest}
+          />
+        </div>
       </div>
     </div>
   );

@@ -71,8 +71,7 @@ const HealthMetrics = ({ facescanResult, userFaceDataLatest }: any) => {
         title="Heart Rate"
         value={
           facescanResult?.heart_rate_bpm ||
-          userFaceDataLatest?.[userFaceDataLatest?.length - 1]?.faceScanData
-            ?.heart_rate_bpm
+          PulseHRFilteredData?.[PulseHRFilteredData?.length - 1]?.value
         }
         unit="bpm"
         normalRange="60-100 bpm"
@@ -83,7 +82,18 @@ const HealthMetrics = ({ facescanResult, userFaceDataLatest }: any) => {
       />
 
       <BloodPressureMetric
-        facescanResult={facescanResult}
+        systolicValue={
+          facescanResult?.systolic_blood_pressure_mmhg ||
+          systolicBloodPressureFilteredData?.[
+            systolicBloodPressureFilteredData?.length - 1
+          ]?.value
+        }
+        diastolicValue={
+          facescanResult?.diastolic_blood_pressure_mmhg ||
+          diastolicBloodPressureFilteredData?.[
+            diastolicBloodPressureFilteredData?.length - 1
+          ]?.value
+        }
         systolicData={systolicBloodPressureFilteredData}
         diastolicData={diastolicBloodPressureFilteredData}
       />
@@ -93,8 +103,7 @@ const HealthMetrics = ({ facescanResult, userFaceDataLatest }: any) => {
         title="Heart Rate Variability (HRV)"
         value={
           facescanResult?.hrv_sdnn_ms ||
-          userFaceDataLatest?.[userFaceDataLatest?.length - 1]?.faceScanData
-            ?.hrv_sdnn_ms
+          hrvSdnnmsFilteredData?.[hrvSdnnmsFilteredData?.length - 1]?.value
         }
         unit="ms"
         normalRange=""
@@ -108,8 +117,9 @@ const HealthMetrics = ({ facescanResult, userFaceDataLatest }: any) => {
         title="Breathing Rate (BR)"
         value={
           facescanResult?.breathing_rate_bpm ||
-          userFaceDataLatest?.[userFaceDataLatest?.length - 1]?.faceScanData
-            ?.breathing_rate_bpm
+          breathingRatebpmFilteredData?.[
+            breathingRatebpmFilteredData?.length - 1
+          ]?.value
         }
         unit="bpm"
         normalRange="12-20 bpm"
@@ -124,8 +134,8 @@ const HealthMetrics = ({ facescanResult, userFaceDataLatest }: any) => {
         title="Stress Index"
         value={
           facescanResult?.stress_index ||
-          userFaceDataLatest?.[userFaceDataLatest?.length - 1]?.faceScanData
-            ?.stress_index
+          stress_indexFilteredData?.[stress_indexFilteredData?.length - 1]
+            ?.value
         }
         unit=""
         normalRange="0-4"
@@ -140,8 +150,9 @@ const HealthMetrics = ({ facescanResult, userFaceDataLatest }: any) => {
         title="Cardiac Workload"
         value={
           facescanResult?.cardiac_workload_mmhg_per_sec ||
-          userFaceDataLatest?.[userFaceDataLatest?.length - 1]?.faceScanData
-            ?.cardiac_workload_mmhg_per_sec
+          cardiac_workload_mmhg_per_secFilteredData?.[
+            cardiac_workload_mmhg_per_secFilteredData?.length - 1
+          ]?.value
         }
         unit="mmHg/s"
         normalRange="90-216 mmHg/s"
@@ -156,8 +167,9 @@ const HealthMetrics = ({ facescanResult, userFaceDataLatest }: any) => {
         title="Parasympathetic Activity"
         value={
           facescanResult?.parasympathetic_activity ||
-          userFaceDataLatest?.[userFaceDataLatest?.length - 1]?.faceScanData
-            ?.parasympathetic_activity
+          parasympathetic_activityFilteredData?.[
+            parasympathetic_activityFilteredData?.length - 1
+          ]?.value
         }
         unit="%"
         normalRange=""
@@ -171,8 +183,8 @@ const HealthMetrics = ({ facescanResult, userFaceDataLatest }: any) => {
         title="Body Mass Index (BMI)"
         value={
           facescanResult?.bmi_kg_per_m2 ||
-          userFaceDataLatest?.[userFaceDataLatest?.length - 1]?.faceScanData
-            ?.bmi_kg_per_m2
+          bmi_kg_per_m2FilteredData?.[bmi_kg_per_m2FilteredData?.length - 1]
+            ?.value
         }
         unit="kg/m²"
         normalRange="18.5-24.9 kg/m²"
