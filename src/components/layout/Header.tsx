@@ -11,6 +11,7 @@ import {
   Wallet,
   Settings,
   Menu,
+  Flag,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -32,6 +33,7 @@ const Header = () => {
     { path: "/activity", label: "Activity", icon: Activity },
     { path: "/nutrition", label: "Nutrition", icon: Leaf },
     // { path: "/risk-score", label: "Risk Score", icon: Activity },
+    { path: "/goals", label: "My Goals", icon: Flag },
     { path: "/wallet", label: "Wallet", icon: Wallet },
   ];
 
