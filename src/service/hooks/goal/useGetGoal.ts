@@ -28,7 +28,7 @@ export const useUserGoalExerciseDetails = () => {
   });
 
   return {
-    data: data?.data?.payload,
+    data: data?.data,
     error,
     isError,
     isLoading,

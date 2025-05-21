@@ -170,6 +170,7 @@ const CreateGoalWizard = ({ onClose }: CreateGoalWizardProps) => {
           goalData={goalData}
           updateGoalData={setGoalData}
           userGoalDetails={userGoalDetails}
+          userGoalExerciseDetailsData={userGoalExerciseDetailsData}
         />
       </div>
 
