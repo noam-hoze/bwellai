@@ -45,11 +45,13 @@ export type Exercise = {
 interface CreateGoalWizardProps {
   onClose: () => void;
   savedUserGoalRefetch?;
+  userGoalDetails?;
 }
 
 const CreateGoalWizard = ({
   onClose,
   savedUserGoalRefetch,
+  userGoalDetails,
 }: CreateGoalWizardProps) => {
   const { toast } = useToast();
   const [currentStep, setCurrentStep] = useState(0);
@@ -68,9 +70,6 @@ const CreateGoalWizard = ({
     name: "",
     duration: 30, // Default to 30 days
   });
-
-  const { data: userGoalDetails, isLoading: userGoalDetailsIsLoading } =
-    useUserGoalDetails();
 
   const {
     data: userGoalExerciseDetailsData,
