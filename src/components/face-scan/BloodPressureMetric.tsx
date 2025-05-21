@@ -6,11 +6,13 @@ import { Card } from "@/components/ui/card";
 interface BloodPressureMetricProps {
   systolicData: Array<{ date: Date; value: number }>;
   diastolicData: Array<{ date: Date; value: number }>;
-  facescanResult?;
+  systolicValue?;
+  diastolicValue?;
 }
 
 const BloodPressureMetric = ({
-  facescanResult,
+  systolicValue,
+  diastolicValue,
   systolicData,
   diastolicData,
 }: BloodPressureMetricProps) => {
@@ -27,8 +29,8 @@ const BloodPressureMetric = ({
           </div>
           <div className="flex items-center gap-2">
             <span className="text-lg font-medium text-blue-500">
-              {facescanResult?.systolic_blood_pressure_mmhg}/
-              {facescanResult?.diastolic_blood_pressure_mmhg} mmHg
+              {systolicValue || systolicData}/{diastolicValue || diastolicData}{" "}
+              mmHg
             </span>
             <span className="text-xs text-gray-400">90-129/60-84 mmHg</span>
           </div>
