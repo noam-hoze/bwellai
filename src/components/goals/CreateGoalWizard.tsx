@@ -62,7 +62,9 @@ const CreateGoalWizard = ({ onClose }: CreateGoalWizardProps) => {
     duration: 30, // Default to 30 days
   });
 
-  const { data: userGoalDetailsData, isLoading: userGoalDetailsIsLoading } =
+  console.log(goalData);
+
+  const { data: userGoalDetails, isLoading: userGoalDetailsIsLoading } =
     useUserGoalDetails();
 
   const {
@@ -167,6 +169,7 @@ const CreateGoalWizard = ({ onClose }: CreateGoalWizardProps) => {
         <CurrentStepComponent
           goalData={goalData}
           updateGoalData={setGoalData}
+          userGoalDetails={userGoalDetails}
         />
       </div>
 

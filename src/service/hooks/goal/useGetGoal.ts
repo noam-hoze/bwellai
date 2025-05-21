@@ -12,7 +12,7 @@ export const useUserGoalDetails = () => {
   });
 
   return {
-    data: data?.data?.payload,
+    data: data?.data,
     error,
     isError,
     isLoading,
