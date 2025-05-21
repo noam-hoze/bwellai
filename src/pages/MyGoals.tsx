@@ -14,7 +14,11 @@ const MyGoals = () => {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const navigate = useNavigate();
 
-  const { data, isLoading, refetch } = useGetSavedUserGoal();
+  const {
+    data,
+    isLoading,
+    refetch: savedUserGoalRefetch,
+  } = useGetSavedUserGoal();
 
   // In a real app, this would come from an API
   const mockGoals = [
@@ -154,7 +158,12 @@ const MyGoals = () => {
 
       <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
         <DialogContent className="sm:max-w-[600px] p-0">
-          <CreateGoalWizard onClose={() => setIsCreateDialogOpen(false)} />
+          <CreateGoalWizard
+            onClose={() => {
+              setIsCreateDialogOpen(false);
+            }}
+            savedUserGoalRefetch={savedUserGoalRefetch}
+          />
         </DialogContent>
       </Dialog>
     </Layout>
