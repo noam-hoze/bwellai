@@ -2,6 +2,7 @@ import {
   getSavedUserGoalFetcher,
   getUserGoalDetailsFetcher,
   getUserGoalExerciseDetailsFetcher,
+  saveUserGoalActivityFetcher,
   saveUserGoalFetcher,
 } from "@/service/api/fetcher/goals/get-goal-details";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -41,6 +42,21 @@ export const useUserGoalExerciseDetails = () => {
 export const useSaveUserGoalFetcher = () => {
   const { data, error, isError, isPending, isSuccess, mutate } = useMutation({
     mutationFn: saveUserGoalFetcher,
+  });
+
+  return {
+    data: data?.data,
+    error,
+    isError,
+    isPending,
+    isSuccess,
+    mutate,
+  };
+};
+
+export const useSaveUserGoalActivity = () => {
+  const { data, error, isError, isPending, isSuccess, mutate } = useMutation({
+    mutationFn: saveUserGoalActivityFetcher,
   });
 
   return {

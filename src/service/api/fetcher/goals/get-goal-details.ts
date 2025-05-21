@@ -5,6 +5,7 @@ const getUserGoalExerciseDetails = () => `/goal/exercise`;
 
 const getSavedUserGoal = () => `/goal/user/goals`;
 const saveUserGoal = () => `/goal/save`;
+const saveUserGoalActivity = () => `/goal/activity/save`;
 
 export const getUserGoalDetailsFetcher = () => {
   return Client.get(getUserGoalDetails());
@@ -20,4 +21,8 @@ export const getSavedUserGoalFetcher = () => {
 
 export const saveUserGoalFetcher = (payload) => {
   return Client.post(saveUserGoal(), payload);
+};
+
+export const saveUserGoalActivityFetcher = (payload) => {
+  return Client.post(saveUserGoalActivity(), payload);
 };

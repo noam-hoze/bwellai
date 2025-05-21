@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, ArrowRight } from "lucide-react";
@@ -44,9 +44,13 @@ export type Exercise = {
 
 interface CreateGoalWizardProps {
   onClose: () => void;
+  savedUserGoalRefetch?;
 }
 
-const CreateGoalWizard = ({ onClose }: CreateGoalWizardProps) => {
+const CreateGoalWizard = ({
+  onClose,
+  savedUserGoalRefetch,
+}: CreateGoalWizardProps) => {
   const { toast } = useToast();
   const [currentStep, setCurrentStep] = useState(0);
   const [goalData, setGoalData] = useState<GoalData>({
@@ -65,8 +69,6 @@ const CreateGoalWizard = ({ onClose }: CreateGoalWizardProps) => {
     duration: 30, // Default to 30 days
   });
 
-  console.log(goalData);
-
   const { data: userGoalDetails, isLoading: userGoalDetailsIsLoading } =
     useUserGoalDetails();
 
@@ -75,7 +77,11 @@ const CreateGoalWizard = ({ onClose }: CreateGoalWizardProps) => {
     isLoading: userGoalExerciseIsLoading,
   } = useUserGoalExerciseDetails();
 
-  const { data, mutate: saveUserGoalMutate } = useSaveUserGoalFetcher();
+  const {
+    data,
+    isSuccess: saveUserGoalIsSuccess,
+    mutate: saveUserGoalMutate,
+  } = useSaveUserGoalFetcher();
 
   const steps = [
     { title: "Goal Type", component: GoalTypeStep },
@@ -179,6 +185,12 @@ const CreateGoalWizard = ({ onClose }: CreateGoalWizardProps) => {
     });
     onClose();
   };
+
+  useEffect(() => {
+    if (saveUserGoalIsSuccess) {
+      savedUserGoalRefetch();
+    }
+  }, [saveUserGoalIsSuccess]);
 
   const CurrentStepComponent = steps[currentStep].component;
 

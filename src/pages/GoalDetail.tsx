@@ -9,6 +9,8 @@ import { Separator } from "@/components/ui/separator";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/hooks/use-toast";
+import { useSaveUserGoalActivity } from "@/service/hooks/goal/useGetGoal";
+import { getFormattedDateYMD } from "@/utils/utils";
 
 // In a real app, this would come from an API or context
 const mockGoalData = {
@@ -77,6 +79,9 @@ const GoalDetail = () => {
   const [showPainUpdate, setShowPainUpdate] = useState<boolean>(false);
   const [goalData, setGoalData] = useState<any>(null);
 
+  const { data, mutate: saveUserGoalActivityMutate } =
+    useSaveUserGoalActivity();
+
   useEffect(() => {
     if (location.state?.goal) {
       const goalData = location.state.goal;
@@ -86,6 +91,14 @@ const GoalDetail = () => {
   }, [location]);
 
   const handleMarkComplete = (exerciseId: number) => {
+    saveUserGoalActivityMutate({
+      goals_id: exerciseId,
+      user_action: {
+        goal_completed: true,
+      },
+      date: getFormattedDateYMD(),
+    });
+
     setCompletedExercises((prev) => {
       const newCompleted = [...prev, exerciseId];
       // In a real app, this would update the backend
@@ -264,7 +277,7 @@ const GoalDetail = () => {
           <CardContent className="space-y-4">
             <div>
               <h3 className="text-sm font-medium">Pattern</h3>
-              <p className="text-sm text-gray-600">
+              <p className=" text-gray-600">
                 {goalData?.pain_assessment?.pain_pattern}
               </p>
             </div>
@@ -282,7 +295,9 @@ const GoalDetail = () => {
                     </div>
                   )
                 )} */}
-                {goalData?.pain_assessment?.pain_triggers}
+                <p className="text-gray-600">
+                  {goalData?.pain_assessment?.pain_triggers}
+                </p>
               </div>
             </div>
           </CardContent>
