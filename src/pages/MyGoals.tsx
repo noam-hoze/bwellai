@@ -121,7 +121,11 @@ const MyGoals = () => {
                       <Button
                         variant="secondary"
                         className="w-full flex justify-between"
-                        onClick={() => navigate(`/goal-detail/${goal.id}`)}
+                        onClick={() =>
+                          navigate(`/goal-detail/${goal.id}`, {
+                            state: { goal },
+                          })
+                        }
                       >
                         <span>View Goal Details</span>
                         <ArrowRight className="h-4 w-4" />
