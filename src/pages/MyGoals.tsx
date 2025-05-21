@@ -8,10 +8,13 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { useNavigate } from "react-router-dom";
 import { Progress } from "@/components/ui/progress";
 import { format, addDays } from "date-fns";
+import { useGetSavedUserGoal } from "@/service/hooks/goal/useGetGoal";
 
 const MyGoals = () => {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const navigate = useNavigate();
+
+  const { data, isLoading, refetch } = useGetSavedUserGoal();
 
   // In a real app, this would come from an API
   const mockGoals = [
@@ -43,24 +46,49 @@ const MyGoals = () => {
           </Button>
         </div>
 
-        {mockGoals.length > 0 ? (
+        {data?.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {mockGoals.map((goal) => {
-              const endDate = addDays(goal.startDate, goal.duration);
+            {data?.map((goal) => {
+              const endDate = addDays(
+                new Date(goal.created_local_time),
+                Number(goal?.schedule?.program_duration_in_days)
+              );
+
+              const startDate = new Date(goal.created_local_time);
+              const now = new Date();
+              const msInDay = 1000 * 60 * 60 * 24;
+
+              // Calculate how many full days have passed since the start date
+              const currentDay = Math.min(
+                goal?.schedule?.program_duration_in_days,
+                Math.max(
+                  1,
+                  Math.floor((now.getTime() - startDate.getTime()) / msInDay) +
+                    1
+                )
+              );
+
+              const progress = Math.min(
+                100,
+                Math.round(
+                  (currentDay / goal?.schedule?.program_duration_in_days) * 100
+                )
+              );
 
               return (
                 <Card key={goal.id} className="overflow-hidden">
                   <CardHeader className="bg-gradient-to-r from-wellness-light-green to-blue-50">
                     <CardTitle className="text-xl font-semibold text-wellness-bright-green">
-                      {goal.title}
+                      {goal?.exercise_selection?.exercise_name}
                     </CardTitle>
                     <div className="flex justify-between text-sm text-gray-600 mt-1">
-                      <span>Progress: {goal.progress}%</span>
+                      <span>Progress: {progress}%</span>
                       <span>
-                        Day {goal.currentDay} of {goal.duration}
+                        Day {currentDay} of{" "}
+                        {goal?.schedule?.program_duration_in_days}
                       </span>
                     </div>
-                    <Progress value={goal.progress} className="h-1.5 mt-2" />
+                    <Progress value={progress} className="h-1.5 mt-2" />
                   </CardHeader>
 
                   <CardContent className="p-5">
@@ -71,7 +99,7 @@ const MyGoals = () => {
                           <div>
                             <p className="text-sm font-medium">Duration</p>
                             <p className="text-xs text-gray-500">
-                              {formatDateToString(goal.startDate)} -{" "}
+                              {formatDateToString(goal.created_local_time)} -{" "}
                               {formatDateToString(endDate)}
                             </p>
                           </div>
@@ -82,8 +110,9 @@ const MyGoals = () => {
                           <div>
                             <p className="text-sm font-medium">Pain Level</p>
                             <p className="text-xs text-gray-500">
-                              Initial: {goal.initialPainLevel}/10 → Current:{" "}
-                              {goal.currentPainLevel}/10
+                              Initial:{" "}
+                              {goal?.pain_assessment?.current_pain_level}/10 →
+                              Current: {goal.currentPainLevel}/10
                             </p>
                           </div>
                         </div>
@@ -92,7 +121,11 @@ const MyGoals = () => {
                       <Button
                         variant="secondary"
                         className="w-full flex justify-between"
-                        onClick={() => navigate(`/goal-detail/${goal.id}`)}
+                        onClick={() =>
+                          navigate(`/goal-detail/${goal.id}`, {
+                            state: { goal },
+                          })
+                        }
                       >
                         <span>View Goal Details</span>
                         <ArrowRight className="h-4 w-4" />

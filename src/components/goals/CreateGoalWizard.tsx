@@ -8,8 +8,14 @@ import ExerciseSelectionStep from "./wizard-steps/ExerciseSelectionStep";
 import ScheduleCustomizationStep from "./wizard-steps/ScheduleCustomizationStep";
 import GoalReviewStep from "./wizard-steps/GoalReviewStep";
 import { useToast } from "@/hooks/use-toast";
+import {
+  useSaveUserGoalFetcher,
+  useUserGoalDetails,
+  useUserGoalExerciseDetails,
+} from "@/service/hooks/goal/useGetGoal";
 
 export type GoalData = {
+  goalId: number;
   type: string;
   painLevel: number;
   painPattern: string;
@@ -22,7 +28,7 @@ export type GoalData = {
   };
   name: string;
   duration: number; // Duration in days
-}
+};
 
 export type Exercise = {
   id: number;
@@ -34,7 +40,7 @@ export type Exercise = {
   imageUrl: string;
   videoUrl: string;
   selected: boolean;
-}
+};
 
 interface CreateGoalWizardProps {
   onClose: () => void;
@@ -44,6 +50,7 @@ const CreateGoalWizard = ({ onClose }: CreateGoalWizardProps) => {
   const { toast } = useToast();
   const [currentStep, setCurrentStep] = useState(0);
   const [goalData, setGoalData] = useState<GoalData>({
+    goalId: 0,
     type: "",
     painLevel: 5,
     painPattern: "",
@@ -57,6 +64,18 @@ const CreateGoalWizard = ({ onClose }: CreateGoalWizardProps) => {
     name: "",
     duration: 30, // Default to 30 days
   });
+
+  console.log(goalData);
+
+  const { data: userGoalDetails, isLoading: userGoalDetailsIsLoading } =
+    useUserGoalDetails();
+
+  const {
+    data: userGoalExerciseDetailsData,
+    isLoading: userGoalExerciseIsLoading,
+  } = useUserGoalExerciseDetails();
+
+  const { data, mutate: saveUserGoalMutate } = useSaveUserGoalFetcher();
 
   const steps = [
     { title: "Goal Type", component: GoalTypeStep },
@@ -75,7 +94,7 @@ const CreateGoalWizard = ({ onClose }: CreateGoalWizardProps) => {
       });
       return;
     }
-    
+
     if (currentStep === 1 && !goalData.painPattern) {
       toast({
         title: "Please describe your pain pattern",
@@ -84,20 +103,22 @@ const CreateGoalWizard = ({ onClose }: CreateGoalWizardProps) => {
       });
       return;
     }
-    
+
     if (currentStep === 2 && goalData.selectedExercises.length === 0) {
       toast({
         title: "Please select at least one exercise",
         description: "You need to choose exercises for your goal",
-        variant: "destructive", 
+        variant: "destructive",
       });
       return;
     }
-    
-    if (currentStep === 3 && 
-      !goalData.schedule.morning && 
-      !goalData.schedule.afternoon && 
-      !goalData.schedule.evening) {
+
+    if (
+      currentStep === 3 &&
+      !goalData.schedule.morning &&
+      !goalData.schedule.afternoon &&
+      !goalData.schedule.evening
+    ) {
       toast({
         title: "Please select at least one time period",
         description: "Choose when you plan to do your exercises",
@@ -105,7 +126,7 @@ const CreateGoalWizard = ({ onClose }: CreateGoalWizardProps) => {
       });
       return;
     }
-    
+
     if (currentStep < steps.length - 1) {
       setCurrentStep(currentStep + 1);
     }
@@ -120,15 +141,47 @@ const CreateGoalWizard = ({ onClose }: CreateGoalWizardProps) => {
   const handleSaveGoal = () => {
     // In a real app, this would save the goal to a database
     console.log("Saving goal:", goalData);
+    const pre_time = [];
+    if (goalData.schedule.morning) {
+      pre_time.push("MORNING");
+    }
+    if (goalData.schedule.afternoon) {
+      pre_time.push("AFTERNOON");
+    }
+    if (goalData.schedule.evening) {
+      pre_time.push("EVENING");
+    }
+
+    saveUserGoalMutate({
+      goals_id: goalData?.goalId,
+      pain_assessment: {
+        current_pain_level: goalData?.painLevel,
+        pain_pattern: goalData?.painPattern,
+        pain_triggers: goalData?.painTriggers?.[0], // should be arr
+      },
+      // should be arr of exercises
+      exercise_selection: {
+        exercise_id: goalData?.selectedExercises?.[0]?.id,
+        exercise_name: goalData?.selectedExercises?.[0]?.label,
+        entity: goalData?.selectedExercises?.[0]?.name,
+        entity_value: goalData?.selectedExercises?.[0]?.customReps,
+      },
+      schedule: {
+        preferred_time: pre_time,
+        program_duration_in_days: goalData?.duration,
+      },
+      status: "ACTIVE",
+    });
+
     toast({
       title: "Goal Created Successfully",
-      description: `Your ${goalData.type} management goal has been created`,
+      description: `Your ${goalData.name} has been created`,
     });
     onClose();
   };
 
   const CurrentStepComponent = steps[currentStep].component;
-  
+
   return (
     <div className="max-h-[80vh] overflow-auto">
       <DialogHeader className="bg-gradient-to-r from-wellness-light-green to-blue-50 p-6 sticky top-0 z-10 border-b">
@@ -140,9 +193,9 @@ const CreateGoalWizard = ({ onClose }: CreateGoalWizardProps) => {
             Step {currentStep + 1} of {steps.length}
           </div>
         </div>
-        
+
         <div className="w-full mt-3 h-2 bg-gray-200 rounded-full overflow-hidden">
-          <div 
+          <div
             className="h-full bg-wellness-bright-green transition-all duration-300 ease-in-out"
             style={{ width: `${((currentStep + 1) / steps.length) * 100}%` }}
           ></div>
@@ -150,9 +203,11 @@ const CreateGoalWizard = ({ onClose }: CreateGoalWizardProps) => {
       </DialogHeader>
 
       <div className="p-6">
-        <CurrentStepComponent 
-          goalData={goalData} 
-          updateGoalData={setGoalData} 
+        <CurrentStepComponent
+          goalData={goalData}
+          updateGoalData={setGoalData}
+          userGoalDetails={userGoalDetails}
+          userGoalExerciseDetailsData={userGoalExerciseDetailsData}
         />
       </div>
 
@@ -162,16 +217,20 @@ const CreateGoalWizard = ({ onClose }: CreateGoalWizardProps) => {
           onClick={currentStep === 0 ? onClose : handlePrevious}
           className="min-w-[100px]"
         >
-          {currentStep === 0 ? "Cancel" : (
+          {currentStep === 0 ? (
+            "Cancel"
+          ) : (
             <>
               <ArrowLeft className="mr-2 h-4 w-4" />
               Back
             </>
           )}
         </Button>
-        
-        <Button 
-          onClick={currentStep === steps.length - 1 ? handleSaveGoal : handleNext}
+
+        <Button
+          onClick={
+            currentStep === steps.length - 1 ? handleSaveGoal : handleNext
+          }
           className="min-w-[100px]"
         >
           {currentStep === steps.length - 1 ? (

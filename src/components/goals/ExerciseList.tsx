@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Exercise } from "./CreateGoalWizard";
 import { Card } from "@/components/ui/card";
@@ -8,19 +7,21 @@ import ExerciseDetailsModal from "./ExerciseDetailsModal";
 import { cn } from "@/lib/utils";
 
 interface ExerciseListProps {
-  exercises: Exercise[];
+  exercises?;
   onMarkComplete?: (exerciseId: number) => void;
   completedExercises?: number[];
   showCompleteButtons?: boolean;
 }
 
-const ExerciseList = ({ 
-  exercises, 
+const ExerciseList = ({
+  exercises,
   onMarkComplete,
   completedExercises = [],
-  showCompleteButtons = true
+  showCompleteButtons = true,
 }: ExerciseListProps) => {
-  const [selectedExercise, setSelectedExercise] = useState<Exercise | null>(null);
+  const [selectedExercise, setSelectedExercise] = useState<Exercise | null>(
+    null
+  );
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleViewExercise = (exercise: Exercise) => {
@@ -46,13 +47,14 @@ const ExerciseList = ({
     <>
       <div className="space-y-4">
         {exercises.map((exercise) => {
-          const isCompleted = isExerciseCompleted(exercise.id);
-          
+          // const isCompleted = isExerciseCompleted(exercise.id);
+          const isCompleted = false;
+
           return (
-            <Card 
-              key={exercise.id} 
+            <Card
+              key={exercise.id}
               className={cn(
-                "overflow-hidden transition-colors", 
+                "overflow-hidden transition-colors",
                 isCompleted ? "bg-green-50 border-green-100" : "bg-gray-50"
               )}
             >
@@ -63,17 +65,17 @@ const ExerciseList = ({
                   )}
                   <div>
                     <div className="flex items-center">
-                      <h3 className="font-medium">{exercise.name}</h3>
+                      <h3 className="font-medium">{exercise.exercise_name}</h3>
                     </div>
                     <p className="text-sm text-gray-500 mt-1">
-                      {exercise.customReps} repetitions • {exercise.category}
+                      {exercise.entity_value} repetitions • {exercise.entity}
                     </p>
                   </div>
                 </div>
-                
+
                 <div className="flex flex-wrap gap-2 ml-auto">
-                  <Button 
-                    variant="secondary" 
+                  <Button
+                    variant="secondary"
                     size="sm"
                     className="text-xs"
                     onClick={() => handleViewExercise(exercise)}
@@ -81,10 +83,10 @@ const ExerciseList = ({
                     <Video className="h-3 w-3 mr-1" />
                     View Exercise
                   </Button>
-                  
+
                   {showCompleteButtons && !isCompleted && onMarkComplete && (
-                    <Button 
-                      size="sm" 
+                    <Button
+                      size="sm"
                       className="text-xs"
                       onClick={() => handleMarkComplete(exercise.id)}
                     >
@@ -104,7 +106,9 @@ const ExerciseList = ({
         onClose={handleCloseModal}
         exercise={selectedExercise}
         onMarkComplete={showCompleteButtons ? handleMarkComplete : undefined}
-        isCompleted={selectedExercise ? isExerciseCompleted(selectedExercise.id) : false}
+        isCompleted={
+          selectedExercise ? isExerciseCompleted(selectedExercise.id) : false
+        }
       />
     </>
   );
