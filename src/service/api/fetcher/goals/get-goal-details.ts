@@ -18,6 +18,6 @@ export const getSavedUserGoalFetcher = () => {
   return Client.get(getSavedUserGoal());
 };
 
-export const saveUserGoalFetcher = () => {
-  return Client.post(saveUserGoal(), {});
+export const saveUserGoalFetcher = (payload) => {
+  return Client.post(saveUserGoal(), payload);
 };

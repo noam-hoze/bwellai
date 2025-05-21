@@ -11,6 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 interface ExerciseSelectionStepProps {
   goalData: GoalData;
   updateGoalData: (data: GoalData) => void;
+  userGoalDetails?;
   userGoalExerciseDetailsData?;
 }
 
@@ -24,7 +25,7 @@ const exercisesByCategory = {
       description:
         "Gentle movement that loosens the back and warms up the spine",
       recommendedReps: 10,
-      customReps: 10,
+      customReps: 30,
       imageUrl:
         "https://images.unsplash.com/photo-1518495973542-4542c06a5843?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
       videoUrl: "#",
@@ -51,7 +52,7 @@ const exercisesByCategory = {
       category: "Strengthening",
       description: "Builds core stability and strengthens back muscles",
       recommendedReps: 8,
-      customReps: 8,
+      customReps: 3,
       imageUrl:
         "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
       videoUrl: "#",
@@ -63,7 +64,7 @@ const exercisesByCategory = {
       category: "Strengthening",
       description: "Activates glutes and stabilizes lower back",
       recommendedReps: 12,
-      customReps: 12,
+      customReps: 32,
       imageUrl:
         "https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
       videoUrl: "#",
@@ -77,7 +78,7 @@ const exercisesByCategory = {
       category: "Mobility",
       description: "Increases spinal rotation and relieves tension",
       recommendedReps: 6,
-      customReps: 6,
+      customReps: 3,
       imageUrl:
         "https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
       videoUrl: "#",
@@ -90,7 +91,7 @@ const exercisesByCategory = {
       description:
         "Stretches tight hamstrings which can contribute to back pain",
       recommendedReps: 4,
-      customReps: 4,
+      customReps: 3,
       imageUrl:
         "https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
       videoUrl: "#",
@@ -138,7 +139,12 @@ const ExerciseSelectionStep = ({
 
   const getCustomReps = (id: number) => {
     const exercise = goalData.selectedExercises.find((e) => e.id === id);
-    return exercise ? exercise.customReps : 0;
+
+    if (!exercise?.customReps) {
+      exercise.customReps = 3;
+    }
+
+    return exercise ? exercise?.customReps : 0;
   };
 
   const openVideoPreview = (exercise: Exercise) => {
@@ -237,7 +243,8 @@ const ExerciseSelectionStep = ({
                               className="h-7 w-14 text-center mx-1 p-0"
                               value={
                                 getCustomReps(exercise.id) ||
-                                exercise.recommendedReps
+                                exercisesByCategory?.[exercise?.name]?.[index]
+                                  ?.recommendedReps
                               }
                               onChange={(e) =>
                                 updateExerciseReps(

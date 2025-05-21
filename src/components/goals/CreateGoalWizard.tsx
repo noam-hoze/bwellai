@@ -9,11 +9,13 @@ import ScheduleCustomizationStep from "./wizard-steps/ScheduleCustomizationStep"
 import GoalReviewStep from "./wizard-steps/GoalReviewStep";
 import { useToast } from "@/hooks/use-toast";
 import {
+  useSaveUserGoalFetcher,
   useUserGoalDetails,
   useUserGoalExerciseDetails,
 } from "@/service/hooks/goal/useGetGoal";
 
 export type GoalData = {
+  goalId: number;
   type: string;
   painLevel: number;
   painPattern: string;
@@ -48,6 +50,7 @@ const CreateGoalWizard = ({ onClose }: CreateGoalWizardProps) => {
   const { toast } = useToast();
   const [currentStep, setCurrentStep] = useState(0);
   const [goalData, setGoalData] = useState<GoalData>({
+    goalId: 0,
     type: "",
     painLevel: 5,
     painPattern: "",
@@ -71,6 +74,8 @@ const CreateGoalWizard = ({ onClose }: CreateGoalWizardProps) => {
     data: userGoalExerciseDetailsData,
     isLoading: userGoalExerciseIsLoading,
   } = useUserGoalExerciseDetails();
+
+  const { data, mutate: saveUserGoalMutate } = useSaveUserGoalFetcher();
 
   const steps = [
     { title: "Goal Type", component: GoalTypeStep },
@@ -136,9 +141,41 @@ const CreateGoalWizard = ({ onClose }: CreateGoalWizardProps) => {
   const handleSaveGoal = () => {
     // In a real app, this would save the goal to a database
     console.log("Saving goal:", goalData);
+    const pre_time = [];
+    if (goalData.schedule.morning) {
+      pre_time.push("MORNING");
+    }
+    if (goalData.schedule.afternoon) {
+      pre_time.push("AFTERNOON");
+    }
+    if (goalData.schedule.evening) {
+      pre_time.push("EVENING");
+    }
+
+    saveUserGoalMutate({
+      goals_id: goalData?.goalId,
+      pain_assessment: {
+        current_pain_level: goalData?.painLevel,
+        pain_pattern: goalData?.painPattern,
+        pain_triggers: goalData?.painTriggers?.[0], // should be arr
+      },
+      // should be arr of exercises
+      exercise_selection: {
+        exercise_id: goalData?.selectedExercises?.[0]?.id,
+        exercise_name: goalData?.selectedExercises?.[0]?.label,
+        entity: goalData?.selectedExercises?.[0]?.name,
+        entity_value: goalData?.selectedExercises?.[0]?.customReps,
+      },
+      schedule: {
+        preferred_time: pre_time,
+        program_duration_in_days: goalData?.duration,
+      },
+      status: "ACTIVE",
+    });
+
     toast({
       title: "Goal Created Successfully",
-      description: `Your ${goalData.type} management goal has been created`,
+      description: `Your ${goalData.name} has been created`,
     });
     onClose();
   };

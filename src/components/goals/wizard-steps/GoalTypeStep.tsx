@@ -7,6 +7,7 @@ interface GoalTypeStepProps {
   goalData: GoalData;
   updateGoalData: (data: GoalData) => void;
   userGoalDetails?;
+  userGoalExerciseDetailsData?;
 }
 
 const GoalTypeStep = ({
@@ -54,10 +55,19 @@ const GoalTypeStep = ({
     },
   ];
 
-  const selectGoalType = ({ type, name }: { type: string; name: string }) => {
+  const selectGoalType = ({
+    type,
+    name,
+    id,
+  }: {
+    type: string;
+    name: string;
+    id: number;
+  }) => {
     updateGoalData({
       ...goalData,
       type,
+      goalId: id,
       name: `${name} Management Goal`,
     });
   };
@@ -79,7 +89,11 @@ const GoalTypeStep = ({
                 : ""
             )}
             onClick={() =>
-              selectGoalType({ type: type?.goalType, name: type?.name })
+              selectGoalType({
+                type: type?.goalType,
+                name: type?.name,
+                id: type?.id,
+              })
             }
           >
             <div
