@@ -8,11 +8,17 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { useNavigate } from "react-router-dom";
 import { Progress } from "@/components/ui/progress";
 import { format, addDays } from "date-fns";
-import { useGetSavedUserGoal } from "@/service/hooks/goal/useGetGoal";
+import {
+  useGetSavedUserGoal,
+  useUserGoalDetails,
+} from "@/service/hooks/goal/useGetGoal";
 
 const MyGoals = () => {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const navigate = useNavigate();
+
+  const { data: userGoalDetails, isLoading: userGoalDetailsIsLoading } =
+    useUserGoalDetails();
 
   const {
     data,
@@ -34,6 +40,13 @@ const MyGoals = () => {
       currentPainLevel: 5,
     },
   ];
+
+  const getGoalName = (goalId: number) => {
+    const goal = userGoalDetails?.filter((g) => g.id === goalId);
+    return {
+      name: goal?.[0]?.name,
+    };
+  };
 
   const formatDateToString = (date: Date) => {
     return format(date, "MMM d, yyyy");
@@ -83,7 +96,7 @@ const MyGoals = () => {
                 <Card key={goal.id} className="overflow-hidden">
                   <CardHeader className="bg-gradient-to-r from-wellness-light-green to-blue-50">
                     <CardTitle className="text-xl font-semibold text-wellness-bright-green">
-                      {goal?.exercise_selection?.exercise_name}
+                      {getGoalName(goal?.goalsId)?.name}
                     </CardTitle>
                     <div className="flex justify-between text-sm text-gray-600 mt-1">
                       <span>Progress: {progress}%</span>
@@ -163,6 +176,7 @@ const MyGoals = () => {
               setIsCreateDialogOpen(false);
             }}
             savedUserGoalRefetch={savedUserGoalRefetch}
+            userGoalDetails={userGoalDetails}
           />
         </DialogContent>
       </Dialog>
