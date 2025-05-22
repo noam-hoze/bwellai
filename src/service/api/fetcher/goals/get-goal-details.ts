@@ -27,7 +27,7 @@ export const getUserGoalActivityFetcher = ({
   type,
 }: {
   date: string;
-  user_goal_id: string;
+  user_goal_id?: string;
   type: string;
 }) => {
   return Client.get(getUserGoalActivity({ date, user_goal_id, type }));

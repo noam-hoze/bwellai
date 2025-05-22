@@ -86,7 +86,15 @@ export const useGetSavedUserGoal = () => {
   };
 };
 
-export const useUserGoalActivity = ({ date, user_goal_id, type }) => {
+export const useUserGoalActivity = ({
+  date,
+  user_goal_id,
+  type,
+}: {
+  date: string;
+  user_goal_id?: string;
+  type: string;
+}) => {
   const { data, error, isError, isLoading, isSuccess, refetch } = useQuery({
     queryKey: ["get-user-goal-activity-details", date, user_goal_id, type],
     queryFn: () => getUserGoalActivityFetcher({ date, user_goal_id, type }),
