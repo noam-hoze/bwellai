@@ -82,14 +82,26 @@ const GoalDetail = () => {
   const [showPainUpdate, setShowPainUpdate] = useState<boolean>(false);
   const [goalData, setGoalData] = useState<any>(null);
 
-  const { data: userGoalActivityData } = useUserGoalActivity({
+  const { data: userGoalActivityData, refetch: userGoalActivityRefetch } =
+    useUserGoalActivity({
+      date: getFormattedDateYMD(),
+      user_goal_id: goalData?.userGoalId,
+      type: "exercise_status",
+    });
+  const {
+    data: userGoalActivityPainData,
+    refetch: userGoalActivityPainRefetch,
+  } = useUserGoalActivity({
     date: getFormattedDateYMD(),
     user_goal_id: goalData?.userGoalId,
-    type: "exercise_status",
+    type: "pain_level",
   });
 
-  const { data, mutate: saveUserGoalActivityMutate } =
-    useSaveUserGoalActivity();
+  const {
+    data,
+    mutate: saveUserGoalActivityMutate,
+    isSuccess: saveUserGoalActivityIsSuccess,
+  } = useSaveUserGoalActivity();
 
   useEffect(() => {
     if (location.state?.goal) {
@@ -107,6 +119,19 @@ const GoalDetail = () => {
       setCompletedExercises(c);
     }
   }, [userGoalActivityData]);
+
+  useEffect(() => {
+    if (userGoalActivityPainData) {
+      setCurrentPainLevel(userGoalActivityPainData?.[0]?.userActivity?.value);
+    }
+  }, [userGoalActivityPainData]);
+
+  useEffect(() => {
+    if (saveUserGoalActivityIsSuccess) {
+      userGoalActivityRefetch();
+      userGoalActivityPainRefetch();
+    }
+  }, [saveUserGoalActivityIsSuccess]);
 
   const handleMarkComplete = (exerciseId: number) => {
     saveUserGoalActivityMutate({
