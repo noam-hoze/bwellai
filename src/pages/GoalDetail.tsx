@@ -13,7 +13,7 @@ import {
   useSaveUserGoalActivity,
   useUserGoalActivity,
 } from "@/service/hooks/goal/useGetGoal";
-import { getFormattedDateYMD } from "@/utils/utils";
+import { capitalizeText, getFormattedDateYMD } from "@/utils/utils";
 
 // In a real app, this would come from an API or context
 // const mockGoalData = {
@@ -331,7 +331,7 @@ const GoalDetail = () => {
             <div>
               <h3 className="text-sm font-medium">Pattern</h3>
               <p className=" text-gray-600">
-                {goalData?.pain_assessment?.pain_pattern}
+                {capitalizeText(goalData?.pain_assessment?.pain_pattern, "_")}
               </p>
             </div>
 
