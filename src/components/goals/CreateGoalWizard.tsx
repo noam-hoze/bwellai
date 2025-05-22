@@ -157,20 +157,23 @@ const CreateGoalWizard = ({
       pre_time.push("EVENING");
     }
 
+    console.log(goalData);
+
     saveUserGoalMutate({
       goals_id: goalData?.goalId,
       pain_assessment: {
         current_pain_level: goalData?.painLevel,
         pain_pattern: goalData?.painPattern,
-        pain_triggers: goalData?.painTriggers?.[0], // should be arr
+        pain_triggers: goalData?.painTriggers,
       },
-      // should be arr of exercises
-      exercise_selection: {
-        exercise_id: goalData?.selectedExercises?.[0]?.id,
-        exercise_name: goalData?.selectedExercises?.[0]?.label,
-        entity: goalData?.selectedExercises?.[0]?.name,
-        entity_value: goalData?.selectedExercises?.[0]?.customReps,
-      },
+      exercise_selection: goalData?.selectedExercises?.map((g) => {
+        return {
+          exercise_id: g?.id,
+          exercise_name: g?.label,
+          entity: g?.name,
+          entity_value: g?.customReps,
+        };
+      }),
       schedule: {
         preferred_time: pre_time,
         program_duration_in_days: goalData?.duration,

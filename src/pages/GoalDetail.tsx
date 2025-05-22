@@ -9,65 +9,68 @@ import { Separator } from "@/components/ui/separator";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/hooks/use-toast";
-import { useSaveUserGoalActivity } from "@/service/hooks/goal/useGetGoal";
+import {
+  useSaveUserGoalActivity,
+  useUserGoalActivity,
+} from "@/service/hooks/goal/useGetGoal";
 import { getFormattedDateYMD } from "@/utils/utils";
 
 // In a real app, this would come from an API or context
-const mockGoalData = {
-  id: 1,
-  type: "Back Pain",
-  painLevel: 6,
-  painPattern: "Morning stiffness and pain after sitting",
-  painTriggers: ["Prolonged sitting", "Heavy lifting"],
-  schedule: {
-    morning: true,
-    afternoon: false,
-    evening: true,
-  },
-  duration: 30,
-  startDate: new Date(),
-  selectedExercises: [
-    {
-      id: 1,
-      name: "Cat-Cow Stretch",
-      category: "Stretching",
-      description:
-        "Gentle movement that loosens the back and warms up the spine. Start on your hands and knees. Alternate between arching your back upward (cat) and letting it sag while lifting your head (cow).",
-      recommendedReps: 10,
-      customReps: 10,
-      imageUrl:
-        "https://images.unsplash.com/photo-1518495973542-4542c06a5843?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
-      videoUrl: "#",
-      selected: true,
-    },
-    {
-      id: 2,
-      name: "Child's Pose",
-      category: "Stretching",
-      description:
-        "Relaxes the lower back and promotes flexibility in the hips. Kneel with toes together, sit back on your heels, and stretch arms forward while lowering your forehead to the floor.",
-      recommendedReps: 3,
-      customReps: 3,
-      imageUrl:
-        "https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
-      videoUrl: "#",
-      selected: true,
-    },
-    {
-      id: 3,
-      name: "Bird Dog (each side)",
-      category: "Strengthening",
-      description:
-        "Builds core stability and strengthens back muscles. Start on hands and knees, extend opposite arm and leg simultaneously while maintaining a stable core.",
-      recommendedReps: 8,
-      customReps: 8,
-      imageUrl:
-        "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
-      videoUrl: "#",
-      selected: true,
-    },
-  ],
-};
+// const mockGoalData = {
+//   id: 1,
+//   type: "Back Pain",
+//   painLevel: 6,
+//   painPattern: "Morning stiffness and pain after sitting",
+//   painTriggers: ["Prolonged sitting", "Heavy lifting"],
+//   schedule: {
+//     morning: true,
+//     afternoon: false,
+//     evening: true,
+//   },
+//   duration: 30,
+//   startDate: new Date(),
+//   selectedExercises: [
+//     {
+//       id: 1,
+//       name: "Cat-Cow Stretch",
+//       category: "Stretching",
+//       description:
+//         "Gentle movement that loosens the back and warms up the spine. Start on your hands and knees. Alternate between arching your back upward (cat) and letting it sag while lifting your head (cow).",
+//       recommendedReps: 10,
+//       customReps: 10,
+//       imageUrl:
+//         "https://images.unsplash.com/photo-1518495973542-4542c06a5843?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
+//       videoUrl: "#",
+//       selected: true,
+//     },
+//     {
+//       id: 2,
+//       name: "Child's Pose",
+//       category: "Stretching",
+//       description:
+//         "Relaxes the lower back and promotes flexibility in the hips. Kneel with toes together, sit back on your heels, and stretch arms forward while lowering your forehead to the floor.",
+//       recommendedReps: 3,
+//       customReps: 3,
+//       imageUrl:
+//         "https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
+//       videoUrl: "#",
+//       selected: true,
+//     },
+//     {
+//       id: 3,
+//       name: "Bird Dog (each side)",
+//       category: "Strengthening",
+//       description:
+//         "Builds core stability and strengthens back muscles. Start on hands and knees, extend opposite arm and leg simultaneously while maintaining a stable core.",
+//       recommendedReps: 8,
+//       customReps: 8,
+//       imageUrl:
+//         "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
+//       videoUrl: "#",
+//       selected: true,
+//     },
+//   ],
+// };
 
 const GoalDetail = () => {
   const navigate = useNavigate();
@@ -78,6 +81,12 @@ const GoalDetail = () => {
   const [currentPainLevel, setCurrentPainLevel] = useState<number>(0);
   const [showPainUpdate, setShowPainUpdate] = useState<boolean>(false);
   const [goalData, setGoalData] = useState<any>(null);
+
+  const { data: userGoalActivityData } = useUserGoalActivity({
+    date: getFormattedDateYMD(),
+    user_goal_id: goalData?.userGoalId,
+    type: "exercise_status",
+  });
 
   const { data, mutate: saveUserGoalActivityMutate } =
     useSaveUserGoalActivity();
@@ -90,9 +99,21 @@ const GoalDetail = () => {
     }
   }, [location]);
 
+  useEffect(() => {
+    if (userGoalActivityData) {
+      const c = userGoalActivityData?.map((g) => {
+        return g?.userActivity?.exercise_id;
+      });
+      setCompletedExercises(c);
+    }
+  }, [userGoalActivityData]);
+
   const handleMarkComplete = (exerciseId: number) => {
     saveUserGoalActivityMutate({
-      goals_id: exerciseId,
+      goals_id: goalData?.goalsId,
+      exercise_id: exerciseId,
+      type: "exercise_status",
+      user_goal_id: goalData?.userGoalId,
       user_action: {
         goal_completed: true,
       },
@@ -112,6 +133,17 @@ const GoalDetail = () => {
   };
 
   const handlePainLevelChange = (level: number) => {
+    saveUserGoalActivityMutate({
+      goals_id: goalData?.goalsId,
+      user_goal_id: goalData?.userGoalId,
+      type: "pain_level",
+      value: level,
+      // user_action: {
+      //   goal_completed: true,
+      // },
+      date: getFormattedDateYMD(),
+    });
+
     setCurrentPainLevel(level);
     setShowPainUpdate(false);
     toast({
@@ -120,9 +152,13 @@ const GoalDetail = () => {
     });
   };
 
-  const completionPercentage = Math.round(
-    (completedExercises.length / mockGoalData.selectedExercises.length) * 100
-  );
+  const completionPercentage =
+    completedExercises?.length > 0
+      ? Math.round(
+          (completedExercises?.length / goalData?.exercise_selection?.length) *
+            100
+        )
+      : 0;
 
   const startDate = new Date(goalData?.created_local_time);
   const now = new Date();
@@ -132,14 +168,6 @@ const GoalDetail = () => {
     goalData?.schedule?.program_duration_in_days,
     Math.max(1, Math.floor((now.getTime() - startDate.getTime()) / msInDay) + 1)
   );
-
-  console.log(currentDay);
-
-  let exg = [];
-
-  if (goalData) {
-    exg = [goalData.exercise_selection];
-  }
 
   return (
     <Layout>
@@ -155,7 +183,8 @@ const GoalDetail = () => {
           </Button>
 
           <h1 className="text-2xl font-bold">
-            {goalData?.exercise_selection?.exercise_name} Management Program
+            {/* {goalData?.exercise_selection} Management Program */}
+            Management Program
           </h1>
           <div className="flex items-center mt-2 text-sm text-gray-500">
             <Calendar className="h-4 w-4 mr-1.5" />
@@ -178,8 +207,8 @@ const GoalDetail = () => {
             <div className="flex justify-between text-sm mt-1">
               <span>Today's exercises: {completionPercentage}% complete</span>
               <span>
-                {completedExercises.length} of{" "}
-                {mockGoalData.selectedExercises.length} completed
+                {completedExercises?.length} of{" "}
+                {goalData?.exercise_selection?.length} completed
               </span>
             </div>
             <Progress value={completionPercentage} className="h-1 mt-2" />
@@ -262,8 +291,7 @@ const GoalDetail = () => {
         <div className="mb-6">
           <h2 className="text-xl font-semibold mb-4">Today's Exercises</h2>
           <ExerciseList
-            // exercises={mockGoalData.selectedExercises}
-            exercises={exg}
+            exercises={goalData?.exercise_selection}
             onMarkComplete={handleMarkComplete}
             completedExercises={completedExercises}
           />
@@ -285,7 +313,7 @@ const GoalDetail = () => {
             <div>
               <h3 className="text-sm font-medium">Triggers</h3>
               <div className="flex flex-wrap gap-2 mt-1">
-                {/* {goalData?.pain_assessment?.pain_triggers.map(
+                {goalData?.pain_assessment?.pain_triggers.map(
                   (trigger, index) => (
                     <div
                       key={index}
@@ -294,10 +322,7 @@ const GoalDetail = () => {
                       {trigger}
                     </div>
                   )
-                )} */}
-                <p className="text-gray-600">
-                  {goalData?.pain_assessment?.pain_triggers}
-                </p>
+                )}
               </div>
             </div>
           </CardContent>

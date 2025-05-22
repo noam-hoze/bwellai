@@ -16,7 +16,7 @@ interface ExerciseListProps {
 const ExerciseList = ({
   exercises,
   onMarkComplete,
-  completedExercises = [],
+  completedExercises,
   showCompleteButtons = true,
 }: ExerciseListProps) => {
   const [selectedExercise, setSelectedExercise] = useState<Exercise | null>(
@@ -40,19 +40,18 @@ const ExerciseList = ({
   };
 
   const isExerciseCompleted = (exerciseId: number) => {
-    return completedExercises.includes(exerciseId);
+    return completedExercises?.includes(exerciseId);
   };
 
   return (
     <>
       <div className="space-y-4">
-        {exercises.map((exercise) => {
-          // const isCompleted = isExerciseCompleted(exercise.id);
-          const isCompleted = false;
+        {exercises?.map((exercise) => {
+          const isCompleted = isExerciseCompleted(exercise?.exercise_id);
 
           return (
             <Card
-              key={exercise.id}
+              key={exercise?.id}
               className={cn(
                 "overflow-hidden transition-colors",
                 isCompleted ? "bg-green-50 border-green-100" : "bg-gray-50"
@@ -65,10 +64,10 @@ const ExerciseList = ({
                   )}
                   <div>
                     <div className="flex items-center">
-                      <h3 className="font-medium">{exercise.exercise_name}</h3>
+                      <h3 className="font-medium">{exercise?.exercise_name}</h3>
                     </div>
                     <p className="text-sm text-gray-500 mt-1">
-                      {exercise.entity_value} repetitions • {exercise.entity}
+                      {exercise?.entity_value} repetitions • {exercise?.entity}
                     </p>
                   </div>
                 </div>
@@ -88,7 +87,7 @@ const ExerciseList = ({
                     <Button
                       size="sm"
                       className="text-xs"
-                      onClick={() => handleMarkComplete(exercise.id)}
+                      onClick={() => handleMarkComplete(exercise?.exercise_id)}
                     >
                       <CircleCheck className="h-3 w-3 mr-1" />
                       Mark Complete
@@ -107,7 +106,7 @@ const ExerciseList = ({
         exercise={selectedExercise}
         onMarkComplete={showCompleteButtons ? handleMarkComplete : undefined}
         isCompleted={
-          selectedExercise ? isExerciseCompleted(selectedExercise.id) : false
+          selectedExercise ? isExerciseCompleted(selectedExercise?.id) : false
         }
       />
     </>
