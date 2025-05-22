@@ -417,3 +417,13 @@ export function calcAngle({ h, m }: { h: number; m: number }): number {
 
   return angle;
 }
+
+export const capitalizeText = (text: string, separator: string) => {
+  const textArray = text?.split(separator);
+  const fixTextArray = textArray?.map((text) => {
+    return (
+      text?.[0]?.toUpperCase() + text?.slice(1, text?.length)?.toLowerCase()
+    );
+  });
+  return fixTextArray?.join(" ");
+};
