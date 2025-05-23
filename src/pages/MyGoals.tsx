@@ -42,7 +42,7 @@ const MyGoals = () => {
   ];
 
   const getGoalName = (goalId: number) => {
-    const goal = userGoalDetails?.filter((g) => g.id === goalId);
+    const goal = userGoalDetails?.filter((g) => g?.id === goalId);
     return {
       name: goal?.[0]?.name,
     };
@@ -93,7 +93,7 @@ const MyGoals = () => {
               );
 
               return (
-                <Card key={goal.id} className="overflow-hidden">
+                <Card key={goal?.id} className="overflow-hidden">
                   <CardHeader className="bg-gradient-to-r from-wellness-light-green to-blue-50">
                     <CardTitle className="text-xl font-semibold text-wellness-bright-green">
                       {getGoalName(goal?.goalsId)?.name}
@@ -116,7 +116,7 @@ const MyGoals = () => {
                           <div>
                             <p className="text-sm font-medium">Duration</p>
                             <p className="text-xs text-gray-500">
-                              {formatDateToString(goal.created_local_time)} -{" "}
+                              {formatDateToString(goal?.created_local_time)} -{" "}
                               {formatDateToString(endDate)}
                             </p>
                           </div>
@@ -128,8 +128,9 @@ const MyGoals = () => {
                             <p className="text-sm font-medium">Pain Level</p>
                             <p className="text-xs text-gray-500">
                               Initial:{" "}
-                              {goal?.pain_assessment?.current_pain_level}/10 →
-                              Current: {goal.currentPainLevel}/10
+                              {goal?.pain_assessment?.initial_pain_level}/10 →
+                              Current:{" "}
+                              {goal?.pain_assessment?.current_pain_level}/10
                             </p>
                           </div>
                         </div>
