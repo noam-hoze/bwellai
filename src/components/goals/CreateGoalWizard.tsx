@@ -157,8 +157,6 @@ const CreateGoalWizard = ({
       pre_time.push("EVENING");
     }
 
-    console.log(goalData);
-
     saveUserGoalMutate({
       goals_id: goalData?.goalId,
       pain_assessment: {
@@ -181,17 +179,16 @@ const CreateGoalWizard = ({
       },
       status: "ACTIVE",
     });
-
-    toast({
-      title: "Goal Created Successfully",
-      description: `Your ${goalData.name} has been created`,
-    });
-    onClose();
   };
 
   useEffect(() => {
     if (saveUserGoalIsSuccess) {
       savedUserGoalRefetch();
+      toast({
+        title: "Goal Created Successfully",
+        description: `Your ${goalData.name} has been created`,
+      });
+      onClose();
     }
   }, [saveUserGoalIsSuccess]);
 

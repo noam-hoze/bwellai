@@ -1,7 +1,11 @@
-
 import React from "react";
 import { Exercise } from "./CreateGoalWizard";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Video, ArrowLeft, ArrowRight, CircleCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -13,18 +17,18 @@ interface ExerciseDetailsModalProps {
   isCompleted?: boolean;
 }
 
-const ExerciseDetailsModal = ({ 
-  isOpen, 
-  onClose, 
-  exercise, 
+const ExerciseDetailsModal = ({
+  isOpen,
+  onClose,
+  exercise,
   onMarkComplete,
-  isCompleted = false
+  isCompleted = false,
 }: ExerciseDetailsModalProps) => {
   if (!exercise) return null;
 
   const handleComplete = () => {
     if (onMarkComplete) {
-      onMarkComplete(exercise.id);
+      onMarkComplete(exercise?.id);
       onClose();
     }
   };
@@ -34,16 +38,16 @@ const ExerciseDetailsModal = ({
       <DialogContent className="sm:max-w-lg p-0">
         <DialogHeader className="p-6 bg-gradient-to-r from-wellness-light-green to-blue-50 border-b">
           <DialogTitle className="text-xl font-semibold text-wellness-bright-green">
-            {exercise.name}
+            {exercise?.name}
           </DialogTitle>
         </DialogHeader>
 
         <div className="p-6 space-y-6">
           {/* Exercise Video/Image Preview */}
           <div className="aspect-video bg-gray-100 rounded-lg overflow-hidden">
-            <div 
+            <div
               className="w-full h-full bg-cover bg-center flex items-center justify-center"
-              style={{ backgroundImage: `url(${exercise.imageUrl})` }}
+              style={{ backgroundImage: `url(${exercise?.imageUrl})` }}
             >
               <Video className="h-12 w-12 text-white bg-black/50 p-2 rounded-full" />
             </div>
@@ -53,26 +57,28 @@ const ExerciseDetailsModal = ({
           <div className="space-y-4">
             <div>
               <h3 className="font-semibold text-lg">Instructions</h3>
-              <p className="text-gray-600 mt-1">{exercise.description}</p>
+              <p className="text-gray-600 mt-1">{exercise?.description}</p>
             </div>
 
             <div>
               <h3 className="font-semibold">Repetitions</h3>
               <p className="text-gray-600 mt-1">
-                {exercise.customReps} repetitions
-                {exercise.name.toLowerCase().includes("each side") && 
-                  ` (${Math.floor(exercise.customReps/2)} each side)`}
+                {exercise?.customReps} repetitions
+                {exercise?.name?.toLowerCase()?.includes("each side") &&
+                  ` (${Math.floor(exercise?.customReps / 2)} each side)`}
               </p>
             </div>
 
             <div>
               <h3 className="font-semibold">Category</h3>
-              <p className="text-gray-600 mt-1">{exercise.category}</p>
+              <p className="text-gray-600 mt-1">{exercise?.category}</p>
             </div>
 
             {/* Tips */}
             <div className="bg-wellness-light-green p-4 rounded-lg">
-              <h3 className="font-semibold text-wellness-bright-green">Tips for Best Results</h3>
+              <h3 className="font-semibold text-wellness-bright-green">
+                Tips for Best Results
+              </h3>
               <ul className="text-sm mt-2 space-y-1 text-gray-700">
                 <li>• Focus on proper form rather than speed</li>
                 <li>• Breathe naturally throughout the exercise</li>
@@ -90,7 +96,10 @@ const ExerciseDetailsModal = ({
                 Mark Complete
               </Button>
             ) : isCompleted ? (
-              <Button disabled className="flex-1 bg-green-100 text-green-700 hover:bg-green-100">
+              <Button
+                disabled
+                className="flex-1 bg-green-100 text-green-700 hover:bg-green-100"
+              >
                 <CircleCheck className="mr-2 h-4 w-4" />
                 Completed
               </Button>

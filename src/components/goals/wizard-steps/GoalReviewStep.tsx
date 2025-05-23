@@ -1,9 +1,9 @@
-
 import React from "react";
 import { GoalData } from "../CreateGoalWizard";
 import { Separator } from "@/components/ui/separator";
 import { Check, Clock, Calendar } from "lucide-react";
 import { format, addDays } from "date-fns";
+import { capitalizeText } from "@/utils/utils";
 
 interface GoalReviewStepProps {
   goalData: GoalData;
@@ -21,7 +21,7 @@ const GoalReviewStep = ({ goalData }: GoalReviewStepProps) => {
 
   const startDate = new Date();
   const endDate = addDays(startDate, goalData.duration);
-  
+
   // Helper function to format a date to a readable string
   const formatDateToString = (date: Date) => {
     return format(date, "MMM d, yyyy");
@@ -30,7 +30,9 @@ const GoalReviewStep = ({ goalData }: GoalReviewStepProps) => {
   return (
     <div className="space-y-6">
       <div>
-        <h3 className="text-xl font-semibold mb-2">{goalData.type} Management Goal</h3>
+        <h3 className="text-xl font-semibold mb-2">
+          {capitalizeText(goalData.type, "_")} Management Goal
+        </h3>
         <p className="text-sm text-gray-600">
           Please review your goal details below before creating it.
         </p>
@@ -56,12 +58,17 @@ const GoalReviewStep = ({ goalData }: GoalReviewStepProps) => {
         <div className="flex flex-wrap gap-2">
           {goalData.painTriggers.length > 0 ? (
             goalData.painTriggers.map((trigger) => (
-              <div key={trigger} className="bg-gray-100 px-3 py-1 rounded-full text-sm">
+              <div
+                key={trigger}
+                className="bg-gray-100 px-3 py-1 rounded-full text-sm"
+              >
                 {trigger}
               </div>
             ))
           ) : (
-            <p className="text-sm text-gray-500">No specific triggers selected</p>
+            <p className="text-sm text-gray-500">
+              No specific triggers selected
+            </p>
           )}
         </div>
       </div>
@@ -70,14 +77,21 @@ const GoalReviewStep = ({ goalData }: GoalReviewStepProps) => {
 
       <div>
         <div className="flex justify-between items-center mb-2">
-          <h4 className="font-medium">Selected Exercises ({goalData.selectedExercises.length})</h4>
+          <h4 className="font-medium">
+            Selected Exercises ({goalData.selectedExercises.length})
+          </h4>
         </div>
         <div className="space-y-3">
           {goalData.selectedExercises.map((exercise) => (
-            <div key={exercise.id} className="flex items-center justify-between bg-gray-50 p-3 rounded">
+            <div
+              key={exercise.id}
+              className="flex items-center justify-between bg-gray-50 p-3 rounded"
+            >
               <div>
                 <p className="font-medium">{exercise.name}</p>
-                <p className="text-xs text-gray-500">{exercise.category} • {exercise.customReps} repetitions</p>
+                <p className="text-xs text-gray-500">
+                  {exercise.category} • {exercise.customReps} repetitions
+                </p>
               </div>
               <Check className="h-4 w-4 text-wellness-bright-green" />
             </div>
@@ -101,7 +115,9 @@ const GoalReviewStep = ({ goalData }: GoalReviewStepProps) => {
             <p className="text-sm font-medium">Goal Duration</p>
             <p className="text-sm text-gray-600">
               {formatDateToString(startDate)} - {formatDateToString(endDate)}
-              <span className="block text-xs text-gray-500">({goalData.duration} days)</span>
+              <span className="block text-xs text-gray-500">
+                ({goalData.duration} days)
+              </span>
             </p>
           </div>
         </div>
@@ -110,9 +126,16 @@ const GoalReviewStep = ({ goalData }: GoalReviewStepProps) => {
       <div className="bg-wellness-light-green p-4 rounded-lg">
         <h4 className="font-medium text-wellness-bright-green">Goal Summary</h4>
         <p className="mt-1 text-sm">
-          This {goalData.type.toLowerCase()} management goal will help you reduce pain through
-          guided exercises. You'll track your progress daily for {goalData.duration} days and should start seeing results within 
-          {goalData.duration <= 14 ? " 1-2 weeks" : goalData.duration <= 30 ? " 2-4 weeks" : " 4-8 weeks"}.
+          This {capitalizeText(goalData.type, "_")} management goal will help
+          you reduce pain through guided exercises. You'll track your progress
+          daily for {goalData.duration} days and should start seeing results
+          within
+          {goalData.duration <= 14
+            ? " 1-2 weeks"
+            : goalData.duration <= 30
+            ? " 2-4 weeks"
+            : " 4-8 weeks"}
+          .
         </p>
       </div>
     </div>
