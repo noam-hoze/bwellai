@@ -17,11 +17,11 @@ interface ExerciseSelectionStepProps {
 
 // Sample exercise data - in a real app, this might come from an API based on the selected pain type
 const exercisesByCategory = {
-  Stretching: [
+  Stabilization: [
     {
       id: 1,
       name: "Cat-Cow Stretch",
-      category: "Stretching",
+      category: "Stabilization",
       description:
         "Gentle movement that loosens the back and warms up the spine",
       recommendedReps: 10,
@@ -34,7 +34,7 @@ const exercisesByCategory = {
     {
       id: 2,
       name: "Child's Pose",
-      category: "Stretching",
+      category: "Stabilization",
       description:
         "Relaxes the lower back and promotes flexibility in the hips",
       recommendedReps: 3,
@@ -105,7 +105,7 @@ const ExerciseSelectionStep = ({
   updateGoalData,
   userGoalExerciseDetailsData,
 }: ExerciseSelectionStepProps) => {
-  const [activeTab, setActiveTab] = useState<string>("Stretching");
+  const [activeTab, setActiveTab] = useState<string>("Stabilization");
   const [videoPreviewExercise, setVideoPreviewExercise] =
     useState<Exercise | null>(null);
 
