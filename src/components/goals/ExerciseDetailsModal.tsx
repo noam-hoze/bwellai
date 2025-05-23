@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button";
 interface ExerciseDetailsModalProps {
   isOpen: boolean;
   onClose: () => void;
-  exercise: Exercise | null;
+  exercise: any;
   onMarkComplete?: (exerciseId: number) => void;
   isCompleted?: boolean;
 }
@@ -38,7 +38,7 @@ const ExerciseDetailsModal = ({
       <DialogContent className="sm:max-w-lg p-0">
         <DialogHeader className="p-6 bg-gradient-to-r from-wellness-light-green to-blue-50 border-b">
           <DialogTitle className="text-xl font-semibold text-wellness-bright-green">
-            {exercise?.name}
+            {exercise?.exercise_name}
           </DialogTitle>
         </DialogHeader>
 
@@ -63,15 +63,17 @@ const ExerciseDetailsModal = ({
             <div>
               <h3 className="font-semibold">Repetitions</h3>
               <p className="text-gray-600 mt-1">
-                {exercise?.customReps} repetitions
-                {exercise?.name?.toLowerCase()?.includes("each side") &&
-                  ` (${Math.floor(exercise?.customReps / 2)} each side)`}
+                {exercise?.entity_value} repetitions
+                {exercise?.exercise_name
+                  ?.toLowerCase()
+                  ?.includes("each side") &&
+                  ` (${Math.floor(exercise?.entity_value / 2)} each side)`}
               </p>
             </div>
 
             <div>
               <h3 className="font-semibold">Category</h3>
-              <p className="text-gray-600 mt-1">{exercise?.category}</p>
+              <p className="text-gray-600 mt-1">{exercise?.entity}</p>
             </div>
 
             {/* Tips */}
