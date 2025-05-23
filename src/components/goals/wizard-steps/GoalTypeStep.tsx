@@ -16,18 +16,38 @@ const GoalTypeStep = ({
   updateGoalData,
 }: GoalTypeStepProps) => {
   const imageObj = {
-    back_pain: {
+    neck: {
       image:
-        "https://images.unsplash.com/photo-1518495973542-4542c06a5843?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
+        "/images/goals/neck.png",
     },
-    neck_pain: {
+    upper_back: {
       image:
-        "https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
+        "/images/goals/upper_back.png",
     },
-    shoulder_pain: {
+    lower_back: {
       image:
-        "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
+        "/images/goals/lower_back.png",
     },
+    pelvis : {
+      image:
+        "/images/goals/pelvis.png",
+    },
+    hip: {
+      image:
+        "/images/goals/hip.png",
+    },
+    knee: {
+      image:
+        "/images/goals/knee.png",
+    },
+    ankle_foot: {
+      image:
+        "/images/goals/ankle_foot.png",
+    },
+    shoulder: {
+      image:
+        "/images/goals/shoulder.png",
+    }
   };
   const goalTypes = [
     {
