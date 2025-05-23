@@ -163,6 +163,7 @@ const CreateGoalWizard = ({
       goals_id: goalData?.goalId,
       pain_assessment: {
         current_pain_level: goalData?.painLevel,
+        initial_pain_level: goalData?.painLevel,
         pain_pattern: goalData?.painPattern,
         pain_triggers: goalData?.painTriggers,
       },

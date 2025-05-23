@@ -122,7 +122,9 @@ const GoalDetail = () => {
 
   useEffect(() => {
     if (userGoalActivityPainData) {
-      setCurrentPainLevel(userGoalActivityPainData?.[0]?.userActivity?.value);
+      setCurrentPainLevel(
+        userGoalActivityPainData?.[0]?.userActivity?.current_pain_level
+      );
     }
   }, [userGoalActivityPainData]);
 
@@ -162,7 +164,7 @@ const GoalDetail = () => {
       goals_id: goalData?.goalsId,
       user_goal_id: goalData?.userGoalId,
       type: "pain_level",
-      value: level,
+      current_pain_level: level,
       // user_action: {
       //   goal_completed: true,
       // },
