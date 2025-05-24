@@ -173,13 +173,13 @@ const ExerciseSelectionStep = ({
           ([category, exercises]) => (
             <TabsContent key={category} value={category} className="pt-4">
               <div className="grid gap-4 md:grid-cols-2">
-                {exercises.map((exercise, index) => (
+                {exercises?.map((exercise, index) => (
                   <Card key={exercise.id} className="overflow-hidden">
                     <div
                       className="h-32 bg-cover bg-center relative"
                       style={{
                         backgroundImage: `url(${
-                          exercisesByCategory?.[exercise?.name]?.[index]
+                          exercisesByCategory?.[exercise?.label]?.[index]
                             ?.imageUrl
                         })`,
                       }}
@@ -209,7 +209,7 @@ const ExerciseSelectionStep = ({
                               htmlFor={`exercise-${exercise.id}`}
                               className="font-medium cursor-pointer"
                             >
-                              {exercise.label}
+                              {exercise?.name}
                             </label>
                           </div>
                           <p className="text-sm text-gray-600 mt-1">
@@ -243,7 +243,7 @@ const ExerciseSelectionStep = ({
                               className="h-7 w-14 text-center mx-1 p-0"
                               value={
                                 getCustomReps(exercise.id) ||
-                                exercisesByCategory?.[exercise?.name]?.[index]
+                                exercisesByCategory?.[exercise?.label]?.[index]
                                   ?.recommendedReps
                               }
                               onChange={(e) =>
@@ -290,7 +290,7 @@ const ExerciseSelectionStep = ({
               <div className="text-center">
                 <Play className="h-12 w-12 mx-auto text-wellness-bright-green mb-2" />
                 <p className="text-sm text-gray-600">
-                  Video preview for {videoPreviewExercise.label}
+                  Video preview for {videoPreviewExercise.name}
                 </p>
                 <p className="text-xs text-gray-400 mt-1">
                   (In a real application, this would play the actual exercise
