@@ -168,8 +168,8 @@ const CreateGoalWizard = ({
       exercise_selection: goalData?.selectedExercises?.map((g) => {
         return {
           exercise_id: g?.id,
-          exercise_name: g?.label,
-          entity: g?.name,
+          exercise_name: g?.name,
+          entity: g?.label,
           entity_value: g?.customReps,
         };
       }),
