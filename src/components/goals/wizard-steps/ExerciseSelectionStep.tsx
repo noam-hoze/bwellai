@@ -105,7 +105,7 @@ const ExerciseSelectionStep = ({
   updateGoalData,
   userGoalExerciseDetailsData,
 }: ExerciseSelectionStepProps) => {
-  const [activeTab, setActiveTab] = useState<string>("Stabilization");
+  const [activeTab, setActiveTab] = useState<string>("Strengthening");
   const [videoPreviewExercise, setVideoPreviewExercise] =
     useState<Exercise | null>(null);
 
@@ -151,6 +151,8 @@ const ExerciseSelectionStep = ({
     setVideoPreviewExercise(exercise);
   };
 
+  console.log(userGoalExerciseDetailsData);
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -162,19 +164,19 @@ const ExerciseSelectionStep = ({
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="grid w-full grid-cols-3">
-          {Object.keys(exercisesByCategory).map((category) => (
+          {Object.keys(userGoalExerciseDetailsData)?.map((category) => (
             <TabsTrigger key={category} value={category}>
               {category}
             </TabsTrigger>
           ))}
         </TabsList>
 
-        {Object.entries(userGoalExerciseDetailsData).map(
+        {Object.entries(userGoalExerciseDetailsData)?.map(
           ([category, exercises]) => (
             <TabsContent key={category} value={category} className="pt-4">
               <div className="grid gap-4 md:grid-cols-2">
                 {exercises?.map((exercise, index) => (
-                  <Card key={exercise.id} className="overflow-hidden">
+                  <Card key={exercise?.id} className="overflow-hidden">
                     <div
                       className="h-32 bg-cover bg-center relative"
                       style={{
@@ -199,26 +201,26 @@ const ExerciseSelectionStep = ({
                         <div>
                           <div className="flex items-center space-x-2">
                             <Checkbox
-                              id={`exercise-${exercise.id}`}
-                              checked={isExerciseSelected(exercise.id)}
+                              id={`exercise-${exercise?.id}`}
+                              checked={isExerciseSelected(exercise?.id)}
                               onCheckedChange={() =>
                                 toggleExerciseSelection(exercise)
                               }
                             />
                             <label
-                              htmlFor={`exercise-${exercise.id}`}
+                              htmlFor={`exercise-${exercise?.id}`}
                               className="font-medium cursor-pointer"
                             >
                               {exercise?.name}
                             </label>
                           </div>
                           <p className="text-sm text-gray-600 mt-1">
-                            {exercise.description}
+                            {exercise?.description}
                           </p>
                         </div>
                       </div>
 
-                      {isExerciseSelected(exercise.id) && (
+                      {isExerciseSelected(exercise?.id) && (
                         <div className="mt-3 flex items-center">
                           <label className="text-sm mr-2">Repetitions:</label>
                           <div className="flex items-center">
@@ -227,10 +229,10 @@ const ExerciseSelectionStep = ({
                               size="sm"
                               className="h-7 w-7 p-0 rounded-full"
                               onClick={() => {
-                                const currentReps = getCustomReps(exercise.id);
+                                const currentReps = getCustomReps(exercise?.id);
                                 if (currentReps > 1) {
                                   updateExerciseReps(
-                                    exercise.id,
+                                    exercise?.id,
                                     currentReps - 1
                                   );
                                 }
