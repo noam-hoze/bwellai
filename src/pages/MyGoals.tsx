@@ -141,7 +141,7 @@ const MyGoals = () => {
                         className="w-full flex justify-between"
                         onClick={() =>
                           navigate(`/goal-detail/${goal.id}`, {
-                            state: { goal },
+                            state: { goal: { ...goal, name: getGoalName(goal?.goalsId)?.name } },
                           })
                         }
                       >

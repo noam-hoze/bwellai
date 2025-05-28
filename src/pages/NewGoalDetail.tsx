@@ -130,8 +130,7 @@ const NewGoalDetail = () => {
       }
     }, [location]);
 
-    console.log("goalDuration:", goalDuration);
-    console.log("End date calculated:", programEndDate);
+    console.log("goalData", goalData);
 
     if(!goalData) {
       return <div className="text-center text-gray-500">Loading goal data...</div>;
@@ -142,7 +141,7 @@ const NewGoalDetail = () => {
       <div className="container max-w-4xl mx-auto px-4 py-6">
         {/* Header */}
         <GoalHeader 
-          goalType={mockGoalData.type} //change
+          goalType={goalData.name}
           startDate={goalData.created_local_time}
           endDate={programEndDate}
           completionPercentage={completionPercentage}//change
