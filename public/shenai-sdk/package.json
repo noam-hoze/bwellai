@@ -1,6 +1,6 @@
 {
   "name": "shenai-sdk",
-  "version": "2.6.3",
+  "version": "2.7.3",
   "description": "Shen.ai Web SDK",
   "module": "index.mjs",
   "types": "index.d.ts",
