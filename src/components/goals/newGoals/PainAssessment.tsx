@@ -1,25 +1,44 @@
 
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { useSaveUserGoalActivity } from "@/service/hooks/goal/useGetGoal";
+import {  getFormattedDateYMD } from "@/utils/utils";
+
 
 interface PainAssessmentProps {
   currentPainLevel: number;
   dayNumber: number;
   isToday: boolean;
+  goalData: {
+    goalsId: string;
+    userGoalId: string;
+  };
   onUpdatePain: (level: number) => void;
 }
-
+  
 const PainAssessment = ({
   currentPainLevel,
   dayNumber,
   isToday,
+  goalData,
   onUpdatePain
 }: PainAssessmentProps) => {
   const [showPainUpdate, setShowPainUpdate] = useState<boolean>(false);
+
+    const {
+    mutate: saveUserGoalActivityMutate,
+  } = useSaveUserGoalActivity();
   
   const handlePainLevelChange = (level: number) => {
     onUpdatePain(level);
     setShowPainUpdate(false);
+    saveUserGoalActivityMutate({
+          goals_id: goalData?.goalsId,
+          user_goal_id: goalData?.userGoalId,
+          type: "pain_level",
+          current_pain_level: level,
+          date: getFormattedDateYMD(),
+        });
   };
   
   const getPainEmoji = (level: number) => {

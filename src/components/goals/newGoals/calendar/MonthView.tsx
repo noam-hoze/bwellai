@@ -1,19 +1,20 @@
 
-import React from "react";
+import React, {useCallback} from "react";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight, CircleCheck } from "lucide-react";
-import { getDate } from "date-fns";
+import { getDate, isToday, isSameDay, isAfter, isBefore } from "date-fns";
 import { cn } from "@/lib/utils";
 import { generateMonthGrid, formatMonthYear } from "@/utils/dateUtils";
 
 interface MonthViewProps {
   currentMonthDate: Date;
-  currentDay: number;
-  setCurrentDay: (day: number) => void;
+  currentDay: Date;
+  setCurrentDay: (day: Date) => void;
   goToPreviousMonth: () => void;
   goToNextMonth: () => void;
-  hasCompletedExercises: (day: number) => boolean;
-  isToday: (day: number) => boolean;
+  hasCompletedExercises: (day: Date) => boolean;
+  programStartDate: Date;
+  programEndDate: Date;
 }
 
 const MonthView = ({
@@ -23,10 +24,23 @@ const MonthView = ({
   goToPreviousMonth,
   goToNextMonth,
   hasCompletedExercises,
-  isToday
+  programStartDate,
+  programEndDate
 }: MonthViewProps) => {
   const monthGrid = generateMonthGrid(currentMonthDate);
   const monthRangeDisplay = formatMonthYear(currentMonthDate);
+
+  const isInProgramRange = useCallback((day: Date) => {
+      return (isSameDay(day, programStartDate) || isAfter(day, programStartDate)) && (isBefore(day, programEndDate) || isSameDay(day, programEndDate));
+    }, [programStartDate, programEndDate]);
+  
+    const selectDayHandler = useCallback((day: Date) => {
+      const inProgramRange = isInProgramRange(day);
+      if (!inProgramRange) {
+        return; // Do not change if the same day is clicked
+      }
+      setCurrentDay(day);
+    }, [isInProgramRange]);
 
   return (
     <>
@@ -64,11 +78,10 @@ const MonthView = ({
           <div key={weekIndex} className="grid grid-cols-7 gap-1 mb-1">
             {week.map((day, dayIndex) => {
               if (!day) return <div key={dayIndex} className="p-2"></div>;
-              
-              const dayNumber = getDate(day);
-              const isDayToday = isToday(dayNumber);
-              const isSelected = dayNumber === currentDay;
-              const hasCompleted = hasCompletedExercises(dayNumber);
+              const isDayToday = isToday(day);
+              const isSelected = isSameDay(day, currentDay);
+              const hasCompleted = hasCompletedExercises(day);
+              const inProgramRange = isInProgramRange(day); // Check if the day is within the program range
               
               return (
                 <div
@@ -76,16 +89,17 @@ const MonthView = ({
                   className={cn(
                     "flex flex-col items-center p-2 rounded-lg cursor-pointer text-center h-16",
                     isSelected ? 'border-2 border-green-500 bg-green-50' : 'hover:bg-gray-50',
-                    isDayToday ? 'bg-green-100' : ''
+                    isDayToday ? 'bg-green-100' : '',
+                    inProgramRange ? "cursor-pointer" : "opacity-50 cursor-not-allowed bg-gray-100",
                   )}
-                  onClick={() => setCurrentDay(dayNumber)}
+                  onClick={() => selectDayHandler(day)}
                 >
                   <div className={cn(
                     "text-lg",
                     isSelected ? 'text-green-600' : '',
                     isDayToday ? 'font-bold' : ''
                   )}>
-                    {dayNumber}
+                    {day.getDate()}
                   </div>
                   {isDayToday && <div className="text-xs">•</div>}
                   {hasCompleted && (

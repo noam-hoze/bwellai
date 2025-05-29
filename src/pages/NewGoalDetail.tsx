@@ -1,11 +1,11 @@
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import Layout from "@/components/layout/Layout";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import CreateGoalWizard from "@/components/goals/CreateGoalWizard";
 import { Exercise } from "@/components/goals/CreateGoalWizard";
-import { addDays, set, differenceInDays } from "date-fns";
+import { addDays, set, differenceInDays, isSameDay, startOfDay } from "date-fns";
 
 // Import mock data
 import { 
@@ -31,7 +31,7 @@ import { useLocation } from "react-router-dom";
 const NewGoalDetail = () => {
   const [goalData, setGoalData] = useState<any>(null);
   // Lovable start
-  const [currentDay, setCurrentDay] = useState<number>(8);
+  const [currentDay, setCurrentDay] = useState<Date>(new Date());
   const [currentView, setCurrentView] = useState<"calendar" | "progress">("calendar");
   const [calendarView, setCalendarView] = useState<"week" | "month">("week");
   const [exercises, setExercises] = useState<Exercise[]>(mockGoalData.selectedExercises);
@@ -42,25 +42,19 @@ const NewGoalDetail = () => {
   const [difficultyRatings, setDifficultyRatings] = useState(initialDifficultyRatings);
   const [isRatingDialogOpen, setIsRatingDialogOpen] = useState<boolean>(false);
   const [exerciseToRate, setExerciseToRate] = useState<Exercise | null>(null);
-  const [currentPainLevel, setCurrentPainLevel] = useState<number>(5); // Starting at 5/10
   const [isEditDialogOpen, setIsEditDialogOpen] = useState<boolean>(false);
 
   // Calculate completion percentage for the current day
-  const dayCompletedExercises = completedExercises[currentDay] || [];
+  const dayCompletedExercises = [];
   const completionPercentage = exercises.length > 0
     ? Math.round((dayCompletedExercises.length / exercises.length) * 100)
-    : 0;
-
-  // Calculate pain reduction - assuming initial pain level was mockGoalData.painLevel (6)
-  const painReduction = mockGoalData.painLevel > currentPainLevel 
-    ? Math.round(((mockGoalData.painLevel - currentPainLevel) / mockGoalData.painLevel) * 100)
     : 0;
 
   const handleMarkComplete = (exerciseId: number) => {
     // Update local state for immediate feedback
     const newCompletedExercises = {
       ...completedExercises,
-      [currentDay]: [...(completedExercises[currentDay] || []), exerciseId]
+      // [currentDay]: [...(completedExercises[currentDay] || []), exerciseId]
     };
     
     setCompletedExercises(newCompletedExercises);
@@ -114,6 +108,13 @@ const NewGoalDetail = () => {
   const [goalDuration, setGoalDuration] = useState<number>(1); // Default to 1 day
   const [programStartDate, setProgramStartDate] = useState<Date | null>(null);
   const [programEndDate, setProgramEndDate] = useState<Date | null>(null);
+  const [currentPainLevel, setCurrentPainLevel] = useState<number>(0);
+
+  const painReduction = useMemo(() => {
+      if(!goalData) return 0;
+      const { initial_pain_level } = goalData.pain_assessment;
+      return ((initial_pain_level - currentPainLevel) / initial_pain_level) * 100;
+    }, [goalData, currentPainLevel]);
 
   useEffect(() => {
       if (location.state?.goal) {
@@ -125,8 +126,8 @@ const NewGoalDetail = () => {
         const newGoalDuration = Number(goalData?.schedule?.program_duration_in_days);
         setGoalDuration(newGoalDuration);
         setProgramStartDate(goalCreationDateInLocalTime);
-        setProgramEndDate(addDays(goalCreationDateInLocalTime, newGoalDuration));
-        setCurrentDayOfGoal(differenceInDays(new Date(), goalCreationDateInLocalTime) + 1);
+        setProgramEndDate(addDays(goalCreationDateInLocalTime, newGoalDuration)); 
+        setCurrentDayOfGoal(differenceInDays(new Date(), startOfDay(goalCreationDateInLocalTime)) + 1);
       }
     }, [location]);
 
@@ -172,7 +173,8 @@ const NewGoalDetail = () => {
               <CalendarView
                 calendarView={calendarView}
                 setCalendarView={setCalendarView}
-                currentDay={currentDayOfGoal}
+                currentDayOfGoal={currentDayOfGoal}
+                currentDay={currentDay}
                 setCurrentDay={setCurrentDay}
                 completedExercises={completedExercises}
                 totalDays={goalDuration}
@@ -188,14 +190,16 @@ const NewGoalDetail = () => {
                 completedExercises={completedExercises}
                 onMarkComplete={handleMarkComplete}
                 onViewExercise={handleViewExercise}
+                programStartDate={programStartDate}
               />
 
               {/* Pain assessment */}
               <div className="mt-6">
                 <PainAssessment 
                   currentPainLevel={currentPainLevel}
-                  dayNumber={currentDay}
-                  isToday={currentDay === 8} // In a real app, check against actual today
+                  dayNumber={currentDay.getDate()}
+                  isToday={isSameDay(currentDay, new Date())}// In a real app, check against actual today
+                  goalData ={goalData}
                   onUpdatePain={handleUpdatePain}
                 />
               </div>
@@ -208,6 +212,7 @@ const NewGoalDetail = () => {
               completedExercises={18} // Mock data - in a real app calculate from all days
               totalExercises={22}     // Mock data
               currentDay={currentDay}
+              currentDayOfGoal={currentDayOfGoal}
               totalDays={mockGoalData.duration}
               painReduction={painReduction}
               streak={5} // Mock streak data

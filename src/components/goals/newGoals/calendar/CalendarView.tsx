@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { subWeeks, addWeeks, startOfWeek, subMonths, addMonths } from "date-fns";
+import { subWeeks, addWeeks, startOfWeek, subMonths, addMonths, isSameMonth, isBefore, isAfter } from "date-fns";
 import WeekView from "./WeekView";
 import MonthView from "./MonthView";
 import CalendarStats from "./CalendarStats";
@@ -9,8 +9,9 @@ import CalendarStats from "./CalendarStats";
 interface CalendarViewProps {
   calendarView: "week" | "month";
   setCalendarView: (view: "week" | "month") => void;
-  currentDay: number;
-  setCurrentDay: (day: number) => void;
+  currentDayOfGoal: number;
+  currentDay: Date;
+  setCurrentDay: (day: Date) => void;
   completedExercises: Record<number, number[]>;
   totalDays: number;
   painReduction: number;
@@ -21,7 +22,8 @@ interface CalendarViewProps {
 const CalendarView = ({
   calendarView,
   setCalendarView,
-  currentDay,
+   currentDay,
+  currentDayOfGoal,
   setCurrentDay,
   completedExercises,
   totalDays,
@@ -42,21 +44,28 @@ const CalendarView = ({
   };
 
   const goToPreviousMonth = () => {
+    if (
+      isSameMonth(currentMonthDate, programStartDate) ||
+      isBefore(currentMonthDate, programStartDate)
+    ) {
+      return; // Prevent going before program start date
+    };
     setCurrentMonthDate(subMonths(currentMonthDate, 1));
-  };
+  }
 
   const goToNextMonth = () => {
+    if (
+      isSameMonth(currentMonthDate, programEndDate) ||
+      isAfter(currentMonthDate, programEndDate)
+    ) {
+      return; // Prevent going after program end date
+    };
     setCurrentMonthDate(addMonths(currentMonthDate, 1));
   };
 
   // Helper for checking completed exercises
   const hasCompletedExercises = (day: number) => {
     return completedExercises[day] && completedExercises[day].length > 0;
-  };
-
-  // Helper to determine if a day is today
-  const isToday = (day: number) => {
-    return day === 8; // In this mock, day 8 is today
   };
 
   return (
@@ -86,7 +95,7 @@ const CalendarView = ({
       {/* Calendar Views */}
       <div className="border rounded-lg p-4">
         {calendarView === "week" ? (
-          <WeekView 
+          <WeekView
             currentWeekStart={currentWeekStart}
             currentDay={currentDay}
             setCurrentDay={setCurrentDay}
@@ -102,14 +111,15 @@ const CalendarView = ({
             setCurrentDay={setCurrentDay}
             goToPreviousMonth={goToPreviousMonth}
             goToNextMonth={goToNextMonth}
+            programStartDate={programStartDate}
+            programEndDate={programEndDate}
             hasCompletedExercises={hasCompletedExercises}
-            isToday={isToday}
           />
         )}
-        
+
         {/* Calendar stats - visible in both views */}
         <CalendarStats
-          currentDayNumber={currentDay}
+          currentDayNumber={currentDayOfGoal}
           totalDays={totalDays}
           exercisesCompleted={18} // Mock data
           adherencePercentage={82} // Mock data

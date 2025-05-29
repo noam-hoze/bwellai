@@ -16,6 +16,7 @@ const CalendarStats = ({
   adherencePercentage,
   painReductionPercentage
 }: CalendarStatsProps) => {
+  const didPainIncrease = painReductionPercentage < 0;
   return (
     <div className="grid grid-cols-4 gap-4 mt-6 border-t pt-4">
       <div>
@@ -31,8 +32,8 @@ const CalendarStats = ({
         <div className="font-semibold text-green-600">{adherencePercentage}%</div>
       </div>
       <div>
-        <div className="text-sm text-gray-500">Pain ↓</div>
-        <div className="font-semibold text-green-600">{painReductionPercentage}%</div>
+        <div className="text-sm text-gray-500">Pain {didPainIncrease ? "↑" : "↓"}</div>
+        <div className={`font-semibold ${didPainIncrease ? 'text-red-600' : 'text-green-600'}`}>{Math.abs(painReductionPercentage)}%</div>
       </div>
     </div>
   );

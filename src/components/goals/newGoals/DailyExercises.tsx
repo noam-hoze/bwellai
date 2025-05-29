@@ -1,13 +1,14 @@
 
 import React, { useState } from "react";
 import { Exercise } from "@/components/goals/CreateGoalWizard";
-import { format } from "date-fns";
+import { differenceInDays, format, startOfDay } from "date-fns";
 import { cn } from "@/lib/utils";
 import { CircleCheck, Video } from "lucide-react";
 import { getExerciseEmoji } from "@/components/goals/newGoals/mockGoalData";
 
 interface DailyExercisesProps {
-  currentDay: number;
+  currentDay: Date;
+  programStartDate: Date;
   exercises: Exercise[];
   completedExercises: Record<number, number[]>;
   onMarkComplete: (exerciseId: number) => void;
@@ -19,10 +20,11 @@ const DailyExercises = ({
   exercises,
   completedExercises,
   onMarkComplete,
-  onViewExercise
+  onViewExercise,
+  programStartDate,
 }: DailyExercisesProps) => {
   const [showingGreatJob, setShowingGreatJob] = useState<number | null>(null);
-  const dayCompletedExercises = completedExercises[currentDay] || [];
+  const dayCompletedExercises = [];
   
   const isExerciseCompleted = (exerciseId: number) => {
     return dayCompletedExercises.includes(exerciseId);
@@ -41,10 +43,12 @@ const DailyExercises = ({
     onMarkComplete(exerciseId);
   };
 
+  const dayOfProgram = differenceInDays(currentDay, startOfDay(programStartDate)) + 1; // Assuming program starts on Jan 1, 2023
+
   return (
     <div>
       <h3 className="font-medium text-gray-900 mb-3">
-        Day {currentDay} • {format(new Date(2025, 4, currentDay), "EEE, MMM d")}
+        Day {dayOfProgram} • {format(currentDay, "EEE, MMM d")}
       </h3>
       <div className="text-sm text-gray-600 mb-3">Upcoming</div>
       

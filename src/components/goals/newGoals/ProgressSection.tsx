@@ -20,7 +20,8 @@ import InsightCard from "./InsightCard";
 interface ProgressSectionProps {
   completedExercises: number;
   totalExercises: number;
-  currentDay: number;
+  currentDay: Date;
+  currentDayOfGoal: number;
   totalDays: number;
   painReduction: number;
   streak: number;
@@ -52,6 +53,7 @@ const ProgressSection = ({
   completedExercises,
   totalExercises,
   currentDay,
+  currentDayOfGoal,
   totalDays,
   painReduction,
   streak,
@@ -64,8 +66,8 @@ const ProgressSection = ({
   milestones
 }: ProgressSectionProps) => {
   const completionPercentage = Math.round((completedExercises / totalExercises) * 100);
-  const planProgress = Math.round((currentDay / totalDays) * 100);
-  const adherenceRate = Math.round((completedExercises / (currentDay * (totalExercises / totalDays))) * 100);
+  const planProgress = Math.round((currentDayOfGoal / totalDays) * 100);
+  const adherenceRate = Math.round((completedExercises / (currentDayOfGoal * (totalExercises / totalDays))) * 100);
   
   const handleDownloadReport = () => {
     // In a real app, this would generate and download a PDF report
@@ -97,7 +99,7 @@ const ProgressSection = ({
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <Card className="bg-white">
               <CardContent className="p-4 text-center">
-                <span className="text-3xl font-bold text-green-600">{currentDay}</span>
+                <span className="text-3xl font-bold text-green-600">{currentDay.getDate()}</span>
                 <p className="text-sm text-gray-600">Days Completed</p>
               </CardContent>
             </Card>
