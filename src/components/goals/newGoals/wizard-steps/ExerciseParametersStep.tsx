@@ -91,6 +91,8 @@ const ExerciseParametersStep: React.FC<ExerciseParametersStepProps> = ({
     updateExercise(exerciseId, { frequency });
   };
 
+  console.log("goalData.selectedExercises: ", goalData.selectedExercises);
+
   return (
     <div className="space-y-5">
       <div className="flex items-center justify-between">
@@ -223,12 +225,12 @@ const ExerciseParametersStep: React.FC<ExerciseParametersStepProps> = ({
                   
                   {/* Summary */}
                   <div className="mt-4 pt-2 text-sm text-gray-600">
-                    <p>
+                    {/*<p>
                       Summary: {exercise.exerciseType === "rep-based"
                         ? `${exercise.customReps} reps`
                         : `${exercise.duration} seconds`
                       } × {exercise.sets} sets, {exercise.frequency.toLowerCase()}
-                    </p>
+                    </p>*/}
                   </div>
                 </div>
               </CardContent>

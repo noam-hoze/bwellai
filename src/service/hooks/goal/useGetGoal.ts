@@ -14,8 +14,13 @@ export const useUserGoalDetails = () => {
     queryFn: () => getUserGoalDetailsFetcher(),
   });
 
+  const enrichedData = data?.data?.map((goal) => ({
+    ...goal,
+    image: `/images/goals/${goal.goalType}.png`
+  }));
+
   return {
-    data: data?.data,
+    data: enrichedData,
     error,
     isError,
     isLoading,

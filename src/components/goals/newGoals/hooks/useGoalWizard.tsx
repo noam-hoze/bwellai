@@ -12,25 +12,21 @@ export const useGoalWizard = ({ onClose, editGoal }: UseGoalWizardProps) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [validationError, setValidationError] = useState<string | null>(null);
   const [goalData, setGoalData] = useState<GoalData>({
-    bodyArea: "neck",
+    goalId: 0,
+    type: "",
     painLevel: 5,
-    painPattern: "intermittent",
-    painTriggers: ["sitting", "bending", "lifting"],
-    functionalLimitations: ["walking_limited", "sitting_limited"],
+    painPattern: "",
+    painTriggers: [],
     selectedExercises: [],
-    selectedTherapies: [],
-    planDuration: "4 weeks",
-    reminderSettings: ["daily_exercises", "weekly_checkins", "therapy_reminders"],
-    confirmConsultation: true,
-    name: "",
-    schedule: { // Initialize schedule
-      morning: true,
+    schedule: {
+      morning: false,
       afternoon: false,
-      evening: true
+      evening: false,
     },
-    duration: 30 // Default 30 days
+    name: "",
+    duration: 30, // Default to 30 days
   });
-
+const [confirmConsultation, setConfirmConsultation] = useState(false);
   // When in edit mode, initialize with the provided goal data
   useEffect(() => {
     if (editGoal) {
@@ -57,7 +53,7 @@ export const useGoalWizard = ({ onClose, editGoal }: UseGoalWizardProps) => {
     setValidationError(null);
     
     // Validation logic for each step
-    if (currentStep === 0 && !goalData.bodyArea) {
+    if (currentStep === 0 && !goalData.type) {
       setValidationError("Please select a pain area to continue");
       return;
     }
@@ -67,7 +63,7 @@ export const useGoalWizard = ({ onClose, editGoal }: UseGoalWizardProps) => {
       return;
     }
     
-    if (currentStep === 6 && !goalData.confirmConsultation) {
+    if (currentStep === 6 && !confirmConsultation) {
       setValidationError("Please confirm the consultation notice to proceed");
       return;
     }
@@ -93,7 +89,7 @@ export const useGoalWizard = ({ onClose, editGoal }: UseGoalWizardProps) => {
     console.log("Saving goal:", goalData);
     toast({
       title: editGoal ? "Treatment Plan Updated Successfully" : "Treatment Plan Created Successfully",
-      description: `Your ${goalData.bodyArea} pain management plan has been ${editGoal ? 'updated' : 'created'}`,
+      description: `Your ${goalData.type} pain management plan has been ${editGoal ? 'updated' : 'created'}`,
     });
     onClose();
   };

@@ -3,7 +3,7 @@ import Layout from "@/components/layout/Layout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Plus, ArrowRight, Calendar, Clock } from "lucide-react";
-import CreateGoalWizard from "@/components/goals/CreateGoalWizard";
+import CreateGoalWizard from "@/components/goals/newGoals/CreateGoalWizard";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { useNavigate } from "react-router-dom";
 import { Progress } from "@/components/ui/progress";

@@ -39,15 +39,16 @@ export type Exercise = {
   description: string;
   recommendedReps: number;
   customReps: number;
-  sets: number;
   imageUrl: string;
   videoUrl: string;
   selected: boolean;
+  sets: number;
   isRecommended?: boolean;
   exerciseType?: 'rep-based' | 'time-based';
   duration?: number; // seconds for time-based exercises
   frequency?: 'Daily' | 'Every other day' | '3x per week' | '2x per week' | 'Weekly';
-}
+  
+};
 
 export type Therapy = {
   id: number;
@@ -65,29 +66,20 @@ export type PlanDuration = '2 weeks' | '4 weeks' | '8 weeks' | 'custom';
 export type ReminderSetting = 'daily_exercises' | 'weekly_checkins' | 'therapy_reminders';
 
 export type GoalData = {
-  bodyArea: string;
+  goalId: number;
+  type: string;
   painLevel: number;
-  painPattern: PainPattern;
-  painTriggers: PainTrigger[];
-  functionalLimitations: FunctionalLimitation[];
+  painPattern: string;
+  painTriggers: string[];
   selectedExercises: Exercise[];
-  selectedTherapies: Therapy[];
-  planDuration: PlanDuration;
-  customDuration?: {
-    weeks: number;
-    days: number;
-  };
-  reminderSettings: ReminderSetting[];
-  confirmConsultation: boolean;
-  name: string;
-  type?: string; // Added for GoalTypeStep
-  schedule?: { // Added for ScheduleCustomizationStep
+  schedule: {
     morning: boolean;
     afternoon: boolean;
     evening: boolean;
   };
-  duration?: number; // Added for multiple steps
-}
+  name: string;
+  duration: number; // Duration in days
+};
 
 export interface Goal {
   id: number;

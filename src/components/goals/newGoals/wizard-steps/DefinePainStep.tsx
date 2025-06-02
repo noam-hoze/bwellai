@@ -9,7 +9,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 
 interface DefinePainStepProps {
   goalData: GoalData;
-  updateGoalData: (newData: Partial<GoalData>) => void;
+  updateGoalData: (data: GoalData) => void;
 }
 
 const DefinePainStep: React.FC<DefinePainStepProps> = ({ 
@@ -17,11 +17,11 @@ const DefinePainStep: React.FC<DefinePainStepProps> = ({
   updateGoalData 
 }) => {
   const handlePainLevelChange = (level: number) => {
-    updateGoalData({ painLevel: level });
+    updateGoalData({ ...goalData, painLevel: level });
   };
 
   const handlePainPatternChange = (value: PainPattern) => {
-    updateGoalData({ painPattern: value });
+    updateGoalData({ ...goalData, painPattern: value });
   };
 
   const togglePainTrigger = (trigger: PainTrigger) => {
@@ -33,11 +33,11 @@ const DefinePainStep: React.FC<DefinePainStepProps> = ({
     } else {
       currentTriggers.push(trigger);
     }
-    
-    updateGoalData({ painTriggers: currentTriggers });
+
+    updateGoalData({ ...goalData, painTriggers: currentTriggers });
   };
 
-  const toggleFunctionalLimitation = (limitation: FunctionalLimitation) => {
+  /*const toggleFunctionalLimitation = (limitation: FunctionalLimitation) => {
     const currentLimitations = [...goalData.functionalLimitations];
     const limitationIndex = currentLimitations.indexOf(limitation);
     
@@ -48,7 +48,7 @@ const DefinePainStep: React.FC<DefinePainStepProps> = ({
     }
     
     updateGoalData({ functionalLimitations: currentLimitations });
-  };
+  };*/
 
   const getPainLevelColorClass = (level: number) => {
     if (level <= 3) return "bg-green-100 text-green-800";
@@ -157,7 +157,7 @@ const DefinePainStep: React.FC<DefinePainStepProps> = ({
           </div>
         </div>
 
-        <div className="space-y-3">
+        {/*<div className="space-y-3">
           <h3 className="font-semibold">Functional Limitations</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             <div className="flex items-center space-x-2">
@@ -193,7 +193,7 @@ const DefinePainStep: React.FC<DefinePainStepProps> = ({
               <Label htmlFor="limit-sleep">Sleep is disrupted by pain</Label>
             </div>
           </div>
-        </div>
+        </div>*/}
       </CardContent>
     </Card>
   );
