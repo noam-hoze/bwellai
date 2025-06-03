@@ -72,6 +72,8 @@ export type GoalData = {
   painPattern: string;
   painTriggers: string[];
   selectedExercises: Exercise[];
+  selectedTherapies: Therapy[];
+  functionalLimitations: FunctionalLimitation[];
   schedule: {
     morning: boolean;
     afternoon: boolean;

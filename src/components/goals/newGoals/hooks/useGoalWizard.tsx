@@ -18,6 +18,8 @@ export const useGoalWizard = ({ onClose, editGoal }: UseGoalWizardProps) => {
     painPattern: "",
     painTriggers: [],
     selectedExercises: [],
+    selectedTherapies: [],
+    functionalLimitations: [],
     schedule: {
       morning: false,
       afternoon: false,

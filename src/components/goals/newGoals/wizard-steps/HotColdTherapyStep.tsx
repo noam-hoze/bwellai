@@ -41,6 +41,8 @@ const HotColdTherapyStep: React.FC<HotColdTherapyStepProps> = ({
   goalData,
   updateGoalData
 }) => {
+  console.log("HotColdTherapyStep rendered with goalData:", goalData);
+  
   const handleAddTherapy = (therapy: Therapy) => {
     const updatedTherapy = { ...therapy, selected: true };
     const updatedTherapies = [...goalData.selectedTherapies, updatedTherapy];
