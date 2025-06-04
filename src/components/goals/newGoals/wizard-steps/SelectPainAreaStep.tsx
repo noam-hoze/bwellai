@@ -16,8 +16,8 @@ const SelectPainAreaStep: React.FC<SelectPainAreaStepProps> = ({
 }) => {
   const { data: userGoalDetails, isLoading: userGoalDetailsIsLoading } =
       useUserGoalDetails();
-  const handleSelectArea = (type: string) => {
-    updateGoalData({ type: type });
+  const handleSelectArea = (type: string, id: number) => {
+    updateGoalData({ type: type , goalId: id });
   };
 console.log("userGoalDetails", userGoalDetails);
 console.log("goalData", goalData);
@@ -38,7 +38,7 @@ console.log("goalData", goalData);
                 ? "border-wellness-bright-green bg-green-50" 
                 : "border-transparent hover:border-gray-300"
             )}
-            onClick={() => handleSelectArea(goal.goalType)}
+            onClick={() => handleSelectArea(goal.goalType, goal.id)}
           >
             <CardContent className="p-3 flex items-center">
               <div className="w-12 h-12 rounded-md mr-3 flex items-center justify-center overflow-hidden shrink-0">

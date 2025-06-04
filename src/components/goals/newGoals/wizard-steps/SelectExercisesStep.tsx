@@ -29,7 +29,13 @@ const allExercises = Object.values(userGoalExerciseDetailsData || {}).flat();
 const mobilityExercises = userGoalExerciseDetailsData?.Mobility || [];
 const stabilizationExercises = userGoalExerciseDetailsData?.Stabilization || [];
 const strengtheningExercises = userGoalExerciseDetailsData?.Strengthening || [];
-const recommendedExercises =  []; //TODO: Handle recommended exercises logic here
+const recommendedExercises = userGoalExerciseDetailsData
+  ? Object.values(userGoalExerciseDetailsData)
+      .flat()
+      .filter((exercise: Exercise) => exercise.goalTypeIds.includes(goalData.goalId))
+  : [];
+
+
 
   const handleAddExercise = (exercise: Exercise) => {
     const updatedExercise = { ...exercise, selected: true };

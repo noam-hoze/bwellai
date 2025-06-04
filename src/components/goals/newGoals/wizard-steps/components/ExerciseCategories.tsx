@@ -32,9 +32,9 @@ const ExerciseCategories: React.FC<ExerciseCategoriesProps> = ({
       <h3 className="font-medium mb-2">Exercise Categories</h3>
       <Tabs defaultValue="mobility" value={activeTab} onValueChange={onTabChange}>
         <TabsList className="w-full grid grid-cols-3">
-          <TabsTrigger value="mobility">Mobilize</TabsTrigger>
-          <TabsTrigger value="stabilization">Stabilize</TabsTrigger>
-          <TabsTrigger value="strengthening">Strengthen</TabsTrigger>
+          <TabsTrigger value="mobility">Mobility</TabsTrigger>
+          <TabsTrigger value="stabilization">Stability</TabsTrigger>
+          <TabsTrigger value="strengthening">Strength</TabsTrigger>
         </TabsList>
         
         <TabsContent value="mobility" className="mt-4">

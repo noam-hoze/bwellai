@@ -47,7 +47,7 @@ export type Exercise = {
   exerciseType?: 'rep-based' | 'time-based';
   duration?: number; // seconds for time-based exercises
   frequency?: 'Daily' | 'Every other day' | '3x per week' | '2x per week' | 'Weekly';
-  
+  goalTypeIds: number[];
 };
 
 export type Therapy = {
