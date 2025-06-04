@@ -37,6 +37,7 @@ import { initializeGTag } from "./utils/gtagmanager";
 import FaceScanV2 from "./pages/FaceScanV2";
 import MyGoals from "./pages/MyGoals";
 import GoalDetail from "./pages/GoalDetail";
+import NewGoalDetail from "./pages/NewGoalDetail";
 
 const queryClient = new QueryClient();
 
@@ -103,7 +104,8 @@ const App = () => {
                       element={<SubscriptionPlans />}
                     />
                     <Route path="/goals" element={<MyGoals />} />
-                    <Route path="/goal-detail/:id" element={<GoalDetail />} />
+                    {/* <Route path="/goal-detail/:id" element={<GoalDetail />} /> */}
+                    <Route path="/goal-detail/:id" element={<NewGoalDetail />} />
                     {/* Public Shared Report Route - No Auth Required */}
                     <Route
                       path="/shared-report/:reportId"
