@@ -21,8 +21,7 @@ const RecommendedExercises: React.FC<RecommendedExercisesProps> = ({
     return selectedExercises.some(exercise => exercise.id === exerciseId);
   };
 
-  //if (recommendedExercises.length === 0) return null; // Uncomment this line after implementing the logic to fetch recommended exercises
-
+  if (recommendedExercises.length === 0) return null; 
   return (
     <Card className="border border-blue-200 relative z-10">
       <div className="bg-blue-50 border-b border-blue-200 px-4 py-2 flex items-center justify-between">

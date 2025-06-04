@@ -9,6 +9,8 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { MinusCircle, PlusCircle } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useEffect } from "react";
+
 
 interface ExerciseParametersStepProps {
   goalData: GoalData;
@@ -32,6 +34,15 @@ const ExerciseParametersStep: React.FC<ExerciseParametersStepProps> = ({
     updateGoalData({ selectedExercises: updatedExercises });
   };
 
+  const getDefaultsForExercise = (exercise: Exercise): Partial<Exercise> => {
+  if (exercise.exerciseType === "rep-based") {
+    return { customReps: 10, duration: undefined, sets: 2 };
+  } else {
+    return { customReps: 0, duration: 30, sets: 2 };
+  }
+};
+
+
   const toggleExerciseType = (exercise: Exercise) => {
     const newType = exercise.exerciseType === "rep-based" ? "time-based" : "rep-based";
     
@@ -40,13 +51,15 @@ const ExerciseParametersStep: React.FC<ExerciseParametersStepProps> = ({
       updateExercise(exercise.id, { 
         exerciseType: newType,
         customReps: 10,
-        duration: undefined
+        duration: undefined,
+        sets: 2
       });
     } else {
       updateExercise(exercise.id, { 
         exerciseType: newType,
         customReps: 0,
-        duration: 30
+        duration: 30,
+        sets: 2
       });
     }
   };
@@ -90,6 +103,21 @@ const ExerciseParametersStep: React.FC<ExerciseParametersStepProps> = ({
   const setFrequency = (exerciseId: number, frequency: Exercise['frequency']) => {
     updateExercise(exerciseId, { frequency });
   };
+
+  useEffect(() => {
+  const updated = goalData.selectedExercises.map((exercise) => {
+    const needsInit =
+      exercise.customReps === undefined ||
+      exercise.sets === undefined ||
+      (exercise.exerciseType === "time-based" && exercise.duration === undefined);
+
+    return needsInit
+      ? { ...exercise, ...getDefaultsForExercise(exercise) }
+      : exercise;
+  });
+
+  updateGoalData({ selectedExercises: updated });
+}, []);
 
   console.log("goalData.selectedExercises: ", goalData.selectedExercises);
 

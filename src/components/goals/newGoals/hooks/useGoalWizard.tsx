@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { GoalData, Goal } from "../types/goalTypes";
 import { useToast } from "@/hooks/use-toast";
+import { useGetSavedUserGoal, useSaveUserGoalFetcher } from "@/service/hooks/goal/useGetGoal";
+
 
 interface UseGoalWizardProps {
   onClose: () => void;
@@ -45,6 +47,10 @@ const [confirmConsultation, setConfirmConsultation] = useState(false);
     }
   }, [editGoal]);
 
+  const {
+      refetch: savedUserGoalRefetch,
+    } = useGetSavedUserGoal();
+
   // Create a wrapper function to correctly handle partial updates
   const updateGoalData = (newData: Partial<GoalData>) => {
     setGoalData(prevData => ({...prevData, ...newData}));
@@ -86,15 +92,56 @@ const [confirmConsultation, setConfirmConsultation] = useState(false);
     }
   };
 
+  const { mutate: saveUserGoalMutate } = useSaveUserGoalFetcher();
+
   const handleSaveGoal = () => {
-    // In a real app, this would save the goal to a database
-    console.log("Saving goal:", goalData);
-    toast({
-      title: editGoal ? "Treatment Plan Updated Successfully" : "Treatment Plan Created Successfully",
-      description: `Your ${goalData.type} pain management plan has been ${editGoal ? 'updated' : 'created'}`,
-    });
-    onClose();
-  };
+    const preferredTimes = [];
+    if (goalData.schedule.morning) preferredTimes.push("MORNING");
+    if (goalData.schedule.afternoon) preferredTimes.push("AFTERNOON");
+    if (goalData.schedule.evening) preferredTimes.push("EVENING");
+
+    saveUserGoalMutate(
+      {
+      goals_id: goalData.goalId,
+      pain_assessment: {
+        current_pain_level: goalData.painLevel,
+        initial_pain_level: goalData.painLevel,
+        pain_pattern: goalData.painPattern,
+        pain_triggers: goalData.painTriggers,
+        functional_limitations: goalData.functionalLimitations,
+      },
+      exercise_selection: goalData.selectedExercises.map((exercise) => ({
+        exercise_id: exercise.id,
+        exercise_name: exercise.name,
+        entity: exercise.customReps > 0 ? "reps" : "duration",
+        entity_value: exercise.customReps > 0 ? exercise.customReps : exercise.duration,
+      })),
+      schedule: {
+        preferred_time: preferredTimes,
+        program_duration_in_days: goalData.duration,
+      },
+      status: "ACTIVE",
+    },
+    {
+      onSuccess: () => {
+        toast({
+          title: editGoal ? "Treatment Plan Updated Successfully" : "Treatment Plan Created Successfully",
+          description: `Your ${goalData.type} pain management plan has been ${editGoal ? 'updated' : 'created'}`,
+        });
+        savedUserGoalRefetch();
+        onClose();
+      },
+      onError: () => {
+        toast({
+          title: "Something went wrong",
+          description: "Please try again.",
+          variant: "destructive",
+        });
+      },
+    }
+  );
+};
+
 
   return {
     currentStep,

@@ -32,7 +32,7 @@ const strengtheningExercises = userGoalExerciseDetailsData?.Strengthening || [];
 const recommendedExercises = userGoalExerciseDetailsData
   ? Object.values(userGoalExerciseDetailsData)
       .flat()
-      .filter((exercise: Exercise) => exercise.goalTypeIds.includes(goalData.goalId))
+      .filter((exercise: Exercise) => exercise.goalTypeIds.includes(goalData.goalId)) as Exercise[]
   : [];
 
 
