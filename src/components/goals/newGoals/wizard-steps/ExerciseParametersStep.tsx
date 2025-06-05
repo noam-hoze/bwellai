@@ -36,9 +36,9 @@ const ExerciseParametersStep: React.FC<ExerciseParametersStepProps> = ({
 
   const getDefaultsForExercise = (exercise: Exercise): Partial<Exercise> => {
   if (exercise.exerciseType === "rep-based") {
-    return { customReps: 10, duration: undefined, sets: 2 };
+    return { customReps: 10, duration: undefined, sets: 2 , frequency: "Daily" };
   } else {
-    return { customReps: 0, duration: 30, sets: 2 };
+    return { customReps: 0, duration: 30, sets: 2 , frequency: "Daily" };
   }
 };
 
@@ -109,7 +109,8 @@ const ExerciseParametersStep: React.FC<ExerciseParametersStepProps> = ({
     const needsInit =
       exercise.customReps === undefined ||
       exercise.sets === undefined ||
-      (exercise.exerciseType === "time-based" && exercise.duration === undefined);
+      (exercise.exerciseType === "time-based" && exercise.duration === undefined) ||
+      exercise.frequency === undefined;;
 
     return needsInit
       ? { ...exercise, ...getDefaultsForExercise(exercise) }

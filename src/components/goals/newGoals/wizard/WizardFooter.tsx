@@ -11,6 +11,7 @@ interface WizardFooterProps {
   onPrevious: () => void;
   onNext: () => void;
   onSave: () => void;
+  confirmConsultation: boolean;
 }
 
 const WizardFooter = ({ 
@@ -20,7 +21,8 @@ const WizardFooter = ({
   validationError,
   onPrevious, 
   onNext, 
-  onSave 
+  onSave,
+  confirmConsultation
 }: WizardFooterProps) => {
   return (
     <div className="flex flex-col p-6 border-t bg-white sticky bottom-0 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]">
@@ -42,6 +44,8 @@ const WizardFooter = ({
         <Button 
           onClick={isLastStep ? onSave : onNext}
           className="min-w-[100px]"
+          disabled={isLastStep && !confirmConsultation}
+
         >
           {isLastStep ? (
             isEditMode ? "Update Treatment Plan" : "Create Treatment Plan"

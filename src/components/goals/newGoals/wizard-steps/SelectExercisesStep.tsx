@@ -27,8 +27,8 @@ const SelectExercisesStep: React.FC<SelectExercisesStepProps> = ({
 
 const allExercises = Object.values(userGoalExerciseDetailsData || {}).flat();
 const mobilityExercises = userGoalExerciseDetailsData?.Mobility || [];
-const stabilizationExercises = userGoalExerciseDetailsData?.Stabilization || [];
-const strengtheningExercises = userGoalExerciseDetailsData?.Strengthening || [];
+const stabilizationExercises = userGoalExerciseDetailsData?.Stability || [];
+const strengtheningExercises = userGoalExerciseDetailsData?.Strength || [];
 const recommendedExercises = userGoalExerciseDetailsData
   ? Object.values(userGoalExerciseDetailsData)
       .flat()
