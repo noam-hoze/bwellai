@@ -34,7 +34,7 @@ const NewGoalDetail = () => {
   const [currentDay, setCurrentDay] = useState<Date>(new Date());
   const [currentView, setCurrentView] = useState<"calendar" | "progress">("calendar");
   const [calendarView, setCalendarView] = useState<"week" | "month">("week");
-  const [exercises, setExercises] = useState<Exercise[]>(mockGoalData.selectedExercises);
+  const [exercises, setExercises] = useState<Exercise[]>(goalData?.exercise_selection || []);
   const [exercisesExpanded, setExercisesExpanded] = useState<boolean>(true);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [selectedExercise, setSelectedExercise] = useState<Exercise | null>(null);
@@ -186,7 +186,7 @@ const NewGoalDetail = () => {
               {/* Daily Exercises */}
               <DailyExercises
                 currentDay={currentDay}
-                exercises={exercises}
+                exercises={goalData.exercise_selection}
                 completedExercises={completedExercises}
                 onMarkComplete={handleMarkComplete}
                 onViewExercise={handleViewExercise}
