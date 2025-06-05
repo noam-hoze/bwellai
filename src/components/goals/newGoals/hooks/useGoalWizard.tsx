@@ -28,7 +28,8 @@ export const useGoalWizard = ({ onClose, editGoal }: UseGoalWizardProps) => {
       evening: false,
     },
     name: "",
-    duration: 30, // Default to 30 days
+    duration: 28, // Default to 28 days
+    planDuration: "4 weeks", // Default to 4 weeks
   });
 const [confirmConsultation, setConfirmConsultation] = useState(false);
   // When in edit mode, initialize with the provided goal data

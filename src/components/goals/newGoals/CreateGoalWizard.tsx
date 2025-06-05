@@ -60,6 +60,7 @@ const CreateGoalWizard = ({ onClose, editGoal }: CreateGoalWizardProps) => {
         onPrevious={currentStep === 0 ? onClose : handlePrevious}
         onNext={handleNext}
         onSave={handleSaveGoal}
+        confirmConsultation={goalData.confirmConsultation}
       />
     </div>
   );

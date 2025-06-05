@@ -9,7 +9,7 @@ import { ChevronDown, ChevronUp } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 interface SummaryConfirmationStepProps {
-  goalData: GoalData;
+  goalData: GoalDatfa;
   updateGoalData: (newData: Partial<GoalData>) => void;
 }
 
@@ -86,7 +86,7 @@ const SummaryConfirmationStep: React.FC<SummaryConfirmationStepProps> = ({
     
     return "Custom";
   };
-
+  console.log("exercises", goalData.selectedExercises);
   return (
     <div className="space-y-6">
       <Card className="border-green-200 bg-green-50">
@@ -103,7 +103,7 @@ const SummaryConfirmationStep: React.FC<SummaryConfirmationStepProps> = ({
           <CardContent className="p-4">
             <h3 className="font-medium">Condition</h3>
             <p className="text-sm text-gray-700 mt-1">
-              {bodyAreaLabels[goalData.bodyArea] || goalData.bodyArea} Pain
+              {goalData.name} Pain
             </p>
           </CardContent>
         </Card>
@@ -212,7 +212,7 @@ const SummaryConfirmationStep: React.FC<SummaryConfirmationStepProps> = ({
                         </div>
                       </div>
                       <Badge variant="outline" className="text-xs">
-                        {exercise.category}
+                        {exercise.label}
                       </Badge>
                     </div>
                   ))}

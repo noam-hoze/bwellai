@@ -80,7 +80,8 @@ export type GoalData = {
     evening: boolean;
   };
   name: string;
-  duration: number; // Duration in days
+  duration: number;
+  confirmConsultation: boolean;
 };
 
 export interface Goal {
