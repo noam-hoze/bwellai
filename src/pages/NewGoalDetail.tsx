@@ -3,8 +3,6 @@ import React, { useState, useEffect, useMemo } from "react";
 import Layout from "@/components/layout/Layout";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-import CreateGoalWizard from "@/components/goals/CreateGoalWizard";
-import { Exercise } from "@/components/goals/CreateGoalWizard";
 import { addDays, set, differenceInDays, isSameDay, startOfDay } from "date-fns";
 
 // Import mock data
@@ -27,6 +25,7 @@ import ProgressSection from "@/components/goals/newGoals/ProgressSection";
 import ExerciseDetailsModal from "@/components/goals/newGoals/ExerciseDetailsModal";
 import DifficultyRatingDialog from "@/components/goals/newGoals/DifficultyRatingDialog";
 import { useLocation } from "react-router-dom";
+import { Exercise } from "@/components/goals/newGoals/types/goalTypes";
 
 const NewGoalDetail = () => {
   const [goalData, setGoalData] = useState<any>(null);
@@ -181,6 +180,7 @@ const NewGoalDetail = () => {
                 painReduction={painReduction}
                 programStartDate={programStartDate}
                 programEndDate={programEndDate}
+                exercises={goalData.exercise_selection || []}
               />
 
               {/* Daily Exercises */}

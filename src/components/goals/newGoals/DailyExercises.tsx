@@ -5,6 +5,8 @@ import { differenceInDays, format, startOfDay } from "date-fns";
 import { cn } from "@/lib/utils";
 import { CircleCheck, Video } from "lucide-react";
 import { getExerciseEmoji } from "@/components/goals/newGoals/mockGoalData";
+import { isSameDay } from "date-fns";
+
 
 interface DailyExercisesProps {
   currentDay: Date;
@@ -44,7 +46,7 @@ const DailyExercises = ({
   };
 
   const dayOfProgram = differenceInDays(currentDay, startOfDay(programStartDate)) + 1; // Assuming program starts on Jan 1, 2023
-
+  const todayExercises = exercises.filter((exercise) => isSameDay(exercise.date, currentDay));
   return (
     <div>
       <h3 className="font-medium text-gray-900 mb-3">
@@ -54,7 +56,7 @@ const DailyExercises = ({
       
       {/* Exercise list */}
       <ul className="space-y-2">
-        {exercises.map((exercise) => {
+        {todayExercises.map((exercise) => {
           const isCompleted = isExerciseCompleted(exercise.exercise_id);
           //const exerciseEmoji = getExerciseEmoji(exercise.category);
           const isShowingGreatJob = showingGreatJob === exercise.exercise_id;
@@ -99,8 +101,8 @@ const DailyExercises = ({
                     )}
                   </div>
                   <p className="text-xs text-gray-500">
-                    {exercise.customReps} {exercise.customReps === 1 ? 'rep' : 'reps'} • {exercise.category}
-                    {exercise.duration && ` • ${exercise.duration} minutes`}
+                    {exercise.entity_value} {exercise.entity === 'duration' ? 'seconds' : 'reps'} •
+                    {exercise.sets > 1 ? ` ${exercise.sets} sets` : ''}
                   </p>
                 </div>
                 

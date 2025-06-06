@@ -5,6 +5,7 @@ import { subWeeks, addWeeks, startOfWeek, subMonths, addMonths, isSameMonth, isB
 import WeekView from "./WeekView";
 import MonthView from "./MonthView";
 import CalendarStats from "./CalendarStats";
+import { SelectedExercise } from "../types/goalTypes";
 
 interface CalendarViewProps {
   calendarView: "week" | "month";
@@ -17,6 +18,7 @@ interface CalendarViewProps {
   painReduction: number;
   programStartDate: Date;
   programEndDate: Date;
+  exercises: SelectedExercise[]; // Optional exercises prop, can be used for future enhancements
 }
 
 const CalendarView = ({
@@ -29,7 +31,8 @@ const CalendarView = ({
   totalDays,
   painReduction,
   programStartDate,
-  programEndDate
+  programEndDate,
+  exercises, 
 }: CalendarViewProps) => {
   const [currentWeekStart, setCurrentWeekStart] = React.useState<Date>(startOfWeek(new Date()));
   const [currentMonthDate, setCurrentMonthDate] = React.useState<Date>(new Date());
@@ -103,6 +106,7 @@ const CalendarView = ({
             goToNextWeek={goToNextWeek}
             programStartDate={programStartDate}
             programEndDate={programEndDate}
+            exercises={exercises}
           />
         ) : (
           <MonthView
