@@ -148,6 +148,7 @@ const NewGoalDetail = () => {
           streak={5} // Mock data for streak, change
           onEditGoal={handleEditGoal}//change? look into this
           duration={goalData.schedule?.program_duration_in_days}
+          goalId={goalData.id} // Assuming goalData has an id field
         />
 
         {/* Navigation Tabs */}

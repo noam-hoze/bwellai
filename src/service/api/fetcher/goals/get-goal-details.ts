@@ -40,3 +40,7 @@ export const saveUserGoalFetcher = (payload) => {
 export const saveUserGoalActivityFetcher = (payload) => {
   return Client.post(saveUserGoalActivity(), payload);
 };
+
+export const deleteUserGoalFetcher = (goalId: string) => {
+  return Client.delete(`/goal/${goalId}`, {});
+}
