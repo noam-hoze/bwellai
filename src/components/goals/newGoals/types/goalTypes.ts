@@ -50,6 +50,17 @@ export type Exercise = {
   goalTypeIds: number[];
 };
 
+export type SelectedExercise = {
+   exercise_id: number;
+   exercise_type_id: number;
+   exercise_name: string;
+   entity: string; //duration, distance, reps, sets, etc.
+   entity_value: number;
+   date: Date;
+   sets: number;
+   is_completed: boolean;
+};
+
 export type Therapy = {
   id: number;
   name: string;

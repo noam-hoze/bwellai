@@ -3,8 +3,6 @@ import React, { useState, useEffect, useMemo } from "react";
 import Layout from "@/components/layout/Layout";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-import CreateGoalWizard from "@/components/goals/CreateGoalWizard";
-import { Exercise } from "@/components/goals/CreateGoalWizard";
 import { addDays, set, differenceInDays, isSameDay, startOfDay } from "date-fns";
 
 // Import mock data
@@ -27,6 +25,7 @@ import ProgressSection from "@/components/goals/newGoals/ProgressSection";
 import ExerciseDetailsModal from "@/components/goals/newGoals/ExerciseDetailsModal";
 import DifficultyRatingDialog from "@/components/goals/newGoals/DifficultyRatingDialog";
 import { useLocation } from "react-router-dom";
+import { Exercise } from "@/components/goals/newGoals/types/goalTypes";
 
 const NewGoalDetail = () => {
   const [goalData, setGoalData] = useState<any>(null);
@@ -34,7 +33,7 @@ const NewGoalDetail = () => {
   const [currentDay, setCurrentDay] = useState<Date>(new Date());
   const [currentView, setCurrentView] = useState<"calendar" | "progress">("calendar");
   const [calendarView, setCalendarView] = useState<"week" | "month">("week");
-  const [exercises, setExercises] = useState<Exercise[]>(mockGoalData.selectedExercises);
+  const [exercises, setExercises] = useState<Exercise[]>(goalData?.exercise_selection || []);
   const [exercisesExpanded, setExercisesExpanded] = useState<boolean>(true);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [selectedExercise, setSelectedExercise] = useState<Exercise | null>(null);
@@ -149,6 +148,7 @@ const NewGoalDetail = () => {
           streak={5} // Mock data for streak, change
           onEditGoal={handleEditGoal}//change? look into this
           duration={goalData.schedule?.program_duration_in_days}
+          goalId={goalData.id} // Assuming goalData has an id field
         />
 
         {/* Navigation Tabs */}
@@ -181,12 +181,13 @@ const NewGoalDetail = () => {
                 painReduction={painReduction}
                 programStartDate={programStartDate}
                 programEndDate={programEndDate}
+                exercises={goalData.exercise_selection || []}
               />
 
               {/* Daily Exercises */}
               <DailyExercises
                 currentDay={currentDay}
-                exercises={exercises}
+                exercises={goalData.exercise_selection}
                 completedExercises={completedExercises}
                 onMarkComplete={handleMarkComplete}
                 onViewExercise={handleViewExercise}

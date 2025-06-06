@@ -9,7 +9,7 @@ import { ChevronDown, ChevronUp } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 interface SummaryConfirmationStepProps {
-  goalData: GoalDatfa;
+  goalData: GoalData;
   updateGoalData: (newData: Partial<GoalData>) => void;
 }
 

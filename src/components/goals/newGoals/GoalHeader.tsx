@@ -1,9 +1,10 @@
 
-import React from "react";
+import React, { useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Edit, Trash2, Share } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { formatDateRange } from "@/utils/dateUtils";
+import { useDeleteUserGoal } from "@/service/hooks/goal/useGetGoal";
 
 interface GoalHeaderProps {
   goalType: string;
@@ -13,6 +14,7 @@ interface GoalHeaderProps {
   streak: number; // Days in streak
   onEditGoal?: () => void; // Add this prop for edit functionality
   duration: number;
+  goalId: string; 
 }
 
 const GoalHeader = ({ 
@@ -22,10 +24,20 @@ const GoalHeader = ({
   completionPercentage, 
   streak,
   duration,
-  onEditGoal
+  onEditGoal,
+  goalId
 }: GoalHeaderProps) => {
   const navigate = useNavigate();
   const dateRangeDisplay = formatDateRange(startDate, endDate);
+
+  const { deleteUserGoal } = useDeleteUserGoal();
+
+  const deleteGoalHandler = useCallback(() => {
+    console.log("Deleting goal with ID:", goalId);
+    deleteUserGoal(goalId);
+    console.log("Goal deleted successfully");
+    navigate('/goals'); // Redirect to goals page after deletion
+  }, [deleteUserGoal, goalId]);
 
   const handleShareReport = () => {
     // Generate a unique report ID - in a real app this would come from the backend
@@ -63,6 +75,7 @@ const GoalHeader = ({
             variant="outline" 
             size="icon"
             className="rounded-full"
+            onClick={deleteGoalHandler}
           >
             <Trash2 className="h-4 w-4 text-gray-600" />
           </Button>

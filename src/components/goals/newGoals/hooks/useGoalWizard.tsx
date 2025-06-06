@@ -101,6 +101,24 @@ const [confirmConsultation, setConfirmConsultation] = useState(false);
     if (goalData.schedule.afternoon) preferredTimes.push("AFTERNOON");
     if (goalData.schedule.evening) preferredTimes.push("EVENING");
 
+    let runningId = 1;
+
+const scheduledExercises = goalData.selectedExercises.flatMap((exercise) => {
+  const dates = generateDatesByFrequency(exercise.frequency, goalData.duration);
+
+  return dates.map((date) => ({
+    exercise_id: runningId++,
+    exercise_type_id: exercise.id,
+    exercise_name: exercise.name,
+    entity: exercise.customReps > 0 ? "reps" : "duration",
+    entity_value: exercise.customReps > 0 ? exercise.customReps : exercise.duration,
+    sets: exercise.sets,
+    date: date,
+    is_completed: false
+  }));
+});
+
+
     saveUserGoalMutate(
       {
       goals_id: goalData.goalId,
@@ -111,12 +129,7 @@ const [confirmConsultation, setConfirmConsultation] = useState(false);
         pain_triggers: goalData.painTriggers,
         functional_limitations: goalData.functionalLimitations,
       },
-      exercise_selection: goalData.selectedExercises.map((exercise) => ({
-        exercise_id: exercise.id,
-        exercise_name: exercise.name,
-        entity: exercise.customReps > 0 ? "reps" : "duration",
-        entity_value: exercise.customReps > 0 ? exercise.customReps : exercise.duration,
-      })),
+      exercise_selection: scheduledExercises,
       schedule: {
         preferred_time: preferredTimes,
         program_duration_in_days: goalData.duration,
@@ -142,6 +155,42 @@ const [confirmConsultation, setConfirmConsultation] = useState(false);
     }
   );
 };
+
+function generateDatesByFrequency(frequency: string, duration: number): string[] {
+  const today = new Date();
+  const result: string[] = [];
+
+  for (let i = 0; i < duration; i++) {
+    let shouldAdd = false;
+
+    switch (frequency) {
+      case "Daily":
+        shouldAdd = true;
+        break;
+      case "Every other day":
+        shouldAdd = i % 2 === 0;
+        break;
+      case "3x per week":
+        shouldAdd = [0, 2, 4, 7, 9, 11, 13].includes(i); // You can tweak this
+        break;
+      case "2x per week":
+        shouldAdd = [0, 3, 7, 10].includes(i);
+        break;
+      case "Weekly":
+        shouldAdd = i % 7 === 0;
+        break;
+    }
+
+    if (shouldAdd) {
+      const date = new Date(today);
+      date.setDate(today.getDate() + i);
+      result.push(date.toISOString().split("T")[0]); // Format YYYY-MM-DD
+    }
+  }
+
+  return result;
+}
+
 
 
   return {

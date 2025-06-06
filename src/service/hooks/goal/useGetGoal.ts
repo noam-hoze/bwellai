@@ -1,4 +1,5 @@
 import {
+  deleteUserGoalFetcher,
   getSavedUserGoalFetcher,
   getUserGoalActivityFetcher,
   getUserGoalDetailsFetcher,
@@ -113,4 +114,15 @@ export const useUserGoalActivity = ({
     isSuccess,
     refetch,
   };
+};
+
+export const useDeleteUserGoal = () => {
+  console.log("useDeleteUserGoal hook called");
+  const { mutate: deleteUserGoal } = useMutation({
+    mutationFn: (goalId: string) => {
+      return deleteUserGoalFetcher(goalId);
+    },
+  });
+
+  return { deleteUserGoal };
 };

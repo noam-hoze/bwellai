@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { differenceInDays, isEqual, lastDayOfWeek, isSameDay, isAfter, startOfDay, isBefore, endOfDay } from "date-fns";
 import { generateWeekDays, formatWeekRange } from "@/utils/dateUtils";
+import { SelectedExercise } from "../types/goalTypes";
 
 interface WeekViewProps {
   currentWeekStart: Date;
@@ -13,6 +14,7 @@ interface WeekViewProps {
   goToNextWeek: () => void;
   programStartDate: Date;
   programEndDate: Date;
+  exercises?: SelectedExercise[]; // Optional exercises prop, can be used for future enhancements
 }
 
 const WeekView = ({
@@ -22,7 +24,8 @@ const WeekView = ({
   goToPreviousWeek,
   goToNextWeek,
   programStartDate,
-  programEndDate
+  programEndDate,
+  exercises
 }: WeekViewProps) => {
   const weekDays = generateWeekDays(currentWeekStart);
   const currentWeek = Math.ceil((differenceInDays(currentWeekStart, programStartDate) / 7) + 1);
@@ -57,6 +60,9 @@ const WeekView = ({
     setCurrentDay(day);
   }, [isInProgramRange]);
 
+  console.log("day", currentDay);
+  console.log("exercises", exercises);
+
   return (
     <>
       <div className="flex justify-between items-center mb-4">
@@ -85,6 +91,8 @@ const WeekView = ({
           const isActive = isSameDay(day, currentDay) // Current selected day
           const isToday = isSameDay(day, new Date()); // Check if the day is today
           const inProgramRange = isInProgramRange(day); // Check if the day is within the program range
+          const doesHaveExercises = exercises?.some((exercise) => isSameDay(exercise.date, day));
+
           return (
             <div
               key={index}
@@ -100,7 +108,7 @@ const WeekView = ({
               </div>
               {(isToday && isActive) && <div className="text-xs text-green-500">Now</div>}
               <div className="mt-2">
-                {day.getDate() % 2 === 0 && (
+                {doesHaveExercises && (
                   <div className="w-6 h-6 flex items-center justify-center bg-amber-100 rounded-full">
                     <span className="text-amber-700 text-xs">🧘</span>
                   </div>

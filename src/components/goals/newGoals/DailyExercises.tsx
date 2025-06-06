@@ -5,6 +5,8 @@ import { differenceInDays, format, startOfDay } from "date-fns";
 import { cn } from "@/lib/utils";
 import { CircleCheck, Video } from "lucide-react";
 import { getExerciseEmoji } from "@/components/goals/newGoals/mockGoalData";
+import { isSameDay } from "date-fns";
+
 
 interface DailyExercisesProps {
   currentDay: Date;
@@ -44,7 +46,7 @@ const DailyExercises = ({
   };
 
   const dayOfProgram = differenceInDays(currentDay, startOfDay(programStartDate)) + 1; // Assuming program starts on Jan 1, 2023
-
+  const todayExercises = exercises.filter((exercise) => isSameDay(exercise.date, currentDay));
   return (
     <div>
       <h3 className="font-medium text-gray-900 mb-3">
@@ -54,14 +56,14 @@ const DailyExercises = ({
       
       {/* Exercise list */}
       <ul className="space-y-2">
-        {exercises.map((exercise) => {
-          const isCompleted = isExerciseCompleted(exercise.id);
-          const exerciseEmoji = getExerciseEmoji(exercise.category);
-          const isShowingGreatJob = showingGreatJob === exercise.id;
+        {todayExercises.map((exercise) => {
+          const isCompleted = isExerciseCompleted(exercise.exercise_id);
+          //const exerciseEmoji = getExerciseEmoji(exercise.category);
+          const isShowingGreatJob = showingGreatJob === exercise.exercise_id;
           
           return (
             <li 
-              key={exercise.id} 
+              key={exercise.exercise_id} 
               className={cn(
                 "flex items-center py-2 px-3 rounded-lg border transition-all duration-300",
                 isCompleted ? "bg-green-50 border-green-100" : "bg-white border-gray-100"
@@ -73,7 +75,7 @@ const DailyExercises = ({
                   "h-10 w-10 flex items-center justify-center rounded-md mr-3 text-lg",
                   isCompleted ? "bg-green-100" : "bg-gray-100"
                 )}>
-                  {exerciseEmoji}
+                  {/* {exerciseEmoji} */}
                 </div>
                 
                 {/* Exercise Details */}
@@ -83,7 +85,7 @@ const DailyExercises = ({
                       "font-medium text-sm transition-colors duration-300",
                       isCompleted ? "text-green-700" : "text-gray-800"
                     )}>
-                      {exercise.name}
+                      {exercise.exercise_name}
                       {isCompleted && !isShowingGreatJob && (
                         <span className="ml-2 text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">
                           Completed
@@ -99,8 +101,8 @@ const DailyExercises = ({
                     )}
                   </div>
                   <p className="text-xs text-gray-500">
-                    {exercise.customReps} {exercise.customReps === 1 ? 'rep' : 'reps'} • {exercise.category}
-                    {exercise.duration && ` • ${exercise.duration} minutes`}
+                    {exercise.entity_value} {exercise.entity === 'duration' ? 'seconds' : 'reps'} •
+                    {exercise.sets > 1 ? ` ${exercise.sets} sets` : ''}
                   </p>
                 </div>
                 
