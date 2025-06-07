@@ -1,14 +1,15 @@
-import React from "react";
-import { Exercise } from "./CreateGoalWizard";
+import React, { useMemo } from "react";
+import { Exercise, SelectedExercise } from "./CreateGoalWizard";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { ArrowLeft, ArrowRight, CircleCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import DifficultyRating from "./DifficultyRating";
+import { useUserGoalExerciseDetails } from "@/service/hooks/goal/useGetGoal";
 
 interface ExerciseDetailsModalProps {
   isOpen: boolean;
   onClose: () => void;
-  exercise: Exercise | null;
+  exercise: SelectedExercise | null;
   onMarkComplete?: (exerciseId: number) => void;
   isCompleted?: boolean;
   difficultyRating?: number;
@@ -22,11 +23,19 @@ const ExerciseDetailsModal = ({
   isCompleted = false,
   difficultyRating
 }: ExerciseDetailsModalProps) => {
-  if (!exercise) return null;
+  const {
+        data: userGoalExerciseDetailsData,
+        isLoading: userGoalExerciseIsLoading,
+      } = useUserGoalExerciseDetails();
 
+      const allExercises = Object.values(userGoalExerciseDetailsData || []).flat();
+      
   const handleComplete = () => {
+    if(!exercise){
+      return;
+    }
     if (onMarkComplete) {
-      onMarkComplete(exercise.id);
+      onMarkComplete(exercise.exercise_id);
       onClose();
     }
   };
@@ -37,14 +46,22 @@ const ExerciseDetailsModal = ({
     return "Vg4iSulJStI"; // Video from https://youtu.be/Vg4iSulJStI?si=LgNkFb30u9ZSPYPE
   };
 
-  const videoId = getYouTubeVideoId(exercise.videoUrl || "");
+  // const videoId = getYouTubeVideoId(exercise.videoUrl || "");
+  const videoId = useMemo(() => {
+    if(!exercise || !exercise.exercise_id) return '';
+    const foundExercise = allExercises.find((ex: Exercise) => ex.id === exercise.exercise_type_id) as Exercise | undefined;
+    if (!foundExercise) return '';
+    return foundExercise.videoUrl;
+  }, [allExercises, exercise]);
+
+  if (!exercise) return null;
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-lg p-0">
         <DialogHeader className="p-6 bg-gradient-to-r from-wellness-light-green to-blue-50 border-b">
           <DialogTitle className="text-xl font-semibold text-wellness-bright-green flex items-center justify-between">
-            <span>{exercise.name}</span>
+            <span>{exercise.exercise_name}</span>
             {isCompleted && difficultyRating && (
               <DifficultyRating rating={difficultyRating} size="lg" />
             )}
@@ -58,7 +75,7 @@ const ExerciseDetailsModal = ({
               width="100%"
               height="100%"
               src={`https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1`}
-              title={`${exercise.name} Exercise Video`}
+              title={`${exercise.exercise_name} Exercise Video`}
               frameBorder="0"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
@@ -68,7 +85,7 @@ const ExerciseDetailsModal = ({
 
           {/* Exercise Details */}
           <div className="space-y-4">
-            <div>
+            {/* <div>
               <h3 className="font-semibold text-lg">Instructions</h3>
               <p className="text-gray-600 mt-1">{exercise.description}</p>
             </div>
@@ -77,7 +94,7 @@ const ExerciseDetailsModal = ({
               <h3 className="font-semibold">Repetitions</h3>
               <p className="text-gray-600 mt-1">
                 {exercise.customReps} repetitions
-                {exercise.name.toLowerCase().includes("each side") && 
+                {exercise.exercise_name.toLowerCase().includes("each side") && 
                   ` (${Math.floor(exercise.customReps/2)} each side)`}
               </p>
             </div>
@@ -85,7 +102,7 @@ const ExerciseDetailsModal = ({
             <div>
               <h3 className="font-semibold">Category</h3>
               <p className="text-gray-600 mt-1">{exercise.category}</p>
-            </div>
+            </div> */}
 
             {/* Tips */}
             <div className="bg-wellness-light-green p-4 rounded-lg">

@@ -237,7 +237,7 @@ const ExerciseParametersStep: React.FC<ExerciseParametersStepProps> = ({
                         onValueChange={(value) => setFrequency(exercise.id, value as Exercise['frequency'])}
                       >
                         <SelectTrigger className="h-10">
-                          <SelectValue placeholder="Select frequency" />
+                          <SelectValue  />
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="Daily">Daily</SelectItem>

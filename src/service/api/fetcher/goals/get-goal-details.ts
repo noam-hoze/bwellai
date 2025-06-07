@@ -44,3 +44,7 @@ export const saveUserGoalActivityFetcher = (payload) => {
 export const deleteUserGoalFetcher = (goalId: string) => {
   return Client.delete(`/goal/${goalId}`, {});
 }
+
+export const updateExerciseDetailsFetcher = (userGoalId, exerciseId, payload) => {
+  return Client.put(`/goal/${userGoalId}/exercise`, payload);
+};

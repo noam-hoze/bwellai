@@ -36,7 +36,9 @@ const BodyMetrics = () => {
   }
 
   const handleUpdateMetrics = () => {
-    navigate("/face-scan");
+    // do a hard reload, so that the vite server (vite.config.ts) will add Cross-Origin-Embedder-Policy and other stuff that face-scan requires for SharedArrayBuffer.
+    window.location.href = "/face-scan";
+    // navigate("/face-scan");
   };
 
   return (
