@@ -6,6 +6,7 @@ import {
   getUserGoalExerciseDetailsFetcher,
   saveUserGoalActivityFetcher,
   saveUserGoalFetcher,
+  updateExerciseDetailsFetcher,
 } from "@/service/api/fetcher/goals/get-goal-details";
 import { useMutation, useQuery } from "@tanstack/react-query";
 
@@ -125,4 +126,14 @@ export const useDeleteUserGoal = () => {
   });
 
   return { deleteUserGoal };
+};
+
+export const useUpdateExerciseDetails = () => {
+  const { mutate: updateExerciseDetails } = useMutation({
+    mutationFn: ({ userGoalId, exerciseId, payload }: { userGoalId: any; exerciseId: any; payload: any }) => {
+      return updateExerciseDetailsFetcher(userGoalId, exerciseId, payload);
+    },
+  });
+
+  return { updateExerciseDetails };
 };

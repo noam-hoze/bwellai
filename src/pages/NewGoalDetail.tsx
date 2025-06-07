@@ -25,22 +25,24 @@ import ProgressSection from "@/components/goals/newGoals/ProgressSection";
 import ExerciseDetailsModal from "@/components/goals/newGoals/ExerciseDetailsModal";
 import DifficultyRatingDialog from "@/components/goals/newGoals/DifficultyRatingDialog";
 import { useLocation } from "react-router-dom";
-import { Exercise } from "@/components/goals/newGoals/types/goalTypes";
+import { Exercise, SelectedExercise } from "@/components/goals/newGoals/types/goalTypes";
+import { useUpdateExerciseDetails } from "@/service/hooks/goal/useGetGoal";
 
 const NewGoalDetail = () => {
   const [goalData, setGoalData] = useState<any>(null);
+  const { updateExerciseDetails } = useUpdateExerciseDetails();
   // Lovable start
   const [currentDay, setCurrentDay] = useState<Date>(new Date());
   const [currentView, setCurrentView] = useState<"calendar" | "progress">("calendar");
   const [calendarView, setCalendarView] = useState<"week" | "month">("week");
-  const [exercises, setExercises] = useState<Exercise[]>(goalData?.exercise_selection || []);
+  const [exercises, setExercises] = useState<SelectedExercise[]>(goalData?.exercise_selection || []);
   const [exercisesExpanded, setExercisesExpanded] = useState<boolean>(true);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [selectedExercise, setSelectedExercise] = useState<Exercise | null>(null);
+  const [selectedExercise, setSelectedExercise] = useState<SelectedExercise | null>(null);
   const [completedExercises, setCompletedExercises] = useState(initialCompletedExercises);
   const [difficultyRatings, setDifficultyRatings] = useState(initialDifficultyRatings);
   const [isRatingDialogOpen, setIsRatingDialogOpen] = useState<boolean>(false);
-  const [exerciseToRate, setExerciseToRate] = useState<Exercise | null>(null);
+  const [exerciseToRate, setExerciseToRate] = useState<SelectedExercise | null>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState<boolean>(false);
 
   // Calculate completion percentage for the current day
@@ -58,12 +60,26 @@ const NewGoalDetail = () => {
     
     setCompletedExercises(newCompletedExercises);
     
+    const existingExercises = goalData.exercise_selection;
     // Show the difficulty rating dialog
-    const exerciseToRate = exercises.find(ex => ex.id === exerciseId);
+    const exerciseToRate = existingExercises.find(ex => ex.exercise_id === exerciseId);
     if (exerciseToRate) {
       setExerciseToRate(exerciseToRate);
       setIsRatingDialogOpen(true);
     }
+
+    const exercise = existingExercises.find(ex => ex.exercise_id === exerciseId);
+    if (!exercise) return;
+    const payload = {
+      ...exercise,
+      is_completed: true,
+    }
+    
+    updateExerciseDetails({
+      payload,
+      userGoalId: goalData.id,
+      exerciseId: exerciseId,
+    });
     
     // No toast notification - removed
   };
@@ -72,14 +88,14 @@ const NewGoalDetail = () => {
     if (exerciseToRate) {
       setDifficultyRatings({
         ...difficultyRatings,
-        [exerciseToRate.id]: rating
+        [exerciseToRate.exercise_id]: rating
       });
     }
     setIsRatingDialogOpen(false);
     setExerciseToRate(null);
   };
 
-  const handleViewExercise = (exercise: Exercise) => {
+  const handleViewExercise = (exercise: SelectedExercise) => {
     setSelectedExercise(exercise);
     setIsModalOpen(true);
   };
@@ -161,8 +177,8 @@ const NewGoalDetail = () => {
             <TabsTrigger value="calendar" className="data-[state=active]:border-b-2 data-[state=active]:border-green-600 data-[state=active]:rounded-none data-[state=active]:shadow-none">
               Calendar
             </TabsTrigger>
-            <TabsTrigger value="progress" className="data-[state=active]:border-b-2 data-[state=active]:border-green-600 data-[state=active]:rounded-none data-[state=active]:shadow-none">
-              Progress
+            <TabsTrigger disabled value="progress" className="data-[state=active]:border-b-2 data-[state=active]:border-green-600 data-[state=active]:rounded-none data-[state=active]:shadow-none">
+              Progress (Coming soon)
             </TabsTrigger>
           </TabsList>
 
@@ -188,7 +204,6 @@ const NewGoalDetail = () => {
               <DailyExercises
                 currentDay={currentDay}
                 exercises={goalData.exercise_selection}
-                completedExercises={completedExercises}
                 onMarkComplete={handleMarkComplete}
                 onViewExercise={handleViewExercise}
                 programStartDate={programStartDate}
@@ -234,14 +249,14 @@ const NewGoalDetail = () => {
           onClose={handleCloseModal}
           exercise={selectedExercise}
           onMarkComplete={handleMarkComplete}
-          isCompleted={selectedExercise ? (completedExercises[currentDay] || []).includes(selectedExercise.id) : false}
+          isCompleted={selectedExercise?.is_completed || false}
         />
         
         <DifficultyRatingDialog 
           isOpen={isRatingDialogOpen}
           onClose={() => setIsRatingDialogOpen(false)}
           onRate={handleRateExercise}
-          exerciseName={exerciseToRate?.name || ""}
+          exerciseName={exerciseToRate?.exercise_name || ""}
         />
 
         {/* Edit Goal Dialog */}

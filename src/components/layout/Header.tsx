@@ -51,9 +51,10 @@ const Header = () => {
 
           <nav className="hidden md:flex space-x-2">
             {navLinks.map((link) => (
-              <Link
+              // using <a> instead of <Link> here on purpose! when navigating between different pages, we need to hard reload them, this is because face-scan requires special headers, that mess up other pages, like the youtube embed in goal detail.
+              <a
                 key={link.path}
-                to={link.path}
+                href={link.path}
                 className={cn(
                   "nav-link flex items-center gap-1",
                   isActive(link.path)
@@ -63,7 +64,7 @@ const Header = () => {
               >
                 <link.icon className="h-4 w-4" />
                 {link.label}
-              </Link>
+              </a>
             ))}
           </nav>
         </div>

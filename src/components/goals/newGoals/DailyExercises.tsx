@@ -1,26 +1,25 @@
 
 import React, { useState } from "react";
-import { Exercise } from "@/components/goals/CreateGoalWizard";
+import { Exercise, SelectedExercise } from "@/components/goals/newGoals/types/goalTypes";
 import { differenceInDays, format, startOfDay } from "date-fns";
 import { cn } from "@/lib/utils";
 import { CircleCheck, Video } from "lucide-react";
 import { getExerciseEmoji } from "@/components/goals/newGoals/mockGoalData";
 import { isSameDay } from "date-fns";
+import { useUpdateExerciseDetails } from "@/service/hooks/goal/useGetGoal";
 
 
 interface DailyExercisesProps {
   currentDay: Date;
   programStartDate: Date;
-  exercises: Exercise[];
-  completedExercises: Record<number, number[]>;
+  exercises: SelectedExercise[];
   onMarkComplete: (exerciseId: number) => void;
-  onViewExercise: (exercise: Exercise) => void;
+  onViewExercise: (exercise: SelectedExercise) => void;
 }
 
 const DailyExercises = ({
   currentDay,
   exercises,
-  completedExercises,
   onMarkComplete,
   onViewExercise,
   programStartDate,
@@ -28,21 +27,25 @@ const DailyExercises = ({
   const [showingGreatJob, setShowingGreatJob] = useState<number | null>(null);
   const dayCompletedExercises = [];
   
-  const isExerciseCompleted = (exerciseId: number) => {
-    return dayCompletedExercises.includes(exerciseId);
-  };
 
-  const handleMarkComplete = (exerciseId: number) => {
-    if (isExerciseCompleted(exerciseId)) return;
-    
+
+  
+
+  const handleMarkComplete = (exercise) => {
+
+    if (exercise.is_completed) return;
+
+    exercise.is_completed = true;
+
     // Show "Great Job" animation for longer duration
-    setShowingGreatJob(exerciseId);
+    setShowingGreatJob(exercise.exercise_id);
     setTimeout(() => {
       setShowingGreatJob(null);
     }, 5000); // 5 seconds duration
+
     
     // Call the parent handler
-    onMarkComplete(exerciseId);
+    onMarkComplete(exercise.exercise_id);
   };
 
   const dayOfProgram = differenceInDays(currentDay, startOfDay(programStartDate)) + 1; // Assuming program starts on Jan 1, 2023
@@ -57,7 +60,7 @@ const DailyExercises = ({
       {/* Exercise list */}
       <ul className="space-y-2">
         {todayExercises.map((exercise) => {
-          const isCompleted = isExerciseCompleted(exercise.exercise_id);
+          const isCompleted = exercise.is_completed;
           //const exerciseEmoji = getExerciseEmoji(exercise.category);
           const isShowingGreatJob = showingGreatJob === exercise.exercise_id;
           
@@ -119,7 +122,7 @@ const DailyExercises = ({
                   {!isCompleted ? (
                     <button 
                       className="h-8 w-8 rounded-full flex items-center justify-center bg-wellness-bright-green hover:bg-wellness-bright-green/90 transition-colors"
-                      onClick={() => handleMarkComplete(exercise.id)}
+                      onClick={() => handleMarkComplete(exercise)}
                     >
                       <CircleCheck className="h-4 w-4 text-white" />
                       <span className="sr-only">Mark as complete</span>

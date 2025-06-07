@@ -1,16 +1,16 @@
 
 import React from "react";
-import { Exercise } from "./CreateGoalWizard";
+import { Exercise, SelectedExercise } from "./CreateGoalWizard";
 import { Button } from "@/components/ui/button";
 import { Activity, CheckCircle, Video } from "lucide-react";
 import DifficultyRating from "./DifficultyRating";
 
 interface ExerciseCardProps {
-  exercise: Exercise;
+  exercise: SelectedExercise;
   isCompleted: boolean;
   difficultyRating?: number;
   onMarkComplete: (exerciseId: number) => void;
-  onViewExercise: (exercise: Exercise) => void;
+  onViewExercise: (exercise: SelectedExercise) => void;
 }
 
 const ExerciseCard = ({ 
