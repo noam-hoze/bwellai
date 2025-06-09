@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useEffect, useRef }  from "react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Info } from "lucide-react";
 import { useGoalWizard } from "./hooks/useGoalWizard";
@@ -28,6 +28,13 @@ const CreateGoalWizard = ({ onClose, editGoal }: CreateGoalWizardProps) => {
   } = useGoalWizard({ onClose, editGoal });
 
   const CurrentStepComponent = wizardSteps[currentStep].component;
+
+  const scrollRef = useRef<HTMLDivElement | null>(null);
+
+useEffect(() => {
+  scrollRef.current?.scrollTo({ top: 0, behavior: "smooth" });
+}, [currentStep]);
+
   
   return (
     <div className="flex flex-col h-[80vh] overflow-hidden">
@@ -38,7 +45,7 @@ const CreateGoalWizard = ({ onClose, editGoal }: CreateGoalWizardProps) => {
         isEditMode={!!editGoal}
       />
 
-      <div className="flex-1 overflow-auto p-6 space-y-4 pb-24">
+      <div ref={scrollRef} className="flex-1 overflow-auto p-6 space-y-4 pb-24">
         <Alert className="bg-blue-50 border-blue-200">
           <Info className="h-4 w-4 text-blue-500" />
           <AlertDescription className="text-blue-700">
