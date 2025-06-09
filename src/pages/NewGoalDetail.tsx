@@ -46,9 +46,10 @@ const NewGoalDetail = () => {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState<boolean>(false);
 
   // Calculate completion percentage for the current day
-  const dayCompletedExercises = [];
-  const completionPercentage = exercises.length > 0
-    ? Math.round((dayCompletedExercises.length / exercises.length) * 100)
+  const daysWithExercises = new Set(goalData?.exercise_selection.map(ex=>ex.date)).size; // Unique days with exercises
+  const daysWithCompletedExercises = new Set(goalData?.exercise_selection.filter(x=>x.is_completed).map(ex=>ex.date)).size; // Unique days with completed exercises
+  const completionPercentage = goalData?.exercise_selection.length > 0
+    ? Math.round((daysWithCompletedExercises / daysWithExercises ) * 100)
     : 0;
 
   const handleMarkComplete = (exerciseId: number) => {
