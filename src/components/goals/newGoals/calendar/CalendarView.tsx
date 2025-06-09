@@ -71,6 +71,8 @@ const CalendarView = ({
     return completedExercises[day] && completedExercises[day].length > 0;
   };
 
+  const exercisesCompleted = exercises.filter(exercise => exercise.is_completed).length;
+
   return (
     <div>
       <div className="flex justify-between items-center mb-4">
@@ -125,9 +127,9 @@ const CalendarView = ({
         <CalendarStats
           currentDayNumber={currentDayOfGoal}
           totalDays={totalDays}
-          exercisesCompleted={exercises.filter(exercise => exercise.is_completed).length} // Mock data
-          totalExercises={exercises.length} // Mock data
-          adherencePercentage={82} // Mock data
+          exercisesCompleted={exercisesCompleted} 
+          totalExercises={exercises.length} 
+          adherencePercentage={Math.round((exercisesCompleted / exercises.length) * 100)} 
           painReductionPercentage={painReduction}
         />
       </div>
