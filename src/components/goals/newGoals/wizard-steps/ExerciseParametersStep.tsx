@@ -109,10 +109,11 @@ const ExerciseParametersStep: React.FC<ExerciseParametersStepProps> = ({
     const needsInit =
       exercise.customReps === undefined ||
       exercise.sets === undefined ||
-      (exercise.exerciseType === "time-based" && exercise.duration === undefined);
+      (exercise.exerciseType === "time-based" && exercise.duration === undefined)||
+      exercise.frequency === undefined;;
 
     return needsInit
-      ? { ...exercise, ...getDefaultsForExercise(exercise) }
+      ? { ...exercise, ...getDefaultsForExercise(exercise), frequency: exercise.frequency ?? "Daily" }
       : exercise;
   });
 
@@ -235,6 +236,7 @@ const ExerciseParametersStep: React.FC<ExerciseParametersStepProps> = ({
                       <Select 
                         value={exercise.frequency} 
                         onValueChange={(value) => setFrequency(exercise.id, value as Exercise['frequency'])}
+                        defaultValue="Daily"
                       >
                         <SelectTrigger className="h-10">
                           <SelectValue  />
