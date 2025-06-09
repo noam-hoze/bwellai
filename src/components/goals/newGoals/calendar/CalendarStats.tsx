@@ -5,6 +5,7 @@ interface CalendarStatsProps {
   currentDayNumber: number;
   totalDays: number;
   exercisesCompleted: number;
+  totalExercises: number;
   adherencePercentage: number;
   painReductionPercentage: number;
 }
@@ -13,6 +14,7 @@ const CalendarStats = ({
   currentDayNumber,
   totalDays,
   exercisesCompleted,
+  totalExercises,
   adherencePercentage,
   painReductionPercentage
 }: CalendarStatsProps) => {
@@ -25,7 +27,7 @@ const CalendarStats = ({
       </div>
       <div>
         <div className="text-sm text-gray-500">Exercises</div>
-        <div className="font-semibold text-green-600">{exercisesCompleted}</div>
+        <div className="font-semibold text-green-600">{exercisesCompleted}/{totalExercises}</div>
       </div>
       <div>
         <div className="text-sm text-gray-500">Adherence</div>

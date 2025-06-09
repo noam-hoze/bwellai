@@ -125,7 +125,8 @@ const CalendarView = ({
         <CalendarStats
           currentDayNumber={currentDayOfGoal}
           totalDays={totalDays}
-          exercisesCompleted={18} // Mock data
+          exercisesCompleted={exercises.filter(exercise => exercise.is_completed).length} // Mock data
+          totalExercises={exercises.length} // Mock data
           adherencePercentage={82} // Mock data
           painReductionPercentage={painReduction}
         />
