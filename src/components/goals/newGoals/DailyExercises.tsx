@@ -51,11 +51,12 @@ const DailyExercises = ({
     onMarkComplete(exercise.exercise_id);
   }
 
-
+  const getCategory = (exercise) => {
+  return exerciseTypes.find((type) => type.id === exercise.exercise_type_id)?.label || '';
+  }
 
   const getExerciseEmoji = (exercise) => {
-  const matchingExercise = exerciseTypes.find((type) => type.id === exercise.exercise_type_id);
-  const category = matchingExercise ? matchingExercise.label : '';
+  const category = getCategory(exercise);
 
   switch(category.toLowerCase()) {
     case 'stability':
@@ -127,8 +128,10 @@ const DailyExercises = ({
                     )}
                   </div>
                   <p className="text-xs text-gray-500">
-                    {exercise.entity_value} {exercise.entity === 'duration' ? 'seconds' : 'reps'} •
-                    {exercise.sets > 1 ? ` ${exercise.sets} sets` : ''}
+                    <span>
+                    {exercise.entity_value} {exercise.entity === 'duration' ? 'seconds' : 'reps'} • </span>
+                    <span>{exercise.sets > 1 ? ` ${exercise.sets} sets` : ''} • </span>
+                    <span>{getCategory(exercise)}</span>
                   </p>
                 </div>
                 
