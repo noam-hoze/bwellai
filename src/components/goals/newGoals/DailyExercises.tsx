@@ -4,9 +4,8 @@ import { Exercise, SelectedExercise } from "@/components/goals/newGoals/types/go
 import { differenceInDays, format, startOfDay } from "date-fns";
 import { cn } from "@/lib/utils";
 import { CircleCheck, Video } from "lucide-react";
-import { getExerciseEmoji } from "@/components/goals/newGoals/mockGoalData";
 import { isSameDay } from "date-fns";
-import { useUpdateExerciseDetails } from "@/service/hooks/goal/useGetGoal";
+import { useUpdateExerciseDetails, useUserGoalExerciseDetails } from "@/service/hooks/goal/useGetGoal";
 
 
 interface DailyExercisesProps {
@@ -26,12 +25,15 @@ const DailyExercises = ({
 }: DailyExercisesProps) => {
   const [showingGreatJob, setShowingGreatJob] = useState<number | null>(null);
   const dayCompletedExercises = [];
-  
 
+  const {
+      data: userGoalExerciseDetailsData,
+      isLoading: userGoalExerciseIsLoading,
+    } = useUserGoalExerciseDetails();
 
-  
+  const exerciseTypes = Object.values(userGoalExerciseDetailsData ?? {}).flat();
 
-  const handleMarkComplete = (exercise) => {
+  function handleMarkComplete(exercise) {
 
     if (exercise.is_completed) return;
 
@@ -43,10 +45,31 @@ const DailyExercises = ({
       setShowingGreatJob(null);
     }, 5000); // 5 seconds duration
 
-    
+
+
     // Call the parent handler
     onMarkComplete(exercise.exercise_id);
-  };
+  }
+
+
+
+  const getExerciseEmoji = (exercise) => {
+  const matchingExercise = exerciseTypes.find((type) => type.id === exercise.exercise_type_id);
+  const category = matchingExercise ? matchingExercise.label : '';
+
+  switch(category.toLowerCase()) {
+    case 'stability':
+      return '🧘';
+    case 'mobility':
+      return '🔄';
+    case 'strength':
+      return '🏋️';
+    case 'therapy':
+      return '❄️';
+    default:
+      return '🧍';
+  }
+};
 
   const dayOfProgram = differenceInDays(currentDay, startOfDay(programStartDate)) + 1; // Assuming program starts on Jan 1, 2023
   const todayExercises = exercises.filter((exercise) => isSameDay(exercise.date, currentDay));
@@ -61,7 +84,7 @@ const DailyExercises = ({
       <ul className="space-y-2">
         {todayExercises.map((exercise) => {
           const isCompleted = exercise.is_completed;
-          //const exerciseEmoji = getExerciseEmoji(exercise.category);
+          const exerciseEmoji = getExerciseEmoji(exercise);
           const isShowingGreatJob = showingGreatJob === exercise.exercise_id;
           
           return (
@@ -78,7 +101,7 @@ const DailyExercises = ({
                   "h-10 w-10 flex items-center justify-center rounded-md mr-3 text-lg",
                   isCompleted ? "bg-green-100" : "bg-gray-100"
                 )}>
-                  {/* {exerciseEmoji} */}
+                  {exerciseEmoji}
                 </div>
                 
                 {/* Exercise Details */}
