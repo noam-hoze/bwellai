@@ -83,10 +83,13 @@ const SummaryConfirmationStep: React.FC<SummaryConfirmationStepProps> = ({
       }
       return durationStr;
     }
-    
+
     return "Custom";
   };
-  console.log("exercises", goalData.selectedExercises);
+
+  const selectedTherapies = goalData.selectedExercises.filter(ex => ex.label === "Therapy");
+  const selectedExercises = goalData.selectedExercises.filter(ex => ex.label !== "Therapy");
+
   return (
     <div className="space-y-6">
       <Card className="border-green-200 bg-green-50">
@@ -178,7 +181,7 @@ const SummaryConfirmationStep: React.FC<SummaryConfirmationStepProps> = ({
       <Card>
         <Collapsible open={isExercisesOpen} onOpenChange={setIsExercisesOpen}>
           <div className="bg-wellness-light-green p-4 flex items-center justify-between border-b cursor-pointer">
-            <h3 className="font-medium text-wellness-bright-green">Exercises ({goalData.selectedExercises.length})</h3>
+            <h3 className="font-medium text-wellness-bright-green">Exercises ({selectedExercises.length})</h3>
             <CollapsibleTrigger asChild>
               <div className="cursor-pointer">
                 {isExercisesOpen ? (
@@ -191,9 +194,9 @@ const SummaryConfirmationStep: React.FC<SummaryConfirmationStepProps> = ({
           </div>
           <CollapsibleContent>
             <CardContent className="p-4 pt-2">
-              {goalData.selectedExercises.length > 0 ? (
+              {selectedExercises.length > 0 ? (
                 <div className="space-y-3 mt-2">
-                  {goalData.selectedExercises.map(exercise => (
+                  {selectedExercises.map(exercise => (
                     <div key={exercise.id} className="flex items-center justify-between border-b last:border-0 pb-2 last:pb-0">
                       <div className="flex items-center">
                         <div className="mr-3 text-xl">
@@ -226,11 +229,11 @@ const SummaryConfirmationStep: React.FC<SummaryConfirmationStepProps> = ({
       </Card>
       
       {/* Therapies Section */}
-      {goalData.selectedTherapies.length > 0 && (
+      {selectedTherapies.length > 0 && (
         <Card>
           <Collapsible open={isTherapiesOpen} onOpenChange={setIsTherapiesOpen}>
             <div className="bg-blue-50 p-4 flex items-center justify-between border-b cursor-pointer">
-              <h3 className="font-medium text-blue-700">Hot/Cold Therapy ({goalData.selectedTherapies.length})</h3>
+              <h3 className="font-medium text-blue-700">Hot/Cold Therapy ({selectedTherapies.length})</h3>
               <CollapsibleTrigger asChild>
                 <div className="cursor-pointer">
                   {isTherapiesOpen ? (
@@ -244,21 +247,21 @@ const SummaryConfirmationStep: React.FC<SummaryConfirmationStepProps> = ({
             <CollapsibleContent>
               <CardContent className="p-4 pt-2">
                 <div className="space-y-3 mt-2">
-                  {goalData.selectedTherapies.map(therapy => (
+                  {selectedTherapies.map(therapy => (
                     <div key={therapy.id} className="flex items-center justify-between border-b last:border-0 pb-2 last:pb-0">
                       <div className="flex items-center">
                         <div 
                           className={`mr-3 text-xl ${
-                            therapy.type === "cold" ? "text-blue-500" : "text-red-500"
+                            therapy.name.toLowerCase().includes("cold") ? "text-blue-500" : "text-red-500"
                           }`}
                         >
-                          {therapy.type === "cold" ? "❄️" : "🔥"}
+                          {therapy.name.toLowerCase().includes("cold") ? "❄️" : "🔥"}
                         </div>
                         <div>
                           <h4 className="font-medium text-sm">{therapy.name}</h4>
                           <p className="text-xs text-gray-500">
                             {therapy.duration} min, {therapy.timesPerDay}x daily,{" "} 
-                            {therapy.whenToApply}
+                            {therapy.frequency}
                           </p>
                         </div>
                       </div>

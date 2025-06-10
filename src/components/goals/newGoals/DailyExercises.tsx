@@ -66,7 +66,7 @@ const DailyExercises = ({
     case 'strength':
       return '🏋️';
     case 'therapy':
-      return '❄️';
+      return exercise.exercise_name.toLowerCase().includes("cold") ? '❄️' : '🔥';
     default:
       return '🧍';
   }
@@ -130,7 +130,7 @@ const DailyExercises = ({
                   <p className="text-xs text-gray-500">
                     <span>
                     {exercise.entity_value} {exercise.entity === 'duration' ? 'seconds' : 'reps'} • </span>
-                    <span>{exercise.sets > 1 ? ` ${exercise.sets} sets` : ''} • </span>
+                    <span>{exercise.sets > 1 ? ` ${exercise.sets} sets` : `${exercise.sets} set`} • </span>
                     <span>{getCategory(exercise)}</span>
                   </p>
                 </div>
