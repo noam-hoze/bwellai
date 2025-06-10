@@ -72,6 +72,7 @@ const CalendarView = ({
   };
 
   const exercisesCompleted = exercises.filter(exercise => exercise.is_completed).length;
+  const exercisesPrescribed = exercises.filter(exercise => !isAfter(exercise.date, new Date())).length;
 
   return (
     <div>
@@ -129,7 +130,7 @@ const CalendarView = ({
           totalDays={totalDays}
           exercisesCompleted={exercisesCompleted} 
           totalExercises={exercises.length} 
-          adherencePercentage={Math.round((exercisesCompleted / exercises.length) * 100)} 
+          adherencePercentage={Math.round((exercisesCompleted / exercisesPrescribed) * 100)} 
           painReductionPercentage={painReduction}
         />
       </div>
