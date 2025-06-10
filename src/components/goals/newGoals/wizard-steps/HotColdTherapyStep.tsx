@@ -1,5 +1,5 @@
 import React from "react";
-import { GoalData, Therapy } from "../CreateGoalWizard";
+import { Exercise, GoalData, SelectedExercise, Therapy } from "../CreateGoalWizard";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -7,67 +7,58 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { MinusCircle, Plus, PlusCircle, X } from "lucide-react";
+import { useUserGoalExerciseDetails } from "@/service/hooks/goal/useGetGoal";
 
-// Mock data for therapy options
-const therapyOptions: Therapy[] = [
-  {
-    id: 1,
-    name: "Cold Compress",
-    description: "Applies cold to reduce inflammation and pain",
-    type: "cold",
-    duration: 15,
-    timesPerDay: 3,
-    whenToApply: "After activity",
-    selected: false
-  },
-  {
-    id: 2,
-    name: "Heat Therapy",
-    description: "Applies heat to improve circulation and relax muscles",
-    type: "heat",
-    duration: 20,
-    timesPerDay: 2,
-    whenToApply: "Before stretching",
-    selected: false
-  }
-];
+
 
 interface HotColdTherapyStepProps {
   goalData: GoalData;
   updateGoalData: (newData: Partial<GoalData>) => void;
+  userGoalExerciseDetailsData?: Record<string, Exercise[]>;
 }
 
 const HotColdTherapyStep: React.FC<HotColdTherapyStepProps> = ({
   goalData,
   updateGoalData
 }) => {
-  console.log("HotColdTherapyStep rendered with goalData:", goalData);
-  
-  const handleAddTherapy = (therapy: Therapy) => {
-    const updatedTherapy = { ...therapy, selected: true };
-    const updatedTherapies = [...goalData.selectedTherapies, updatedTherapy];
-    updateGoalData({ selectedTherapies: updatedTherapies });
+
+   const {
+        data: userGoalExerciseDetailsData,
+        isLoading: userGoalExerciseIsLoading,
+      } = useUserGoalExerciseDetails();
+
+  const therapyOptions = userGoalExerciseDetailsData?.Therapy || [];
+
+  console.log("therapyOptions: ", therapyOptions);
+
+  const selectedTherapies = goalData.selectedExercises.filter(ex => ex.label === "Therapy");
+  console.log("selectedTherapies: ", selectedTherapies);
+
+  const handleAddTherapy = (therapy: Exercise) => {
+    const updatedTherapy = { ...therapy, selected: true, duration: 30, timesPerDay: 1, frequency: "Daily" as Exercise['frequency'] };
+    const updatedTherapies = [...goalData.selectedExercises, updatedTherapy];
+    updateGoalData({ selectedExercises: updatedTherapies });
   };
 
   const handleRemoveTherapy = (therapyId: number) => {
-    const updatedTherapies = goalData.selectedTherapies.filter(
+    const updatedTherapies = goalData.selectedExercises.filter(
       therapy => therapy.id !== therapyId
     );
-    updateGoalData({ selectedTherapies: updatedTherapies });
+    updateGoalData({ selectedExercises: updatedTherapies });
   };
 
-  const updateTherapy = (therapyId: number, updates: Partial<Therapy>) => {
-    const updatedTherapies = goalData.selectedTherapies.map(therapy => {
+  const updateTherapy = (therapyId: number, updates: Partial<Exercise>) => {
+    const updatedTherapies = goalData.selectedExercises.map(therapy => {
       if (therapy.id === therapyId) {
         return { ...therapy, ...updates };
       }
       return therapy;
     });
-    
-    updateGoalData({ selectedTherapies: updatedTherapies });
+
+    updateGoalData({ selectedExercises: updatedTherapies });
   };
 
-  const incrementValue = (therapy: Therapy, field: 'duration' | 'timesPerDay') => {
+  const incrementValue = (therapy: Exercise, field: 'duration' | 'timesPerDay') => {
     if (field === 'duration') {
       updateTherapy(therapy.id, { duration: therapy.duration + 5 });
     } else {
@@ -75,7 +66,7 @@ const HotColdTherapyStep: React.FC<HotColdTherapyStepProps> = ({
     }
   };
 
-  const decrementValue = (therapy: Therapy, field: 'duration' | 'timesPerDay') => {
+  const decrementValue = (therapy: any, field: 'duration' | 'timesPerDay') => {
     if (field === 'duration') {
       updateTherapy(therapy.id, { duration: Math.max(5, therapy.duration - 5) });
     } else {
@@ -84,7 +75,7 @@ const HotColdTherapyStep: React.FC<HotColdTherapyStepProps> = ({
   };
 
   const handleInputChange = (
-    therapy: Therapy, 
+    therapy: any, 
     field: 'duration' | 'timesPerDay', 
     value: string
   ) => {
@@ -98,7 +89,7 @@ const HotColdTherapyStep: React.FC<HotColdTherapyStepProps> = ({
   };
 
   const isTherapySelected = (therapyId: number) => {
-    return goalData.selectedTherapies.some(therapy => therapy.id === therapyId);
+    return goalData.selectedExercises.some(therapy => therapy.id === therapyId);
   };
 
   const availableTherapies = therapyOptions.filter(
@@ -124,23 +115,23 @@ const HotColdTherapyStep: React.FC<HotColdTherapyStepProps> = ({
       <div className="flex items-center justify-between">
         <h2 className="text-xl font-semibold">Hot & Cold Therapy</h2>
         <Badge variant="secondary" className="bg-wellness-light-green text-wellness-bright-green">
-          Selected: {goalData.selectedTherapies.length} therapies
+          Selected: {selectedTherapies.length} therapies
         </Badge>
       </div>
       
-      {goalData.selectedTherapies.length > 0 && (
+      {selectedTherapies.length > 0 && (
         <div className="space-y-6">
-          {goalData.selectedTherapies.map(therapy => (
+          {selectedTherapies.map(therapy => (
             <Card key={therapy.id} className="border border-gray-200">
               <CardContent className="p-4">
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center">
                     <div 
                       className={`h-12 w-12 rounded-md flex items-center justify-center text-2xl mr-3 ${
-                        therapy.type === "cold" ? "bg-blue-100" : "bg-red-100"
+                        therapy.name.toLowerCase().includes("cold") ? "bg-blue-100" : "bg-red-100"
                       }`}
                     >
-                      {therapy.type === "cold" ? "❄️" : "🔥"}
+                      {therapy.name.toLowerCase().includes("cold") ? "❄️" : "🔥"}
                     </div>
                     <div>
                       <h4 className="font-medium">{therapy.name}</h4>
@@ -210,26 +201,18 @@ const HotColdTherapyStep: React.FC<HotColdTherapyStepProps> = ({
                   
                   <div>
                     <Select 
-                      value={therapy.whenToApply} 
-                      onValueChange={(value) => updateTherapy(therapy.id, { whenToApply: value })}
+                      value={therapy.frequency} 
+                      onValueChange={(value) => updateTherapy(therapy.id, { frequency: value as Exercise['frequency']})}
                     >
                       <SelectTrigger className="h-10">
                         <SelectValue placeholder="When to apply" />
                       </SelectTrigger>
                       <SelectContent>
-                        {therapy.type === "cold" ? (
-                          coldCompressOptions.map((option) => (
-                            <SelectItem key={option} value={option}>
-                              {option}
-                            </SelectItem>
-                          ))
-                        ) : (
-                          heatTherapyOptions.map((option) => (
-                            <SelectItem key={option} value={option}>
-                              {option}
-                            </SelectItem>
-                          ))
-                        )}
+                       <SelectItem value="Daily">Daily</SelectItem>
+                        <SelectItem value="Every other day">Every other day</SelectItem>
+                        <SelectItem value="3x per week">3 times per week</SelectItem>
+                        <SelectItem value="2x per week">2 times per week</SelectItem>
+                        <SelectItem value="Weekly">Weekly</SelectItem>
                       </SelectContent>
                     </Select>
                     <p className="text-xs text-gray-500 mt-1">when to apply</p>
@@ -252,10 +235,10 @@ const HotColdTherapyStep: React.FC<HotColdTherapyStepProps> = ({
                     <div className="flex items-center">
                       <div 
                         className={`h-12 w-12 rounded-md flex items-center justify-center text-2xl mr-3 ${
-                          therapy.type === "cold" ? "bg-blue-100" : "bg-red-100"
+                          therapy.name.toLowerCase().includes("cold") ? "bg-blue-100" : "bg-red-100"
                         }`}
                       >
-                        {therapy.type === "cold" ? "❄️" : "🔥"}
+                        {therapy.name.toLowerCase().includes("cold") ? "❄️" : "🔥"}
                       </div>
                       <div>
                         <h4 className="font-medium">{therapy.name}</h4>
