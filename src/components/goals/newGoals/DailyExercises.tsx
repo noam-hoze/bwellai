@@ -129,7 +129,7 @@ const DailyExercises = ({
                   </div>
                   <p className="text-xs text-gray-500">
                     <span>
-                    {exercise.entity_value} {exercise.entity === 'duration' ? 'seconds' : 'reps'} • </span>
+                    {exercise.entity_value} {getCategory(exercise) === 'Therapy' ? 'minutes' : exercise.entity === 'duration' ? 'seconds' : 'reps'} • </span>
                     <span>{exercise.sets > 1 ? ` ${exercise.sets} sets` : `${exercise.sets} set`} • </span>
                     <span>{getCategory(exercise)}</span>
                   </p>
