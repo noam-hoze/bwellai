@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { subWeeks, addWeeks, startOfWeek, subMonths, addMonths, isSameMonth, isBefore, isAfter } from "date-fns";
+import { subWeeks, addWeeks, startOfWeek, subMonths, addMonths, isSameMonth, isBefore, isAfter, isSameDay } from "date-fns";
 import WeekView from "./WeekView";
 import MonthView from "./MonthView";
 import CalendarStats from "./CalendarStats";
@@ -72,8 +72,10 @@ const CalendarView = ({
   };
 
   const exercisesCompleted = exercises.filter(exercise => exercise.is_completed).length;
-  const exercisesPrescribed = exercises.filter(exercise => !isAfter(exercise.date, new Date())).length;
+  const exercisesPrescribed = exercises.filter(exercise => isBefore(exercise.date, new Date()) || isSameDay(exercise.date, new Date())).length;
 
+  console.log("Exercises Completed:", exercisesCompleted);
+  console.log("Exercises Prescribed:", exercisesPrescribed);
   return (
     <div>
       <div className="flex justify-between items-center mb-4">
