@@ -142,7 +142,7 @@ const NewGoalDetail = () => {
         const newGoalDuration = Number(goalData?.schedule?.program_duration_in_days);
         setGoalDuration(newGoalDuration);
         setProgramStartDate(goalCreationDateInLocalTime);
-        setProgramEndDate(addDays(goalCreationDateInLocalTime, newGoalDuration)); 
+        setProgramEndDate(addDays(goalCreationDateInLocalTime, newGoalDuration - 1));
         setCurrentDayOfGoal(differenceInDays(new Date(), startOfDay(goalCreationDateInLocalTime)) + 1);
       }
     }, [location]);

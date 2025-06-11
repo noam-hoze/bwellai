@@ -162,7 +162,7 @@ export const useGoalWizard = ({ onClose, editGoal }: UseGoalWizardProps) => {
     const today = new Date();
     const result: string[] = [];
 
-    for (let i = 0; i < duration; i++) {
+    for (let i = 1; i < duration + 1; i++) {
       let shouldAdd = false;
 
       switch (frequency) {
