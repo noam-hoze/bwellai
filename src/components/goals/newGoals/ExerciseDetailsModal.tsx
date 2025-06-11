@@ -40,21 +40,29 @@ const ExerciseDetailsModal = ({
     }
   };
 
-  // Extract YouTube video ID from URL or use the specific demo video
-  const getYouTubeVideoId = (url: string) => {
-    // Use the specific video ID from the provided URL
-    return "Vg4iSulJStI"; // Video from https://youtu.be/Vg4iSulJStI?si=LgNkFb30u9ZSPYPE
+  // const videoId = getYouTubeVideoId(exercise.videoUrl || "");
+  const foundExercise = useMemo(() => {
+  if (!exercise || !exercise.exercise_id) return undefined;
+  return allExercises.find((ex: Exercise) => ex.id === exercise.exercise_type_id);
+}, [allExercises, exercise]) as Exercise | undefined;
+
+    const formatSetsAndReps = () => {
+    if (exercise.entity === "duration" && exercise.entity_value) {
+      const minutes = Math.floor(exercise.entity_value / 60);
+      const seconds = exercise.entity_value % 60;
+      const timeStr = minutes > 0 
+        ? `${minutes}:${seconds.toString().padStart(2, '0')} minutes`
+        : `${seconds} seconds`;
+      return `${exercise.sets} ${exercise.sets === 1 ? 'set' : 'sets'} of ${timeStr}`;
+    } else {
+      return `${exercise.sets} ${exercise.sets === 1 ? 'set' : 'sets'} of ${exercise.entity_value} repetitions`;
+    }
   };
 
-  // const videoId = getYouTubeVideoId(exercise.videoUrl || "");
-  const videoId = useMemo(() => {
-    if(!exercise || !exercise.exercise_id) return '';
-    const foundExercise = allExercises.find((ex: Exercise) => ex.id === exercise.exercise_type_id) as Exercise | undefined;
-    if (!foundExercise) return '';
-    return foundExercise.videoUrl;
-  }, [allExercises, exercise]);
-
   if (!exercise) return null;
+
+  console.log("Exercise Details Modal", exercise);
+  console.log("Found Exercise", foundExercise);
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -74,7 +82,7 @@ const ExerciseDetailsModal = ({
             <iframe
               width="100%"
               height="100%"
-              src={`https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1`}
+              src={`https://www.youtube.com/embed/${foundExercise.videoUrl}?rel=0&modestbranding=1`}
               title={`${exercise.exercise_name} Exercise Video`}
               frameBorder="0"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -85,24 +93,24 @@ const ExerciseDetailsModal = ({
 
           {/* Exercise Details */}
           <div className="space-y-4">
-            {/* <div>
+           <div>
               <h3 className="font-semibold text-lg">Instructions</h3>
-              <p className="text-gray-600 mt-1">{exercise.description}</p>
+              <p className="text-gray-600 mt-1">{foundExercise.description}</p>
             </div>
 
             <div>
-              <h3 className="font-semibold">Repetitions</h3>
+              <h3 className="font-semibold">Sets & {exercise.entity === "reps" ? "Repetitions" : "Duration"}</h3>
               <p className="text-gray-600 mt-1">
-                {exercise.customReps} repetitions
-                {exercise.exercise_name.toLowerCase().includes("each side") && 
-                  ` (${Math.floor(exercise.customReps/2)} each side)`}
+                {formatSetsAndReps()}
+                {exercise.exercise_name.toLowerCase().includes("each side") && exercise.entity === "reps" &&
+                  ` (${Math.floor(exercise.entity_value/2)} each side)`}
               </p>
             </div>
 
             <div>
               <h3 className="font-semibold">Category</h3>
-              <p className="text-gray-600 mt-1">{exercise.category}</p>
-            </div> */}
+              <p className="text-gray-600 mt-1">{foundExercise.label}</p>
+            </div> 
 
             {/* Tips */}
             <div className="bg-wellness-light-green p-4 rounded-lg">

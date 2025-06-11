@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { MinusCircle, PlusCircle } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useEffect } from "react";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
 
 interface ExerciseParametersStepProps {
@@ -43,20 +44,19 @@ const ExerciseParametersStep: React.FC<ExerciseParametersStepProps> = ({
 };
 
 
-  const toggleExerciseType = (exercise: Exercise) => {
-    const newType = exercise.exerciseType === "rep-based" ? "time-based" : "rep-based";
+  const toggleExerciseType = (exercise: Exercise, value: string) => {
     
     // Set appropriate default values based on the type
-    if (newType === "rep-based") {
-      updateExercise(exercise.id, { 
-        exerciseType: newType,
+    if (value === "rep-based") {
+      updateExercise(exercise.id, {
+        exerciseType: "rep-based",
         customReps: 10,
         duration: undefined,
         sets: 2
       });
     } else {
-      updateExercise(exercise.id, { 
-        exerciseType: newType,
+      updateExercise(exercise.id, {
+        exerciseType: "time-based",
         customReps: 0,
         duration: 30,
         sets: 2
@@ -159,9 +159,10 @@ const ExerciseParametersStep: React.FC<ExerciseParametersStepProps> = ({
                   </div>
                 </div>
                 
-                <div className="border-t border-gray-100 pt-4">
+                
+               <div className="border-t border-gray-100 pt-4">
                   {/* Exercise Type Toggle */}
-                  <div className="flex items-center mb-4">
+                   {/*<div className="flex items-center mb-4">
                     <span className="text-sm font-medium mr-2">
                       {exercise.exerciseType === "rep-based" ? "Repetitions" : "Duration"}
                     </span>
@@ -170,7 +171,29 @@ const ExerciseParametersStep: React.FC<ExerciseParametersStepProps> = ({
                       className="text-wellness-bright-green text-sm hover:underline"
                     >
                       Switch
-                    </button>
+                    </button>*/}
+                    <div className="flex items-center gap-3 mb-4">
+                    <Label className="text-sm font-medium">Exercise Type:</Label>
+                    <ToggleGroup 
+                      type="single" 
+                      value={exercise.exerciseType}
+                      defaultValue="time-based"
+                      onValueChange={(value) => value && toggleExerciseType(exercise, value)}
+                      className="border rounded-md p-0.5 h-8"
+                    >
+                      <ToggleGroupItem 
+                        value="rep-based" 
+                        className="text-xs px-3 py-1 h-7 data-[state=on]:bg-wellness-bright-green data-[state=on]:text-white"
+                      >
+                        Repetitions
+                      </ToggleGroupItem>
+                      <ToggleGroupItem 
+                        value="time-based" 
+                        className="text-xs px-3 py-1 h-7 data-[state=on]:bg-wellness-bright-green data-[state=on]:text-white"
+                      >
+                        Duration
+                      </ToggleGroupItem>
+                    </ToggleGroup>
                   </div>
                   
                   {/* Controls Grid */}
