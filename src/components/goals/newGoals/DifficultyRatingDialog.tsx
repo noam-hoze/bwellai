@@ -2,7 +2,6 @@
 import React, { useState } from "react";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Star } from "lucide-react";
 
 interface DifficultyRatingDialogProps {
   isOpen: boolean;
@@ -34,22 +33,39 @@ const DifficultyRatingDialog = ({
         </DialogHeader>
         
         <div className="py-6">
-          <p className="text-center text-gray-600 mb-4">
+          <p className="text-center text-gray-600 mb-6">
             How difficult was "{exerciseName}"?
           </p>
           
-          <div className="flex justify-center gap-2">
-            {[1, 2, 3, 4, 5].map((rating) => (
-              <Button
-                key={rating}
-                variant="ghost"
-                size="icon"
-                className={`h-12 w-12 ${selectedRating >= rating ? 'text-yellow-500' : 'text-gray-300'}`}
-                onClick={() => setSelectedRating(rating)}
-              >
-                <Star className="h-8 w-8 fill-current" />
-              </Button>
-            ))}
+          <div className="flex justify-center items-center gap-4">
+            {/* Easy label */}
+            <div className="text-sm font-medium text-gray-500">
+              Easy
+            </div>
+            
+            {/* Rating buttons */}
+            <div className="flex gap-2">
+              {[1, 2, 3, 4, 5].map((rating) => (
+                <Button
+                  key={rating}
+                  variant="ghost"
+                  size="icon"
+                  className={`h-12 w-12 rounded-full border-2 transition-all ${
+                    selectedRating >= rating 
+                      ? 'bg-wellness-bright-green border-wellness-bright-green text-white' 
+                      : 'border-gray-300 text-gray-500 hover:border-wellness-bright-green hover:text-wellness-bright-green'
+                  }`}
+                  onClick={() => setSelectedRating(rating)}
+                >
+                  <span className="text-lg font-semibold">{rating}</span>
+                </Button>
+              ))}
+            </div>
+            
+            {/* Hard label */}
+            <div className="text-sm font-medium text-gray-500">
+              Hard
+            </div>
           </div>
         </div>
         

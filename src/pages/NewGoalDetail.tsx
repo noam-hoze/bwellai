@@ -82,7 +82,6 @@ const NewGoalDetail = () => {
       exerciseId: exerciseId,
     });
     
-    // No toast notification - removed
   };
 
   const handleRateExercise = (rating: number) => {
@@ -91,6 +90,17 @@ const NewGoalDetail = () => {
         ...difficultyRatings,
         [exerciseToRate.exercise_id]: rating
       });
+
+      const payload = {
+      ...exerciseToRate,
+      difficulty_level: rating,
+    };
+
+    updateExerciseDetails({
+      payload,
+      userGoalId: goalData.id,
+      exerciseId: exerciseToRate.exercise_id,
+    });
     }
     setIsRatingDialogOpen(false);
     setExerciseToRate(null);
