@@ -16,10 +16,12 @@ import { Button } from "@/components/ui/button";
 import PainProgressChart from "./PainProgressChart";
 import DifficultyAnalysis from "./DifficultyAnalysis";
 import InsightCard from "./InsightCard";
+import { SelectedExercise } from "./CreateGoalWizard";
+import { isBefore, isSameDay } from "date-fns";
 
 interface ProgressSectionProps {
-  completedExercises: number;
-  totalExercises: number;
+  exercises: SelectedExercise[];
+  completionPercentage: number;
   currentDay: Date;
   currentDayOfGoal: number;
   totalDays: number;
@@ -50,8 +52,8 @@ interface ProgressSectionProps {
 }
 
 const ProgressSection = ({
-  completedExercises,
-  totalExercises,
+  exercises,
+  completionPercentage,
   currentDay,
   currentDayOfGoal,
   totalDays,
@@ -65,10 +67,7 @@ const ProgressSection = ({
   insights,
   milestones
 }: ProgressSectionProps) => {
-  const completionPercentage = Math.round((completedExercises / totalExercises) * 100);
-  const planProgress = Math.round((currentDayOfGoal / totalDays) * 100);
-  const adherenceRate = Math.round((completedExercises / (currentDayOfGoal * (totalExercises / totalDays))) * 100);
-  
+
   const handleDownloadReport = () => {
     // In a real app, this would generate and download a PDF report
     alert("Downloading progress report...");
@@ -78,6 +77,26 @@ const ProgressSection = ({
     // In a real app, this would open sharing options
     alert("Opening sharing options...");
   };
+
+  const exercisesCompleted = exercises.filter(exercise => exercise.is_completed).length;
+  const exercisesPrescribed = exercises.filter(exercise => isBefore(exercise.date, new Date()) || isSameDay(exercise.date, new Date())).length;
+
+  const adherenceRate = Math.round((exercisesCompleted / exercisesPrescribed) * 100)
+
+  function countCompletedDays(exercises): number {
+  const completedDays = new Set<string>();
+
+  exercises.forEach((exercise) => {
+    if (exercise.is_completed) {
+      const day = new Date(exercise.date).toISOString().split("T")[0];
+      completedDays.add(day);
+    }
+  });
+
+  return completedDays.size;
+}
+
+  const completedDays = countCompletedDays(exercises);
 
   return (
     <div className="space-y-6">
@@ -90,28 +109,28 @@ const ProgressSection = ({
           <div className="mb-6">
             <div className="flex justify-between items-center mb-2">
               <span className="text-gray-700">Plan Completion</span>
-              <span className="font-bold text-2xl text-green-600">{planProgress}%</span>
+              <span className="font-bold text-2xl text-green-600">{completionPercentage}%</span>
             </div>
-            <Progress value={planProgress} className="h-3 bg-green-100" indicatorColor="var(--wellness-bright-green)" />
+            <Progress value={completionPercentage} className="h-3 bg-green-100" indicatorColor="green" />
           </div>
           
           {/* 4-Column Grid with Key Stats */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <Card className="bg-white">
               <CardContent className="p-4 text-center">
-                <span className="text-3xl font-bold text-green-600">{currentDay.getDate()}</span>
+                <span className="text-3xl font-bold text-green-600">{completedDays}/{totalDays}</span>
                 <p className="text-sm text-gray-600">Days Completed</p>
               </CardContent>
             </Card>
             <Card className="bg-white">
               <CardContent className="p-4 text-center">
-                <span className="text-3xl font-bold text-green-600">{streak} days</span>
-                <p className="text-sm text-gray-600">Current Streak</p>
+                <span className="text-xl font-bold text-green-600"></span>
+                <p className="text-base text-gray-600">Current Streak<br/>Coming Soon</p>
               </CardContent>
             </Card>
             <Card className="bg-white">
               <CardContent className="p-4 text-center">
-                <span className="text-3xl font-bold text-green-600">{completedExercises}</span>
+                <span className="text-3xl font-bold text-green-600">{exercisesCompleted}</span>
                 <p className="text-sm text-gray-600">Exercises Done</p>
               </CardContent>
             </Card>
@@ -124,17 +143,17 @@ const ProgressSection = ({
           </div>
           
           {/* Download Button */}
-          <Button 
+          {/*<Button 
             className="w-full mt-6" 
             onClick={handleDownloadReport}
           >
             <Download className="h-4 w-4 mr-2" /> Download Full Progress Report
-          </Button>
+          </Button>*/}
         </CardContent>
       </Card>
 
       {/* Pain Progress Chart Section */}
-      <Card>
+     {/* <Card>
         <CardContent className="p-4">
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-lg font-semibold">Pain Progress</h3>
@@ -144,13 +163,13 @@ const ProgressSection = ({
                 {painReduction}% decrease
               </div>
             )}
-          </div>
+          </div>*/}
           
           {/* Pain Progress Chart Component */}
-          <PainProgressChart painHistory={painHistory} />
+          {/*<PainProgressChart painHistory={painHistory} />*/}
           
           {/* Chart Summary */}
-          <div className="grid grid-cols-3 gap-4 mt-4 text-center">
+        {/*}  <div className="grid grid-cols-3 gap-4 mt-4 text-center">
             <div>
               <div className="text-sm text-gray-500">Initial Pain</div>
               <div className="font-bold text-lg">{initialPainLevel}/10</div>
@@ -165,18 +184,18 @@ const ProgressSection = ({
             </div>
           </div>
         </CardContent>
-      </Card>
+      </Card>*/}
       
       {/* Exercise Difficulty Analysis */}
-      <Card>
+      {/*<Card>
         <CardContent className="p-4">
-          <h3 className="text-lg font-semibold mb-4">Exercise Difficulty Analysis</h3>
+          <h3 className="text-lg font-semibold mb-4">Exercise Difficulty Analysis</h3> */}
           
           {/* Difficulty Analysis Component */}
-          <DifficultyAnalysis difficulties={exerciseDifficulties} />
+         {/* <DifficultyAnalysis difficulties={exerciseDifficulties} />*/}
           
           {/* Insight Box */}
-          <div className="bg-blue-50 p-4 rounded-lg mt-4 flex items-start">
+          {/*<div className="bg-blue-50 p-4 rounded-lg mt-4 flex items-start">
             <Info className="h-5 w-5 text-blue-500 mt-0.5 mr-3 flex-shrink-0" />
             <p className="text-sm text-blue-700">
               Your difficulty ratings show you find mobility exercises most challenging. 
@@ -185,7 +204,7 @@ const ProgressSection = ({
             </p>
           </div>
         </CardContent>
-      </Card>
+      </Card> */}
     </div>
   );
 };

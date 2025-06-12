@@ -171,11 +171,11 @@ const NewGoalDetail = () => {
           goalType={goalData.name}
           startDate={goalData.created_local_time}
           endDate={programEndDate}
-          completionPercentage={completionPercentage}//change
+          completionPercentage={completionPercentage}
           streak={5} // Mock data for streak, change
           onEditGoal={handleEditGoal}//change? look into this
           duration={goalData.schedule?.program_duration_in_days}
-          goalId={goalData.id} // Assuming goalData has an id field
+          goalId={goalData.id} 
         />
 
         {/* Navigation Tabs */}
@@ -188,8 +188,8 @@ const NewGoalDetail = () => {
             <TabsTrigger value="calendar" className="data-[state=active]:border-b-2 data-[state=active]:border-green-600 data-[state=active]:rounded-none data-[state=active]:shadow-none">
               Calendar
             </TabsTrigger>
-            <TabsTrigger disabled value="progress" className="data-[state=active]:border-b-2 data-[state=active]:border-green-600 data-[state=active]:rounded-none data-[state=active]:shadow-none">
-              Progress (Coming soon)
+            <TabsTrigger value="progress" className="data-[state=active]:border-b-2 data-[state=active]:border-green-600 data-[state=active]:rounded-none data-[state=active]:shadow-none">
+              Progress
             </TabsTrigger>
           </TabsList>
 
@@ -236,11 +236,11 @@ const NewGoalDetail = () => {
           {/* Progress Tab Content */}
           <TabsContent value="progress">
             <ProgressSection 
-              completedExercises={18} // Mock data - in a real app calculate from all days
-              totalExercises={22}     // Mock data
+              exercises = {goalData.exercise_selection}
+              completionPercentage={completionPercentage}
               currentDay={currentDay}
               currentDayOfGoal={currentDayOfGoal}
-              totalDays={mockGoalData.duration}
+              totalDays={goalData.schedule?.program_duration_in_days}
               painReduction={painReduction}
               streak={5} // Mock streak data
               painHistory={mockPainHistory}
