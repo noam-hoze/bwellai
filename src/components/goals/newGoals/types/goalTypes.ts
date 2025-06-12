@@ -60,6 +60,7 @@ export type SelectedExercise = {
    date: Date;
    sets: number;
    is_completed: boolean;
+   difficulty_level: number; // 1-5 scale
 };
 
 export type Therapy = {

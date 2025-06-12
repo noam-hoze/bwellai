@@ -115,7 +115,8 @@ export const useGoalWizard = ({ onClose, editGoal }: UseGoalWizardProps) => {
         entity_value: exercise.customReps > 0 ? exercise.customReps : exercise.duration,
         sets: exercise.sets > 0 ? exercise.sets : exercise.timesPerDay,
         date: date,
-        is_completed: false
+        is_completed: false,
+        difficulty_level: 0 // Default to 0, can be updated later
       }));
     });
 
