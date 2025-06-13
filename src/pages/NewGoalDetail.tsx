@@ -247,7 +247,6 @@ const NewGoalDetail = () => {
               initialPainLevel={mockGoalData.painLevel}
               currentPainLevel={currentPainLevel}
               targetPainLevel={2} // From goal description
-              exerciseDifficulties={mockExerciseDifficulties}
               insights={mockInsights}
               milestones={mockMilestones}
             />
