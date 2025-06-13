@@ -31,11 +31,6 @@ interface ProgressSectionProps {
   initialPainLevel: number;
   currentPainLevel: number;
   targetPainLevel: number;
-  exerciseDifficulties: Array<{
-    category: string;
-    averageDifficulty: number;
-    count: number;
-  }>;
   insights: Array<{
     icon: string;
     title: string;
@@ -63,7 +58,6 @@ const ProgressSection = ({
   initialPainLevel,
   currentPainLevel,
   targetPainLevel,
-  exerciseDifficulties,
   insights,
   milestones
 }: ProgressSectionProps) => {
@@ -187,15 +181,15 @@ const ProgressSection = ({
       </Card>*/}
       
       {/* Exercise Difficulty Analysis */}
-      {/*<Card>
+      <Card>
         <CardContent className="p-4">
-          <h3 className="text-lg font-semibold mb-4">Exercise Difficulty Analysis</h3> */}
+          <h3 className="text-lg font-semibold mb-4">Exercise Difficulty Analysis</h3> 
           
           {/* Difficulty Analysis Component */}
-         {/* <DifficultyAnalysis difficulties={exerciseDifficulties} />*/}
+          <DifficultyAnalysis exercises={exercises} />
           
           {/* Insight Box */}
-          {/*<div className="bg-blue-50 p-4 rounded-lg mt-4 flex items-start">
+       {/*<div className="bg-blue-50 p-4 rounded-lg mt-4 flex items-start">
             <Info className="h-5 w-5 text-blue-500 mt-0.5 mr-3 flex-shrink-0" />
             <p className="text-sm text-blue-700">
               Your difficulty ratings show you find mobility exercises most challenging. 
@@ -203,8 +197,9 @@ const ProgressSection = ({
               stretching exercises when fatigue is higher.
             </p>
           </div>
+           */}
         </CardContent>
-      </Card> */}
+      </Card>
     </div>
   );
 };
