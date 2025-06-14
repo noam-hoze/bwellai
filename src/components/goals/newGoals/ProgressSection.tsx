@@ -10,7 +10,8 @@ import {
   Activity, 
   BarChart, 
   Share2, 
-  Award 
+  Award, 
+  TrendingUp
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import PainProgressChart from "./PainProgressChart";
@@ -27,7 +28,7 @@ interface ProgressSectionProps {
   totalDays: number;
   painReduction: number;
   streak: number;
-  painHistory: Array<{day: number, level: number}>;
+  userGoalId: string;
   initialPainLevel: number;
   currentPainLevel: number;
   targetPainLevel: number;
@@ -54,7 +55,7 @@ const ProgressSection = ({
   totalDays,
   painReduction,
   streak,
-  painHistory,
+  userGoalId,
   initialPainLevel,
   currentPainLevel,
   targetPainLevel,
@@ -91,6 +92,8 @@ const ProgressSection = ({
 }
 
   const completedDays = countCompletedDays(exercises);
+
+  console.log("userGoalId:", userGoalId);
 
   return (
     <div className="space-y-6">
@@ -147,23 +150,28 @@ const ProgressSection = ({
       </Card>
 
       {/* Pain Progress Chart Section */}
-     {/* <Card>
+      <Card>
         <CardContent className="p-4">
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-lg font-semibold">Pain Progress</h3>
-            {painReduction > 0 && (
+            {painReduction > 0 ? (
               <div className="bg-green-100 text-green-700 px-2 py-1 rounded-full text-xs flex items-center">
                 <TrendingDown className="h-3 w-3 mr-1" />
                 {painReduction}% decrease
               </div>
+            ) : (
+              <div className="bg-red-100 text-red-700 px-2 py-1 rounded-full text-xs flex items-center">
+                <TrendingUp className="h-3 w-3 mr-1" />
+                {-painReduction}% increase
+              </div>
             )}
-          </div>*/}
-          
+          </div>
+
           {/* Pain Progress Chart Component */}
-          {/*<PainProgressChart painHistory={painHistory} />*/}
-          
+          <PainProgressChart userGoalId={userGoalId} />
+
           {/* Chart Summary */}
-        {/*}  <div className="grid grid-cols-3 gap-4 mt-4 text-center">
+         <div className="grid grid-cols-3 gap-4 mt-4 text-center">
             <div>
               <div className="text-sm text-gray-500">Initial Pain</div>
               <div className="font-bold text-lg">{initialPainLevel}/10</div>
@@ -178,7 +186,7 @@ const ProgressSection = ({
             </div>
           </div>
         </CardContent>
-      </Card>*/}
+      </Card>
       
       {/* Exercise Difficulty Analysis */}
       <Card>

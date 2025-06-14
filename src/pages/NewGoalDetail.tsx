@@ -139,7 +139,7 @@ const NewGoalDetail = () => {
   const painReduction = useMemo(() => {
       if(!goalData) return 0;
       const { initial_pain_level } = goalData.pain_assessment;
-      return ((initial_pain_level - currentPainLevel) / initial_pain_level) * 100;
+      return Math.round((initial_pain_level - currentPainLevel) / initial_pain_level * 100);
     }, [goalData, currentPainLevel]);
 
   useEffect(() => {
@@ -157,11 +157,10 @@ const NewGoalDetail = () => {
       }
     }, [location]);
 
-    console.log("goalData", goalData);
-
     if(!goalData) {
       return <div className="text-center text-gray-500">Loading goal data...</div>;
     }
+    console.log("Goal Data:", goalData);
 
   return (
     <Layout>
@@ -243,10 +242,11 @@ const NewGoalDetail = () => {
               totalDays={goalData.schedule?.program_duration_in_days}
               painReduction={painReduction}
               streak={5} // Mock streak data
-              painHistory={mockPainHistory}
-              initialPainLevel={mockGoalData.painLevel}
+              userGoalId={goalData.userGoalId}
+              initialPainLevel={goalData.pain_assessment?.initial_pain_level}
               currentPainLevel={currentPainLevel}
-              targetPainLevel={2} // From goal description
+              targetPainLevel={goalData.pain_assessment?.initial_pain_level > 2 ? 
+      goalData.pain_assessment?.initial_pain_level - 2 : 0} // temporary target pain level
               insights={mockInsights}
               milestones={mockMilestones}
             />
