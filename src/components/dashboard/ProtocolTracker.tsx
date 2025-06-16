@@ -15,9 +15,11 @@ const ProtocolTracker = () => {
       <CardHeader className="flex flex-row items-center justify-between pb-2">
         <CardTitle className="flex gap-2 text-xl font-semibold">
           Protocol Tracker{" "}
-          <div className="px-2 py-0.5 bg-gray-100 text-gray-600 text-xs font-medium rounded-full flex items-center">
-            coming soon
-          </div>
+<div className="px-2 h-6 bg-yellow-200 text-yellow-800 text-xs font-semibold rounded-full border border-yellow-300 flex items-center justify-center">
+  coming soon
+</div>
+
+
         </CardTitle>
         <CheckCircle2 className="h-5 w-5 text-green-500" />
       </CardHeader>

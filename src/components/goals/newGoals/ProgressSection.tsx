@@ -10,7 +10,8 @@ import {
   Activity, 
   BarChart, 
   Share2, 
-  Award 
+  Award, 
+  TrendingUp
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import PainProgressChart from "./PainProgressChart";
@@ -27,7 +28,7 @@ interface ProgressSectionProps {
   totalDays: number;
   painReduction: number;
   streak: number;
-  painHistory: Array<{day: number, level: number}>;
+  userGoalId: string;
   initialPainLevel: number;
   currentPainLevel: number;
   targetPainLevel: number;
@@ -44,6 +45,7 @@ interface ProgressSectionProps {
     status: string;
     icon: string;
   }>;
+  goalData: any;
 }
 
 const ProgressSection = ({
@@ -54,12 +56,13 @@ const ProgressSection = ({
   totalDays,
   painReduction,
   streak,
-  painHistory,
+  userGoalId,
   initialPainLevel,
   currentPainLevel,
   targetPainLevel,
   insights,
-  milestones
+  milestones,
+  goalData
 }: ProgressSectionProps) => {
 
   const handleDownloadReport = () => {
@@ -91,6 +94,8 @@ const ProgressSection = ({
 }
 
   const completedDays = countCompletedDays(exercises);
+
+  console.log("userGoalId:", userGoalId);
 
   return (
     <div className="space-y-6">
@@ -146,41 +151,7 @@ const ProgressSection = ({
         </CardContent>
       </Card>
 
-      {/* Pain Progress Chart Section */}
-     {/* <Card>
-        <CardContent className="p-4">
-          <div className="flex justify-between items-center mb-4">
-            <h3 className="text-lg font-semibold">Pain Progress</h3>
-            {painReduction > 0 && (
-              <div className="bg-green-100 text-green-700 px-2 py-1 rounded-full text-xs flex items-center">
-                <TrendingDown className="h-3 w-3 mr-1" />
-                {painReduction}% decrease
-              </div>
-            )}
-          </div>*/}
-          
-          {/* Pain Progress Chart Component */}
-          {/*<PainProgressChart painHistory={painHistory} />*/}
-          
-          {/* Chart Summary */}
-        {/*}  <div className="grid grid-cols-3 gap-4 mt-4 text-center">
-            <div>
-              <div className="text-sm text-gray-500">Initial Pain</div>
-              <div className="font-bold text-lg">{initialPainLevel}/10</div>
-            </div>
-            <div>
-              <div className="text-sm text-gray-500">Current Pain</div>
-              <div className="font-bold text-lg text-green-600">{currentPainLevel}/10</div>
-            </div>
-            <div>
-              <div className="text-sm text-gray-500">Target</div>
-              <div className="font-bold text-lg text-blue-600">{targetPainLevel}/10</div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>*/}
-      
-      {/* Exercise Difficulty Analysis */}
+            {/* Exercise Difficulty Analysis */}
       <Card>
         <CardContent className="p-4">
           <h3 className="text-lg font-semibold mb-4">Exercise Difficulty Analysis</h3> 
@@ -200,6 +171,47 @@ const ProgressSection = ({
            */}
         </CardContent>
       </Card>
+
+      {/* Pain Progress Chart Section */}
+      <Card>
+        <CardContent className="p-4">
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-lg font-semibold">Pain Progress</h3>
+            {painReduction > 0 ? (
+              <div className="bg-green-100 text-green-700 px-2 py-1 rounded-full text-xs flex items-center">
+                <TrendingDown className="h-3 w-3 mr-1" />
+                {painReduction}% decrease
+              </div>
+            ) : (
+              <div className="bg-red-100 text-red-700 px-2 py-1 rounded-full text-xs flex items-center">
+                <TrendingUp className="h-3 w-3 mr-1" />
+                {-painReduction}% increase
+              </div>
+            )}
+          </div>
+
+          {/* Pain Progress Chart Component */}
+          <PainProgressChart userGoalId={userGoalId} initialPainLevel={goalData?.pain_assessment?.initial_pain_level} />
+
+          {/* Chart Summary */}
+         <div className="grid grid-cols-3 gap-4 mt-4 text-center">
+            <div>
+              <div className="text-sm text-gray-500">Initial Pain</div>
+              <div className="font-bold text-lg">{initialPainLevel}/10</div>
+            </div>
+            <div>
+              <div className="text-sm text-gray-500">Current Pain</div>
+              <div className="font-bold text-lg text-green-600">{currentPainLevel}/10</div>
+            </div>
+            <div>
+              <div className="text-sm text-gray-500">Target</div>
+              <div className="font-bold text-lg text-blue-600">{targetPainLevel}/10</div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+      
+
     </div>
   );
 };

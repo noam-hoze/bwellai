@@ -1,6 +1,7 @@
 import {
   deleteUserGoalFetcher,
   getSavedUserGoalFetcher,
+  getUserActivityFetcher,
   getUserGoalActivityFetcher,
   getUserGoalDetailsFetcher,
   getUserGoalExerciseDetailsFetcher,
@@ -116,6 +117,22 @@ export const useUserGoalActivity = ({
     refetch,
   };
 };
+
+export const useGetUserActivity = () => {
+  const { data, error, isError, isLoading, isSuccess, refetch } = useQuery({
+    queryKey: ["get-user-activity"],
+    queryFn: () => getUserActivityFetcher(),
+  });
+  return {
+    data: data?.data,
+    error,
+    isError,
+    isLoading,
+    isSuccess,
+    refetch,
+  };
+};
+
 
 export const useDeleteUserGoal = () => {
   console.log("useDeleteUserGoal hook called");
