@@ -249,6 +249,7 @@ const NewGoalDetail = () => {
       goalData.pain_assessment?.initial_pain_level - 2 : 0} // temporary target pain level
               insights={mockInsights}
               milestones={mockMilestones}
+              goalData={goalData}
             />
           </TabsContent>
         </Tabs>
