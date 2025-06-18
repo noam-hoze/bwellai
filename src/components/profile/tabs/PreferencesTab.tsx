@@ -1,19 +1,19 @@
-import { useEffect, useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useEffect, useState } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Label } from "@/components/ui/label";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { Languages, Ruler, Scale, Thermometer } from "lucide-react";
-import { toast } from "sonner";
-import { LanguageObjectData } from "@/modules/constant/profile";
-import { Button } from "@/components/ui/button";
-import { useGetCreateProfile } from "@/service/hooks/profile/useGetCreateProfile";
+} from '@/components/ui/select';
+import { Label } from '@/components/ui/label';
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
+import { Languages, Ruler, Scale, Thermometer } from 'lucide-react';
+import { toast } from 'sonner';
+import { LanguageObjectData } from '@/models/constant/profile';
+import { Button } from '@/components/ui/button';
+import { useGetCreateProfile } from '@/service/hooks/profile/useGetCreateProfile';
 
 const PreferencesTab = ({
   getProfileIsData,
@@ -47,7 +47,7 @@ const PreferencesTab = ({
   useEffect(() => {
     if (createProfileIsSuccess) {
       getUserProfileRefetch();
-      toast.success("Health profile updated successfully");
+      toast.success('Health profile updated successfully');
     }
   }, [createProfileIsSuccess]);
 
@@ -84,11 +84,7 @@ const PreferencesTab = ({
                 </SelectTrigger>
                 <SelectContent>
                   {LanguageObjectData?.map((language) => {
-                    return (
-                      <SelectItem value={language?.value}>
-                        {language?.label}
-                      </SelectItem>
-                    );
+                    return <SelectItem value={language?.value}>{language?.label}</SelectItem>;
                   })}
                 </SelectContent>
               </Select>

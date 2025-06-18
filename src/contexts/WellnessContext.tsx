@@ -1,7 +1,7 @@
 // context/WellnessContext.tsx
 
-import React, { createContext, useContext, useState } from "react";
-import { WellnessData } from "@/modules/types/wellness";
+import React, { createContext, useContext, useState } from 'react';
+import { WellnessData } from '@/models/types/wellness';
 
 const defaultWellnessData: WellnessData = {
   wellnessScore: null,
@@ -43,15 +43,10 @@ type WellnessContextType = {
   setWellnessData: React.Dispatch<React.SetStateAction<WellnessData>>;
 };
 
-const WellnessContext = createContext<WellnessContextType | undefined>(
-  undefined
-);
+const WellnessContext = createContext<WellnessContextType | undefined>(undefined);
 
-export const WellnessProvider: React.FC<{ children: React.ReactNode }> = ({
-  children,
-}) => {
-  const [wellnessData, setWellnessData] =
-    useState<WellnessData>(defaultWellnessData);
+export const WellnessProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [wellnessData, setWellnessData] = useState<WellnessData>(defaultWellnessData);
 
   return (
     <WellnessContext.Provider value={{ wellnessData, setWellnessData }}>
@@ -63,7 +58,7 @@ export const WellnessProvider: React.FC<{ children: React.ReactNode }> = ({
 export const useWellness = () => {
   const context = useContext(WellnessContext);
   if (!context) {
-    throw new Error("useWellness must be used within a WellnessProvider");
+    throw new Error('useWellness must be used within a WellnessProvider');
   }
   return context;
 };

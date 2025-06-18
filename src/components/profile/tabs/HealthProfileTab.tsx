@@ -1,45 +1,32 @@
-import { useState, useEffect } from "react";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Slider } from "@/components/ui/slider";
+import { useState, useEffect } from 'react';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Slider } from '@/components/ui/slider';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Checkbox } from "@/components/ui/checkbox";
-import { User, HeartPulse, Upload, Dna, Activity } from "lucide-react";
-import { toast } from "sonner";
+} from '@/components/ui/select';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Checkbox } from '@/components/ui/checkbox';
+import { User, HeartPulse, Upload, Dna, Activity } from 'lucide-react';
+import { toast } from 'sonner';
 import {
   allergiesData,
   CommonGeneVariantsData,
   CommonGeneVariantsDataDescriptionMapping,
   currentMedicationOptionsData,
   ExerciseFrequency,
-} from "@/modules/constant/profile";
-import { useGetCreateProfile } from "@/service/hooks/profile/useGetCreateProfile";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import {
-  convertHeightValueUnits,
-  convertWeightValueUnits,
-} from "@/utils/utils";
-import { h } from "node_modules/framer-motion/dist/types.d-B50aGbjN";
-import { get } from "http";
+} from '@/models/constant/profile';
+import { useGetCreateProfile } from '@/service/hooks/profile/useGetCreateProfile';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { convertHeightValueUnits, convertWeightValueUnits } from '@/utils/utils';
+import { h } from 'node_modules/framer-motion/dist/types.d-B50aGbjN';
+import { get } from 'http';
 import {
   Command,
   CommandEmpty,
@@ -47,58 +34,58 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from "@/components/ui/command";
+} from '@/components/ui/command';
 
 const commonConditions = [
-  { id: "hypertension", label: "Hypertension (High Blood Pressure)" },
-  { id: "diabetes", label: "Diabetes" },
-  { id: "depression", label: "Depression/Anxiety" },
-  { id: "arthritis", label: "Arthritis" },
-  { id: "asthma", label: "Asthma" },
+  { id: 'hypertension', label: 'Hypertension (High Blood Pressure)' },
+  { id: 'diabetes', label: 'Diabetes' },
+  { id: 'depression', label: 'Depression/Anxiety' },
+  { id: 'arthritis', label: 'Arthritis' },
+  { id: 'asthma', label: 'Asthma' },
 ];
 
 const commonAllergies = [
-  { id: "peanuts", label: "Peanuts" },
-  { id: "milk", label: "Milk" },
-  { id: "eggs", label: "Eggs" },
-  { id: "shellfish", label: "Shellfish" },
-  { id: "tree-nuts", label: "Tree Nuts" },
+  { id: 'peanuts', label: 'Peanuts' },
+  { id: 'milk', label: 'Milk' },
+  { id: 'eggs', label: 'Eggs' },
+  { id: 'shellfish', label: 'Shellfish' },
+  { id: 'tree-nuts', label: 'Tree Nuts' },
 ];
-const commonMedication = [{ id: "", label: "" }];
+const commonMedication = [{ id: '', label: '' }];
 
 const additionalConditions = [
-  { id: "heart-disease", label: "Heart Disease" },
-  { id: "cancer", label: "Cancer" },
-  { id: "thyroid-disorder", label: "Thyroid Disorder" },
-  { id: "copd", label: "COPD" },
-  { id: "gerd", label: "GERD (Acid Reflux)" },
-  { id: "ibs", label: "Irritable Bowel Syndrome" },
-  { id: "migraine", label: "Migraine" },
-  { id: "insomnia", label: "Insomnia" },
-  { id: "fibromyalgia", label: "Fibromyalgia" },
-  { id: "osteoporosis", label: "Osteoporosis" },
-  { id: "psoriasis", label: "Psoriasis" },
-  { id: "alzheimers", label: "Alzheimer's Disease" },
-  { id: "parkinsons", label: "Parkinson's Disease" },
+  { id: 'heart-disease', label: 'Heart Disease' },
+  { id: 'cancer', label: 'Cancer' },
+  { id: 'thyroid-disorder', label: 'Thyroid Disorder' },
+  { id: 'copd', label: 'COPD' },
+  { id: 'gerd', label: 'GERD (Acid Reflux)' },
+  { id: 'ibs', label: 'Irritable Bowel Syndrome' },
+  { id: 'migraine', label: 'Migraine' },
+  { id: 'insomnia', label: 'Insomnia' },
+  { id: 'fibromyalgia', label: 'Fibromyalgia' },
+  { id: 'osteoporosis', label: 'Osteoporosis' },
+  { id: 'psoriasis', label: 'Psoriasis' },
+  { id: 'alzheimers', label: "Alzheimer's Disease" },
+  { id: 'parkinsons', label: "Parkinson's Disease" },
 ];
 
 // Additional allergies for autocomplete
 const additionalAllergies = [
-  { id: "soy", label: "Soy" },
-  { id: "wheat", label: "Wheat" },
-  { id: "fish", label: "Fish" },
-  { id: "sesame", label: "Sesame" },
-  { id: "sulphites", label: "Sulphites" },
-  { id: "mustard", label: "Mustard" },
-  { id: "celery", label: "Celery" },
-  { id: "lupin", label: "Lupin" },
-  { id: "molluscs", label: "Molluscs" },
-  { id: "latex", label: "Latex" },
-  { id: "penicillin", label: "Penicillin" },
-  { id: "insect-stings", label: "Insect Stings" },
-  { id: "pollen", label: "Pollen" },
-  { id: "mold", label: "Mold" },
-  { id: "pet-dander", label: "Pet Dander" },
+  { id: 'soy', label: 'Soy' },
+  { id: 'wheat', label: 'Wheat' },
+  { id: 'fish', label: 'Fish' },
+  { id: 'sesame', label: 'Sesame' },
+  { id: 'sulphites', label: 'Sulphites' },
+  { id: 'mustard', label: 'Mustard' },
+  { id: 'celery', label: 'Celery' },
+  { id: 'lupin', label: 'Lupin' },
+  { id: 'molluscs', label: 'Molluscs' },
+  { id: 'latex', label: 'Latex' },
+  { id: 'penicillin', label: 'Penicillin' },
+  { id: 'insect-stings', label: 'Insect Stings' },
+  { id: 'pollen', label: 'Pollen' },
+  { id: 'mold', label: 'Mold' },
+  { id: 'pet-dander', label: 'Pet Dander' },
 ];
 
 const HealthProfileTab = ({
@@ -114,14 +101,14 @@ const HealthProfileTab = ({
   language,
   getUserProfileRefetch,
 }) => {
-  const [age, setAge] = useState<string>("");
-  const [gender, setGender] = useState<string>("male");
+  const [age, setAge] = useState<string>('');
+  const [gender, setGender] = useState<string>('male');
   const [bmi, setBmi] = useState<number>(0);
-  const [smoker, setSmoker] = useState<string>("no");
-  const [alcohol, setAlcohol] = useState<string>("occasionally");
-  const [exercise, setExercise] = useState<string>("weekly");
+  const [smoker, setSmoker] = useState<string>('no');
+  const [alcohol, setAlcohol] = useState<string>('occasionally');
+  const [exercise, setExercise] = useState<string>('weekly');
   const [exerciseTypes, setExerciseTypes] = useState<string[]>([]);
-  const [searchValue, setSearchValue] = useState("");
+  const [searchValue, setSearchValue] = useState('');
   const [isConditionPopoverOpen, setIsConditionPopoverOpen] = useState(false);
   const [otherConditions, setOtherConditions] = useState<string[]>([]);
 
@@ -129,15 +116,15 @@ const HealthProfileTab = ({
 
   const [selectedConditions, setSelectedConditions] = useState<string[]>([]);
   const [selectedAllergies, setSelectedAllergies] = useState<string[]>([]);
-  const [bloodType, setBloodType] = useState<string>("unknown");
+  const [bloodType, setBloodType] = useState<string>('unknown');
   const [medications, setMedications] = useState<string[]>([]);
 
-  const [geneVariant, setGeneVariant] = useState<string>("");
+  const [geneVariant, setGeneVariant] = useState<string>('');
 
   const [openAllergy, setOpenAllergy] = useState(false);
   // New allergies autocomplete states
-  const [allergySearchValue, setAllergySearchValue] = useState("");
-  const [medicalConditionValue, setmedicalConditionValue] = useState("");
+  const [allergySearchValue, setAllergySearchValue] = useState('');
+  const [medicalConditionValue, setmedicalConditionValue] = useState('');
 
   const [isAllergyPopoverOpen, setIsAllergyPopoverOpen] = useState(false);
   const [isMedicalPopoverOpen, setIsMedicalPopoverOpen] = useState(false);
@@ -151,7 +138,7 @@ const HealthProfileTab = ({
   useEffect(() => {
     if (createProfileIsSuccess) {
       getUserProfileRefetch();
-      toast.success("Health profile updated successfully");
+      toast.success('Health profile updated successfully');
     }
   }, [createProfileIsSuccess]);
 
@@ -160,11 +147,11 @@ const HealthProfileTab = ({
     if (height && weight) {
       let heightValue = height;
       let weightValue = weight;
-      if (heightUnit === "ft") {
-        heightValue = convertHeightValueUnits(heightUnit, "cm", heightValue);
+      if (heightUnit === 'ft') {
+        heightValue = convertHeightValueUnits(heightUnit, 'cm', heightValue);
       }
-      if (weightUnit === "lb") {
-        weightValue = convertWeightValueUnits(weightUnit, "kg", weightValue);
+      if (weightUnit === 'lb') {
+        weightValue = convertWeightValueUnits(weightUnit, 'kg', weightValue);
       }
 
       const heightInMeters = heightValue / 100;
@@ -181,10 +168,8 @@ const HealthProfileTab = ({
       setHeight(getProfileIsData?.height);
       setWeight(getProfileIsData?.weight);
 
-      if (getProfileIsData?.heightUnit === "ft") {
-        setSliderHeight(
-          convertHeightValueUnits("ft", "cm", getProfileIsData?.height)
-        );
+      if (getProfileIsData?.heightUnit === 'ft') {
+        setSliderHeight(convertHeightValueUnits('ft', 'cm', getProfileIsData?.height));
       } else {
         setSliderHeight(getProfileIsData?.height);
       }
@@ -195,48 +180,42 @@ const HealthProfileTab = ({
       // );
       setGeneVariant(
         getProfileIsData?.additionalDetails?.[
-          "What Common Gene Variants do you have? (may impact the insights we offer)"
-        ]?.answersArray?.[0] || ""
+          'What Common Gene Variants do you have? (may impact the insights we offer)'
+        ]?.answersArray?.[0] || '',
       );
       setExerciseTypes(
-        getProfileIsData?.additionalDetails?.[
-          "What type of exercise do you typically engage in?"
-        ]?.answersArray || []
+        getProfileIsData?.additionalDetails?.['What type of exercise do you typically engage in?']
+          ?.answersArray || [],
       );
       setExercise(
-        getProfileIsData?.additionalDetails?.[
-          "How often do you exercise in a week?"
-        ]?.answersArray?.[0] || ""
+        getProfileIsData?.additionalDetails?.['How often do you exercise in a week?']
+          ?.answersArray?.[0] || '',
       );
       setAlcohol(
-        getProfileIsData?.additionalDetails?.[
-          "How often do you consume alcohol?"
-        ]?.answersArray?.[0] || ""
+        getProfileIsData?.additionalDetails?.['How often do you consume alcohol?']
+          ?.answersArray?.[0] || '',
       );
       setSmoker(
-        getProfileIsData?.additionalDetails?.[
-          "Do you smoke or use tobacco products?"
-        ]?.answersArray?.[0] || ""
+        getProfileIsData?.additionalDetails?.['Do you smoke or use tobacco products?']
+          ?.answersArray?.[0] || '',
       );
       setSelectedConditions(
         getProfileIsData?.additionalDetails?.[
-          "Have you been diagnosed with any chronic health conditions?"
-        ]?.answersArray || []
+          'Have you been diagnosed with any chronic health conditions?'
+        ]?.answersArray || [],
       );
       setSelectedAllergies(
-        getProfileIsData?.additionalDetails?.[
-          "Do you have any known allergies?"
-        ]?.answersArray || []
+        getProfileIsData?.additionalDetails?.['Do you have any known allergies?']?.answersArray ||
+          [],
       );
       setMedications(
-        getProfileIsData?.additionalDetails?.[
-          "Are you currently taking any medications?"
-        ]?.answersArray || []
+        getProfileIsData?.additionalDetails?.['Are you currently taking any medications?']
+          ?.answersArray || [],
       );
 
       setBloodType(
-        getProfileIsData?.additionalDetails?.["What is your blood type?"]
-          ?.answersArray?.[0] || "unknown"
+        getProfileIsData?.additionalDetails?.['What is your blood type?']?.answersArray?.[0] ||
+          'unknown',
       );
     }
   }, [
@@ -248,50 +227,50 @@ const HealthProfileTab = ({
 
   const handleExerciseTypeChange = (type: string) => {
     setExerciseTypes((prev) => {
-      return prev?.includes(type)
-        ? prev?.filter((t) => t !== type)
-        : [...prev, type];
+      return prev?.includes(type) ? prev?.filter((t) => t !== type) : [...prev, type];
     });
   };
 
   const handleSaveProfile = () => {
     createProfileMutate({
       additionalDetails: {
-        "What is your Body Mass Index (BMI)?": {
+        'What is your Body Mass Index (BMI)?': {
           answersArray: [bmi],
           include_in_interpretation: true,
         },
-        "Do you smoke or use tobacco products?": {
+        'Do you smoke or use tobacco products?': {
           answersArray: [smoker],
           include_in_interpretation: true,
         },
-        "How often do you consume alcohol?": {
+        'How often do you consume alcohol?': {
           answersArray: [alcohol],
           include_in_interpretation: true,
         },
-        "What Common Gene Variants do you have? (may impact the insights we offer)":
-          { answersArray: [geneVariant], include_in_interpretation: true },
-        "How often do you exercise in a week?": {
+        'What Common Gene Variants do you have? (may impact the insights we offer)': {
+          answersArray: [geneVariant],
+          include_in_interpretation: true,
+        },
+        'How often do you exercise in a week?': {
           answersArray: [exercise],
           include_in_interpretation: true,
         },
-        "What type of exercise do you typically engage in?": {
+        'What type of exercise do you typically engage in?': {
           answersArray: exerciseTypes,
           include_in_interpretation: true,
         },
-        "Have you been diagnosed with any chronic health conditions?": {
+        'Have you been diagnosed with any chronic health conditions?': {
           answersArray: selectedConditions,
           include_in_interpretation: true,
         },
-        "Do you have any known allergies?": {
+        'Do you have any known allergies?': {
           answersArray: selectedAllergies,
           include_in_interpretation: true,
         },
-        "Are you currently taking any medications?": {
+        'Are you currently taking any medications?': {
           answersArray: medications,
           include_in_interpretation: true,
         },
-        "What is your blood type?": {
+        'What is your blood type?': {
           answersArray: [bloodType],
           include_in_interpretation: true,
         },
@@ -310,79 +289,70 @@ const HealthProfileTab = ({
 
   const handleConditionChange = (conditionId: string) => {
     setSelectedConditions((prev) =>
-      prev.includes(conditionId)
-        ? prev.filter((id) => id !== conditionId)
-        : [...prev, conditionId]
+      prev.includes(conditionId) ? prev.filter((id) => id !== conditionId) : [...prev, conditionId],
     );
   };
 
   const handleAllergyChange = (allergyId: string) => {
     setSelectedAllergies((prev) =>
-      prev.includes(allergyId)
-        ? prev.filter((id) => id !== allergyId)
-        : [...prev, allergyId]
+      prev.includes(allergyId) ? prev.filter((id) => id !== allergyId) : [...prev, allergyId],
     );
     setOpenAllergy(false);
   };
   const handleMedicationChange = (allergyId: string) => {
     setMedications((prev) =>
-      prev.includes(allergyId)
-        ? prev.filter((id) => id !== allergyId)
-        : [...prev, allergyId]
+      prev.includes(allergyId) ? prev.filter((id) => id !== allergyId) : [...prev, allergyId],
     );
   };
 
   const getBmiBackgroundColor = (bmi: number) => {
-    if (bmi < 18.5) return "bg-yellow-100";
-    if (bmi < 25) return "bg-wellness-light-green";
-    if (bmi < 30) return "bg-orange-100";
-    return "bg-red-100";
+    if (bmi < 18.5) return 'bg-yellow-100';
+    if (bmi < 25) return 'bg-wellness-light-green';
+    if (bmi < 30) return 'bg-orange-100';
+    return 'bg-red-100';
   };
 
   const getBmiTextColor = (bmi: number) => {
-    if (bmi < 18.5) return "text-yellow-800";
-    if (bmi < 25) return "text-wellness-bright-green";
-    if (bmi < 30) return "text-orange-800";
-    return "text-red-800";
+    if (bmi < 18.5) return 'text-yellow-800';
+    if (bmi < 25) return 'text-wellness-bright-green';
+    if (bmi < 30) return 'text-orange-800';
+    return 'text-red-800';
   };
 
   const handleAddCondition = (condition: string) => {
-    if (!selectedConditions.includes(condition) && condition.trim() !== "") {
+    if (!selectedConditions.includes(condition) && condition.trim() !== '') {
       setSelectedConditions((prev) => [...prev, condition]);
     }
-    setSearchValue("");
+    setSearchValue('');
     setIsConditionPopoverOpen(false);
   };
 
   const handleAddAllergy = (allergy: string) => {
-    if (!selectedAllergies.includes(allergy) && allergy.trim() !== "") {
+    if (!selectedAllergies.includes(allergy) && allergy.trim() !== '') {
       setSelectedAllergies((prev) => [...prev, allergy]);
     }
-    setAllergySearchValue("");
+    setAllergySearchValue('');
     setIsAllergyPopoverOpen(false);
   };
   const handleAddMedicalCondition = (medicalCondition: string) => {
-    if (
-      !selectedAllergies.includes(medicalCondition) &&
-      medicalCondition.trim() !== ""
-    ) {
+    if (!selectedAllergies.includes(medicalCondition) && medicalCondition.trim() !== '') {
       setMedications((prev) => [...prev, medicalCondition]);
     }
-    setmedicalConditionValue("");
+    setmedicalConditionValue('');
     setIsMedicalPopoverOpen(false);
   };
 
   const filteredConditions = additionalConditions?.filter(
     (condition) =>
       !selectedConditions.includes(condition.id) &&
-      condition.label.toLowerCase().includes(searchValue.toLowerCase())
+      condition.label.toLowerCase().includes(searchValue.toLowerCase()),
   );
 
   // Filter allergies based on search input
   const filteredAllergies = additionalAllergies.filter(
     (allergy) =>
       !selectedAllergies.includes(allergy.id) &&
-      allergy.label.toLowerCase().includes(allergySearchValue.toLowerCase())
+      allergy.label.toLowerCase().includes(allergySearchValue.toLowerCase()),
   );
 
   return (
@@ -443,8 +413,8 @@ const HealthProfileTab = ({
                   onValueChange={(value) => {
                     let newValue = value[0];
 
-                    if (heightUnit === "ft") {
-                      newValue = convertHeightValueUnits("cm", "ft", newValue);
+                    if (heightUnit === 'ft') {
+                      newValue = convertHeightValueUnits('cm', 'ft', newValue);
                       setHeight(newValue);
                     } else {
                       setHeight(newValue);
@@ -463,8 +433,8 @@ const HealthProfileTab = ({
                 </div>
                 <Slider
                   id="weight"
-                  min={weightUnit === "kg" ? 40 : 90}
-                  max={weightUnit === "kg" ? 130 : 300}
+                  min={weightUnit === 'kg' ? 40 : 90}
+                  max={weightUnit === 'kg' ? 130 : 300}
                   step={1}
                   value={[weight]}
                   onValueChange={(value) => setWeight(value[0])}
@@ -475,20 +445,16 @@ const HealthProfileTab = ({
                 <div className={`p-4 rounded-lg ${getBmiBackgroundColor(bmi)}`}>
                   <div className="flex items-center justify-between">
                     <span className="font-medium">BMI</span>
-                    <span
-                      className={`text-xl font-bold ${getBmiTextColor(bmi)}`}
-                    >
-                      {bmi}
-                    </span>
+                    <span className={`text-xl font-bold ${getBmiTextColor(bmi)}`}>{bmi}</span>
                   </div>
                   <div className={`text-xs ${getBmiTextColor(bmi)} mt-1`}>
                     {bmi < 18.5
-                      ? "Underweight"
+                      ? 'Underweight'
                       : bmi < 25
-                      ? "Normal weight"
+                      ? 'Normal weight'
                       : bmi < 30
-                      ? "Overweight"
-                      : "Obese"}
+                      ? 'Overweight'
+                      : 'Obese'}
                   </div>
                 </div>
               )}
@@ -512,16 +478,11 @@ const HealthProfileTab = ({
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-2">
                 {commonConditions.map((condition) => (
-                  <div
-                    key={condition.label}
-                    className="flex items-center space-x-2"
-                  >
+                  <div key={condition.label} className="flex items-center space-x-2">
                     <Checkbox
                       id={condition.label}
                       checked={selectedConditions.includes(condition.id)}
-                      onCheckedChange={() =>
-                        handleConditionChange(condition.id)
-                      }
+                      onCheckedChange={() => handleConditionChange(condition.id)}
                     />
                     <Label htmlFor={condition.label}>{condition.label}</Label>
                   </div>
@@ -529,9 +490,7 @@ const HealthProfileTab = ({
               </div>
 
               <div className="mt-4">
-                <Label htmlFor="other-conditions">
-                  List any other conditions
-                </Label>
+                <Label htmlFor="other-conditions">List any other conditions</Label>
 
                 <div className="mt-1 flex flex-col space-y-2">
                   <Popover open={openAllergy} onOpenChange={setOpenAllergy}>
@@ -567,17 +526,11 @@ const HealthProfileTab = ({
                                 {condition.label}
                               </CommandItem>
                             ))}
-                            {searchValue.trim() !== "" &&
+                            {searchValue.trim() !== '' &&
                               !additionalConditions.some(
-                                (c) =>
-                                  c.label.toLowerCase() ===
-                                  searchValue.toLowerCase()
+                                (c) => c.label.toLowerCase() === searchValue.toLowerCase(),
                               ) && (
-                                <CommandItem
-                                  onSelect={() =>
-                                    handleAddCondition(searchValue)
-                                  }
-                                >
+                                <CommandItem onSelect={() => handleAddCondition(searchValue)}>
                                   Add "{searchValue}"
                                 </CommandItem>
                               )}
@@ -595,12 +548,8 @@ const HealthProfileTab = ({
                             className="flex items-center gap-1 bg-wellness-light-green py-1 px-2 rounded-full text-sm"
                           >
                             <span>
-                              {commonConditions?.find(
-                                (a) => a.id === Conditions
-                              )?.label ||
-                                additionalConditions?.find(
-                                  (a) => a.id === Conditions
-                                )?.label ||
+                              {commonConditions?.find((a) => a.id === Conditions)?.label ||
+                                additionalConditions?.find((a) => a.id === Conditions)?.label ||
                                 Conditions}
                             </span>
                             <button
@@ -619,9 +568,7 @@ const HealthProfileTab = ({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="allergies">
-                Do you have any known allergies?
-              </Label>
+              <Label htmlFor="allergies">Do you have any known allergies?</Label>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mt-2">
                 {commonAllergies?.map((allergy) => (
                   <div key={allergy.id} className="flex items-center space-x-2">
@@ -630,18 +577,13 @@ const HealthProfileTab = ({
                       checked={selectedAllergies.includes(allergy.id)}
                       onCheckedChange={() => handleAllergyChange(allergy.id)}
                     />
-                    <Label htmlFor={`allergy-${allergy.id}`}>
-                      {allergy.label}
-                    </Label>
+                    <Label htmlFor={`allergy-${allergy.id}`}>{allergy.label}</Label>
                   </div>
                 ))}
               </div>
 
               <div className="mt-3">
-                <Popover
-                  open={isAllergyPopoverOpen}
-                  onOpenChange={setIsAllergyPopoverOpen}
-                >
+                <Popover open={isAllergyPopoverOpen} onOpenChange={setIsAllergyPopoverOpen}>
                   <PopoverTrigger asChild>
                     <div className="flex w-full items-center">
                       <Input
@@ -672,17 +614,11 @@ const HealthProfileTab = ({
                               {allergy.label}
                             </CommandItem>
                           ))}
-                          {allergySearchValue.trim() !== "" &&
+                          {allergySearchValue.trim() !== '' &&
                             !additionalAllergies.some(
-                              (a) =>
-                                a.label.toLowerCase() ===
-                                allergySearchValue.toLowerCase()
+                              (a) => a.label.toLowerCase() === allergySearchValue.toLowerCase(),
                             ) && (
-                              <CommandItem
-                                onSelect={() =>
-                                  handleAddAllergy(allergySearchValue)
-                                }
-                              >
+                              <CommandItem onSelect={() => handleAddAllergy(allergySearchValue)}>
                                 Add "{allergySearchValue}"
                               </CommandItem>
                             )}
@@ -701,10 +637,8 @@ const HealthProfileTab = ({
                         className="flex items-center gap-1 bg-wellness-light-green py-1 px-2 rounded-full text-sm"
                       >
                         <span>
-                          {commonAllergies.find((a) => a.id === allergy)
-                            ?.label ||
-                            additionalAllergies.find((a) => a.id === allergy)
-                              ?.label ||
+                          {commonAllergies.find((a) => a.id === allergy)?.label ||
+                            additionalAllergies.find((a) => a.id === allergy)?.label ||
                             allergy}
                         </span>
                         <button
@@ -721,33 +655,23 @@ const HealthProfileTab = ({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="medications">
-                Are you currently taking any medications?
-              </Label>
+              <Label htmlFor="medications">Are you currently taking any medications?</Label>
 
               <div className="mt-3">
-                <Popover
-                  open={isMedicalPopoverOpen}
-                  onOpenChange={setIsMedicalPopoverOpen}
-                >
+                <Popover open={isMedicalPopoverOpen} onOpenChange={setIsMedicalPopoverOpen}>
                   <PopoverTrigger asChild>
                     <div className="flex w-full items-center">
                       <Input
                         id="medications"
                         placeholder="List any medications, supplements, or vitamins you are currently taking"
                         value={medicalConditionValue}
-                        onChange={(e) =>
-                          setmedicalConditionValue(e.target.value)
-                        }
+                        onChange={(e) => setmedicalConditionValue(e.target.value)}
                         onClick={() => setIsMedicalPopoverOpen(true)}
                         onKeyDown={(e) => {
-                          if (
-                            e.key === "Enter" &&
-                            e.currentTarget.value.trim()
-                          ) {
+                          if (e.key === 'Enter' && e.currentTarget.value.trim()) {
                             const newMedication = e.currentTarget.value.trim();
                             handleMedicationChange(newMedication);
-                            e.currentTarget.value = "";
+                            e.currentTarget.value = '';
                           }
                         }}
                       />
@@ -766,25 +690,17 @@ const HealthProfileTab = ({
                           {currentMedicationOptionsData.map((medicals) => (
                             <CommandItem
                               key={medicals.id}
-                              onSelect={() =>
-                                handleAddMedicalCondition(medicals.id)
-                              }
+                              onSelect={() => handleAddMedicalCondition(medicals.id)}
                             >
                               {medicals.label}
                             </CommandItem>
                           ))}
-                          {medicalConditionValue.trim() !== "" &&
+                          {medicalConditionValue.trim() !== '' &&
                             !currentMedicationOptionsData.some(
-                              (a) =>
-                                a.label.toLowerCase() ===
-                                medicalConditionValue.toLowerCase()
+                              (a) => a.label.toLowerCase() === medicalConditionValue.toLowerCase(),
                             ) && (
                               <CommandItem
-                                onSelect={() =>
-                                  handleAddMedicalCondition(
-                                    medicalConditionValue
-                                  )
-                                }
+                                onSelect={() => handleAddMedicalCondition(medicalConditionValue)}
                               >
                                 Add "{medicalConditionValue}"
                               </CommandItem>
@@ -805,8 +721,7 @@ const HealthProfileTab = ({
                         className="flex items-center gap-1 bg-wellness-light-green py-1 px-2 rounded-full text-sm"
                       >
                         <span>
-                          {commonMedication?.find((a) => a.id === medication)
-                            ?.label || medication}
+                          {commonMedication?.find((a) => a.id === medication)?.label || medication}
                         </span>
                         <button
                           onClick={() => handleMedicationChange(medication)}
@@ -856,20 +771,13 @@ const HealthProfileTab = ({
           <div className="space-y-6">
             <div className="space-y-3">
               <Label>Do you smoke?</Label>
-              <RadioGroup
-                value={smoker}
-                onValueChange={setSmoker}
-                className="flex space-x-4"
-              >
+              <RadioGroup value={smoker} onValueChange={setSmoker} className="flex space-x-4">
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="yes" id="smoke-yes" />
                   <Label htmlFor="smoke-yes">Yes</Label>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <RadioGroupItem
-                    value="occasionally"
-                    id="smoke-occasionally"
-                  />
+                  <RadioGroupItem value="occasionally" id="smoke-occasionally" />
                   <Label htmlFor="smoke-occasionally">Occasionally</Label>
                 </div>
                 <div className="flex items-center space-x-2">
@@ -895,10 +803,7 @@ const HealthProfileTab = ({
                   <Label htmlFor="alcohol-weekly">Weekly</Label>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <RadioGroupItem
-                    value="occasionally"
-                    id="alcohol-occasionally"
-                  />
+                  <RadioGroupItem value="occasionally" id="alcohol-occasionally" />
                   <Label htmlFor="alcohol-occasionally">Occasionally</Label>
                 </div>
                 <div className="flex items-center space-x-2">
@@ -912,13 +817,8 @@ const HealthProfileTab = ({
               <Label>Exercise frequency</Label>
               <RadioGroup value={exercise} onValueChange={setExercise}>
                 <div className="flex items-center space-x-2">
-                  <RadioGroupItem
-                    value="sedentary_adult"
-                    id="sedentary-adult"
-                  />
-                  <Label htmlFor="sedentary-adult">
-                    Sedentary Adult: Little or no exercise
-                  </Label>
+                  <RadioGroupItem value="sedentary_adult" id="sedentary-adult" />
+                  <Label htmlFor="sedentary-adult">Sedentary Adult: Little or no exercise</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="lightly_active" id="lightly-active" />
@@ -927,10 +827,7 @@ const HealthProfileTab = ({
                   </Label>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <RadioGroupItem
-                    value="moderately_active"
-                    id="moderately-active"
-                  />
+                  <RadioGroupItem value="moderately_active" id="moderately-active" />
                   <Label htmlFor="moderately-active">
                     Moderately Active: Moderate exercise/sports 3-5 days/week
                   </Label>
@@ -944,8 +841,7 @@ const HealthProfileTab = ({
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="super_active" id="super-active" />
                   <Label htmlFor="super-active">
-                    Super Active: Very hard exercise/physical job & exercise
-                    2x/day
+                    Super Active: Very hard exercise/physical job & exercise 2x/day
                   </Label>
                 </div>
               </RadioGroup>
@@ -955,21 +851,21 @@ const HealthProfileTab = ({
               <Label>Type of exercise</Label>
               <div className="flex flex-wrap gap-2 mt-2">
                 {[
-                  { id: "gym", label: "🏋️ Gym" },
-                  { id: "running", label: "🏃 Running" },
-                  { id: "cycling", label: "🚴 Cycling" },
-                  { id: "swimming", label: "🏊 Swimming" },
-                  { id: "yoga", label: "🧘 Yoga" },
-                  { id: "team-sports", label: "⚽ Team Sports" },
-                  { id: "other", label: "🔄 Other" },
+                  { id: 'gym', label: '🏋️ Gym' },
+                  { id: 'running', label: '🏃 Running' },
+                  { id: 'cycling', label: '🚴 Cycling' },
+                  { id: 'swimming', label: '🏊 Swimming' },
+                  { id: 'yoga', label: '🧘 Yoga' },
+                  { id: 'team-sports', label: '⚽ Team Sports' },
+                  { id: 'other', label: '🔄 Other' },
                 ].map((type) => (
                   <div
                     key={type.id}
                     onClick={() => handleExerciseTypeChange(type.id)}
                     className={`cursor-pointer rounded-full px-3 py-1 text-sm ${
                       exerciseTypes?.includes(type.id)
-                        ? "bg-wellness-bright-green text-white"
-                        : "bg-gray-100 text-gray-700"
+                        ? 'bg-wellness-bright-green text-white'
+                        : 'bg-gray-100 text-gray-700'
                     }`}
                   >
                     {type.label}
@@ -989,8 +885,7 @@ const HealthProfileTab = ({
             Common Gene Variants
           </CardTitle>
           <CardDescription>
-            Genetic variants can impact how your body responds to diet,
-            exercise, and medication.
+            Genetic variants can impact how your body responds to diet, exercise, and medication.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -1009,12 +904,10 @@ const HealthProfileTab = ({
               </Select>
             </div>
 
-            {geneVariant && geneVariant !== "None" && (
+            {geneVariant && geneVariant !== 'None' && (
               <div className="p-4 bg-wellness-light-green rounded-lg mt-4">
                 <h4 className="font-medium mb-1">{geneVariant}</h4>
-                <p className="text-sm">
-                  {CommonGeneVariantsDataDescriptionMapping?.[geneVariant]}
-                </p>
+                <p className="text-sm">{CommonGeneVariantsDataDescriptionMapping?.[geneVariant]}</p>
               </div>
             )}
           </div>
