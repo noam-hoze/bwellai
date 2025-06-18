@@ -257,7 +257,7 @@ const RenderResults = ({ handleRetakeScan, step }) => {
   );
 };
 
-const FaceScanV2 = () => {
+const FaceScan = () => {
   const navigate = useNavigate();
 
   const [step, setStep] = useState<ScanStep>("intro");
@@ -838,4 +838,4 @@ const FaceScanV2 = () => {
   );
 };
 
-export default FaceScanV2;
+export default FaceScan;
