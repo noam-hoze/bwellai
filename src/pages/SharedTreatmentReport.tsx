@@ -8,9 +8,10 @@ import ExercisePerformanceSummary from '@/components/shared-report/ExercisePerfo
 import DailyExerciseLog from '@/components/shared-report/DailyExerciseLog';
 import PainTrendAnalysis from '@/components/shared-report/PainTrendAnalysis';
 import { useGetSavedUserGoal, useUserGoalDetails } from '@/service/hooks/goal/useGetGoal';
-import {isBefore, isSameDay } from "date-fns";
+import {isBefore, isSameDay,addDays, differenceInDays, parseISO, format , isEqual, compareAsc} from "date-fns";
 import { useAuth } from "@/contexts/AuthContext";
 import { useGetUserProfile } from '@/service/hooks/profile/useGetUserProfile';
+import { SelectedExercise } from '@/components/goals/newGoals/CreateGoalWizard';
 
 const SharedTreatmentReport = () => {
   const { reportId } = useParams<{ reportId: string }>();
@@ -20,12 +21,10 @@ const SharedTreatmentReport = () => {
     const { isAuthenticated, loading } = useAuth();
   
     const {
-      data: getProfileIsData,
+      data: userProfile,
       isSuccess: getProfileIsSuccess,
       refetch: getUserProfileRefetch,
     } = useGetUserProfile({ isAuthenticated });
-
-    console.log("getProfileIsData", getProfileIsData);
 
   const [expandedSections, setExpandedSections] = useState({
     dailyLog: true,
@@ -63,33 +62,94 @@ const SharedTreatmentReport = () => {
       [section]: !prev[section]
     }));
   };
+
+  function calculateStreak(exercises: any[]): number {
+  // Group exercises by date
+  const exercisesByDate = new Map<string, any[]>();
+
+  for (const ex of exercises) {
+    const dateKey = format(parseISO(ex.date), "yyyy-MM-dd");
+    if (!exercisesByDate.has(dateKey)) {
+      exercisesByDate.set(dateKey, []);
+    }
+    exercisesByDate.get(dateKey)!.push(ex);
+  }
+
+  // Get all unique prescribed days, sorted descending
+  const sortedDates = Array.from(exercisesByDate.keys())
+    .sort((a, b) => (a < b ? 1 : -1)); // latest to oldest
+
+  let streak = 0;
+
+  for (const date of sortedDates) {
+    const exercisesForDay = exercisesByDate.get(date);
+    if (exercisesForDay && exercisesForDay.every((ex) => ex.is_completed)) {
+      streak++;
+    } else {
+      break; // streak ends if any exercise that day is not completed
+    }
+  }
+
+  return streak;
+}
+
+function calculateMissedDays(exercises: any[], reportDate: Date): number {
+  const exercisesByDate = new Map<string, any[]>();
+
+  for (const ex of exercises) {
+    const exerciseDate = parseISO(ex.date);
+    // Ignore dates after the reportDate
+    if (isBefore(exerciseDate, reportDate) || isEqual(exerciseDate, reportDate)) {
+      const dateKey = format(exerciseDate, "yyyy-MM-dd");
+      if (!exercisesByDate.has(dateKey)) {
+        exercisesByDate.set(dateKey, []);
+      }
+      exercisesByDate.get(dateKey)!.push(ex);
+    }
+  }
+
+  let missedDays = 0;
+
+  for (const [date, exercisesForDay] of exercisesByDate.entries()) {
+    const allCompleted = exercisesForDay.every((ex) => ex.is_completed);
+    if (!allCompleted) {
+      missedDays++;
+    }
+  }
+
+  return missedDays;
+}
   
   // User data - simplified
   const userData = {
-    username: 'JohnDoe123',
+    username: userProfile?.email,
     reportDate: reportDate
   };
+
+  console.log("goalData", goalData);
+  console.log("exercises", exercises);
+
   
   const planData = {
-    name: 'Back Pain Relief',
-    startDate: new Date('2025-05-10'),
-    endDate: new Date('2025-06-07'),
-    duration: 28,
+    name: currentGoalType?.name,
+    startDate: new Date(goalData?.created_local_time),
+    endDate: addDays(new Date(goalData?.created_local_time), Number(goalData?.schedule?.program_duration_in_days) - 1),
+    duration: goalData?.schedule?.program_duration_in_days,
     
     // Progress metrics
-    daysCompleted: 8,
-    totalExercisesCompleted: 26,
-    totalExercisesPrescribed: 32,
+    daysCompleted: differenceInDays(reportDate, new Date(goalData?.created_local_time)) + 1,
+    totalExercisesCompleted: exercisesCompleted,
+    totalExercisesPrescribed: exercisesPrescribed,
     adherenceRate: Math.round((exercisesCompleted / exercisesPrescribed) * 100),
-    averageCompletionRate: 85,
-    currentStreak: 5,
-    missedDays: 1,
-    
+    averageCompletionRate: Math.round((exercisesCompleted / exercisesPrescribed) * 100),
+    currentStreak: calculateStreak(exercises),
+    missedDays: calculateMissedDays(exercises, reportDate),
+
     // Pain metrics
-    initialPainLevel: 7,
-    currentPainLevel: 5,
+    initialPainLevel: goalData?.pain_assessment?.initial_pain_level,
+    currentPainLevel: goalData?.pain_assessment?.current_pain_level,
     painReduction: painReduction,
-    targetPainLevel: 3,
+    targetPainLevel: goalData?.pain_assessment?.initial_pain_level - 2,
     
     // Goals
     primaryGoals: [
@@ -100,105 +160,59 @@ const SharedTreatmentReport = () => {
     ]
   };
   
-  // Detailed daily exercise log with pain ratings
-  const exerciseLog = [
-    {
-      day: 1,
-      date: new Date('2025-05-10'),
-      overallPainStart: 7,
-      overallPainEnd: 7,
-      exercises: [
-        { name: 'Cat-Cow Stretch', completed: true, painDuring: 4, difficulty: 3 },
-        { name: 'Seated Lumbar Rotation', completed: true, painDuring: 5, difficulty: 4 },
-        { name: 'Standing Hamstring Stretch', completed: true, painDuring: 3, difficulty: 2 },
-        { name: 'Heat Therapy', completed: true, painDuring: 2, difficulty: 1 }
-      ]
-    },
-    {
-      day: 2,
-      date: new Date('2025-05-11'),
-      overallPainStart: 7,
-      overallPainEnd: 7,
-      exercises: [
-        { name: 'Cat-Cow Stretch', completed: true, painDuring: 4, difficulty: 3 },
-        { name: 'Seated Lumbar Rotation', completed: true, painDuring: 4, difficulty: 3 },
-        { name: 'Standing Hamstring Stretch', completed: true, painDuring: 3, difficulty: 2 },
-        { name: 'Cold Compress', completed: true, painDuring: 1, difficulty: 1 }
-      ]
-    },
-    {
-      day: 3,
-      date: new Date('2025-05-12'),
-      overallPainStart: 6,
-      overallPainEnd: 6,
-      exercises: [
-        { name: 'Cat-Cow Stretch', completed: true, painDuring: 3, difficulty: 2 },
-        { name: 'Seated Lumbar Rotation', completed: true, painDuring: 4, difficulty: 3 },
-        { name: 'Standing Hamstring Stretch', completed: false, painDuring: null, difficulty: null },
-        { name: 'Heat Therapy', completed: true, painDuring: 2, difficulty: 1 }
-      ]
-    },
-    {
-      day: 4,
-      date: new Date('2025-05-13'),
-      overallPainStart: 7,
-      overallPainEnd: 6,
-      exercises: [
-        { name: 'Cat-Cow Stretch', completed: true, painDuring: 3, difficulty: 2 },
-        { name: 'Seated Lumbar Rotation', completed: true, painDuring: 4, difficulty: 3 },
-        { name: 'Standing Hamstring Stretch', completed: true, painDuring: 3, difficulty: 2 },
-        { name: 'Cold Compress', completed: true, painDuring: 1, difficulty: 1 }
-      ]
-    },
-    {
-      day: 5,
-      date: new Date('2025-05-14'),
-      overallPainStart: 6,
-      overallPainEnd: 6,
-      exercises: [
-        { name: 'Cat-Cow Stretch', completed: true, painDuring: 3, difficulty: 2 },
-        { name: 'Seated Lumbar Rotation', completed: false, painDuring: null, difficulty: null },
-        { name: 'Standing Hamstring Stretch', completed: true, painDuring: 2, difficulty: 2 },
-        { name: 'Heat Therapy', completed: true, painDuring: 2, difficulty: 1 }
-      ]
-    },
-    {
-      day: 6,
-      date: new Date('2025-05-15'),
-      overallPainStart: 5,
-      overallPainEnd: 5,
-      exercises: [
-        { name: 'Cat-Cow Stretch', completed: true, painDuring: 2, difficulty: 2 },
-        { name: 'Seated Lumbar Rotation', completed: true, painDuring: 3, difficulty: 2 },
-        { name: 'Standing Hamstring Stretch', completed: true, painDuring: 2, difficulty: 1 },
-        { name: 'Cold Compress', completed: true, painDuring: 1, difficulty: 1 }
-      ]
-    },
-    {
-      day: 7,
-      date: new Date('2025-05-16'),
-      overallPainStart: 5,
-      overallPainEnd: 5,
-      exercises: [
-        { name: 'Cat-Cow Stretch', completed: true, painDuring: 2, difficulty: 1 },
-        { name: 'Seated Lumbar Rotation', completed: true, painDuring: 3, difficulty: 2 },
-        { name: 'Standing Hamstring Stretch', completed: true, painDuring: 2, difficulty: 1 },
-        { name: 'Heat Therapy', completed: true, painDuring: 1, difficulty: 1 }
-      ]
-    },
-    {
-      day: 8,
-      date: new Date('2025-05-17'),
-      overallPainStart: 5,
-      overallPainEnd: 5,
-      exercises: [
-        { name: 'Cat-Cow Stretch', completed: true, painDuring: 2, difficulty: 1 },
-        { name: 'Seated Lumbar Rotation', completed: true, painDuring: 2, difficulty: 2 },
-        { name: 'Standing Hamstring Stretch', completed: false, painDuring: null, difficulty: null },
-        { name: 'Cold Compress', completed: true, painDuring: 1, difficulty: 1 }
-      ]
+  type ExerciseLogEntry = {
+  day: number;
+  date: Date;
+  overallPainStart: number | null;
+  overallPainEnd: number | null;
+  exercises: {
+    name: string;
+    completed: boolean;
+    painDuring: number | null;
+    difficulty: number | null;
+  }[];
+};
+
+function transformExercisesToLog(exercises): ExerciseLogEntry[] {
+  // 1. Group exercises by day (yyyy-MM-dd)
+  const grouped = new Map<string, SelectedExercise[]>();
+
+  for (const ex of exercises) {
+    const dateKey = format(parseISO(ex.date), 'yyyy-MM-dd');
+    if (!grouped.has(dateKey)) {
+      grouped.set(dateKey, []);
     }
-  ];
+    grouped.get(dateKey)!.push(ex);
+  }
+
+  // 2. Sort dates ascending
+  const sortedDates = Array.from(grouped.keys()).sort((a, b) =>
+    compareAsc(parseISO(a), parseISO(b))
+  );
+
+  // 3. Transform into final structure
+  const exerciseLog: ExerciseLogEntry[] = sortedDates.map((dateKey, index) => {
+    const exercises = grouped.get(dateKey)!;
+
+    return {
+      day: index + 1,
+      date: new Date(dateKey),
+      overallPainStart: null, // or populate if available
+      overallPainEnd: null,   // or populate if available
+      exercises: exercises.map((ex) => ({
+        name: ex.exercise_name,
+        completed: ex.is_completed,
+        painDuring: null, // or populate if available
+        difficulty: ex.difficulty_level ?? null,
+      })),
+    };
+  });
+
+  return exerciseLog;
+}
+
+const exerciseLog = transformExercisesToLog(exercises);
+
   
   // Calculate exercise-specific metrics
   const exerciseMetrics: Record<string, any> = {};
@@ -260,7 +274,7 @@ const SharedTreatmentReport = () => {
         planData={planData}
         formatDate={formatDate}
       />
-      {/*}
+      
       <TreatmentPlanDetails 
         planData={planData}
         formatDate={formatDate}
@@ -273,7 +287,7 @@ const SharedTreatmentReport = () => {
         expandedSections={expandedSections}
         toggleSection={toggleSection}
       />
-      
+      {/*
       <DailyExerciseLog 
         exerciseLog={exerciseLog}
         expandedSections={expandedSections}

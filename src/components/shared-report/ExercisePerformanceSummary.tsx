@@ -57,19 +57,6 @@ const ExercisePerformanceSummary: React.FC<ExercisePerformanceSummaryProps> = ({
                     </div>
                   </div>
                   <div>
-                    <span className="text-gray-600">Avg Pain</span>
-                    <div className="mt-1">
-                      <span className={`font-medium ${
-                        metrics.avgPain === 'N/A' ? 'text-gray-400' :
-                        parseFloat(metrics.avgPain) <= 3 ? 'text-green-600' :
-                        parseFloat(metrics.avgPain) <= 6 ? 'text-yellow-600' :
-                        'text-red-600'
-                      }`}>
-                        {metrics.avgPain}
-                      </span>
-                    </div>
-                  </div>
-                  <div>
                     <span className="text-gray-600">Difficulty</span>
                     <div className="mt-1">
                       {metrics.avgDifficulty !== 'N/A' && (
@@ -107,8 +94,7 @@ const ExercisePerformanceSummary: React.FC<ExercisePerformanceSummaryProps> = ({
                 <tr className="bg-gray-50">
                   <th className="text-left p-3 font-medium text-gray-700">Exercise Name</th>
                   <th className="text-center p-3 font-medium text-gray-700">Completion Rate</th>
-                  <th className="text-center p-3 font-medium text-gray-700">Avg Pain (1-10)</th>
-                  <th className="text-center p-3 font-medium text-gray-700">Avg Difficulty (1-5)</th>
+                  <th className="text-center p-3 font-medium text-gray-700">Average Difficulty</th>
                   <th className="text-center p-3 font-medium text-gray-700">Times Completed</th>
                 </tr>
               </thead>
@@ -123,16 +109,6 @@ const ExercisePerformanceSummary: React.FC<ExercisePerformanceSummaryProps> = ({
                         'bg-red-100 text-red-800'
                       }`}>
                         {metrics.completionRate}%
-                      </span>
-                    </td>
-                    <td className="text-center p-3">
-                      <span className={`font-medium ${
-                        metrics.avgPain === 'N/A' ? 'text-gray-400' :
-                        parseFloat(metrics.avgPain) <= 3 ? 'text-green-600' :
-                        parseFloat(metrics.avgPain) <= 6 ? 'text-yellow-600' :
-                        'text-red-600'
-                      }`}>
-                        {metrics.avgPain}
                       </span>
                     </td>
                     <td className="text-center p-3">
