@@ -24,9 +24,9 @@ import PainAssessment from "@/components/goals/newGoals/PainAssessment";
 import ProgressSection from "@/components/goals/newGoals/ProgressSection";
 import ExerciseDetailsModal from "@/components/goals/newGoals/ExerciseDetailsModal";
 import DifficultyRatingDialog from "@/components/goals/newGoals/DifficultyRatingDialog";
-import { useLocation } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { Exercise, SelectedExercise } from "@/components/goals/newGoals/types/goalTypes";
-import { useUpdateExerciseDetails } from "@/service/hooks/goal/useGetGoal";
+import { useGetSavedUserGoal, useUpdateExerciseDetails, useUserGoalDetails } from "@/service/hooks/goal/useGetGoal";
 
 const NewGoalDetail = () => {
   const [goalData, setGoalData] = useState<any>(null);
@@ -44,6 +44,21 @@ const NewGoalDetail = () => {
   const [isRatingDialogOpen, setIsRatingDialogOpen] = useState<boolean>(false);
   const [exerciseToRate, setExerciseToRate] = useState<SelectedExercise | null>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState<boolean>(false);
+
+  const { id: goalId } = useParams<{ id: string }>();
+
+  const {
+        data: allGoalsData,
+        isLoading,
+        refetch: savedUserGoalRefetch,
+      } = useGetSavedUserGoal();
+  
+  const currentGoalData = allGoalsData?.find(goal => goal.id === goalId);
+
+  const { data: goalTypes, isLoading: userGoalDetailsIsLoading } =
+          useUserGoalDetails();
+
+  const currentGoalType = goalTypes?.find(goal => goal.id === goalData?.goalsId);
 
   // Calculate completion percentage for the current day
   const daysWithExercises = new Set(goalData?.exercise_selection.map(ex=>ex.date)).size; // Unique days with exercises
@@ -102,6 +117,7 @@ const NewGoalDetail = () => {
       exerciseId: exerciseToRate.exercise_id,
     });
     }
+    savedUserGoalRefetch();
     setIsRatingDialogOpen(false);
     setExerciseToRate(null);
   };
@@ -128,14 +144,13 @@ const NewGoalDetail = () => {
   };
 
   // Lovable end
-
-  const location = useLocation();
   const [currentDayOfGoal, setCurrentDayOfGoal] = useState<number>(1); // Default to day 1
   const [goalDuration, setGoalDuration] = useState<number>(1); // Default to 1 day
   const [programStartDate, setProgramStartDate] = useState<Date | null>(null);
   const [programEndDate, setProgramEndDate] = useState<Date | null>(null);
   const [currentPainLevel, setCurrentPainLevel] = useState<number>(0);
 
+    console.log("Current Goal Data:", currentGoalData);
   const painReduction = useMemo(() => {
       if(!goalData) return 0;
       const { initial_pain_level } = goalData.pain_assessment;
@@ -143,8 +158,8 @@ const NewGoalDetail = () => {
     }, [goalData, currentPainLevel]);
 
   useEffect(() => {
-      if (location.state?.goal) {
-        const goalData = location.state.goal;
+      if (currentGoalData) {
+        const goalData = currentGoalData;
         setGoalData(goalData);
         setCurrentPainLevel(goalData?.pain_assessment?.current_pain_level || 0);
         setGoalDuration(Number(goalData?.schedule?.program_duration_in_days));
@@ -155,7 +170,7 @@ const NewGoalDetail = () => {
         setProgramEndDate(addDays(goalCreationDateInLocalTime, newGoalDuration - 1));
         setCurrentDayOfGoal(differenceInDays(new Date(), startOfDay(goalCreationDateInLocalTime)) + 1);
       }
-    }, [location]);
+    }, [currentGoalData]);
 
     if(!goalData) {
       return <div className="text-center text-gray-500">Loading goal data...</div>;
@@ -167,7 +182,7 @@ const NewGoalDetail = () => {
       <div className="container max-w-4xl mx-auto px-4 py-6">
         {/* Header */}
         <GoalHeader 
-          goalType={goalData.name}
+          goalType={currentGoalType?.name}
           startDate={goalData.created_local_time}
           endDate={programEndDate}
           completionPercentage={completionPercentage}
