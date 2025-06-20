@@ -861,8 +861,7 @@ const RenderPersonalFactorsForm = ({ setAnalysisProgress, setStep }) => {
   );
 };
 
-const FaceScan = () => {
-  const { toast } = useToast();
+const FaceScanV2 = () => {
   const navigate = useNavigate();
   const [step, setStep] = useState<ScanStep>("intro");
   const [scanProgress, setScanProgress] = useState(0);
@@ -2198,4 +2197,4 @@ const FaceScan = () => {
   );
 };
 
-export default FaceScan;
+export default FaceScanV2;

@@ -34,7 +34,7 @@ import RiskScore from "./pages/RiskScore";
 import SharedReport from "./pages/SharedReport";
 import { useEffect } from "react";
 import { initializeGTag } from "./utils/gtagmanager";
-import FaceScanV2 from "./pages/FaceScan";
+import FaceScanV2 from "./pages/FaceScanV2";
 import MyGoals from "./pages/MyGoals";
 import GoalDetail from "./pages/GoalDetail";
 import NewGoalDetail from "./pages/NewGoalDetail";
