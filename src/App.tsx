@@ -38,6 +38,8 @@ import FaceScanV2 from "./pages/FaceScan";
 import MyGoals from "./pages/MyGoals";
 import GoalDetail from "./pages/GoalDetail";
 import NewGoalDetail from "./pages/NewGoalDetail";
+import SharedTreatmentReport from "./pages/SharedTreatmentReport";
+
 
 const queryClient = new QueryClient();
 
@@ -111,6 +113,7 @@ const App = () => {
                       path="/shared-report/:reportId"
                       element={<SharedReport />}
                     />
+                    <Route path="/shared-treatment-report/:reportId" element={<SharedTreatmentReport />} />
                     <Route path="*" element={<NotFound />} />
                   </Routes>
                 </BrowserRouter>

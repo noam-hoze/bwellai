@@ -41,7 +41,7 @@ const GoalHeader = ({
 
   const handleShareReport = () => {
     // Generate a unique report ID - in a real app this would come from the backend
-    const reportId = `report-${Date.now()}`;
+    const reportId = `report-${goalId}-${new Date().getTime()}`;
     const shareUrl = `/shared-treatment-report/${reportId}`;
     
     // Navigate to the shared report page
@@ -63,14 +63,14 @@ const GoalHeader = ({
           <h1 className="text-xl font-bold">{goalType}</h1>
         </div>
         <div className="flex space-x-2">
-          <Button 
+          {/*<Button 
             variant="outline" 
             size="icon"
             className="rounded-full"
             onClick={onEditGoal}
           >
             <Edit className="h-4 w-4 text-gray-600" />
-          </Button>
+          </Button>*/}
           <Button 
             variant="outline" 
             size="icon"
