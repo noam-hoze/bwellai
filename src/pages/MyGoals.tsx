@@ -62,7 +62,7 @@ const MyGoals = () => {
             className="bg-transparent text-transparent border-transparent hover:bg-transparent hover:text-transparent focus:outline-none"
           >
             <Plus className="mr-2 h-4 w-4 text-transparent" />
-            Create
+            
           </Button>
 
         </div>
