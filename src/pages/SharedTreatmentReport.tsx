@@ -1,6 +1,6 @@
 
 import React, { useMemo, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 import SharedReportHeader from '@/components/shared-report/SharedReportHeader';
 import TreatmentPlanDetails from '@/components/shared-report/TreatmentPlanDetails';
 import ProgressOverview from '@/components/shared-report/ProgressOverview';
@@ -14,9 +14,12 @@ import { useGetUserProfile } from '@/service/hooks/profile/useGetUserProfile';
 import { SelectedExercise } from '@/components/goals/newGoals/CreateGoalWizard';
 
 const SharedTreatmentReport = () => {
-  const { reportId } = useParams<{ reportId: string }>();
-  const goalId = reportId.split("-")[1];
-  const reportDate = new Date(Number(reportId.split("-")[2]));
+  const [searchParams, setSearchParams] = useSearchParams();
+  const goalId = searchParams.get("report");
+  const reportDate = new Date(Number(searchParams.get("timestamp")));
+
+  console.log("report", goalId);
+  console.log("timestamp", reportDate);
 
     const { isAuthenticated, loading } = useAuth();
   
