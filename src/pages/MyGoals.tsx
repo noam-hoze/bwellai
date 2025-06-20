@@ -57,10 +57,14 @@ const MyGoals = () => {
       <div className="container max-w-7xl mx-auto px-4 py-6">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold">My Goals</h1>
-          <Button onClick={() => setIsCreateDialogOpen(true)}>
-            <Plus className="mr-2 h-4 w-4" />
+          <Button
+            onClick={() => setIsCreateDialogOpen(true)}
+            className="bg-transparent text-transparent border-transparent hover:bg-transparent hover:text-transparent focus:outline-none"
+          >
+            <Plus className="mr-2 h-4 w-4 text-transparent" />
             Create New Goal
           </Button>
+
         </div>
 
         {data?.length > 0 ? (
@@ -81,7 +85,7 @@ const MyGoals = () => {
                 Math.max(
                   1,
                   Math.floor((now.getTime() - startDate.getTime()) / msInDay) +
-                    1
+                  1
                 )
               );
 

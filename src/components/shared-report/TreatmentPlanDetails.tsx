@@ -8,7 +8,6 @@ interface TreatmentPlanDetailsProps {
     startDate: Date;
     endDate: Date;
     duration: number;
-    primaryGoals: string[];
   };
   formatDate: (date: Date) => string;
 }

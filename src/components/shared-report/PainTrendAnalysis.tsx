@@ -2,13 +2,8 @@
 import React from 'react';
 import { TrendingDown, ChevronUp, ChevronDown } from 'lucide-react';
 
-interface ExerciseLogEntry {
-  day: number;
-  overallPainEnd: number;
-}
-
 interface PainTrendAnalysisProps {
-  exerciseLog: ExerciseLogEntry[];
+  activity: any,
   planData: {
     initialPainLevel: number;
     currentPainLevel: number;
@@ -19,11 +14,14 @@ interface PainTrendAnalysisProps {
 }
 
 const PainTrendAnalysis: React.FC<PainTrendAnalysisProps> = ({
-  exerciseLog,
+  activity,
   planData,
   expandedSections,
   toggleSection
 }) => {
+
+  console.log("PainTrendAnalysis component rendered with activity:", activity);
+
   return (
     <div className="p-4 md:p-6 border-b">
       <div 
@@ -42,7 +40,7 @@ const PainTrendAnalysis: React.FC<PainTrendAnalysisProps> = ({
           {/* Pain chart visualization (simplified) */}
           <div className="bg-gray-50 rounded-lg p-4 mb-4">
             <div className="flex items-end justify-between h-24 md:h-32">
-              {exerciseLog.map((day) => (
+              {activity.map((day) => (
                 <div key={day.day} className="flex-1 flex flex-col items-center max-w-12">
                   <div 
                     className={`w-6 md:w-8 rounded-t ${

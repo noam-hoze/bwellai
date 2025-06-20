@@ -7,7 +7,7 @@ import ProgressOverview from '@/components/shared-report/ProgressOverview';
 import ExercisePerformanceSummary from '@/components/shared-report/ExercisePerformanceSummary';
 import DailyExerciseLog from '@/components/shared-report/DailyExerciseLog';
 import PainTrendAnalysis from '@/components/shared-report/PainTrendAnalysis';
-import { useGetSavedUserGoal, useUserGoalDetails } from '@/service/hooks/goal/useGetGoal';
+import { useGetSavedUserGoal, useGetUserActivity, useUserGoalDetails } from '@/service/hooks/goal/useGetGoal';
 import {isBefore, isSameDay,addDays, differenceInDays, parseISO, format , isEqual, compareAsc} from "date-fns";
 import { useAuth } from "@/contexts/AuthContext";
 import { useGetUserProfile } from '@/service/hooks/profile/useGetUserProfile';
@@ -54,6 +54,15 @@ const SharedTreatmentReport = () => {
         return Math.round((initial_pain_level - current_pain_level) / initial_pain_level * 100);
       }, [goalData]);
 
+   const {
+     data: userActivityData,
+      refetch: userActivityDataRefetch,
+   } = useGetUserActivity();
+
+   const relevantUserActivity = userActivityData?.filter(
+    (item) => item.userActivity?.user_goal_id === goalData?.userGoalId
+    && item.userActivity?.type === "pain_level"
+  );
 
   // Toggle section expansion
   const toggleSection = (section: string) => {
@@ -126,9 +135,6 @@ function calculateMissedDays(exercises: any[], reportDate: Date): number {
     reportDate: reportDate
   };
 
-  console.log("goalData", goalData);
-  console.log("exercises", exercises);
-
   
   const planData = {
     name: currentGoalType?.name,
@@ -150,16 +156,8 @@ function calculateMissedDays(exercises: any[], reportDate: Date): number {
     currentPainLevel: goalData?.pain_assessment?.current_pain_level,
     painReduction: painReduction,
     targetPainLevel: goalData?.pain_assessment?.initial_pain_level - 2,
-    
-    // Goals
-    primaryGoals: [
-      'Reduce pain from 7/10 to 3/10 or less',
-      'Return to regular walking without pain (30+ minutes)',
-      'Resume normal work activities without discomfort',
-      'Prevent future flare-ups through maintenance exercises'
-    ]
   };
-  
+
   type ExerciseLogEntry = {
   day: number;
   date: Date;
@@ -172,6 +170,40 @@ function calculateMissedDays(exercises: any[], reportDate: Date): number {
     difficulty: number | null;
   }[];
 };
+
+function formatActivityData(rawActivity: any[]) {
+  // 1. Group pain entries by date
+  const painByDate = new Map<string, number[]>();
+
+  for (const entry of rawActivity) {
+    const { userActivity } = entry;
+    if (userActivity?.type === 'pain_level' && userActivity?.current_pain_level != null) {
+      const date = userActivity.date;
+      if (!painByDate.has(date)) {
+        painByDate.set(date, []);
+      }
+      painByDate.get(date)!.push(userActivity.current_pain_level);
+    }
+  }
+
+  // 2. Sort by date and calculate average pain per day
+  const sortedDates = Array.from(painByDate.keys()).sort((a, b) =>
+    compareAsc(parseISO(a), parseISO(b))
+  );
+
+  return sortedDates.map((date, index) => {
+    const painLevels = painByDate.get(date)!;
+    const averagePain =
+      painLevels.reduce((sum, level) => sum + level, 0) / painLevels.length;
+
+    return {
+      day: index + 1,
+      overallPainEnd: Math.round(averagePain),
+    };
+  });
+}
+
+
 
 function transformExercisesToLog(exercises): ExerciseLogEntry[] {
   // 1. Group exercises by day (yyyy-MM-dd)
@@ -229,9 +261,6 @@ const exerciseLog = transformExercisesToLog(exercises);
       exerciseMetrics[exercise.name].totalPrescribed++;
       if (exercise.completed) {
         exerciseMetrics[exercise.name].totalCompleted++;
-        if (exercise.painDuring !== null) {
-          exerciseMetrics[exercise.name].painRatings.push(exercise.painDuring);
-        }
         if (exercise.difficulty !== null) {
           exerciseMetrics[exercise.name].difficultyRatings.push(exercise.difficulty);
         }
@@ -266,6 +295,8 @@ const exerciseLog = transformExercisesToLog(exercises);
       day: 'numeric'
     });
   };
+
+  console.log("relevantUserActivity", relevantUserActivity);
   
   return (
     <div className="max-w-4xl mx-auto bg-white min-h-screen">
@@ -287,21 +318,21 @@ const exerciseLog = transformExercisesToLog(exercises);
         expandedSections={expandedSections}
         toggleSection={toggleSection}
       />
-      {/*
+      
       <DailyExerciseLog 
         exerciseLog={exerciseLog}
         expandedSections={expandedSections}
         toggleSection={toggleSection}
         formatShortDate={formatShortDate}
       />
-      
+      {/*
       <PainTrendAnalysis 
-        exerciseLog={exerciseLog}
+        activity={formatActivityData(relevantUserActivity ?? [])}
         planData={planData}
         expandedSections={expandedSections}
         toggleSection={toggleSection}
-      />
-      */}
+      />*/}
+      
       {/* Footer */}
       <div className="p-4 md:p-6 text-center text-sm text-gray-500">
         <p>Treatment Progress Report • {formatDate(userData.reportDate)}</p>
