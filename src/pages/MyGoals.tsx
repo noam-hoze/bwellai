@@ -165,7 +165,8 @@ const MyGoals = () => {
               <p className="text-gray-600 mb-4">
                 Create your first pain management goal to get started
               </p>
-              <Button onClick={() => setIsCreateDialogOpen(true)}>
+              <Button onClick={() => setIsCreateDialogOpen(true)}
+                className="bg-transparent text-transparent border-transparent hover:bg-transparent hover:text-transparent focus:outline-none">
                 <Plus className="mr-2 h-4 w-4" />
                 Create Your First Goal
               </Button>
