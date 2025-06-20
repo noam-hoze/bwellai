@@ -79,14 +79,14 @@ const GoalHeader = ({
           >
             <Trash2 className="h-4 w-4 text-gray-600" />
           </Button>
-          {/*<Button 
+          <Button 
             variant="outline" 
             size="icon"
             className="rounded-full"
             onClick={handleShareReport}
           >
             <Share className="h-4 w-4 text-gray-600" />
-          </Button>*/}
+          </Button>
         </div>
       </div>
       <div className="flex items-center ml-10 space-x-4 text-sm">
