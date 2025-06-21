@@ -1,17 +1,13 @@
 // import { useRealtimeHeartRate } from "./ShenaiContext";
-import { useEffect, useRef, useState } from "react";
-import style from "./shenCanvas.module.css";
-import { useShenaiSdk } from "./useShenaiSDK";
-import { getEnumName } from "@/utils/shenaiHelper";
-import { Button } from "../ui/button";
-import { useFaceScan } from "@/contexts/FaceScanContext";
-import { Progress } from "../ui/progress";
+import { useEffect, useRef, useState } from 'react';
+import style from './shenCanvas.module.css';
+import { useShenaiSdk } from './useShenaiSDK';
+import { getEnumName } from '@/utils/shenaiHelper';
+import { Button } from '../ui/button';
+import { useFaceScan } from '@/contexts/FaceScanContext';
+import { Progress } from '../ui/progress';
 
-export const ShenaiSDKView = ({
-  setStep,
-  setIsShenaiInitialized,
-  setShenAiSDK,
-}) => {
+export const ShenaiSDKView = ({ setStep, setIsShenaiInitialized, setShenAiSDK }) => {
   // const hr = useRealtimeHeartRate();
   const shenaiSDK = useShenaiSdk();
 
@@ -26,24 +22,20 @@ export const ShenaiSDKView = ({
   const [sdkState, setSdkState] = useState<any>();
 
   const [colorTheme, setColorTheme] = useState({
-    themeColor: "#56A0A0",
-    textColor: "#000000",
-    backgroundColor: "#E6E6E6",
-    tileColor: "#FFFFFF",
+    themeColor: '#56A0A0',
+    textColor: '#000000',
+    backgroundColor: '#E6E6E6',
+    tileColor: '#FFFFFF',
   });
 
-  const initializeSdk = (
-    apiKey: string,
-    settings: any,
-    onSuccess?: () => void
-  ) => {
+  const initializeSdk = (apiKey: string, settings: any, onSuccess?: () => void) => {
     if (!shenaiSDK) return;
     setPendingInitialization(true);
-    shenaiSDK.initialize(apiKey, "", settings, (res) => {
+    shenaiSDK.initialize(apiKey, '', settings, (res) => {
       if (res === shenaiSDK.InitializationResult.OK) {
         setShenAiSDK(shenaiSDK);
-        console.log("Shen.AI License result: ", res);
-        shenaiSDK.attachToCanvas("#mxcanvas");
+        console.log('Shen.AI License result: ', res);
+        shenaiSDK.attachToCanvas('#mxcanvas');
         onSuccess?.();
         // scrollToCanvas();
       } else {
@@ -52,10 +44,7 @@ export const ShenaiSDKView = ({
         //     getEnumName(shenaiSDK.InitializationResult, res, "UNKNOWN")
         // );
 
-        console.log(
-          res,
-          getEnumName(shenaiSDK.InitializationResult, res, "UNKNOWN")
-        );
+        console.log(res, getEnumName(shenaiSDK.InitializationResult, res, 'UNKNOWN'));
       }
       setPendingInitialization(false);
     });
@@ -63,46 +52,48 @@ export const ShenaiSDKView = ({
 
   const initialize = () => {
     // if (isAuthenticated) {
-    initializeSdk(
-      import.meta.env.VITE_SHENAI_KEY,
-      initializationSettings ?? {},
-      () => {
-        if (!shenaiSDK) return;
-        shenaiSDK.setCustomColorTheme(colorTheme);
-        if (
-          initializationSettings?.measurementPreset ==
-            shenaiSDK.MeasurementPreset.CUSTOM &&
-          customConfig
-        ) {
-          shenaiSDK.setCustomMeasurementConfig(customConfig);
-        }
+    initializeSdk(import.meta.env.VITE_SHENAI_KEY, initializationSettings ?? {}, () => {
+      if (!shenaiSDK) return;
+      shenaiSDK.setCustomColorTheme(colorTheme);
+      if (
+        initializationSettings?.measurementPreset == shenaiSDK.MeasurementPreset.CUSTOM &&
+        customConfig
+      ) {
+        shenaiSDK.setCustomMeasurementConfig(customConfig);
       }
-    );
+    });
     // }
   };
 
   useEffect(() => {
     if (!shenaiSDK) return;
+
+    // A minimal configuration to test for stability on iOS.
+    // The original, larger configuration is commented out below.
     const settings: any = {
-      precisionMode: shenaiSDK.PrecisionMode.RELAXED,
-      operatingMode: shenaiSDK.OperatingMode.POSITIONING,
-      measurementPreset: shenaiSDK.MeasurementPreset.ONE_MINUTE_BETA_METRICS,
       cameraMode: shenaiSDK.CameraMode.FACING_USER,
-      onboardingMode: shenaiSDK.OnboardingMode.HIDDEN,
-      showUserInterface: true,
-      showFacePositioningOverlay: true,
-      showVisualWarnings: true,
-      enableCameraSwap: true,
-      showFaceMask: true,
-      showBloodFlow: true,
-      hideShenaiLogo: true,
-      enableStartAfterSuccess: true,
-      enableSummaryScreen: false,
-      enableHealthRisks: true,
-      showOutOfRangeResultIndicators: true,
-      showTrialMetricLabels: true,
-      enableFullFrameProcessing: false,
     };
+
+    // const settings: any = {
+    //   precisionMode: shenaiSDK.PrecisionMode.RELAXED,
+    //   operatingMode: shenaiSDK.OperatingMode.POSITIONING,
+    //   measurementPreset: shenaiSDK.MeasurementPreset.ONE_MINUTE_BETA_METRICS,
+    //   cameraMode: shenaiSDK.CameraMode.FACING_USER,
+    //   onboardingMode: shenaiSDK.OnboardingMode.HIDDEN,
+    //   showUserInterface: true,
+    //   showFacePositioningOverlay: true,
+    //   showVisualWarnings: true,
+    //   enableCameraSwap: true,
+    //   showFaceMask: true,
+    //   showBloodFlow: true,
+    //   hideShenaiLogo: true,
+    //   enableStartAfterSuccess: true,
+    //   enableSummaryScreen: false,
+    //   enableHealthRisks: true,
+    //   showOutOfRangeResultIndicators: true,
+    //   showTrialMetricLabels: true,
+    //   enableFullFrameProcessing: false,
+    // };
     setIsShenaiInitialized(true);
     setInitializationSettings(settings);
   }, [shenaiSDK]);
@@ -137,8 +128,7 @@ export const ShenaiSDKView = ({
           showBloodFlow: shenaiSDK.getShowBloodFlow(),
           hideShenaiLogo: shenaiSDK.getHideShenaiLogo(),
           enableStartAfterSuccess: shenaiSDK.getEnableStartAfterSuccess(),
-          showOutOfRangeResultIndicators:
-            shenaiSDK.getShowOutOfRangeResultIndicators(),
+          showOutOfRangeResultIndicators: shenaiSDK.getShowOutOfRangeResultIndicators(),
           showTrialMetricLabels: shenaiSDK.getShowTrialMetricLabels(),
 
           bbox: shenaiSDK.getNormalizedFaceBbox(),
@@ -180,21 +170,11 @@ export const ShenaiSDKView = ({
   }, [shenaiSDK]);
 
   useEffect(() => {
-    console.log(
-      getEnumName(
-        shenaiSDK?.MeasurementState,
-        sdkState?.measurementState,
-        "UNKNOWN"
-      )
-    );
+    console.log(getEnumName(shenaiSDK?.MeasurementState, sdkState?.measurementState, 'UNKNOWN'));
     if (
-      getEnumName(
-        shenaiSDK?.MeasurementState,
-        sdkState?.measurementState,
-        "UNKNOWN"
-      ) === "FINISHED"
+      getEnumName(shenaiSDK?.MeasurementState, sdkState?.measurementState, 'UNKNOWN') === 'FINISHED'
     ) {
-      setStep("results");
+      setStep('results');
       setCameraScanningFinished(true);
     }
   }, [shenaiSDK?.getMeasurementState()]);
@@ -213,16 +193,13 @@ export const ShenaiSDKView = ({
 
   return (
     <div>
-      {typeof sdkState?.progress === "number" && measurementInProgress && (
+      {typeof sdkState?.progress === 'number' && measurementInProgress && (
         <div className="w-full mb-5">
           <div className="flex justify-between text-sm mb-1">
             <span>Scanning in progress...</span>
             <span>{sdkState.progress.toFixed(0)}%</span>
           </div>
-          <Progress
-            value={Number(sdkState.progress.toFixed(0))}
-            className="h-2"
-          />
+          <Progress value={Number(sdkState.progress.toFixed(0))} className="h-2" />
         </div>
       )}
 
@@ -230,9 +207,9 @@ export const ShenaiSDKView = ({
         className="wrapper"
         style={{
           display: `flex`,
-          alignItems: "center",
-          justifyContent: "center",
-          position: "relative",
+          alignItems: 'center',
+          justifyContent: 'center',
+          position: 'relative',
         }}
       >
         <div ref={canvasTopRef} className={style.mxcanvasTopHelper} />
@@ -240,14 +217,11 @@ export const ShenaiSDKView = ({
 
         {!cameraScanningFinished &&
           !initializationDisabled &&
-          getEnumName(
-            shenaiSDK?.MeasurementState,
-            sdkState?.measurementState,
-            "UNKNOWN"
-          ) === "UNKNOWN" && (
+          getEnumName(shenaiSDK?.MeasurementState, sdkState?.measurementState, 'UNKNOWN') ===
+            'UNKNOWN' && (
             <div
               style={{
-                position: "absolute",
+                position: 'absolute',
               }}
             >
               <Button
