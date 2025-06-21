@@ -823,8 +823,9 @@ const FaceScan = () => {
         <Header />
 
         <main className="container mx-auto px-4 py-6">
-          {step === "intro" && renderIntroScreen()}
-          {step === "preparation" && <RenderCaptureScan />}
+          <ChatbotWidget />
+          {step === 'intro' && renderIntroScreen()}
+          {step === 'preparation' && <RenderCaptureScan />}
           {/* {step === "capture" && renderCaptureScreen()} */}
           {/* {step === "processing" && renderProcessingScreen()} */}
           {/* {step === "results" && renderResultsScreen()} */}
