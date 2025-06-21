@@ -76,6 +76,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import HealthMetrics from "@/components/face-scan/HealthMetrics";
 import { useAuth } from "@/contexts/AuthContext";
+import ChatbotWidget from "@/components/chatbot/ChatbotWidget";
 
 const ShenaiApp = lazy(() => import("@/components/Shenai/ShenaiApp"));
 
