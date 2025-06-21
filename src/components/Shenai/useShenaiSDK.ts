@@ -1,9 +1,8 @@
-import { useRef, useState } from "react";
-import { ShenaiSDK } from "../../../public/shenai-sdk";
+import { useRef, useState } from 'react';
 
 export const useShenaiSdk = () => {
-  const [shenaiSdk, setShenaiSdk] = useState<ShenaiSDK>();
-  const sdkRef = useRef<ShenaiSDK | null | undefined>(undefined);
+  const [shenaiSdk, setShenaiSdk] = useState<any>();
+  const sdkRef = useRef<any | null | undefined>(undefined);
 
   if (sdkRef.current) {
     if (shenaiSdk != sdkRef.current) setShenaiSdk(sdkRef.current);
