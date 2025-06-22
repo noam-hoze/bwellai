@@ -445,7 +445,7 @@ const FaceScan = () => {
   }, [step, heartRate, bloodPressure, o2Sat]);
 
   const handleStartScan = () => {
-    window.location.href = '/https://shenai-standalone-24na1l0ze-noam-hozes-projects.vercel.app/';
+    window.location.href = 'https://shenai-standalone-24na1l0ze-noam-hozes-projects.vercel.app/';
   };
 
   const handlePrepareForScan = () => {
