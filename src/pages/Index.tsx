@@ -1,45 +1,45 @@
-import { useToast } from "@/hooks/use-toast";
-import Header from "@/components/layout/Header";
-import AddDataDropdown from "@/components/dashboard/AddDataDropdown";
-import HealthOverview from "@/components/dashboard/HealthOverview";
-import FriendlyGreeting from "@/components/dashboard/FriendlyGreeting";
-import BodyHealthInterface from "@/components/dashboard/BodyHealthInterface";
-import HealthNavigator from "@/components/dashboard/HealthNavigator";
-import { Button } from "@/components/ui/button";
-import { ScanFace } from "lucide-react";
-import { useAuth } from "@/contexts/AuthContext";
-import { Navigate, useNavigate, useSearchParams } from "react-router-dom";
-import { useEffect, useState } from "react";
-import ProtocolTracker from "@/components/dashboard/ProtocolTracker";
-import HealthVisualizations from "@/components/dashboard/HealthVisualizations";
-import LabResultsSummary from "@/components/dashboard/LabResultsSummary";
-import MessagesCenter from "@/components/dashboard/MessagesCenter";
-import NextActions from "@/components/dashboard/NextActions";
-import StartJourneyBanner from "@/components/first-time/StartJourneyBanner";
-import JourneyDialog from "@/components/first-time/JourneyDialog";
-import { useJourneyDialog } from "@/hooks/use-journey-dialog";
-import axios from "axios";
+import { useToast } from '@/hooks/use-toast';
+import Header from '@/components/layout/Header';
+import AddDataDropdown from '@/components/dashboard/AddDataDropdown';
+import HealthOverview from '@/components/dashboard/HealthOverview';
+import FriendlyGreeting from '@/components/dashboard/FriendlyGreeting';
+import BodyHealthInterface from '@/components/dashboard/BodyHealthInterface';
+import HealthNavigator from '@/components/dashboard/HealthNavigator';
+import { Button } from '@/components/ui/button';
+import { ScanFace } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
+import { Navigate, useNavigate, useSearchParams } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import ProtocolTracker from '@/components/dashboard/ProtocolTracker';
+import HealthVisualizations from '@/components/dashboard/HealthVisualizations';
+import LabResultsSummary from '@/components/dashboard/LabResultsSummary';
+import MessagesCenter from '@/components/dashboard/MessagesCenter';
+import NextActions from '@/components/dashboard/NextActions';
+import StartJourneyBanner from '@/components/first-time/StartJourneyBanner';
+import JourneyDialog from '@/components/first-time/JourneyDialog';
+import { useJourneyDialog } from '@/hooks/use-journey-dialog';
+import axios from 'axios';
 import {
   useGetUserOverallStatus,
   useGetUserProfile,
-} from "@/service/hooks/profile/useGetUserProfile";
-import { useGetUserFaceScore } from "@/service/hooks/shenai/useShenaiFaceScore";
+} from '@/service/hooks/profile/useGetUserProfile';
+import { useGetUserFaceScore } from '@/service/hooks/shenai/useShenaiFaceScore';
 import {
   useGetUserInfoTerraData,
   useGetWearableWeeklyDataV4,
-} from "@/service/hooks/wearable/terra/useGetUserInfo";
-import { useGetUserPreviousReportData } from "@/service/hooks/ocr/useGetReportById";
-import ChatbotWidget from "@/components/chatbot/ChatbotWidget";
+} from '@/service/hooks/wearable/terra/useGetUserInfo';
+import { useGetUserPreviousReportData } from '@/service/hooks/ocr/useGetReportById';
+import ChatbotWidget from '@/components/chatbot/ChatbotWidget';
 
 const formatDate = (date: Date) => {
-  return date.toISOString().split("T")[0]; // Extract YYYY-MM-DD
+  return date.toISOString().split('T')[0]; // Extract YYYY-MM-DD
 };
 
 const Index = () => {
   const { toast } = useToast();
   useSearchParams();
   const [searchParams] = useSearchParams();
-  const code = searchParams.get("code");
+  const code = searchParams.get('code');
   const navigate = useNavigate();
   const { isOpen, closeJourney } = useJourneyDialog();
   const [callbackLoading, setCallbackLoading] = useState(false);
@@ -51,13 +51,12 @@ const Index = () => {
     refetch: getUserProfileRefetch,
   } = useGetUserProfile({ isAuthenticated });
 
-  const {
-    data: getUserOverallStatusIsData,
-    refetch: getUserUserOverallStatusRefetch,
-  } = useGetUserOverallStatus({ isAuthenticated });
+  const { data: getUserOverallStatusIsData, refetch: getUserUserOverallStatusRefetch } =
+    useGetUserOverallStatus({ isAuthenticated });
 
-  const { data: connectedDevicesData, refetch: connectedDevicesRefetch } =
-    useGetUserInfoTerraData({ isAuthenticated });
+  const { data: connectedDevicesData, refetch: connectedDevicesRefetch } = useGetUserInfoTerraData({
+    isAuthenticated,
+  });
 
   const {
     data: wearableWeeklyData,
@@ -65,43 +64,36 @@ const Index = () => {
     isLoading: wearableWeeklyIsLoading,
   } = useGetWearableWeeklyDataV4({
     resource: connectedDevicesData?.[0]?.device,
-    isEnable:
-      connectedDevicesData?.length > 0 ? connectedDevicesData?.[0]?.device : "",
+    isEnable: connectedDevicesData?.length > 0 ? connectedDevicesData?.[0]?.device : '',
     startDate: formatDate(new Date()),
   });
 
   const { data: userPreviousData } = useGetUserPreviousReportData(
-    "MODERN_MEDICINE",
-    "",
+    'MODERN_MEDICINE',
+    '',
     isAuthenticated,
-    "English"
+    'English',
   );
 
   const handleGoogleSignIn = (loggedInData) => {
     if (loggedInData) {
       toast({
-        title: "Welcome!",
-        description: "You have successfully logged in.",
+        title: 'Welcome!',
+        description: 'You have successfully logged in.',
       });
 
-      localStorage.setItem("token", loggedInData?.token?.accessToken?.token);
-      localStorage.setItem(
-        "refresh_token",
-        loggedInData?.token?.refreshToken?.token
-      );
-      localStorage.setItem(
-        "is_Profile_updated",
-        loggedInData?.isProfileUpdated
-      );
+      localStorage.setItem('token', loggedInData?.token?.accessToken?.token);
+      localStorage.setItem('refresh_token', loggedInData?.token?.refreshToken?.token);
+      localStorage.setItem('is_Profile_updated', loggedInData?.isProfileUpdated);
 
       loginWithOTP({
-        email: "",
+        email: '',
         isAuthenticated: true,
         isfirstLogin: loggedInData?.payload?.isfirstLogin,
       });
 
       setTimeout(() => {
-        navigate("/dashboard");
+        navigate('/dashboard');
       }, 500);
     }
   };
@@ -121,7 +113,7 @@ const Index = () => {
             params: {
               Token: response,
             },
-          }
+          },
         );
 
         if (backendResponse.data.payload) {
@@ -132,7 +124,7 @@ const Index = () => {
         setCallbackLoading(false);
         if (error) {
           console.log(error);
-          navigate("/onboarding/4");
+          navigate('/onboarding/4');
         }
       } finally {
         // setLoading(false);
@@ -157,28 +149,28 @@ const Index = () => {
 
   const handleLogMeal = () => {
     toast({
-      title: "Coming Soon",
-      description: "Meal logging will be available in the next update.",
+      title: 'Coming Soon',
+      description: 'Meal logging will be available in the next update.',
     });
   };
 
   const handleUploadLabReport = () => {
     toast({
-      title: "Coming Soon",
-      description: "Lab report uploads will be available in the next update.",
+      title: 'Coming Soon',
+      description: 'Lab report uploads will be available in the next update.',
     });
   };
 
   const handleConnectWearable = () => {
     toast({
-      title: "Connecting Wearable",
-      description: "Taking you to the Connections Hub...",
+      title: 'Connecting Wearable',
+      description: 'Taking you to the Connections Hub...',
     });
   };
 
   const handleScanFace = () => {
     // do a hard reload, so that the vite server (vite.config.ts) will add Cross-Origin-Embedder-Policy and other stuff that face-scan requires for SharedArrayBuffer.
-    window.location.href = "/face-scan";
+    window.location.href = 'https://shenai-standalone.vercel.app/';
     // navigate("/face-scan");
   };
 
@@ -202,7 +194,7 @@ const Index = () => {
   }
 
   return (
-    <div className={`min-h-screen bg-gray-50 ${isOpen ? "opacity-95" : ""}`}>
+    <div className={`min-h-screen bg-gray-50 ${isOpen ? 'opacity-95' : ''}`}>
       <Header />
       <ChatbotWidget />
 
@@ -232,15 +224,11 @@ const Index = () => {
           />
         )}
 
-        {getUserOverallStatusIsData?.nutrition &&
-          getUserOverallStatusIsData?.wearable && (
-            <HealthOverview wearableWeeklyData={wearableWeeklyData} />
-          )}
+        {getUserOverallStatusIsData?.nutrition && getUserOverallStatusIsData?.wearable && (
+          <HealthOverview wearableWeeklyData={wearableWeeklyData} />
+        )}
 
-        <HealthNavigator
-          getProfileIsData={getProfileIsData}
-          userPreviousData={userPreviousData}
-        />
+        <HealthNavigator getProfileIsData={getProfileIsData} userPreviousData={userPreviousData} />
 
         <div className="grid gap-6 md:grid-cols-2 mt-6 space-y-6">
           <ProtocolTracker />
@@ -265,8 +253,7 @@ const Index = () => {
         getUserOverallStatusIsData={getUserOverallStatusIsData}
         getProfileIsData={getProfileIsData}
         journeyList={
-          getProfileIsData?.additionalDetails?.["What Are You Aiming For?"]
-            ?.answersArray || []
+          getProfileIsData?.additionalDetails?.['What Are You Aiming For?']?.answersArray || []
         }
       />
 
