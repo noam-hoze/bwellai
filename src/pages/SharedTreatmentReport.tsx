@@ -8,7 +8,7 @@ import ExercisePerformanceSummary from '@/components/shared-report/ExercisePerfo
 import DailyExerciseLog from '@/components/shared-report/DailyExerciseLog';
 import PainTrendAnalysis from '@/components/shared-report/PainTrendAnalysis';
 import { useGetSavedUserGoal, useGetUserActivity, useUserGoalDetails } from '@/service/hooks/goal/useGetGoal';
-import {isBefore, isSameDay,addDays, differenceInDays, parseISO, format , isEqual, compareAsc} from "date-fns";
+import {isBefore, isSameDay,addDays, differenceInDays, parseISO, format , isEqual, compareAsc, startOfDay, isAfter} from "date-fns";
 import { useAuth } from "@/contexts/AuthContext";
 import { useGetUserProfile } from '@/service/hooks/profile/useGetUserProfile';
 import { SelectedExercise } from '@/components/goals/newGoals/CreateGoalWizard';
@@ -17,9 +17,6 @@ const SharedTreatmentReport = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const goalId = searchParams.get("report");
   const reportDate = new Date(Number(searchParams.get("timestamp")));
-
-  console.log("report", goalId);
-  console.log("timestamp", reportDate);
 
     const { isAuthenticated, loading } = useAuth();
   
@@ -75,34 +72,59 @@ const SharedTreatmentReport = () => {
     }));
   };
 
-  function calculateStreak(exercises: any[]): number {
-  // Group exercises by date
-  const exercisesByDate = new Map<string, any[]>();
+  console.log("exercises", exercises);
 
-  for (const ex of exercises) {
-    const dateKey = format(parseISO(ex.date), "yyyy-MM-dd");
-    if (!exercisesByDate.has(dateKey)) {
-      exercisesByDate.set(dateKey, []);
+  function calculateStreak(exercises): number {
+    const today = new Date(reportDate);
+    today.setUTCHours(0, 0, 0, 0);
+
+    const dailyCompletionStatus = new Map<string, boolean>();
+    let hasRelevantData = false; 
+
+    for (const exercise of exercises) {
+        const exerciseDate = new Date(exercise.date);
+        exerciseDate.setUTCHours(0, 0, 0, 0);
+
+        if (exerciseDate.getTime() > today.getTime()) {
+            continue;
+        }
+        hasRelevantData = true;
+        const dateKey = exerciseDate.toISOString().split('T')[0];
+        dailyCompletionStatus.set(dateKey, dailyCompletionStatus.get(dateKey) || exercise.is_completed);
     }
-    exercisesByDate.get(dateKey)!.push(ex);
-  }
 
-  // Get all unique prescribed days, sorted descending
-  const sortedDates = Array.from(exercisesByDate.keys())
-    .sort((a, b) => (a < b ? 1 : -1)); // latest to oldest
-
-  let streak = 0;
-
-  for (const date of sortedDates) {
-    const exercisesForDay = exercisesByDate.get(date);
-    if (exercisesForDay && exercisesForDay.every((ex) => ex.is_completed)) {
-      streak++;
-    } else {
-      break; // streak ends if any exercise that day is not completed
+    if (!hasRelevantData) {
+        return 0;
     }
-  }
 
-  return streak;
+    let streak = 0;
+    let currentDate = new Date(today);
+
+    const sortedKeys = Array.from(dailyCompletionStatus.keys()).sort();
+    const earliestRelevantDate = sortedKeys.length > 0 ? new Date(sortedKeys[0]) : null;
+    if (earliestRelevantDate) {
+        earliestRelevantDate.setUTCHours(0, 0, 0, 0); 
+    }
+
+    while (true) {
+        const currentDateKey = currentDate.toISOString().split('T')[0];
+        const completionStatus = dailyCompletionStatus.get(currentDateKey);
+
+        if (completionStatus === true) {
+            streak++;
+        } else if (completionStatus === false) {
+            break;
+        } else { 
+            if (earliestRelevantDate && currentDate.getTime() < earliestRelevantDate.getTime()) {
+                break;
+            }
+        }
+
+        // Move to the previous day
+        currentDate.setUTCDate(currentDate.getUTCDate() - 1);
+    }
+
+    return streak;
 }
 
 function calculateMissedDays(exercises: any[], reportDate: Date): number {
