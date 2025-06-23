@@ -43,10 +43,10 @@ const SharedReportHeader: React.FC<SharedReportHeaderProps> = ({
             <Printer size={16} className="mr-1 md:mr-2" />
             Print
           </button>
-         {/* <button className="px-3 py-2 md:px-4 md:py-2 bg-white text-blue-700 rounded-lg flex items-center hover:bg-blue-50 text-sm">
+         <button className="px-3 py-2 md:px-4 md:py-2 bg-white text-blue-700 rounded-lg flex items-center hover:bg-blue-50 text-sm">
             <Share2 size={16} className="mr-1 md:mr-2" />
             Share
-          </button>*/}
+          </button>
         </div>
       </div>
       
