@@ -123,8 +123,8 @@ const ProgressSection = ({
             </Card>
             <Card className="bg-white">
               <CardContent className="p-4 text-center">
-                <span className="text-xl font-bold text-green-600"></span>
-                <p className="text-base text-gray-600">Current Streak<br/>Coming Soon</p>
+                <span className="text-3xl font-bold text-green-600">{streak}</span>
+                <p className="text-sm text-gray-600">Current Streak<br/></p>
               </CardContent>
             </Card>
             <Card className="bg-white">
