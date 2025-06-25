@@ -40,9 +40,14 @@ const GoalHeader = ({
   }, [deleteUserGoal, goalId]);
 
   const handleShareReport = () => {
-    // Generate a unique report ID - in a real app this would come from the backend
-    const reportId = `report-${goalId}-${new Date().getTime()}`;
-    const shareUrl = `/shared-treatment-report/${reportId}`;
+    
+const params = new URLSearchParams({
+  report: goalId,
+  timestamp: Date.now().toString(),
+});
+const reportQueryParams = `?${params.toString()}`;
+
+const shareUrl = `/shared-treatment-report/${reportQueryParams}`;
     
     // Navigate to the shared report page
     window.open(shareUrl, '_blank');
@@ -79,14 +84,14 @@ const GoalHeader = ({
           >
             <Trash2 className="h-4 w-4 text-gray-600" />
           </Button>
-          {/*<Button 
+          <Button 
             variant="outline" 
             size="icon"
             className="rounded-full"
             onClick={handleShareReport}
           >
             <Share className="h-4 w-4 text-gray-600" />
-          </Button>*/}
+          </Button>
         </div>
       </div>
       <div className="flex items-center ml-10 space-x-4 text-sm">

@@ -8,6 +8,7 @@ const saveUserGoal = () => `/goal/save`;
 const getUserGoalActivity = ({ date, user_goal_id, type }) =>
   `/goal/activity?date=${date}&user_goal_id=${user_goal_id}&type=${type}`;
 const saveUserGoalActivity = () => `/goal/activity/save`;
+const getPublicGoalDetails = (goalId: string) => `/goal/public?goalId=${goalId}`;
 
 export const getUserGoalDetailsFetcher = () => {
   return Client.get(getUserGoalDetails());
@@ -19,6 +20,10 @@ export const getUserGoalExerciseDetailsFetcher = () => {
 
 export const getSavedUserGoalFetcher = () => {
   return Client.get(getSavedUserGoal());
+};
+
+export const getPublicGoalDetailsFetcher = (goalId: string) => {
+  return Client.get(getPublicGoalDetails(goalId));
 };
 
 export const getUserGoalActivityFetcher = ({

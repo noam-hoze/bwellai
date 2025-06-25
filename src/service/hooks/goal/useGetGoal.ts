@@ -1,5 +1,6 @@
 import {
   deleteUserGoalFetcher,
+  getPublicGoalDetailsFetcher,
   getSavedUserGoalFetcher,
   getUserActivityFetcher,
   getUserGoalActivityFetcher,
@@ -82,6 +83,23 @@ export const useGetSavedUserGoal = () => {
   const { data, error, isError, isLoading, isSuccess, refetch } = useQuery({
     queryKey: ["get-user-goal-details-saved"],
     queryFn: () => getSavedUserGoalFetcher(),
+  });
+
+  return {
+    data: data?.data,
+    error,
+    isError,
+    isLoading,
+    isSuccess,
+    refetch,
+  };
+};
+
+export const useGetPublicGoalDetails = (goalId: string) => {
+  const { data, error, isError, isLoading, isSuccess, refetch }
+    = useQuery({
+    queryKey: ["get-public-goal-details", goalId],
+    queryFn: () => getPublicGoalDetailsFetcher(goalId),
   });
 
   return {

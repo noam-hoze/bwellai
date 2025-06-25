@@ -1,30 +1,37 @@
 
 import React, { useMemo, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 import SharedReportHeader from '@/components/shared-report/SharedReportHeader';
 import TreatmentPlanDetails from '@/components/shared-report/TreatmentPlanDetails';
 import ProgressOverview from '@/components/shared-report/ProgressOverview';
 import ExercisePerformanceSummary from '@/components/shared-report/ExercisePerformanceSummary';
 import DailyExerciseLog from '@/components/shared-report/DailyExerciseLog';
 import PainTrendAnalysis from '@/components/shared-report/PainTrendAnalysis';
-import { useGetSavedUserGoal, useGetUserActivity, useUserGoalDetails } from '@/service/hooks/goal/useGetGoal';
-import {isBefore, isSameDay,addDays, differenceInDays, parseISO, format , isEqual, compareAsc} from "date-fns";
-import { useAuth } from "@/contexts/AuthContext";
+import { useGetPublicGoalDetails, useGetSavedUserGoal, useGetUserActivity, useUserGoalDetails } from '@/service/hooks/goal/useGetGoal';
+import { isBefore, isSameDay, addDays, differenceInDays, parseISO, format, isEqual, compareAsc, startOfDay, isAfter } from "date-fns";
 import { useGetUserProfile } from '@/service/hooks/profile/useGetUserProfile';
 import { SelectedExercise } from '@/components/goals/newGoals/CreateGoalWizard';
+import html2pdf from 'html2pdf.js';
+import ShareModal from '@/components/shared-report/ShareModal';
+
 
 const SharedTreatmentReport = () => {
-  const { reportId } = useParams<{ reportId: string }>();
-  const goalId = reportId.split("-")[1];
-  const reportDate = new Date(Number(reportId.split("-")[2]));
 
-    const { isAuthenticated, loading } = useAuth();
-  
-    const {
-      data: userProfile,
-      isSuccess: getProfileIsSuccess,
-      refetch: getUserProfileRefetch,
-    } = useGetUserProfile({ isAuthenticated });
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+
+  const [searchParams, setSearchParams] = useSearchParams();
+  const goalId = searchParams.get("report");
+  const reportDate = new Date(Number(searchParams.get("timestamp")));
+
+  const publicUrl = useMemo(() => {
+    const origin = window.location.origin;
+    const fullUrl = `${origin}/shared-treatment-report?report=${goalId}&timestamp=${reportDate.getTime()}`;
+    return fullUrl;
+  }, [goalId, reportDate]);
+
+  const handleShareClick = () => {
+  setIsShareModalOpen(true);
+};
 
   const [expandedSections, setExpandedSections] = useState({
     dailyLog: true,
@@ -32,29 +39,27 @@ const SharedTreatmentReport = () => {
     exerciseDetails: true
   });
 
-  const { data: goalTypes, isLoading: userGoalDetailsIsLoading } =
-      useUserGoalDetails();
-
   const {
-      data,
-      isLoading,
-      refetch: savedUserGoalRefetch,
-    } = useGetSavedUserGoal();
+    data: goalData,
+    isLoading,
+    refetch: savedUserGoalRefetch,
+  } = useGetPublicGoalDetails(goalId);
 
-  const goalData = data?.find(goal => goal.id === goalId);
-  const currentGoalType = goalTypes?.find(goal => goal.id === goalData?.goalsId);
-  const exercises = goalData?.exercise_selection || [];
-  const exercisesCompleted = exercises.filter(exercise => exercise.is_completed).length;
+  console.log("goalData", goalData);
+
+
+  const exercises = goalData?.exerciseSelection || [];
+  const exercisesCompleted = exercises.filter(exercise => exercise.completed).length;
   const exercisesPrescribed = exercises.filter(exercise => isBefore(exercise.date, new Date()) || isSameDay(exercise.date, new Date())).length;
-  
+
 
   const painReduction = useMemo(() => {
-        if(!goalData) return 0;
-        const { initial_pain_level, current_pain_level } = goalData.pain_assessment;
-        return Math.round((initial_pain_level - current_pain_level) / initial_pain_level * 100);
-      }, [goalData]);
+    if (!goalData) return 0;
+    const { initialPainLevel, currentPainLevel } = goalData.painAssessment;
+    return Math.round((initialPainLevel - currentPainLevel) / initialPainLevel * 100);
+  }, [goalData]);
 
-   const {
+  /* const {
      data: userActivityData,
       refetch: userActivityDataRefetch,
    } = useGetUserActivity();
@@ -62,7 +67,7 @@ const SharedTreatmentReport = () => {
    const relevantUserActivity = userActivityData?.filter(
     (item) => item.userActivity?.user_goal_id === goalData?.userGoalId
     && item.userActivity?.type === "pain_level"
-  );
+  );*/
 
   // Toggle section expansion
   const toggleSection = (section: string) => {
@@ -72,78 +77,103 @@ const SharedTreatmentReport = () => {
     }));
   };
 
-  function calculateStreak(exercises: any[]): number {
-  // Group exercises by date
-  const exercisesByDate = new Map<string, any[]>();
+  console.log("exercises", exercises);
 
-  for (const ex of exercises) {
-    const dateKey = format(parseISO(ex.date), "yyyy-MM-dd");
-    if (!exercisesByDate.has(dateKey)) {
-      exercisesByDate.set(dateKey, []);
-    }
-    exercisesByDate.get(dateKey)!.push(ex);
-  }
+  function calculateStreak(exercises): number {
+    const today = new Date(reportDate);
+    today.setUTCHours(0, 0, 0, 0);
 
-  // Get all unique prescribed days, sorted descending
-  const sortedDates = Array.from(exercisesByDate.keys())
-    .sort((a, b) => (a < b ? 1 : -1)); // latest to oldest
+    const dailyCompletionStatus = new Map<string, boolean>();
+    let hasRelevantData = false;
 
-  let streak = 0;
+    for (const exercise of exercises) {
+      const exerciseDate = new Date(exercise.date);
+      exerciseDate.setUTCHours(0, 0, 0, 0);
 
-  for (const date of sortedDates) {
-    const exercisesForDay = exercisesByDate.get(date);
-    if (exercisesForDay && exercisesForDay.every((ex) => ex.is_completed)) {
-      streak++;
-    } else {
-      break; // streak ends if any exercise that day is not completed
-    }
-  }
-
-  return streak;
-}
-
-function calculateMissedDays(exercises: any[], reportDate: Date): number {
-  const exercisesByDate = new Map<string, any[]>();
-
-  for (const ex of exercises) {
-    const exerciseDate = parseISO(ex.date);
-    // Ignore dates after the reportDate
-    if (isBefore(exerciseDate, reportDate) || isEqual(exerciseDate, reportDate)) {
-      const dateKey = format(exerciseDate, "yyyy-MM-dd");
-      if (!exercisesByDate.has(dateKey)) {
-        exercisesByDate.set(dateKey, []);
+      if (exerciseDate.getTime() > today.getTime()) {
+        continue;
       }
-      exercisesByDate.get(dateKey)!.push(ex);
+      hasRelevantData = true;
+      const dateKey = exerciseDate.toISOString().split('T')[0];
+      dailyCompletionStatus.set(dateKey, dailyCompletionStatus.get(dateKey) || exercise.completed);
     }
+
+    if (!hasRelevantData) {
+      return 0;
+    }
+
+    let streak = 0;
+    let currentDate = new Date(today);
+
+    const sortedKeys = Array.from(dailyCompletionStatus.keys()).sort();
+    const earliestRelevantDate = sortedKeys.length > 0 ? new Date(sortedKeys[0]) : null;
+    if (earliestRelevantDate) {
+      earliestRelevantDate.setUTCHours(0, 0, 0, 0);
+    }
+
+    while (true) {
+      const currentDateKey = currentDate.toISOString().split('T')[0];
+      const completionStatus = dailyCompletionStatus.get(currentDateKey);
+
+      if (completionStatus === true) {
+        streak++;
+      } else if (completionStatus === false) {
+        break;
+      } else {
+        if (earliestRelevantDate && currentDate.getTime() < earliestRelevantDate.getTime()) {
+          break;
+        }
+      }
+
+      // Move to the previous day
+      currentDate.setUTCDate(currentDate.getUTCDate() - 1);
+    }
+
+    return streak;
   }
 
-  let missedDays = 0;
+  function calculateMissedDays(exercises: any[], reportDate: Date): number {
+    const exercisesByDate = new Map<string, any[]>();
 
-  for (const [date, exercisesForDay] of exercisesByDate.entries()) {
-    const allCompleted = exercisesForDay.every((ex) => ex.is_completed);
-    if (!allCompleted) {
-      missedDays++;
+    for (const ex of exercises) {
+      const exerciseDate = parseISO(ex.date);
+      // Ignore dates after the reportDate
+      if (isBefore(exerciseDate, reportDate) || isEqual(exerciseDate, reportDate)) {
+        const dateKey = format(exerciseDate, "yyyy-MM-dd");
+        if (!exercisesByDate.has(dateKey)) {
+          exercisesByDate.set(dateKey, []);
+        }
+        exercisesByDate.get(dateKey)!.push(ex);
+      }
     }
+
+    let missedDays = 0;
+
+    for (const [date, exercisesForDay] of exercisesByDate.entries()) {
+      const allCompleted = exercisesForDay.every((ex) => ex.completed);
+      if (!allCompleted) {
+        missedDays++;
+      }
+    }
+
+    return missedDays;
   }
 
-  return missedDays;
-}
-  
   // User data - simplified
   const userData = {
-    username: userProfile?.email,
+    username: "user name unavailable", // Placeholder, replace with actual user data
     reportDate: reportDate
   };
 
-  
+
   const planData = {
-    name: currentGoalType?.name,
-    startDate: new Date(goalData?.created_local_time),
-    endDate: addDays(new Date(goalData?.created_local_time), Number(goalData?.schedule?.program_duration_in_days) - 1),
-    duration: goalData?.schedule?.program_duration_in_days,
-    
+    name: goalData?.goalType,
+    startDate: new Date(goalData?.createdLocalTime),
+    endDate: addDays(new Date(goalData?.createdLocalTime), Number(goalData?.schedule?.programDurationInDays) - 1),
+    duration: goalData?.schedule?.programDurationInDays,
+
     // Progress metrics
-    daysCompleted: differenceInDays(reportDate, new Date(goalData?.created_local_time)) + 1,
+    daysCompleted: differenceInDays(reportDate, new Date(goalData?.createdLocalTime)) + 1,
     totalExercisesCompleted: exercisesCompleted,
     totalExercisesPrescribed: exercisesPrescribed,
     adherenceRate: Math.round((exercisesCompleted / exercisesPrescribed) * 100),
@@ -152,100 +182,120 @@ function calculateMissedDays(exercises: any[], reportDate: Date): number {
     missedDays: calculateMissedDays(exercises, reportDate),
 
     // Pain metrics
-    initialPainLevel: goalData?.pain_assessment?.initial_pain_level,
-    currentPainLevel: goalData?.pain_assessment?.current_pain_level,
+    initialPainLevel: goalData?.painAssessment?.initialPainLevel,
+    currentPainLevel: goalData?.painAssessment?.currentPainLevel,
     painReduction: painReduction,
-    targetPainLevel: goalData?.pain_assessment?.initial_pain_level - 2,
+    targetPainLevel: goalData?.painAssessment?.initialPainLevel - 2,
   };
 
   type ExerciseLogEntry = {
-  day: number;
-  date: Date;
-  overallPainStart: number | null;
-  overallPainEnd: number | null;
-  exercises: {
-    name: string;
-    completed: boolean;
-    painDuring: number | null;
-    difficulty: number | null;
-  }[];
-};
+    day: number;
+    date: Date;
+    overallPainStart: number | null;
+    overallPainEnd: number | null;
+    exercises: {
+      name: string;
+      completed: boolean;
+      painDuring: number | null;
+      difficulty: number | null;
+    }[];
+  };
 
-function formatActivityData(rawActivity: any[]) {
-  // 1. Group pain entries by date
-  const painByDate = new Map<string, number[]>();
+  const handleDownloadClick = async () => {
+    const element = document.getElementById("pdf-content");
+    const actions = document.getElementById("pdf-actions");
 
-  for (const entry of rawActivity) {
-    const { userActivity } = entry;
-    if (userActivity?.type === 'pain_level' && userActivity?.current_pain_level != null) {
-      const date = userActivity.date;
-      if (!painByDate.has(date)) {
-        painByDate.set(date, []);
+    if (!element) return alert("Could not find report content.");
+
+    // Hide buttons before generating PDF
+    if (actions) actions.style.display = "none";
+
+    try {
+      await html2pdf().from(element).save("treatment-report.pdf");
+    } finally {
+      // Show buttons again after generation
+      if (actions) actions.style.display = "";
+    }
+  };
+
+
+
+
+  function formatActivityData(rawActivity: any[]) {
+    // 1. Group pain entries by date
+    const painByDate = new Map<string, number[]>();
+
+    for (const entry of rawActivity) {
+      const { userActivity } = entry;
+      if (userActivity?.type === 'pain_level' && userActivity?.currentPainLevel != null) {
+        const date = userActivity.date;
+        if (!painByDate.has(date)) {
+          painByDate.set(date, []);
+        }
+        painByDate.get(date)!.push(userActivity.currentPainLevel);
       }
-      painByDate.get(date)!.push(userActivity.current_pain_level);
     }
+
+    // 2. Sort by date and calculate average pain per day
+    const sortedDates = Array.from(painByDate.keys()).sort((a, b) =>
+      compareAsc(parseISO(a), parseISO(b))
+    );
+
+    return sortedDates.map((date, index) => {
+      const painLevels = painByDate.get(date)!;
+      const averagePain =
+        painLevels.reduce((sum, level) => sum + level, 0) / painLevels.length;
+
+      return {
+        day: index + 1,
+        overallPainEnd: Math.round(averagePain),
+      };
+    });
   }
 
-  // 2. Sort by date and calculate average pain per day
-  const sortedDates = Array.from(painByDate.keys()).sort((a, b) =>
-    compareAsc(parseISO(a), parseISO(b))
-  );
-
-  return sortedDates.map((date, index) => {
-    const painLevels = painByDate.get(date)!;
-    const averagePain =
-      painLevels.reduce((sum, level) => sum + level, 0) / painLevels.length;
-
-    return {
-      day: index + 1,
-      overallPainEnd: Math.round(averagePain),
-    };
-  });
-}
 
 
+  function transformExercisesToLog(exercises): ExerciseLogEntry[] {
+    // 1. Group exercises by day (yyyy-MM-dd)
+    const grouped = new Map<string, any[]>();
 
-function transformExercisesToLog(exercises): ExerciseLogEntry[] {
-  // 1. Group exercises by day (yyyy-MM-dd)
-  const grouped = new Map<string, SelectedExercise[]>();
-
-  for (const ex of exercises) {
-    const dateKey = format(parseISO(ex.date), 'yyyy-MM-dd');
-    if (!grouped.has(dateKey)) {
-      grouped.set(dateKey, []);
+    for (const ex of exercises) {
+      const dateKey = format(parseISO(ex.date), 'yyyy-MM-dd');
+      if (!grouped.has(dateKey)) {
+        grouped.set(dateKey, []);
+      }
+      grouped.get(dateKey)!.push(ex);
     }
-    grouped.get(dateKey)!.push(ex);
+
+    // 2. Sort dates ascending
+    const sortedDates = Array.from(grouped.keys()).sort((a, b) =>
+      compareAsc(parseISO(a), parseISO(b))
+    );
+
+    // 3. Transform into final structure
+    const exerciseLog: ExerciseLogEntry[] = sortedDates.map((dateKey, index) => {
+      const exercises = grouped.get(dateKey)!;
+
+      return {
+        day: index + 1,
+        date: new Date(dateKey),
+        overallPainStart: null, // or populate if available
+        overallPainEnd: null,   // or populate if available
+        exercises: exercises.map((ex) => ({
+          name: ex.exerciseName,
+          completed: ex.completed,
+          painDuring: null, // or populate if available
+          difficulty: ex.difficultyLevel ?? null,
+        })),
+      };
+    });
+
+    return exerciseLog;
   }
 
-  // 2. Sort dates ascending
-  const sortedDates = Array.from(grouped.keys()).sort((a, b) =>
-    compareAsc(parseISO(a), parseISO(b))
-  );
+  const exerciseLog = transformExercisesToLog(exercises);
 
-  // 3. Transform into final structure
-  const exerciseLog: ExerciseLogEntry[] = sortedDates.map((dateKey, index) => {
-    const exercises = grouped.get(dateKey)!;
 
-    return {
-      day: index + 1,
-      date: new Date(dateKey),
-      overallPainStart: null, // or populate if available
-      overallPainEnd: null,   // or populate if available
-      exercises: exercises.map((ex) => ({
-        name: ex.exercise_name,
-        completed: ex.is_completed,
-        painDuring: null, // or populate if available
-        difficulty: ex.difficulty_level ?? null,
-      })),
-    };
-  });
-
-  return exerciseLog;
-}
-
-const exerciseLog = transformExercisesToLog(exercises);
-
-  
   // Calculate exercise-specific metrics
   const exerciseMetrics: Record<string, any> = {};
   exerciseLog.forEach(day => {
@@ -267,77 +317,84 @@ const exerciseLog = transformExercisesToLog(exercises);
       }
     });
   });
-  
+
   // Calculate averages for each exercise
   Object.keys(exerciseMetrics).forEach(exerciseName => {
     const metrics = exerciseMetrics[exerciseName];
     metrics.completionRate = Math.round((metrics.totalCompleted / metrics.totalPrescribed) * 100);
-    metrics.avgPain = metrics.painRatings.length > 0 
+    metrics.avgPain = metrics.painRatings.length > 0
       ? (metrics.painRatings.reduce((a, b) => a + b, 0) / metrics.painRatings.length).toFixed(1)
       : 'N/A';
     metrics.avgDifficulty = metrics.difficultyRatings.length > 0
       ? (metrics.difficultyRatings.reduce((a, b) => a + b, 0) / metrics.difficultyRatings.length).toFixed(1)
       : 'N/A';
   });
-  
+
   // Format date
   const formatDate = (date: Date) => {
-    return date.toLocaleDateString('en-US', { 
+    return date.toLocaleDateString('en-US', {
       year: 'numeric',
-      month: 'long', 
-      day: 'numeric'
-    });
-  };
-  
-  const formatShortDate = (date: Date) => {
-    return date.toLocaleDateString('en-US', { 
-      month: 'short', 
+      month: 'long',
       day: 'numeric'
     });
   };
 
-  console.log("relevantUserActivity", relevantUserActivity);
-  
+  const formatShortDate = (date: Date) => {
+    return date.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric'
+    });
+  };
+
+  //console.log("relevantUserActivity", relevantUserActivity);
+
   return (
-    <div className="max-w-4xl mx-auto bg-white min-h-screen">
-      <SharedReportHeader 
-        userData={userData}
-        planData={planData}
-        formatDate={formatDate}
-      />
-      
-      <TreatmentPlanDetails 
-        planData={planData}
-        formatDate={formatDate}
-      />
-      
-      <ProgressOverview planData={planData} />
-      
-      <ExercisePerformanceSummary 
-        exerciseMetrics={exerciseMetrics}
-        expandedSections={expandedSections}
-        toggleSection={toggleSection}
-      />
-      
-      <DailyExerciseLog 
-        exerciseLog={exerciseLog}
-        expandedSections={expandedSections}
-        toggleSection={toggleSection}
-        formatShortDate={formatShortDate}
-      />
-      {/*
+    <div id="pdf-content" className="max-w-4xl mx-auto bg-white min-h-screen">
+      <div className="max-w-4xl mx-auto bg-white min-h-screen">
+        <SharedReportHeader
+          userData={userData}
+          planData={planData}
+          formatDate={formatDate}
+          onDownloadClick={handleDownloadClick}
+          onShareClick={handleShareClick}
+        />
+
+        <TreatmentPlanDetails
+          planData={planData}
+          formatDate={formatDate}
+        />
+
+        <ProgressOverview planData={planData} />
+
+        <ExercisePerformanceSummary
+          exerciseMetrics={exerciseMetrics}
+          expandedSections={expandedSections}
+          toggleSection={toggleSection}
+        />
+
+        <DailyExerciseLog
+          exerciseLog={exerciseLog}
+          expandedSections={expandedSections}
+          toggleSection={toggleSection}
+          formatShortDate={formatShortDate}
+        />
+        {/*
       <PainTrendAnalysis 
         activity={formatActivityData(relevantUserActivity ?? [])}
         planData={planData}
         expandedSections={expandedSections}
         toggleSection={toggleSection}
       />*/}
-      
-      {/* Footer */}
-      <div className="p-4 md:p-6 text-center text-sm text-gray-500">
-        <p>Treatment Progress Report • {formatDate(userData.reportDate)}</p>
-        <p className="mt-2">This report is a summary of your treatment progress and exercise completion.</p>
+
+        {/* Footer */}
+        <div className="p-4 md:p-6 text-center text-sm text-gray-500">
+          <p>Treatment Progress Report • {formatDate(userData.reportDate)}</p>
+          <p className="mt-2">This report is a summary of your treatment progress and exercise completion.</p>
+        </div>
       </div>
+      {isShareModalOpen && (
+        <ShareModal url={publicUrl} onClose={() => setIsShareModalOpen(false)} />
+      )}  
     </div>
   );
 };

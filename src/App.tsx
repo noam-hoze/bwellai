@@ -113,7 +113,7 @@ const App = () => {
                       path="/shared-report/:reportId"
                       element={<SharedReport />}
                     />
-                    <Route path="/shared-treatment-report/:reportId" element={<SharedTreatmentReport />} />
+                    <Route path="/shared-treatment-report" element={<SharedTreatmentReport />} />
                     <Route path="*" element={<NotFound />} />
                   </Routes>
                 </BrowserRouter>
