@@ -214,8 +214,8 @@ export const requiredMicronutrientsBalanceDisplayed = ({
       ),
       carbs: Math.round(
         (MicronutrientsBalanceMap?.GeneralHealthyAdult?.carbs * calorie) /
-          100 /
-          4
+        100 /
+        4
       ),
     };
   }
@@ -427,3 +427,59 @@ export const capitalizeText = (text: string, separator: string) => {
   });
   return fixTextArray?.join(" ");
 };
+
+export function calculateStreak(exercises, date): number {
+  console.log("in calculate streak. exercises: ", exercises, "date: ", date)
+
+  const today = new Date(date);
+  today.setUTCHours(0, 0, 0, 0);
+
+  const dailyCompletionStatus = new Map<string, boolean>();
+  let hasRelevantData = false;
+
+  for (const exercise of exercises) {
+    const exerciseDate = new Date(exercise.date);
+    exerciseDate.setUTCHours(0, 0, 0, 0);
+
+    if (exerciseDate.getTime() > today.getTime()) {
+      continue;
+    }
+    hasRelevantData = true;
+    const dateKey = exerciseDate.toISOString().split('T')[0];
+    const isCompleted = exercise.completed ?? exercise.is_completed ?? false;
+    dailyCompletionStatus.set(dateKey, dailyCompletionStatus.get(dateKey) || isCompleted);
+  }
+
+  if (!hasRelevantData) {
+    return 0;
+  }
+
+  let streak = 0;
+  let currentDate = new Date(today);
+
+  const sortedKeys = Array.from(dailyCompletionStatus.keys()).sort();
+  const earliestRelevantDate = sortedKeys.length > 0 ? new Date(sortedKeys[0]) : null;
+  if (earliestRelevantDate) {
+    earliestRelevantDate.setUTCHours(0, 0, 0, 0);
+  }
+
+  while (true) {
+    const currentDateKey = currentDate.toISOString().split('T')[0];
+    const completionStatus = dailyCompletionStatus.get(currentDateKey);
+
+    if (completionStatus === true) {
+      streak++;
+    } else if (completionStatus === false) {
+      break;
+    } else {
+      if (earliestRelevantDate && currentDate.getTime() < earliestRelevantDate.getTime()) {
+        break;
+      }
+    }
+
+    // Move to the previous day
+    currentDate.setUTCDate(currentDate.getUTCDate() - 1);
+  }
+
+  return streak;
+}

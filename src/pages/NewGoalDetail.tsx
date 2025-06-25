@@ -27,6 +27,7 @@ import DifficultyRatingDialog from "@/components/goals/newGoals/DifficultyRating
 import { useParams } from "react-router-dom";
 import { Exercise, SelectedExercise } from "@/components/goals/newGoals/types/goalTypes";
 import { useGetSavedUserGoal, useUpdateExerciseDetails, useUserGoalDetails } from "@/service/hooks/goal/useGetGoal";
+import { calculateStreak } from "@/utils/utils";
 
 const NewGoalDetail = () => {
   const [goalData, setGoalData] = useState<any>(null);
@@ -177,6 +178,10 @@ const NewGoalDetail = () => {
     }
     console.log("Goal Data:", goalData);
 
+    const streak = calculateStreak(goalData.exercise_selection, new Date());
+
+    console.log("streak: ", streak);
+
   return (
     <Layout>
       <div className="container max-w-4xl mx-auto px-4 py-6">
@@ -186,7 +191,7 @@ const NewGoalDetail = () => {
           startDate={goalData.created_local_time}
           endDate={programEndDate}
           completionPercentage={completionPercentage}
-          streak={5} // Mock data for streak, change
+          streak={streak}
           onEditGoal={handleEditGoal}//change? look into this
           duration={goalData.schedule?.program_duration_in_days}
           goalId={goalData.id} 
@@ -256,7 +261,7 @@ const NewGoalDetail = () => {
               currentDayOfGoal={currentDayOfGoal}
               totalDays={goalData.schedule?.program_duration_in_days}
               painReduction={painReduction}
-              streak={5} // Mock streak data
+              streak={streak} 
               userGoalId={goalData.userGoalId}
               initialPainLevel={goalData.pain_assessment?.initial_pain_level}
               currentPainLevel={currentPainLevel}
