@@ -16,6 +16,7 @@ interface SharedReportHeaderProps {
   };
   formatDate: (date: Date) => string;
   onDownloadClick: () => void;
+  onShareClick: () => void;
 }
 
 const SharedReportHeader: React.FC<SharedReportHeaderProps> = ({
@@ -23,6 +24,7 @@ const SharedReportHeader: React.FC<SharedReportHeaderProps> = ({
   planData,
   formatDate,
   onDownloadClick,
+  onShareClick
 }) => {
   return (
     <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-4 md:p-6">
@@ -50,10 +52,13 @@ const SharedReportHeader: React.FC<SharedReportHeaderProps> = ({
             Print
           </button>
           <button
-            className="px-3 py-2 md:px-4 md:py-2 bg-white text-blue-700 rounded-lg flex items-center hover:bg-blue-50 text-sm">
+            onClick={onShareClick}
+            className="px-3 py-2 md:px-4 md:py-2 bg-white text-blue-700 rounded-lg flex items-center hover:bg-blue-50 text-sm"
+          >
             <Share2 size={16} className="mr-1 md:mr-2" />
             Share
           </button>
+
 
         </div>
       </div>
