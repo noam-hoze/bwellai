@@ -151,7 +151,6 @@ const NewGoalDetail = () => {
   const [programEndDate, setProgramEndDate] = useState<Date | null>(null);
   const [currentPainLevel, setCurrentPainLevel] = useState<number>(0);
 
-    console.log("Current Goal Data:", currentGoalData);
   const painReduction = useMemo(() => {
       if(!goalData) return 0;
       const { initial_pain_level } = goalData.pain_assessment;
@@ -176,11 +175,7 @@ const NewGoalDetail = () => {
     if(!goalData) {
       return <div className="text-center text-gray-500">Loading goal data...</div>;
     }
-    console.log("Goal Data:", goalData);
-
     const streak = calculateStreak(goalData.exercise_selection, new Date());
-
-    console.log("streak: ", streak);
 
   return (
     <Layout>
