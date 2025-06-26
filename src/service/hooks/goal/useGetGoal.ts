@@ -154,14 +154,14 @@ export const useGetUserActivity = () => {
 
 export const useDeleteUserGoal = () => {
   console.log("useDeleteUserGoal hook called");
-  const { mutate: deleteUserGoal } = useMutation({
-    mutationFn: (goalId: string) => {
-      return deleteUserGoalFetcher(goalId);
-    },
+
+  const { mutateAsync: deleteUserGoal } = useMutation({
+    mutationFn: (goalId: string) => deleteUserGoalFetcher(goalId),
   });
 
   return { deleteUserGoal };
 };
+
 
 export const useUpdateExerciseDetails = () => {
   const { mutate: updateExerciseDetails } = useMutation({

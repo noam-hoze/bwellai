@@ -32,12 +32,17 @@ const GoalHeader = ({
 
   const { deleteUserGoal } = useDeleteUserGoal();
 
-  const deleteGoalHandler = useCallback(() => {
+const deleteGoalHandler = useCallback(async () => {
+  try {
     console.log("Deleting goal with ID:", goalId);
-    deleteUserGoal(goalId);
+    await deleteUserGoal(goalId); // wait for the deletion to complete
     console.log("Goal deleted successfully");
-    navigate('/goals'); // Redirect to goals page after deletion
-  }, [deleteUserGoal, goalId]);
+    navigate('/goals'); // redirect after deletion completes
+  } catch (error) {
+    console.error("Failed to delete goal:", error);
+  }
+}, [deleteUserGoal, goalId, navigate]);
+
 
   const handleShareReport = () => {
     

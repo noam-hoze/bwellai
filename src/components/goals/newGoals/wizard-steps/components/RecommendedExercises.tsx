@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Check, Plus } from "lucide-react";
 import { Exercise } from "../../CreateGoalWizard";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface RecommendedExercisesProps {
   recommendedExercises: Exercise[];
@@ -31,6 +32,7 @@ const RecommendedExercises: React.FC<RecommendedExercisesProps> = ({
         </div>
       </div>
       <CardContent className="p-4">
+        <ScrollArea className="h-[300px] p-4">
         <div className="space-y-3">
           {recommendedExercises.map(exercise => (
             <div 
@@ -75,6 +77,7 @@ const RecommendedExercises: React.FC<RecommendedExercisesProps> = ({
             </div>
           ))}
         </div>
+        </ScrollArea>
       </CardContent>
     </Card>
   );
