@@ -446,7 +446,12 @@ const FaceScan = () => {
   }, [step, heartRate, bloodPressure, o2Sat]);
 
   const handleStartScan = () => {
-    setStep('preparation');
+    const token = localStorage.getItem('token');
+    if (token) {
+      window.location.href = `https://localhost:5173?token=${token}`;
+    } else {
+      console.error('Authentication token not found.');
+    }
   };
 
   const handlePrepareForScan = () => {
