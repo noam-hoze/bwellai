@@ -171,8 +171,9 @@ const Index = () => {
   const handleScanFace = () => {
     const token = localStorage.getItem('token');
     if (token) {
-      // Navigate to the standalone scanner app with the auth token
-      window.location.href = `https://localhost:5173?token=${token}`;
+      // Redirect to the standalone scanner app, passing the token
+      const scannerUrl = import.meta.env.VITE_SHENAI_SCANNER_URL;
+      window.location.href = `${scannerUrl}?token=${token}`;
     } else {
       // Handle the case where the user is not authenticated
       console.error('Authentication token not found.');
