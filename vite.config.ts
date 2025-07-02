@@ -38,7 +38,7 @@ export default defineConfig(({ mode }) => ({
     },
   },
   build: {
-    outDir: 'public/face-scan',
+    outDir: 'dist',
     rollupOptions: {
       output: {
         assetFileNames: '[name].[ext]',
