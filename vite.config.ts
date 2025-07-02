@@ -37,8 +37,8 @@ export default defineConfig(({ mode }) => ({
       // "Cross-Origin-Embedder-Policy": "require-corp",
     },
   },
-  build: {
-    outDir: 'public/face-scan',
+  build: {  
+    //outDir: 'public/face-scan',
     rollupOptions: {
       output: {
         assetFileNames: '[name].[ext]',
