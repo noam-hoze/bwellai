@@ -38,7 +38,6 @@ export default defineConfig(({ mode }) => ({
     },
   },
   build: {
-    outDir: 'dist',
     rollupOptions: {
       output: {
         assetFileNames: '[name].[ext]',
