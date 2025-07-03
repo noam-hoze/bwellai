@@ -30,6 +30,7 @@ import {
 } from '@/service/hooks/wearable/terra/useGetUserInfo';
 import { useGetUserPreviousReportData } from '@/service/hooks/ocr/useGetReportById';
 import ChatbotWidget from '@/components/chatbot/ChatbotWidget';
+import { version } from '../../package.json';
 
 const formatDate = (date: Date) => {
   return date.toISOString().split('T')[0]; // Extract YYYY-MM-DD
@@ -268,8 +269,11 @@ const Index = () => {
         }
       />
 
-      <footer className="py-6 text-center text-sm text-gray-500 border-t border-gray-100">
-        © 2024 Wellness App. All rights reserved.
+      <footer className="w-full py-6 text-sm text-gray-500 border-t border-gray-100 mt-8">
+        <div className="container mx-auto grid grid-cols-3 items-center px-4">
+          <p className="text-left">Version {version}</p>
+          <p className="text-center col-span-1">© 2024 Wellness App. All rights reserved.</p>
+        </div>
       </footer>
     </div>
   );
