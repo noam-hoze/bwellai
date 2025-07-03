@@ -69,6 +69,18 @@ const ScanResultModal = ({ open, onOpenChange, result }: ScanResultModalProps) =
       border: 'border-orange-500',
       text: 'text-orange-800',
     },
+    attantion: {
+      from: 'from-red-50',
+      to: 'to-red-100',
+      border: 'border-red-500',
+      text: 'text-red-800',
+    },
+    neutral: {
+      from: 'from-orange-50',
+      to: 'to-orange-100',
+      border: 'border-orange-500',
+      text: 'text-orange-800',
+    }
   };
   const bannerStyle = bannerColorMap[result.bannerType || 'celebration'];
 
@@ -359,7 +371,7 @@ const ScanResultModal = ({ open, onOpenChange, result }: ScanResultModalProps) =
             <div className="bg-gradient-to-r from-purple-50 to-pink-50 p-6 rounded-2xl border-l-4 border-purple-500">
               <div className="flex items-center gap-3 mb-4">
                 <h3 className="text-xl font-semibold text-gray-900">
-                  {result.data.tcm_analysis?.zoning_analysis?.title || 'Tongue Zoning Analysis'}
+                  {result.data.tcm_analysis?.zoning_analysis?.title}
                 </h3>
               </div>
 
@@ -400,7 +412,7 @@ const ScanResultModal = ({ open, onOpenChange, result }: ScanResultModalProps) =
                   <div
                     key={index}
                     className="p-4 rounded-xl flex items-start gap-3"
-                    style={{ backgroundColor: '#f0f3ea'}}
+                    style={{ backgroundColor: '#f0f3ea' }}
                   >
                     <span className="text-sm text-gray-800">{tip.description}</span>
                   </div>
@@ -411,10 +423,10 @@ const ScanResultModal = ({ open, onOpenChange, result }: ScanResultModalProps) =
             {/* Health Summary */}
             <div
               className={`p-5 rounded-2xl border-l-4 text-center ${result.data.health_summary?.clearance_note?.type === 'clearance'
-                  ? 'bg-green-50 border-green-500 text-green-800'
-                  : result.data.health_summary?.clearance_note?.type === 'caution'
-                    ? 'bg-yellow-50 border-yellow-500 text-yellow-800'
-                    : 'bg-red-50 border-red-500 text-red-800'
+                ? 'bg-green-50 border-green-500 text-green-800'
+                : result.data.health_summary?.clearance_note?.type === 'caution'
+                  ? 'bg-yellow-50 border-yellow-500 text-yellow-800'
+                  : 'bg-red-50 border-red-500 text-red-800'
                 }`}
             >
               <p className="text-lg font-medium leading-relaxed">
@@ -440,7 +452,7 @@ const ScanResultModal = ({ open, onOpenChange, result }: ScanResultModalProps) =
     return (
       <div className="p-4 md:p-6">
         <Tabs defaultValue="health" className="w-full">
-          <TabsList className="grid w-full grid-cols-4 bg-gray-50 border-b border-gray-200">
+          <TabsList className="grid w-full grid-cols-3 bg-gray-50 border-b border-gray-200">
             <TabsTrigger
               value="health"
               className="flex items-center gap-2 data-[state=active]:bg-white data-[state=active]:border-b-2 data-[state=active]:border-[#113811]"
@@ -448,14 +460,6 @@ const ScanResultModal = ({ open, onOpenChange, result }: ScanResultModalProps) =
             >
               <span className="hidden sm:inline">Health Signals</span>
               <span className="sm:hidden">Health</span>
-            </TabsTrigger>
-            <TabsTrigger
-              value="style"
-              className="flex items-center gap-2 data-[state=active]:bg-white data-[state=active]:border-b-2 data-[state=active]:border-[#113811]"
-              style={{ color: '#294829' }}
-            >
-              <span className="hidden sm:inline">Writing Style</span>
-              <span className="sm:hidden">Style</span>
             </TabsTrigger>
             <TabsTrigger
               value="personality"
@@ -475,155 +479,173 @@ const ScanResultModal = ({ open, onOpenChange, result }: ScanResultModalProps) =
             </TabsTrigger>
           </TabsList>
 
+          {/* Health Signals Tab */}
           <TabsContent value="health" className="mt-6 space-y-6">
-            <div className="bg-gradient-to-r from-green-50 to-green-100 p-5 rounded-2xl border-l-4 border-green-500 text-center">
-              <p className="text-green-800 text-lg font-medium leading-relaxed">
-                Great news! Your handwriting shows some really positive health signals. Let's dive in!
+            {/* Banner */}
+            <div
+              className={`bg-gradient-to-r ${bannerStyle.from} ${bannerStyle.to} p-5 rounded-2xl border-l-4 ${bannerStyle.border} text-center`}
+            >
+              <p className={`${bannerStyle.text} text-lg font-medium leading-relaxed`}>
+                {result.bannerText}
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div style={{ backgroundColor: '#f0f3ea', borderLeftColor: '#123c14' }} className="p-5 rounded-2xl border-l-4 hover:transform hover:-translate-y-1 transition-transform duration-200">
-                <h4 className="font-semibold mb-3" style={{ color: '#2d4c2b' }}>
-                  Steady hands
-                </h4>
-                <p className="text-sm" style={{ color: '#022406' }}>Your writing shows smooth, controlled strokes. That's a sign of good coordination.</p>
-              </div>
-
-              <div style={{ backgroundColor: '#f0f3ea', borderLeftColor: '#123c14' }} className="p-5 rounded-2xl border-l-4 hover:transform hover:-translate-y-1 transition-transform duration-200">
-                <h4 className="font-semibold mb-3" style={{ color: '#2d4c2b' }}>
-                  No tremors or shakes
-                </h4>
-                <p className="text-sm" style={{ color: '#022406' }}>The pen moves cleanly across the page. No signs of neurological concerns.</p>
-              </div>
-
-              <div style={{ backgroundColor: '#f0f3ea', borderLeftColor: '#123c14' }} className="p-5 rounded-2xl border-l-4 hover:transform hover:-translate-y-1 transition-transform duration-200">
-                <h4 className="font-semibold mb-3" style={{ color: '#2d4c2b' }}>
-                  Clear thinking
-                </h4>
-                <p className="text-sm" style={{ color: '#022406' }}>Your writing stays consistent without signs of mental fatigue.</p>
-              </div>
-
-              <div style={{ backgroundColor: '#f0f3ea', borderLeftColor: '#123c14' }} className="p-5 rounded-2xl border-l-4 hover:transform hover:-translate-y-1 transition-transform duration-200">
-                <h4 className="font-semibold mb-3" style={{ color: '#2d4c2b' }}>
-                  Balanced mood
-                </h4>
-                <p className="text-sm" style={{ color: '#022406' }}>The even pressure and form show emotional steadiness.</p>
-              </div>
-            </div>
-          </TabsContent>
-
-          <TabsContent value="style" className="mt-6 space-y-6">
-            <div className="bg-gradient-to-r from-orange-50 to-yellow-50 p-5 rounded-2xl border-l-4 border-orange-500 text-center">
-              <p className="text-orange-800 text-lg font-medium leading-relaxed">
-                Your writing style tells such an interesting story about who you are!
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div style={{ backgroundColor: '#f0f3ea', borderLeftColor: '#123c14' }} className="p-5 rounded-2xl border-l-4 hover:transform hover:-translate-y-1 transition-transform duration-200">
-                <h4 className="font-semibold mb-3" style={{ color: '#2d4c2b' }}>
-                  Size & slant
-                </h4>
-                <p className="text-sm" style={{ color: '#022406' }}>Medium-sized with a gentle right lean = practical, warm, and future-focused.</p>
-              </div>
-
-              <div style={{ backgroundColor: '#f0f3ea', borderLeftColor: '#123c14' }} className="p-5 rounded-2xl border-l-4 hover:transform hover:-translate-y-1 transition-transform duration-200">
-                <h4 className="font-semibold mb-3" style={{ color: '#2d4c2b' }}>
-                  Pressure
-                </h4>
-                <p className="text-sm" style={{ color: '#022406' }}>Just right! Shows good energy and emotional balance.</p>
-              </div>
-
-              <div style={{ backgroundColor: '#f0f3ea', borderLeftColor: '#123c14' }} className="p-5 rounded-2xl border-l-4 hover:transform hover:-translate-y-1 transition-transform duration-200">
-                <h4 className="font-semibold mb-3" style={{ color: '#2d4c2b' }}>
-                  Flow & rhythm
-                </h4>
-                <p className="text-sm" style={{ color: '#022406' }}>Your writing flows smoothly, suggesting sharp focus.</p>
-              </div>
-
-              <div style={{ backgroundColor: '#f0f3ea', borderLeftColor: '#123c14' }} className="p-5 rounded-2xl border-l-4 hover:transform hover:-translate-y-1 transition-transform duration-200">
-                <h4 className="font-semibold mb-3" style={{ color: '#2d4c2b' }}>
-                  Spacing & alignment
-                </h4>
-                <p className="text-sm" style={{ color: '#022406' }}>Neat spacing and even lines = great organization and clear thinking.</p>
-              </div>
-            </div>
-          </TabsContent>
-
-          <TabsContent value="personality" className="mt-6 space-y-6">
-            <div className="bg-gradient-to-r from-purple-50 to-pink-50 p-6 rounded-2xl border-l-4 border-purple-500">
+            <div
+              className="p-6 rounded-2xl border-l-4 bg-purple-50 border-purple-500"
+              role="region"
+              aria-label="Handwriting Characteristics"
+            >
               <h3 className="text-xl font-semibold text-gray-900 mb-4">
-                What Your Personality Shines Through
+                {result.data.neurological_analysis?.section_title}
               </h3>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div style={{ backgroundColor: '#f0f3ea', borderLeftColor: '#123c14' }} className="p-4 rounded-xl border-l-3">
-                  <h4 className="font-semibold mb-2" style={{ color: '#2d4c2b' }}>
-                    Authentic self
-                  </h4>
-                  <p className="text-sm" style={{ color: '#022406' }}>Your signature matches your regular writing. You're consistent and real.</p>
-                </div>
+              <div className="grid grid-cols-1 gap-4">
+                {result.data.neurological_analysis?.items?.map((item, i) => (
+                  <div
+                    key={i}
+                    className="p-5 rounded-2xl border-l-4 hover:transform hover:-translate-y-1 transition-transform duration-200 shadow-sm"
+                    style={{ backgroundColor: '#f0f3ea', borderLeftColor: '#123c14' }}
+                  >
+                    <h4 className="font-semibold mb-2 text-[15px]" style={{ color: '#2d4c2b' }}>
+                      {item.title}
+                    </h4>
 
-                <div style={{ backgroundColor: '#f0f3ea', borderLeftColor: '#123c14' }} className="p-4 rounded-xl border-l-3">
-                  <h4 className="font-semibold mb-2" style={{ color: '#2d4c2b' }}>
-                    Confident communicator
-                  </h4>
-                  <p className="text-sm" style={{ color: '#022406' }}>Clear letters show transparency and self-assurance.</p>
-                </div>
+                    <p
+                      className="text-sm text-gray-700"
+                      dangerouslySetInnerHTML={{
+                        __html: item.observation.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>'),
+                      }}
+                    />                    <br />
+                    <p
+                      className="text-sm text-gray-700"
+                      dangerouslySetInnerHTML={{
+                        __html: item.interpretation.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>'),
+                      }}
+                    />
 
-                <div style={{ backgroundColor: '#f0f3ea', borderLeftColor: '#123c14' }} className="p-4 rounded-xl border-l-3">
-                  <h4 className="font-semibold mb-2" style={{ color: '#2d4c2b' }}>
-                    Even temperament
-                  </h4>
-                  <p className="text-sm" style={{ color: '#022406' }}>No signs of emotional suppression or impulsiveness.</p>
-                </div>
-
-                <div style={{ backgroundColor: '#f0f3ea', borderLeftColor: '#123c14' }} className="p-4 rounded-xl border-l-3">
-                  <h4 className="font-semibold mb-2" style={{ color: '#2d4c2b' }}>
-                    Socially balanced
-                  </h4>
-                  <p className="text-sm" style={{ color: '#022406' }}>Your writing reflects healthy boundaries and emotional awareness.</p>
-                </div>
+                  </div>
+                ))}
               </div>
             </div>
           </TabsContent>
 
+          {/* Personality Tab */}
+          <TabsContent value="personality" className="mt-6 space-y-6">
+            {/* Personality Section Header */}
+
+            <h4>{result.data.personality_analysis?.section_title} </h4>
+
+            {/* Personality Items */}
+            <div className="grid grid-cols-1 gap-4">
+              {result.data.personality_analysis?.items?.map((item, index) => (
+                <div
+                  key={index}
+                  className="p-5 rounded-2xl border-l-4 shadow-sm transition-transform duration-200 hover:-translate-y-1"
+                  style={{ backgroundColor: '#fdf6ed', borderLeftColor: '#dd6b20' }}
+                >
+                  <h4 className="font-semibold text-[15px] mb-2 text-[#7b341e]">
+                    {item.title}
+                  </h4>
+                  <div className="text-sm text-[#652b19] mb-1">
+                    <strong>What we see:</strong> {item.observation}
+                  </div>
+                  <div className="text-sm text-gray-800">
+                    <strong>Interpretation:</strong>{' '}
+                    <span
+                      dangerouslySetInnerHTML={{
+                        __html: item.interpretation.replace(
+                          /\*\*(.*?)\*\*/g,
+                          '<strong>$1</strong>'
+                        ),
+                      }}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Traits Highlight */}
+            {result.data.personality_analysis?.traits_highlight?.traits?.length > 0 && (
+              <div className="bg-white p-5 rounded-2xl border-l-4 border-orange-400">
+                <h4 className="text-orange-800 text-lg font-semibold mb-2">
+                  {result.data.personality_analysis?.traits_highlight?.title || 'Traits'}
+                </h4>
+                <div className="flex flex-wrap gap-2">
+                  {result.data.personality_analysis.traits_highlight.traits.map(
+                    (trait, index) => (
+                      <span
+                        key={index}
+                        className="px-3 py-1 bg-orange-100 text-orange-700 rounded-full text-sm font-medium"
+                      >
+                        {trait}
+                      </span>
+                    )
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Disclaimer */}
+            {result.data.disclaimer && (
+              <div className="bg-gradient-to-r from-yellow-50 to-orange-50 border border-orange-200 p-4 rounded-xl text-center">
+                <p className="text-orange-800 text-sm leading-relaxed">
+                  {result.data.disclaimer}
+                </p>
+              </div>
+            )}
+          </TabsContent>
+
+
+          {/* Tips Tab */}
           <TabsContent value="tips" className="mt-6 space-y-6">
-            <div className="bg-gradient-to-r from-blue-50 to-cyan-50 p-6 rounded-2xl border-l-4 border-blue-500">
+            <div
+              className="p-6 rounded-2xl border-l-4 bg-blue-50 border-blue-500"
+              role="region"
+              aria-label="Supportive Observations"
+            >
               <h3 className="text-xl font-semibold text-gray-900 mb-4">
-                Gentle Recommendations Just for You
+                {result.data.supportive_observations?.section_title || 'Supportive Observations'}
               </h3>
 
               <div className="space-y-3">
-                <div style={{ backgroundColor: '#f0f3ea', borderLeftColor: '#123c14' }} className="p-4 rounded-xl border-l-3 flex items-start gap-3">
-                  <span className="text-sm" style={{ color: '#022406' }}>Keep doing what works! You show strong focus and emotional steadiness.</span>
-                </div>
+                {result.data.supportive_observations?.items?.map((item, i) => (
+                  <div
+                    key={i}
+                    className="p-4 rounded-xl border-l-3 flex items-start gap-3"
+                    style={{ backgroundColor: '#f0f3ea', borderLeftColor: '#123c14' }}
+                  >
 
-                <div style={{ backgroundColor: '#f0f3ea', borderLeftColor: '#123c14' }} className="p-4 rounded-xl border-l-3 flex items-start gap-3">
-                  <span className="text-sm" style={{ color: '#022406' }}>Try journaling or sketching to explore your creative side.</span>
-                </div>
-
-                <div style={{ backgroundColor: '#f0f3ea', borderLeftColor: '#123c14' }} className="p-4 rounded-xl border-l-3 flex items-start gap-3">
-                  <span className="text-sm" style={{ color: '#022406' }}>You're mentally organized—maybe try new learning tools to build on that.</span>
-                </div>
-
-                <div style={{ backgroundColor: '#f0f3ea', borderLeftColor: '#123c14' }} className="p-4 rounded-xl border-l-3 flex items-start gap-3">
-                  <span className="text-sm" style={{ color: '#022406' }}>Your handwriting suggests a healthy body-mind connection. Keep nurturing that balance!</span>
-                </div>
+                    <span className="text-sm text-[#022406]"><strong>{item.title}: </strong>{item.description}</span>
+                  </div>
+                ))}
               </div>
             </div>
 
-            <div className="bg-gradient-to-r from-green-50 to-green-100 p-5 rounded-2xl border-l-4 border-green-500 text-center">
-              <p className="text-green-800 text-lg font-medium leading-relaxed">
-                Your handwriting tells a beautiful story of balance, focus, and authenticity. Keep being your wonderful self!
-              </p>
-            </div>
+            {result.data.supportive_observations?.summary && (
+              <div
+                className="p-5 rounded-2xl border-l-4 text-center bg-gradient-to-r from-green-50 to-green-100 border-green-500 space-y-2"
+                role="region"
+                aria-label="Summary Section"
+              >
+                <h4 className="text-green-900 text-xl font-semibold">
+                  {result.data.supportive_observations.summary.title}
+                </h4>
+                <p className="text-green-800 text-base leading-relaxed">
+                  {result.data.supportive_observations.summary.text}
+                </p>
+                <p className="text-green-900 text-base font-medium leading-relaxed">
+                  {result.data.supportive_observations.summary.conclusion}
+                </p>
+              </div>
+            )}
+
           </TabsContent>
         </Tabs>
       </div>
     );
   };
+
+
 
   // Nail Analysis specific content
   const renderNailAnalysisContent = () => {
@@ -661,166 +683,149 @@ const ScanResultModal = ({ open, onOpenChange, result }: ScanResultModalProps) =
           </TabsList>
 
           <TabsContent value="structure" className="mt-6 space-y-6">
-            {/* Nail Plate Assessment Section */}
-            <Card style={{ backgroundColor: '#f0f3ea', borderColor: '#123c14' }} className="border-l-4">
-              <CardHeader>
-                <CardTitle className="text-lg md:text-xl" style={{ color: '#2d4c2b' }}>Nail Plate Assessment</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <h4 className="font-semibold" style={{ color: '#2d4c2b' }}>Color</h4>
-                    <p className="text-sm" style={{ color: '#022406' }}>Healthy pink coloration with good blood circulation, no signs of yellowing or discoloration</p>
-                  </div>
-                  <div className="space-y-2">
-                    <h4 className="font-semibold" style={{ color: '#2d4c2b' }}>Texture</h4>
-                    <p className="text-sm" style={{ color: '#022406' }}>Smooth surface texture with normal shine and flexibility</p>
-                  </div>
-                  <div className="space-y-2">
-                    <h4 className="font-semibold" style={{ color: '#2d4c2b' }}>Thickness</h4>
-                    <p className="text-sm" style={{ color: '#022406' }}>Appropriate thickness indicating good nail health and nutrition</p>
-                  </div>
-                  <div className="space-y-2">
-                    <h4 className="font-semibold" style={{ color: '#2d4c2b' }}>Surface Contour</h4>
-                    <p className="text-sm" style={{ color: '#022406' }}>Minor vertical ridges present, typical for age group, no significant pitting or abnormal grooves</p>
-                  </div>
-                  <div className="space-y-2 md:col-span-2">
-                    <h4 className="font-semibold" style={{ color: '#2d4c2b' }}>Shape</h4>
-                    <p className="text-sm" style={{ color: '#022406' }}>Normal curved shape with healthy growth pattern and symmetrical appearance</p>
-                  </div>
+            <div className="flex flex-col gap-6">
+              <div className="bg-gradient-to-r from-green-50 to-green-100 p-6 rounded-2xl border-l-4 border-green-500">
+                <h3 className="text-xl font-semibold text-gray-900 mb-4">
+                  {result.data.nail_health_check?.section_title || 'Nail Plate Assessment'}
+                </h3>
+
+                <div className="flex flex-col gap-4">
+                  {result.data.nail_health_check?.findings?.map((finding, index) => (
+                    <div
+                      key={index}
+                      className="p-5 rounded-2xl border-l-4 shadow-sm transition-transform duration-200 hover:-translate-y-1"
+                      style={{
+                        backgroundColor: '#f0f3ea',
+                        borderLeftColor: '#123c14',
+                      }}
+                    >
+                      <h4 className="font-semibold mb-2 text-[15px]" style={{ color: '#2d4c2b' }}>
+                        {finding.title}
+                      </h4>
+                      <p
+                        className="text-sm text-gray-700"
+                        dangerouslySetInnerHTML={{
+                          __html: finding.description.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>'),
+                        }}
+                      />
+                    </div>
+                  ))}
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           </TabsContent>
+
+
 
           <TabsContent value="circulation" className="mt-6 space-y-6">
-            {/* Nail Bed Health Section */}
-            <Card style={{ backgroundColor: '#f0f3ea', borderColor: '#123c14' }} className="border-l-4">
-              <CardHeader>
-                <CardTitle className="text-lg md:text-xl" style={{ color: '#2d4c2b' }}>Nail Bed Health</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <h4 className="font-semibold" style={{ color: '#2d4c2b' }}>Capillary Refill & Blood Flow</h4>
-                    <p className="text-sm" style={{ color: '#022406' }}>Good blood flow with normal capillary refill time, indicating healthy circulation</p>
-                  </div>
-                  <div className="space-y-2">
-                    <h4 className="font-semibold" style={{ color: '#2d4c2b' }}>Lunula (Half-moon)</h4>
-                    <p className="text-sm" style={{ color: '#022406' }}>Visible half-moon area with appropriate size and coloration</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+            <div className="bg-gradient-to-r from-green-50 to-green-100 p-6 rounded-2xl border-l-4 border-green-500">
+              <h3 className="text-xl font-semibold text-gray-900 mb-4">
+                {result.data.deeper_analysis?.section_title || 'Detailed Nail Analysis'}
+              </h3>
 
-            {/* Nail Fold & Cuticle Assessment Section */}
-            <Card style={{ backgroundColor: '#f0f3ea', borderColor: '#123c14' }} className="border-l-4">
-              <CardHeader>
-                <CardTitle className="text-lg md:text-xl" style={{ color: '#2d4c2b' }}>Nail Fold & Cuticle Assessment</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <h4 className="font-semibold" style={{ color: '#2d4c2b' }}>Inflammation or Swelling</h4>
-                    <p className="text-sm" style={{ color: '#022406' }}>No signs of inflammation or swelling around nail fold area</p>
-                  </div>
-                  <div className="space-y-2">
-                    <h4 className="font-semibold" style={{ color: '#2d4c2b' }}>Cuticle Condition</h4>
-                    <p className="text-sm" style={{ color: '#022406' }}>Healthy cuticle condition with normal moisture levels and no signs of infection</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+              <p className="text-gray-700 text-sm mb-6">
+                {result.data.deeper_analysis?.description}
+              </p>
 
-            {/* Growth & Attachment Section */}
-            <Card style={{ backgroundColor: '#f0f3ea', borderColor: '#123c14' }} className="border-l-4">
-              <CardHeader>
-                <CardTitle className="text-lg md:text-xl" style={{ color: '#2d4c2b' }}>Growth & Attachment</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <h4 className="font-semibold" style={{ color: '#2d4c2b' }}>Growth Pattern</h4>
-                    <p className="text-sm" style={{ color: '#022406' }}>Normal growth pattern with consistent rate and direction</p>
-                  </div>
-                  <div className="space-y-2">
-                    <h4 className="font-semibold" style={{ color: '#2d4c2b' }}>Attachment & Separation</h4>
-                    <p className="text-sm" style={{ color: '#022406' }}>Secure nail attachment with no signs of detachment or separation</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+              <div className="flex flex-col gap-4">
+                {result.data.deeper_analysis?.findings?.map((item, index) => (
+                  <div
+                    key={index}
+                    className="p-5 rounded-2xl border-l-4 transition-transform duration-200 hover:-translate-y-1 shadow-sm"
+                    style={{
+                      backgroundColor: '#f0f3ea',
+                      borderLeftColor: '#123c14',
+                    }}
+                  >
+                    <h4 className="font-semibold mb-2 text-[15px]" style={{ color: '#2d4c2b' }}>
+                      {item.title}
+                    </h4>
 
-            {/* Health Significance Section */}
-            <Card className="bg-gradient-to-r from-green-50 to-green-100 border-l-4 border-green-500">
-              <CardHeader>
-                <CardTitle className="text-base md:text-lg text-green-800">Health Significance</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-green-700 text-sm md:text-base">
-                  Your nail characteristics indicate excellent systemic health. The visible lunula suggests good circulation, while the healthy pink color reflects adequate hemoglobin levels and oxygen transport.
-                </p>
-              </CardContent>
-            </Card>
+                    <p className="text-sm mb-4" style={{ color: '#022406' }}>
+                      {item.observation}
+                    </p>
+
+                    <Tabs defaultValue="allopathic" className="w-full">
+                      <TabsList className="bg-[#e2e8d8] rounded-full p-1 mb-3">
+                        <TabsTrigger
+                          value="allopathic"
+                          className="text-sm px-3 py-1 data-[state=active]:bg-white data-[state=active]:text-[#123c14]"
+                        >
+                          Allopathic
+                        </TabsTrigger>
+                        <TabsTrigger
+                          value="functional_tcm"
+                          className="text-sm px-3 py-1 data-[state=active]:bg-white data-[state=active]:text-[#123c14]"
+                        >
+                          TCM
+                        </TabsTrigger>
+                      </TabsList>
+
+                      <TabsContent value="allopathic">
+                        <p
+                          className="text-sm text-gray-700"
+                          dangerouslySetInnerHTML={{
+                            __html: item.interpretation.allopathic.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>'),
+                          }}
+                        />
+                      </TabsContent>
+
+                      <TabsContent value="functional_tcm">
+                        <p
+                          className="text-sm text-gray-700"
+                          dangerouslySetInnerHTML={{
+                            __html: item.interpretation.functional_tcm.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>'),
+                          }}
+                        />
+                      </TabsContent>
+                    </Tabs>
+                  </div>
+                ))}
+              </div>
+            </div>
           </TabsContent>
+
 
           <TabsContent value="recommendations" className="mt-6 space-y-6">
-            {/* Overall Assessment */}
-            <Card className="bg-gradient-to-r from-green-50 to-green-100 border-l-4 border-green-500">
-              <CardContent className="p-4">
-                <p className="text-green-700 font-medium text-sm md:text-base">
-                  Overall nail health assessment indicates good circulation and nail integrity. Continue current nail care routine and maintain proper nutrition.
-                </p>
-              </CardContent>
-            </Card>
+            {/* Celebration Summary */}
+            <div className="bg-gradient-to-r from-green-50 to-green-100 p-5 rounded-2xl border-l-4 border-green-500 text-center">
+              <p className="text-green-800 text-lg font-medium leading-relaxed">
+                {result.data.supportive_observations?.celebration_message}
+              </p>
+            </div>
 
-            {/* Maintenance Recommendations */}
-            <Card style={{ backgroundColor: '#f0f3ea', borderColor: '#123c14' }} className="border-l-4">
-              <CardHeader>
-                <CardTitle className="text-lg md:text-xl" style={{ color: '#2d4c2b' }}>Maintenance Recommendations</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <h4 className="font-semibold" style={{ color: '#2d4c2b' }}>Nail Care Routine</h4>
-                    <p className="text-sm" style={{ color: '#022406' }}>Continue current nail care practices including regular trimming and cuticle care</p>
-                  </div>
-                  <div className="space-y-2">
-                    <h4 className="font-semibold" style={{ color: '#2d4c2b' }}>Nutritional Support</h4>
-                    <p className="text-sm" style={{ color: '#022406' }}>Maintain balanced diet rich in biotin, protein, and essential vitamins</p>
-                  </div>
-                  <div className="space-y-2">
-                    <h4 className="font-semibold" style={{ color: '#2d4c2b' }}>Hydration</h4>
-                    <p className="text-sm" style={{ color: '#022406' }}>Keep nails and cuticles moisturized with appropriate nail oils or creams</p>
-                  </div>
-                  <div className="space-y-2">
-                    <h4 className="font-semibold" style={{ color: '#2d4c2b' }}>Protection</h4>
-                    <p className="text-sm" style={{ color: '#022406' }}>Use gloves during household chores and harsh chemical exposure</p>
-                  </div>
-                  <div className="space-y-2">
-                    <h4 className="font-semibold" style={{ color: '#2d4c2b' }}>Regular Monitoring</h4>
-                    <p className="text-sm" style={{ color: '#022406' }}>Track nail health monthly to observe long-term changes and patterns</p>
-                  </div>
-                  <div className="space-y-2">
-                    <h4 className="font-semibold" style={{ color: '#2d4c2b' }}>Professional Care</h4>
-                    <p className="text-sm" style={{ color: '#022406' }}>Consider periodic professional manicures for optimal nail health maintenance</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+            {/* Supportive Observations */}
+            <div className="bg-gradient-to-r from-blue-50 to-cyan-50 p-6 rounded-2xl border-l-4 border-blue-500">
+              <h3 className="text-xl font-semibold text-gray-900 mb-4">
+                {result.data.supportive_observations?.section_title}
+              </h3>
 
-            {/* Medical Disclaimer */}
-            <Card className="bg-gradient-to-r from-yellow-50 to-orange-50 border-l-4 border-orange-500">
-              <CardHeader>
-                <CardTitle className="text-base text-orange-800">Disclaimer</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-orange-700 text-sm">
-                  This analysis is for experimental purposes only and should not replace professional medical advice. Please consult with a healthcare provider for any health concerns.
-                </p>
-              </CardContent>
-            </Card>
+              <div className="flex flex-col gap-4">
+                {result.data.supportive_observations?.observations?.map((obs, index) => (
+                  <div
+                    key={index}
+                    className="p-4 rounded-xl border-l-3"
+                    style={{ backgroundColor: '#f0f3ea', borderLeftColor: '#123c14' }}
+                  >
+                    <h4 className="font-semibold mb-2 text-[15px]" style={{ color: '#2d4c2b' }}>
+                      {obs.title}
+                    </h4>
+                    <p className="text-sm" style={{ color: '#022406' }}>
+                      {obs.description}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Disclaimer */}
+            <div className="bg-gradient-to-r from-yellow-50 to-orange-50 border-l-4 border-orange-500 p-4 rounded-2xl text-center">
+              <p className="text-orange-800 text-sm leading-relaxed">
+                {result.data.disclaimer}
+              </p>
+            </div>
           </TabsContent>
+
         </Tabs>
       </div>
     );
