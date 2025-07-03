@@ -4,8 +4,6 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import ScanProcessingLoader from "./ScanProcessingLoader";
 import SimpleCameraModal from "./SimpleCameraModal";
 import { ScanResult } from "@/types/scanResults";
-import { useEyeAnalysis } from "@/service/hooks/experiments/useGetAnalysis";
-import { dataURLtoFile } from '@/utils/utils';
 
 interface EyeScanModalProps {
   open: boolean;

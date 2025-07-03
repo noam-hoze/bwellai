@@ -4,8 +4,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { CheckCircle, AlertTriangle, X, Calendar, Eye, User, Heart, Hand, Activity, Stethoscope } from "lucide-react";
+import { CheckCircle, AlertTriangle, X, Calendar, Eye, User, Heart, Hand, Activity, Stethoscope, Search, HeartPulse, Leaf, CircleDashed } from "lucide-react";
 import { ScanResult } from "@/types/scanResults";
+import { InsightCard } from "./InsightCard";
 
 interface ScanResultModalProps {
   open: boolean;
@@ -32,31 +33,71 @@ const ScanResultModal = ({ open, onOpenChange, result }: ScanResultModalProps) =
     return result.category === 'optimal' ? 'bg-green-100 text-green-800' : 'bg-orange-100 text-orange-800';
   };
 
+  const getStatusColorClass = (color: string) => {
+    switch (color) {
+      case "green":
+        return "bg-green-400";
+      case "orange":
+        return "bg-orange-400";
+      case "red":
+        return "bg-red-400";
+      case "yellow":
+        return "bg-yellow-400";
+      case "blue":
+        return "bg-blue-400";
+      default:
+        return "bg-gray-400";
+    }
+  };
+
+  const bannerColorMap = {
+    celebration: {
+      from: 'from-green-50',
+      to: 'to-green-100',
+      border: 'border-green-500',
+      text: 'text-green-800',
+    },
+    alert: {
+      from: 'from-red-50',
+      to: 'to-red-100',
+      border: 'border-red-500',
+      text: 'text-red-800',
+    },
+    caution: {
+      from: 'from-orange-50',
+      to: 'to-orange-100',
+      border: 'border-orange-500',
+      text: 'text-orange-800',
+    },
+  };
+  const bannerStyle = bannerColorMap[result.bannerType || 'celebration'];
+
+
   // Eye Analysis specific content with new friendly styling
   const renderEyeAnalysisContent = () => {
     return (
       <div className="p-4 md:p-6">
         <Tabs defaultValue="snapshot" className="w-full">
           <TabsList className="grid w-full grid-cols-3 bg-gray-50 border-b border-gray-200">
-            <TabsTrigger 
-              value="snapshot" 
+            <TabsTrigger
+              value="snapshot"
               className="flex items-center gap-2 data-[state=active]:bg-white data-[state=active]:border-b-2 data-[state=active]:border-[#113811]"
-              style={{ 
+              style={{
                 color: '#294829'
               }}
             >
               <span className="hidden sm:inline">Eye Health Snapshot</span>
-              <span className="sm:hidden">Snapshot</span>
+              <span className="sm:hidden">Eye Health</span>
             </TabsTrigger>
-            <TabsTrigger 
-              value="around" 
+            <TabsTrigger
+              value="around"
               className="flex items-center gap-2 data-[state=active]:bg-white data-[state=active]:text-orange-600 data-[state=active]:border-b-2 data-[state=active]:border-[#113811]"
             >
               <span className="hidden sm:inline">Around the Eyes</span>
-              <span className="sm:hidden">Around</span>
+              <span className="sm:hidden">Around Eyes</span>
             </TabsTrigger>
-            <TabsTrigger 
-              value="habits" 
+            <TabsTrigger
+              value="habits"
               className="flex items-center gap-2 data-[state=active]:bg-white data-[state=active]:text-blue-600 data-[state=active]:border-b-2 data-[state=active]:border-[#113811]"
             >
               <span className="hidden sm:inline">Easy Eye Habits</span>
@@ -65,130 +106,151 @@ const ScanResultModal = ({ open, onOpenChange, result }: ScanResultModalProps) =
           </TabsList>
 
           <TabsContent value="snapshot" className="mt-6 space-y-6">
-            {/* Friendly Intro */}
-            <div className="bg-gradient-to-r from-green-50 to-green-100 p-5 rounded-2xl border-l-4 border-green-500 text-center">
-              <p className="text-green-800 text-lg font-medium leading-relaxed">
-                Your eyes are sparkling with health! Let's explore what they're telling us!
+            {/* Banner */}
+            <div
+              className={`bg-gradient-to-r ${bannerStyle.from} ${bannerStyle.to} p-5 rounded-2xl border-l-4 ${bannerStyle.border} text-center`}
+            >
+              <p className={`${bannerStyle.text} text-lg font-medium leading-relaxed`}>
+                {result.bannerText}
               </p>
             </div>
 
+
             {/* Eye Health Insights Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div style={{ backgroundColor: '#f0f3ea', borderLeftColor: '#123c14' }} className="p-5 rounded-2xl border-l-4 hover:transform hover:-translate-y-1 transition-transform duration-200">
-                <h4 className="font-semibold mb-3" style={{ color: '#2d4c2b' }}>
-                  Whites of eyes
-                </h4>
-                <p className="text-sm" style={{ color: '#022406' }}>Clear and bright. No signs of irritation or yellowing.</p>
-              </div>
+            <div className="flex flex-col gap-6">
+              {result.data.eye_health_analysis?.findings?.map((finding, index) => (
+                <div
+                  key={index}
+                  className="p-5 rounded-2xl border-l-4 transition-transform duration-200"
+                  style={{ backgroundColor: '#e8f6e7', borderLeftColor: '#123c14' }}
+                >
+                  {/* Title with icon */}
+                  <h4 className="flex items-center gap-2 font-semibold text-green-900 mb-2 text-lg">
+                    {finding.title}
+                  </h4>
 
-              <div style={{ backgroundColor: '#f0f3ea', borderLeftColor: '#123c14' }} className="p-5 rounded-2xl border-l-4 hover:transform hover:-translate-y-1 transition-transform duration-200">
-                <h4 className="font-semibold text-gray-900 mb-3">
-                  Iris & pupil
-                </h4>
-                <p className="text-sm text-gray-700">Even color, reactive pupils = healthy vision.</p>
-              </div>
+                  {/* Observation */}
+                  <div className="flex items-center gap-2 text-sm font-medium text-green-800 mb-1">
+                    <Search className="w-4 h-4" />
+                    What we see:
+                  </div>
+                  <p className="text-sm text-green-900 mb-4">{finding.observation}</p>
 
-              <div style={{ backgroundColor: '#f0f3ea', borderLeftColor: '#123c14' }} className="p-5 rounded-2xl border-l-4 hover:transform hover:-translate-y-1 transition-transform duration-200">
-                <h4 className="font-semibold text-gray-900 mb-3">
-                  Cornea & moisture
-                </h4>
-                <p className="text-sm text-gray-700">Smooth and hydrated—no dryness here.</p>
-              </div>
+                  {/* Insights */}
+                  <div className="flex flex-col md:flex-row gap-4">
+                    <InsightCard
+                      label="Allopathic Insight:"
+                      content={finding.insights.allopathic}
+                      icon={<HeartPulse className="w-4 h-4" />}
+                      borderColor="#90cdf4" // blue-300
+                    />
+                    <InsightCard
+                      label="Functional Insight:"
+                      content={finding.insights.functional}
+                      icon={<Leaf className="w-4 h-4" />}
+                      borderColor="#68d391" // green-400
+                    />
+                    <InsightCard
+                      label="TCM View:"
+                      content={finding.insights.tcm}
+                      icon={<CircleDashed className="w-4 h-4" />}
+                      borderColor="#f687b3" // pink-400
+                    />
+                  </div>
+                </div>
 
-              <div style={{ backgroundColor: '#f0f3ea', borderLeftColor: '#123c14' }} className="p-5 rounded-2xl border-l-4 hover:transform hover:-translate-y-1 transition-transform duration-200">
-                <h4 className="font-semibold text-gray-900 mb-3">
-                  Conjunctiva
-                </h4>
-                <p className="text-sm text-gray-700">Calm and moist, not inflamed.</p>
-              </div>
+              ))}
             </div>
+
+
           </TabsContent>
 
           <TabsContent value="around" className="mt-6 space-y-6">
-            {/* Around Eyes Section */}
-            <div className="bg-gradient-to-r from-orange-50 to-yellow-50 p-6 rounded-2xl border-l-4 border-orange-500">
-              <h3 className="text-xl font-semibold text-gray-900 mb-4">
-                Around the Eyes
-              </h3>
-              <p className="text-orange-800 text-sm mb-4">
-                The skin around your eyes tells its own story about your overall wellness:
-              </p>
+            <div>
+              <div className="flex flex-col gap-6">
+                {result.data.around_eyes_analysis?.findings?.map((finding, index) => (
+                  <div
+                    key={index}
+                    className="p-6 rounded-2xl border-l-4 shadow-sm"
+                    style={{ backgroundColor: '#e8f6e7', borderLeftColor: '#123c14' }}
+                  >
+                    {/* Title */}
+                    <h4 className="flex items-center gap-2 font-semibold text-green-900 mb-2 text-lg">
+                      {finding.title}
+                    </h4>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="bg-gradient-to-br from-blue-50 to-purple-50 p-4 rounded-xl border-l-3 border-purple-500">
-                  <h4 className="font-semibold text-gray-900 mb-2">
-                    Eyelids
-                  </h4>
-                  <p className="text-sm text-gray-700">Move naturally, no droop or tension.</p>
-                </div>
+                    {/* Observation */}
+                    <div className="flex items-center gap-2 text-sm font-medium text-green-800 mb-1">
+                      <Search className="w-4 h-4" />
+                      What we see:
+                    </div>
+                    <p className="text-sm text-green-900 mb-4">{finding.observation}</p>
 
-                <div className="bg-gradient-to-br from-blue-50 to-purple-50 p-4 rounded-xl border-l-3 border-purple-500">
-                  <h4 className="font-semibold text-gray-900 mb-2">
-                    Under-eye area
-                  </h4>
-                  <p className="text-sm text-gray-700">Minimal circles and nice elasticity.</p>
-                </div>
-
-                <div className="bg-gradient-to-br from-blue-50 to-purple-50 p-4 rounded-xl border-l-3 border-purple-500">
-                  <h4 className="font-semibold text-gray-900 mb-2">
-                    Skin tone & texture
-                  </h4>
-                  <p className="text-sm text-gray-700">Even color and smooth texture.</p>
-                </div>
-
-                <div className="bg-gradient-to-br from-blue-50 to-purple-50 p-4 rounded-xl border-l-3 border-purple-500">
-                  <h4 className="font-semibold text-gray-900 mb-2">
-                    No puffiness
-                  </h4>
-                  <p className="text-sm text-gray-700">Everything looks refreshed and balanced.</p>
-                </div>
+                    {/* Insights */}
+                    <div className="flex flex-col md:flex-row gap-4">
+                      <InsightCard
+                        label="Allopathic Insight:"
+                        content={finding.insights.allopathic}
+                        icon={<HeartPulse className="w-4 h-4" />}
+                        borderColor="#90cdf4"
+                      />
+                      <InsightCard
+                        label="Functional Insight:"
+                        content={finding.insights.functional}
+                        icon={<Leaf className="w-4 h-4" />}
+                        borderColor="#68d391"
+                      />
+                      <InsightCard
+                        label="TCM View:"
+                        content={finding.insights.tcm}
+                        icon={<CircleDashed className="w-4 h-4" />}
+                        borderColor="#f687b3"
+                      />
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           </TabsContent>
+
 
           <TabsContent value="habits" className="mt-6 space-y-6">
             {/* Eye Habits Section */}
             <div className="bg-gradient-to-r from-blue-50 to-cyan-50 p-6 rounded-2xl border-l-4 border-blue-500">
               <h3 className="text-xl font-semibold text-gray-900 mb-4">
-                Easy Eye Habits
+                {result.data.tips_recommendations?.section_title}
               </h3>
 
               <div className="space-y-3">
-                <div className="bg-white bg-opacity-70 p-4 rounded-xl border-l-3 border-blue-600 flex items-start gap-3">
-                  <span className="text-gray-700 text-sm">Use the 20-20-20 rule during screen time.</span>
-                </div>
-
-                <div className="bg-white bg-opacity-70 p-4 rounded-xl border-l-3 border-blue-600 flex items-start gap-3">
-                  <span className="text-gray-700 text-sm">Stay hydrated to support tear health.</span>
-                </div>
-
-                <div className="bg-white bg-opacity-70 p-4 rounded-xl border-l-3 border-blue-600 flex items-start gap-3">
-                  <span className="text-gray-700 text-sm">Get solid sleep—your eyes will thank you.</span>
-                </div>
-
-                <div className="bg-white bg-opacity-70 p-4 rounded-xl border-l-3 border-blue-600 flex items-start gap-3">
-                  <span className="text-gray-700 text-sm">Eat eye-friendly foods (like omega-3s and leafy greens).</span>
-                </div>
-
-                <div className="bg-white bg-opacity-70 p-4 rounded-xl border-l-3 border-blue-600 flex items-start gap-3">
-                  <span className="text-gray-700 text-sm">Keep up with yearly eye checkups.</span>
-                </div>
+                {result.data.tips_recommendations?.tips?.map((tip, index) => (
+                  <div
+                    key={index}
+                    className="bg-white bg-opacity-70 p-4 rounded-xl "
+                  >
+                    <p className="text-blue-900 font-semibold text-sm mb-1">{tip.title}</p>
+                    <p className="text-gray-700 text-sm">{tip.description}</p>
+                  </div>
+                ))}
               </div>
             </div>
 
-            {/* Celebration Footer */}
-            <div className="bg-gradient-to-r from-green-50 to-green-100 p-5 rounded-2xl border-l-4 border-green-500 text-center">
-              <p className="text-green-800 text-lg font-medium leading-relaxed">
-                Bright, balanced eyes = strong health signals. You're looking good!
-              </p>
-            </div>
+            {/* Summary Card */}
+            {result.data.tips_recommendations?.summary && (
+              <div className="bg-gradient-to-r from-green-50 to-green-100 p-5 rounded-2xl border-l-4 border-green-500 text-center">
+                <p className="text-green-800 text-lg font-medium leading-relaxed">
+                  {result.data.tips_recommendations.summary.text}
+                </p>
+              </div>
+            )}
 
-            {/* Friendly Disclaimer */}
-            <div className="bg-gradient-to-r from-yellow-50 to-orange-50 border border-orange-200 p-4 rounded-xl text-center">
-              <p className="text-orange-800 text-sm leading-relaxed">
-                This fun analysis is for curiosity and wellness exploration. For any health questions, always chat with your healthcare provider!
-              </p>
-            </div>
+            {/* Disclaimer */}
+            {result.data.disclaimer && (
+              <div className="bg-gradient-to-r from-yellow-50 to-orange-50 border border-orange-200 p-4 rounded-xl text-center">
+                <p className="text-orange-800 text-sm leading-relaxed">
+                  {result.data.disclaimer}
+                </p>
+              </div>
+            )}
           </TabsContent>
         </Tabs>
       </div>
@@ -201,24 +263,24 @@ const ScanResultModal = ({ open, onOpenChange, result }: ScanResultModalProps) =
       <div className="p-4 md:p-6">
         <Tabs defaultValue="observation" className="w-full">
           <TabsList className="grid w-full grid-cols-3 bg-gray-50 border-b border-gray-200">
-            <TabsTrigger 
-              value="observation" 
+            <TabsTrigger
+              value="observation"
               className="flex items-center gap-2 data-[state=active]:bg-white data-[state=active]:border-b-2 data-[state=active]:border-[#113811]"
               style={{ color: '#294829' }}
             >
               <span className="hidden sm:inline">What We See</span>
               <span className="sm:hidden">Observation</span>
             </TabsTrigger>
-            <TabsTrigger 
-              value="tcm" 
+            <TabsTrigger
+              value="tcm"
               className="flex items-center gap-2 data-[state=active]:bg-white data-[state=active]:border-b-2 data-[state=active]:border-[#113811]"
               style={{ color: '#294829' }}
             >
               <span className="hidden sm:inline">Eastern Wisdom (TCM)</span>
               <span className="sm:hidden">TCM</span>
             </TabsTrigger>
-            <TabsTrigger 
-              value="care" 
+            <TabsTrigger
+              value="care"
               className="flex items-center gap-2 data-[state=active]:bg-white data-[state=active]:border-b-2 data-[state=active]:border-[#113811]"
               style={{ color: '#294829' }}
             >
@@ -228,129 +290,146 @@ const ScanResultModal = ({ open, onOpenChange, result }: ScanResultModalProps) =
           </TabsList>
 
           <TabsContent value="observation" className="mt-6 space-y-6">
-            <div className="bg-gradient-to-r from-green-50 to-green-100 p-5 rounded-2xl border-l-4 border-green-500 text-center">
-              <p className="text-green-800 text-lg font-medium leading-relaxed">
-                Your tongue is telling us some wonderful stories about your health! Let's explore together!
+            <div
+              className={`bg-gradient-to-r ${bannerStyle.from} ${bannerStyle.to} p-5 rounded-2xl border-l-4 ${bannerStyle.border} text-center`}
+            >
+              <p className={`${bannerStyle.text} text-lg font-medium leading-relaxed`}>
+                {result.bannerText}
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div style={{ backgroundColor: '#f0f3ea', borderLeftColor: '#123c14' }} className="p-5 rounded-2xl border-l-4 hover:transform hover:-translate-y-1 transition-transform duration-200">
-                <h4 className="font-semibold mb-3" style={{ color: '#2d4c2b' }}>
-                  Color
-                </h4>
-                <p className="text-sm" style={{ color: '#022406' }}>A healthy pink means good blood flow and oxygen levels.</p>
-              </div>
 
-              <div style={{ backgroundColor: '#f0f3ea', borderLeftColor: '#123c14' }} className="p-5 rounded-2xl border-l-4 hover:transform hover:-translate-y-1 transition-transform duration-200">
-                <h4 className="font-semibold mb-3" style={{ color: '#2d4c2b' }}>
-                  Coating
-                </h4>
-                <p className="text-sm" style={{ color: '#022406' }}>Just a light layer. Totally normal.</p>
-              </div>
-
-              <div style={{ backgroundColor: '#f0f3ea', borderLeftColor: '#123c14' }} className="p-5 rounded-2xl border-l-4 hover:transform hover:-translate-y-1 transition-transform duration-200">
-                <h4 className="font-semibold mb-3" style={{ color: '#2d4c2b' }}>
-                  Hydration
-                </h4>
-                <p className="text-sm" style={{ color: '#022406' }}>Your tongue looks well-hydrated—no dryness here.</p>
-              </div>
-
-              <div style={{ backgroundColor: '#f0f3ea', borderLeftColor: '#123c14' }} className="p-5 rounded-2xl border-l-4 hover:transform hover:-translate-y-1 transition-transform duration-200">
-                <h4 className="font-semibold mb-3" style={{ color: '#2d4c2b' }}>
-                  Shape
-                </h4>
-                <p className="text-sm" style={{ color: '#022406' }}>Symmetrical and toned—great muscle control.</p>
-              </div>
-
-              <div style={{ backgroundColor: '#f0f3ea', borderLeftColor: '#123c14' }} className="p-5 rounded-2xl border-l-4 hover:transform hover:-translate-y-1 transition-transform duration-200">
-                <h4 className="font-semibold mb-3" style={{ color: '#2d4c2b' }}>
-                  Cracks?
-                </h4>
-                <p className="text-sm" style={{ color: '#022406' }}>None. Tissue looks strong.</p>
-              </div>
-
-              <div style={{ backgroundColor: '#f0f3ea', borderLeftColor: '#123c14' }} className="p-5 rounded-2xl border-l-4 hover:transform hover:-translate-y-1 transition-transform duration-200">
-                <h4 className="font-semibold mb-3" style={{ color: '#2d4c2b' }}>
-                  Texture
-                </h4>
-                <p className="text-sm" style={{ color: '#022406' }}>All papillae look healthy and well-distributed.</p>
-              </div>
+            <div className="flex flex-col gap-6">
+              {result.data.western_analysis?.findings?.map((finding, index) => (
+                <div
+                  key={index}
+                  className="p-5 rounded-2xl border-l-4 hover:transform hover:-translate-y-1 transition-transform duration-200 shadow-sm"
+                  style={{
+                    backgroundColor: '#f0f3ea',
+                    borderLeftColor: '#123c14',
+                  }}
+                >
+                  <h4 className="font-semibold mb-2 text-[15px]" style={{ color: '#2d4c2b' }}>
+                    {finding.title}
+                  </h4>
+                  <p className="text-sm mb-2" style={{ color: '#022406' }}>
+                    {finding.observation}
+                  </p>
+                  <p
+                    className="text-sm text-gray-700"
+                    dangerouslySetInnerHTML={{
+                      __html: finding.interpretation.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>'),
+                    }}
+                  />
+                </div>
+              ))}
             </div>
           </TabsContent>
 
           <TabsContent value="tcm" className="mt-6 space-y-6">
+            {/* TCM Overview Card */}
             <div className="bg-gradient-to-r from-purple-50 to-pink-50 p-6 rounded-2xl border-l-4 border-purple-500">
-              <h3 className="text-xl font-semibold text-gray-900 mb-4">
-                Eastern Wisdom (TCM View)
-              </h3>
-              <p className="text-purple-800 text-sm mb-4">
-                In Traditional Chinese Medicine, different parts of your tongue connect to different organs. Here's what yours is sharing:
-              </p>
+              <div className="flex items-center gap-3 mb-4">
+                <h3 className="text-xl font-semibold text-gray-900">
+                  {result.data.tcm_analysis?.section_title || 'Eastern Wisdom (TCM View)'}
+                </h3>
+              </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div style={{ backgroundColor: '#f0f3ea', borderLeftColor: '#123c14' }} className="p-4 rounded-xl border-l-3">
-                  <h4 className="font-semibold mb-2" style={{ color: '#2d4c2b' }}>
-                    Heart & Lungs (tip)
-                  </h4>
-                  <p className="text-sm" style={{ color: '#022406' }}>Healthy color = good circulation.</p>
-                </div>
+              {/* Findings */}
+              <div className="flex flex-col gap-4">
+                {result.data.tcm_analysis?.findings?.map((finding, index) => (
+                  <div
+                    key={index}
+                    className="p-5 rounded-2xl border-l-4 bg-white shadow-sm"
+                    style={{ borderLeftColor: '#a855f7' }}
+                  >
+                    <h4 className="font-semibold text-[15px] text-purple-900 mb-2">{finding.title}</h4>
+                    <p
+                      className="text-sm text-gray-700"
+                      dangerouslySetInnerHTML={{
+                        __html: finding.description.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>'),
+                      }}
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
 
-                <div style={{ backgroundColor: '#f0f3ea', borderLeftColor: '#123c14' }} className="p-4 rounded-xl border-l-3">
-                  <h4 className="font-semibold mb-2" style={{ color: '#2d4c2b' }}>
-                    Liver & Gallbladder (edges)
-                  </h4>
-                  <p className="text-sm" style={{ color: '#022406' }}>Smooth and balanced.</p>
-                </div>
+            {/* TCM Zones Card */}
+            <div className="bg-gradient-to-r from-purple-50 to-pink-50 p-6 rounded-2xl border-l-4 border-purple-500">
+              <div className="flex items-center gap-3 mb-4">
+                <h3 className="text-xl font-semibold text-gray-900">
+                  {result.data.tcm_analysis?.zoning_analysis?.title || 'Tongue Zoning Analysis'}
+                </h3>
+              </div>
 
-                <div style={{ backgroundColor: '#f0f3ea', borderLeftColor: '#123c14' }} className="p-4 rounded-xl border-l-3">
-                  <h4 className="font-semibold mb-2" style={{ color: '#2d4c2b' }}>
-                    Digestion (center)
-                  </h4>
-                  <p className="text-sm" style={{ color: '#022406' }}>Coating and color show your stomach and spleen are doing well.</p>
-                </div>
-
-                <div style={{ backgroundColor: '#f0f3ea', borderLeftColor: '#123c14' }} className="p-4 rounded-xl border-l-3">
-                  <h4 className="font-semibold mb-2" style={{ color: '#2d4c2b' }}>
-                    Kidneys (root)
-                  </h4>
-                  <p className="text-sm" style={{ color: '#022406' }}>Looks moist and vital—no signs of deficiency.</p>
-                </div>
+              {/* Zones */}
+              <div className="flex flex-col gap-6">
+                {result.data.tcm_analysis?.zoning_analysis?.zones?.map((zone, index) => (
+                  <div
+                    key={index}
+                    className="p-5 rounded-2xl border-l-4 bg-white shadow-sm hover:transform hover:-translate-y-1 transition-transform duration-200 shadow-sm"
+                    style={{ borderLeftColor: '#a855f7' }}
+                  >
+                    <h4 className="font-semibold text-[15px] text-purple-900 mb-2">
+                      {zone.zone}
+                    </h4>
+                    <p
+                      className="text-sm text-gray-700"
+                      dangerouslySetInnerHTML={{
+                        __html: zone.finding.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>'),
+                      }}
+                    />
+                  </div>
+                ))}
               </div>
             </div>
           </TabsContent>
 
+
+
           <TabsContent value="care" className="mt-6 space-y-6">
+            {/* Tips / Supportive Observations */}
             <div className="bg-gradient-to-r from-blue-50 to-cyan-50 p-6 rounded-2xl border-l-4 border-blue-500">
               <h3 className="text-xl font-semibold text-gray-900 mb-4">
-                What You Can Do
+                {result.data.tips_recommendations?.section_title}
               </h3>
 
               <div className="space-y-3">
-                <div style={{ backgroundColor: '#f0f3ea', borderLeftColor: '#123c14' }} className="p-4 rounded-xl border-l-3 flex items-start gap-3">
-                  <span className="text-sm" style={{ color: '#022406' }}>Keep your tongue clean—your current hygiene routine is working.</span>
-                </div>
-
-                <div style={{ backgroundColor: '#f0f3ea', borderLeftColor: '#123c14' }} className="p-4 rounded-xl border-l-3 flex items-start gap-3">
-                  <span className="text-sm" style={{ color: '#022406' }}>Stay hydrated and eat a balanced diet.</span>
-                </div>
-
-                <div style={{ backgroundColor: '#f0f3ea', borderLeftColor: '#123c14' }} className="p-4 rounded-xl border-l-3 flex items-start gap-3">
-                  <span className="text-sm" style={{ color: '#022406' }}>Consider trying TCM tongue exercises or mindful eating rituals.</span>
-                </div>
-
-                <div style={{ backgroundColor: '#f0f3ea', borderLeftColor: '#123c14' }} className="p-4 rounded-xl border-l-3 flex items-start gap-3">
-                  <span className="text-sm" style={{ color: '#022406' }}>No concerns spotted, just simple steps to keep things on track.</span>
-                </div>
+                {result.data.tips_recommendations?.tips?.map((tip, index) => (
+                  <div
+                    key={index}
+                    className="p-4 rounded-xl flex items-start gap-3"
+                    style={{ backgroundColor: '#f0f3ea'}}
+                  >
+                    <span className="text-sm text-gray-800">{tip.description}</span>
+                  </div>
+                ))}
               </div>
             </div>
 
-            <div className="bg-gradient-to-r from-green-50 to-green-100 p-5 rounded-2xl border-l-4 border-green-500 text-center">
-              <p className="text-green-800 text-lg font-medium leading-relaxed">
-                Your tongue reflects good internal balance—keep up the great care!
+            {/* Health Summary */}
+            <div
+              className={`p-5 rounded-2xl border-l-4 text-center ${result.data.health_summary?.clearance_note?.type === 'clearance'
+                  ? 'bg-green-50 border-green-500 text-green-800'
+                  : result.data.health_summary?.clearance_note?.type === 'caution'
+                    ? 'bg-yellow-50 border-yellow-500 text-yellow-800'
+                    : 'bg-red-50 border-red-500 text-red-800'
+                }`}
+            >
+              <p className="text-lg font-medium leading-relaxed">
+                {result.data.health_summary?.clearance_note?.text}
+              </p>
+            </div>
+
+            {/* Disclaimer */}
+            <div className="bg-gradient-to-r from-yellow-50 to-orange-50 border border-orange-200 p-4 rounded-xl text-center">
+              <p className="text-orange-800 text-sm leading-relaxed">
+                {result.data.disclaimer}
               </p>
             </div>
           </TabsContent>
+
         </Tabs>
       </div>
     );
@@ -362,32 +441,32 @@ const ScanResultModal = ({ open, onOpenChange, result }: ScanResultModalProps) =
       <div className="p-4 md:p-6">
         <Tabs defaultValue="health" className="w-full">
           <TabsList className="grid w-full grid-cols-4 bg-gray-50 border-b border-gray-200">
-            <TabsTrigger 
-              value="health" 
+            <TabsTrigger
+              value="health"
               className="flex items-center gap-2 data-[state=active]:bg-white data-[state=active]:border-b-2 data-[state=active]:border-[#113811]"
               style={{ color: '#294829' }}
             >
               <span className="hidden sm:inline">Health Signals</span>
               <span className="sm:hidden">Health</span>
             </TabsTrigger>
-            <TabsTrigger 
-              value="style" 
+            <TabsTrigger
+              value="style"
               className="flex items-center gap-2 data-[state=active]:bg-white data-[state=active]:border-b-2 data-[state=active]:border-[#113811]"
               style={{ color: '#294829' }}
             >
               <span className="hidden sm:inline">Writing Style</span>
               <span className="sm:hidden">Style</span>
             </TabsTrigger>
-            <TabsTrigger 
-              value="personality" 
+            <TabsTrigger
+              value="personality"
               className="flex items-center gap-2 data-[state=active]:bg-white data-[state=active]:border-b-2 data-[state=active]:border-[#113811]"
               style={{ color: '#294829' }}
             >
               <span className="hidden sm:inline">Personality</span>
               <span className="sm:hidden">You</span>
             </TabsTrigger>
-            <TabsTrigger 
-              value="tips" 
+            <TabsTrigger
+              value="tips"
               className="flex items-center gap-2 data-[state=active]:bg-white data-[state=active]:border-b-2 data-[state=active]:border-[#113811]"
               style={{ color: '#294829' }}
             >
@@ -552,8 +631,8 @@ const ScanResultModal = ({ open, onOpenChange, result }: ScanResultModalProps) =
       <div className="p-4 md:p-6">
         <Tabs defaultValue="structure" className="w-full">
           <TabsList className="grid w-full grid-cols-3 bg-gray-50 border-b border-gray-200">
-            <TabsTrigger 
-              value="structure" 
+            <TabsTrigger
+              value="structure"
               className="flex items-center gap-2 data-[state=active]:bg-white data-[state=active]:border-b-2 data-[state=active]:border-[#113811]"
               style={{ color: '#294829' }}
             >
@@ -561,8 +640,8 @@ const ScanResultModal = ({ open, onOpenChange, result }: ScanResultModalProps) =
               <span className="hidden sm:inline">Nail Structure</span>
               <span className="sm:hidden">Structure</span>
             </TabsTrigger>
-            <TabsTrigger 
-              value="circulation" 
+            <TabsTrigger
+              value="circulation"
               className="flex items-center gap-2 data-[state=active]:bg-white data-[state=active]:border-b-2 data-[state=active]:border-[#113811]"
               style={{ color: '#294829' }}
             >
@@ -570,8 +649,8 @@ const ScanResultModal = ({ open, onOpenChange, result }: ScanResultModalProps) =
               <span className="hidden sm:inline">Circulation & Health</span>
               <span className="sm:hidden">Health</span>
             </TabsTrigger>
-            <TabsTrigger 
-              value="recommendations" 
+            <TabsTrigger
+              value="recommendations"
               className="flex items-center gap-2 data-[state=active]:bg-white data-[state=active]:border-b-2 data-[state=active]:border-[#113811]"
               style={{ color: '#294829' }}
             >
@@ -812,6 +891,8 @@ const ScanResultModal = ({ open, onOpenChange, result }: ScanResultModalProps) =
     );
   };
 
+  console.log("result: ", result);
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="w-full max-w-4xl h-full max-h-screen md:max-h-[90vh] overflow-y-auto p-0 md:p-6 rounded-2xl">
@@ -820,37 +901,20 @@ const ScanResultModal = ({ open, onOpenChange, result }: ScanResultModalProps) =
             <div className="flex items-start md:items-center gap-2 md:gap-3 w-full md:w-auto">
               <div className="flex-1 md:flex-none">
                 <DialogTitle className="text-xl md:text-2xl font-bold leading-tight flex items-center gap-2 mb-2 text-white">
-                  {result.type === 'eye' ? (
-                    <>
-                      <Eye className="h-6 w-6" /> Your Eye Health Story
-                    </>
-                  ) : result.type === 'nail' ? (
-                    <>
-                      <Hand className="h-6 w-6" /> Fingernail Analysis Results
-                    </>
-                  ) : result.type === 'tongue' ? (
-                    <>
-                      <Heart className="h-6 w-6" /> Your Tongue Health Story
-                    </>
-                  ) : result.type === 'handwriting' ? (
-                    <>
-                      <User className="h-6 w-6" /> Your Handwriting Story
-                    </>
-                  ) : (
-                    result.title
-                  )}
+                  {result.type === 'eye' && <Eye className="h-6 w-6" />}
+                  {result.type === 'nail' && <Hand className="h-6 w-6" />}
+                  {result.type === 'tongue' && <Heart className="h-6 w-6" />}
+                  {result.type === 'handwriting' && <User className="h-6 w-6" />}
+                  {result.title}
                 </DialogTitle>
+
                 <p className="text-white/90 text-sm md:text-base mb-4">
-                  {result.type === 'eye' ? 'Windows to your beautiful soul and health!' : 
-                   result.type === 'nail' ? 'Comprehensive analysis of your nail health indicators' : 
-                   result.type === 'tongue' ? 'A window into your body\'s wisdom!' :
-                   result.type === 'handwriting' ? 'What your writing reveals about your amazing self!' :
-                   ''}
+                  {result.description}
                 </p>
                 <div className="flex items-start md:items-center gap-3 flex-col md:flex-row">
                   <div className="inline-flex items-center gap-2 bg-white/20 px-4 py-2 rounded-full text-sm text-white">
-                    <div className="w-2.5 h-2.5 bg-green-400 rounded-full"></div>
-                    <span>{result.category === 'optimal' ? 'Bright and beautiful!' : 'Watchful Insights'}</span>
+                    <div className={`w-2.5 h-2.5 rounded-full ${getStatusColorClass(result.statusColor)}`} />
+                    <span>{result.statusBadge}</span>
                   </div>
                   <span className="text-xs md:text-sm text-white/80 flex items-center gap-1">
                     <Calendar className="h-3 w-3 md:h-4 md:w-4" />
@@ -859,10 +923,10 @@ const ScanResultModal = ({ open, onOpenChange, result }: ScanResultModalProps) =
                 </div>
               </div>
             </div>
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              onClick={() => onOpenChange(false)} 
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => onOpenChange(false)}
               className="flex-shrink-0 text-white hover:bg-white/20 absolute top-4 right-4 w-9 h-9 rounded-full"
             >
               <X className="h-5 w-5" />
@@ -870,11 +934,11 @@ const ScanResultModal = ({ open, onOpenChange, result }: ScanResultModalProps) =
           </div>
         </DialogHeader>
 
-        {result.type === 'eye' ? renderEyeAnalysisContent() : 
-         result.type === 'nail' ? renderNailAnalysisContent() : 
-         result.type === 'tongue' ? renderTongueAnalysisContent() :
-         result.type === 'handwriting' ? renderHandwritingAnalysisContent() :
-         renderGenericContent()}
+        {result.type === 'eye' ? renderEyeAnalysisContent() :
+          result.type === 'nail' ? renderNailAnalysisContent() :
+            result.type === 'tongue' ? renderTongueAnalysisContent() :
+              result.type === 'handwriting' ? renderHandwritingAnalysisContent() :
+                renderGenericContent()}
       </DialogContent>
     </Dialog>
   );

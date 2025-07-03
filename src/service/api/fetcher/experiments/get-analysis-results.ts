@@ -1,12 +1,13 @@
 import { Client } from "../../api.client";
 
-const getEyeAnalysis = () => `/eye/analyze/v4`;
+const getImageAnalysis = () => `/eye/analyze/v4`;
 
-export const getEyeAnalysisFetcher = ({ file }: { file: File }) => {
+export const getImageAnalysisFetcher = ({ file, type }: { file: File, type: string}) => {
   const formData = new FormData();
   formData.append("image", file); 
+  formData.append("type", type);
 
-  return Client.post(getEyeAnalysis(), formData, {
+  return Client.post(getImageAnalysis(), formData, {
     headers: {
       "Content-Type": "multipart/form-data",
     },

@@ -21,4 +21,9 @@ export interface ScanResult {
   actions: ScanAction[];
   timestamp: Date;
   imageData?: string;
+  statusBadge: string;
+  statusColor: string;
+  bannerText: string;
+  bannerType: 'celebration'|'alert'|'caution';
+  data: any;
 }

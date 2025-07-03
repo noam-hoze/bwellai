@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { X, RotateCcw, CheckCircle, AlertCircle } from "lucide-react";
 import { ScanResult } from "@/types/scanResults";
-import { useEyeAnalysis } from "@/service/hooks/experiments/useGetAnalysis";
+import { useImageAnalysis } from "@/service/hooks/experiments/useGetAnalysis";
 import { dataURLtoFile } from "@/utils/utils";
 
 interface ScanProcessingLoaderProps {
@@ -24,21 +24,21 @@ const ScanProcessingLoader = ({
   const [hasTriggered, setHasTriggered] = useState(false); // prevents double-send
 
   const {
-    mutate: analyzeEye,
+    mutate: analyzeImage,
     data,
     isPending,
     isSuccess,
     isError,
     error: mutationError,
-  } = useEyeAnalysis();
+  } = useImageAnalysis();
 
   useEffect(() => {
     if (!imageData || hasTriggered) return;
     setHasTriggered(true);
 
-    const file = dataURLtoFile(imageData, "eye-scan.jpg");
+    const file = dataURLtoFile(imageData, "scan-image.jpg");
 
-    analyzeEye({file});
+    analyzeImage({file, type: scanType});
   }, [imageData]);
 
   useEffect(() => {
@@ -51,14 +51,19 @@ const ScanProcessingLoader = ({
       const result: ScanResult = {
         id: Date.now().toString(),
         type: scanType,
-        title: "Eye Scan Result",
-        description: "Detailed insights from your eye scan.",
-        category: "watchful", // Placeholder or infer based on response
+        title: raw.header.title,
+        description: raw.header.subtitle,
+        category: raw.assessment_type,
         westernInsights: raw.westernInsights ?? [],
         traditionalInsights: raw.traditionalInsights ?? [],
         recommendations: raw.recommendations ?? [],
         actions: [],
         timestamp: new Date(),
+        statusBadge: raw.header.status_badge,
+        statusColor: raw.header.status_color,
+        bannerText: raw.banner.text,
+        bannerType: raw.banner.type,
+        data: raw
       };
 
       onAnalysisComplete(result);
