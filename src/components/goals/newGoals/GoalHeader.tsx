@@ -32,17 +32,27 @@ const GoalHeader = ({
 
   const { deleteUserGoal } = useDeleteUserGoal();
 
-  const deleteGoalHandler = useCallback(() => {
+const deleteGoalHandler = useCallback(async () => {
+  try {
     console.log("Deleting goal with ID:", goalId);
-    deleteUserGoal(goalId);
+    await deleteUserGoal(goalId); // wait for the deletion to complete
     console.log("Goal deleted successfully");
-    navigate('/goals'); // Redirect to goals page after deletion
-  }, [deleteUserGoal, goalId]);
+    navigate('/goals'); // redirect after deletion completes
+  } catch (error) {
+    console.error("Failed to delete goal:", error);
+  }
+}, [deleteUserGoal, goalId, navigate]);
+
 
   const handleShareReport = () => {
-    // Generate a unique report ID - in a real app this would come from the backend
-    const reportId = `report-${goalId}-${new Date().getTime()}`;
-    const shareUrl = `/shared-treatment-report/${reportId}`;
+    
+const params = new URLSearchParams({
+  report: goalId,
+  timestamp: Date.now().toString(),
+});
+const reportQueryParams = `?${params.toString()}`;
+
+const shareUrl = `/shared-treatment-report/${reportQueryParams}`;
     
     // Navigate to the shared report page
     window.open(shareUrl, '_blank');
@@ -79,14 +89,14 @@ const GoalHeader = ({
           >
             <Trash2 className="h-4 w-4 text-gray-600" />
           </Button>
-          {/*<Button 
+          <Button 
             variant="outline" 
             size="icon"
             className="rounded-full"
             onClick={handleShareReport}
           >
             <Share className="h-4 w-4 text-gray-600" />
-          </Button>*/}
+          </Button>
         </div>
       </div>
       <div className="flex items-center ml-10 space-x-4 text-sm">
@@ -97,12 +107,12 @@ const GoalHeader = ({
           </div>
           <span className="text-gray-700">{completionPercentage}%</span>
         </div>
-        {/*<div className="flex items-center text-amber-500">
+        <div className="flex items-center text-amber-500">
           <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
             <path d="M11.983 1.907a.75.75 0 0 0-1.292-.657l-8.5 9.5A.75.75 0 0 0 2.75 12h6.572l-1.305 6.093a.75.75 0 0 0 1.292.657l8.5-9.5A.75.75 0 0 0 17.25 8h-6.572l1.305-6.093Z" />
           </svg>
           <span>{streak} days</span>
-        </div>*/}
+        </div>
       </div>
     </div>
   );

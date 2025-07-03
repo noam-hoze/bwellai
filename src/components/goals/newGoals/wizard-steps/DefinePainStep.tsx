@@ -84,28 +84,84 @@ const DefinePainStep: React.FC<DefinePainStepProps> = ({
       <CardContent className="p-6 space-y-6">
         <div className="space-y-3">
           <h3 className="font-semibold">Pain Level</h3>
-          <div className="flex flex-wrap gap-2 items-center">
-            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((level) => {
-              const colors = getPainLevelColors(level);
-              const isSelected = goalData.painLevel === level;
+          <div className="space-y-2">
+         {/* Single row for web view (md and up) */}
+            <div className="hidden md:flex gap-2 items-center justify-center">
+              {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((level) => {
+                const colors = getPainLevelColors(level);
+                const isSelected = goalData.painLevel === level;
+                
+                return (
+                  <button
+                    key={level}
+                    className={cn(
+                      "w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium transition-all duration-200",
+                      colors.bg,
+                      colors.text,
+                      colors.hover,
+                      isSelected && "ring-2 ring-offset-2 ring-wellness-bright-green scale-110 shadow-lg",
+                      "hover:scale-105"
+                    )}
+                    onClick={() => handlePainLevelChange(level)}
+                  >
+                    {level}
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Two rows for mobile view */}
+            <div className="md:hidden space-y-2">
+              {/* First row: 1-5 */}
+              <div className="flex gap-2 items-center justify-center">
+                {[1, 2, 3, 4, 5].map((level) => {
+                  const colors = getPainLevelColors(level);
+                  const isSelected = goalData.painLevel === level;
+                  
+                  return (
+                    <button
+                      key={level}
+                      className={cn(
+                        "w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium transition-all duration-200",
+                        colors.bg,
+                        colors.text,
+                        colors.hover,
+                        isSelected && "ring-2 ring-offset-2 ring-wellness-bright-green scale-110 shadow-lg",
+                        "hover:scale-105"
+                      )}
+                      onClick={() => handlePainLevelChange(level)}
+                    >
+                      {level}
+                    </button>
+                  );
+                })}
+              </div>
               
-              return (
-                <button
-                  key={level}
-                  className={cn(
-                    "w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium transition-all duration-200",
-                    colors.bg,
-                    colors.text,
-                    colors.hover,
-                    isSelected && "ring-2 ring-offset-2 ring-wellness-bright-green scale-110 shadow-lg",
-                    "hover:scale-105"
-                  )}
-                  onClick={() => handlePainLevelChange(level)}
-                >
-                  {level}
-                </button>
-              );
-            })}
+              {/* Second row: 6-10 */}
+              <div className="flex gap-2 items-center justify-center">
+                {[6, 7, 8, 9, 10].map((level) => {
+                  const colors = getPainLevelColors(level);
+                  const isSelected = goalData.painLevel === level;
+                  
+                  return (
+                    <button
+                      key={level}
+                      className={cn(
+                        "w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium transition-all duration-200",
+                        colors.bg,
+                        colors.text,
+                        colors.hover,
+                        isSelected && "ring-2 ring-offset-2 ring-wellness-bright-green scale-110 shadow-lg",
+                        "hover:scale-105"
+                      )}
+                      onClick={() => handlePainLevelChange(level)}
+                    >
+                      {level}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
           </div>
           {/* Dynamic Description Display */}
           {goalData.painLevel && (

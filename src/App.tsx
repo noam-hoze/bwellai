@@ -39,6 +39,7 @@ import MyGoals from "./pages/MyGoals";
 import GoalDetail from "./pages/GoalDetail";
 import NewGoalDetail from "./pages/NewGoalDetail";
 import SharedTreatmentReport from "./pages/SharedTreatmentReport";
+import Experiments from "./pages/Experiments";
 
 
 const queryClient = new QueryClient();
@@ -95,6 +96,7 @@ const App = () => {
                       element={<FoodScanAnalysis />}
                     />
                     <Route path="/risk-score" element={<RiskScore />} />
+                    <Route path="/experiments" element={<Experiments />} />
                     <Route path="/connections" element={<Connections />} />
                     <Route path="/wallet" element={<Wallet />} />
                     <Route path="/settings" element={<Settings />} />
@@ -113,7 +115,7 @@ const App = () => {
                       path="/shared-report/:reportId"
                       element={<SharedReport />}
                     />
-                    <Route path="/shared-treatment-report/:reportId" element={<SharedTreatmentReport />} />
+                    <Route path="/shared-treatment-report" element={<SharedTreatmentReport />} />
                     <Route path="*" element={<NotFound />} />
                   </Routes>
                 </BrowserRouter>

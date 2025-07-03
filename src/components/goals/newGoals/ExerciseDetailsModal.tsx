@@ -113,7 +113,7 @@ const ExerciseDetailsModal = ({
             </div> 
 
             {/* Tips */}
-            <div className="bg-wellness-light-green p-4 rounded-lg">
+           {/*<div className="bg-wellness-light-green p-4 rounded-lg">
               <h3 className="font-semibold text-wellness-bright-green">Tips for Best Results</h3>
               <ul className="text-sm mt-2 space-y-1 text-gray-700">
                 <li>• Focus on proper form rather than speed</li>
@@ -121,7 +121,7 @@ const ExerciseDetailsModal = ({
                 <li>• Stop if you feel sharp or shooting pain</li>
                 <li>• Keep movements smooth and controlled</li>
               </ul>
-            </div>
+            </div>*/}
           </div>
 
           {/* Actions */}

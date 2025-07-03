@@ -12,9 +12,12 @@ import {
   Settings,
   Menu,
   Flag,
+  Beaker,
+  MoreHorizontal,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
 
 const Header = () => {
   const location = useLocation();
@@ -27,7 +30,7 @@ const Header = () => {
 
   const navLinks = [
     { path: "/", label: "Home", icon: Home },
-    { path: "/reports", label: "Reports", icon: FileText },
+    { path: "/reports", label: "Labs", icon: FileText },
     // { path: "/body-metrics", label: "Body Metrics", icon: Gauge },
     { path: "/sleep", label: "Sleep", icon: Moon },
     { path: "/activity", label: "Activity", icon: Activity },
@@ -35,6 +38,10 @@ const Header = () => {
     // { path: "/risk-score", label: "Risk Score", icon: Activity },
     { path: "/goals", label: "My Goals", icon: Flag },
     { path: "/wallet", label: "Wallet", icon: Wallet },
+  ];
+
+    const moreNavLinks = [
+    { path: "/experiments", label: "Experiments", icon: Beaker },
   ];
 
   return (
@@ -66,6 +73,37 @@ const Header = () => {
                 {link.label}
               </a>
             ))}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button className={cn(
+                  "nav-link flex items-center gap-1 relative",
+                  isActive("/body-metrics") || isActive("/risk-score") || isActive("/experiments")
+                    ? "text-wellness-bright-green after:bg-wellness-bright-green" 
+                    : "text-gray-600 hover:text-wellness-bright-green"
+                )}>
+                  <MoreHorizontal className="h-4 w-4" />
+                  More
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="bg-white border border-gray-100 shadow-md">
+                {moreNavLinks.map((link) => (
+                  <DropdownMenuItem key={link.path} asChild>
+                    <Link 
+                      to={link.path} 
+                      className={cn(
+                        "flex w-full items-center gap-2 px-3 py-2", 
+                        isActive(link.path) 
+                          ? "text-wellness-bright-green"
+                          : "text-gray-600 hover:text-wellness-bright-green"
+                      )}
+                    >
+                      <link.icon className="h-4 w-4" />
+                      {link.label}
+                    </Link>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
           </nav>
         </div>
 

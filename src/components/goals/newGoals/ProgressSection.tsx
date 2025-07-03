@@ -2,16 +2,16 @@
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { 
-  TrendingDown, 
-  Download, 
-  Info, 
-  CheckCircle, 
-  Activity, 
-  BarChart, 
-  Share2, 
-  Award, 
-  TrendingUp
+import {
+  TrendingDown,
+  Info,
+  CheckCircle,
+  Activity,
+  BarChart,
+  Share2,
+  Award,
+  TrendingUp,
+  Eye,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import PainProgressChart from "./PainProgressChart";
@@ -62,17 +62,23 @@ const ProgressSection = ({
   targetPainLevel,
   insights,
   milestones,
-  goalData
+  goalData,
+
 }: ProgressSectionProps) => {
 
-  const handleDownloadReport = () => {
-    // In a real app, this would generate and download a PDF report
-    alert("Downloading progress report...");
-  };
+  const handleViewReport = () => {
 
-  const handleShareReport = () => {
-    // In a real app, this would open sharing options
-    alert("Opening sharing options...");
+    const params = new URLSearchParams({
+      report: goalData.id,
+      timestamp: Date.now().toString(),
+    });
+
+    const reportQueryParams = `?${params.toString()}`;
+
+    const shareUrl = `/shared-treatment-report/${reportQueryParams}`;
+
+    // Navigate to the shared report page
+    window.open(shareUrl, '_blank');
   };
 
   const exercisesCompleted = exercises.filter(exercise => exercise.is_completed).length;
@@ -81,17 +87,17 @@ const ProgressSection = ({
   const adherenceRate = Math.round((exercisesCompleted / exercisesPrescribed) * 100)
 
   function countCompletedDays(exercises): number {
-  const completedDays = new Set<string>();
+    const completedDays = new Set<string>();
 
-  exercises.forEach((exercise) => {
-    if (exercise.is_completed) {
-      const day = new Date(exercise.date).toISOString().split("T")[0];
-      completedDays.add(day);
-    }
-  });
+    exercises.forEach((exercise) => {
+      if (exercise.is_completed) {
+        const day = new Date(exercise.date).toISOString().split("T")[0];
+        completedDays.add(day);
+      }
+    });
 
-  return completedDays.size;
-}
+    return completedDays.size;
+  }
 
   const completedDays = countCompletedDays(exercises);
 
@@ -103,7 +109,7 @@ const ProgressSection = ({
       <Card className="bg-green-50">
         <CardContent className="p-4">
           <h3 className="text-lg font-semibold text-green-700 mb-4">Overall Plan Progress</h3>
-          
+
           {/* Main Progress Bar */}
           <div className="mb-6">
             <div className="flex justify-between items-center mb-2">
@@ -112,7 +118,7 @@ const ProgressSection = ({
             </div>
             <Progress value={completionPercentage} className="h-3 bg-green-100" indicatorColor="green" />
           </div>
-          
+
           {/* 4-Column Grid with Key Stats */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <Card className="bg-white">
@@ -123,8 +129,8 @@ const ProgressSection = ({
             </Card>
             <Card className="bg-white">
               <CardContent className="p-4 text-center">
-                <span className="text-xl font-bold text-green-600"></span>
-                <p className="text-base text-gray-600">Current Streak<br/>Coming Soon</p>
+                <span className="text-3xl font-bold text-green-600">{streak}</span>
+                <p className="text-sm text-gray-600">Current Streak<br /></p>
               </CardContent>
             </Card>
             <Card className="bg-white">
@@ -140,27 +146,27 @@ const ProgressSection = ({
               </CardContent>
             </Card>
           </div>
-          
+
           {/* Download Button */}
-          {/*<Button 
-            className="w-full mt-6" 
-            onClick={handleDownloadReport}
+          <Button
+            className="w-full mt-6"
+            onClick={handleViewReport}
           >
-            <Download className="h-4 w-4 mr-2" /> Download Full Progress Report
-          </Button>*/}
+            <Eye className="h-4 w-4 mr-2" /> View Full Progress Report
+          </Button>
         </CardContent>
       </Card>
 
-            {/* Exercise Difficulty Analysis */}
+      {/* Exercise Difficulty Analysis */}
       <Card>
         <CardContent className="p-4">
-          <h3 className="text-lg font-semibold mb-4">Exercise Difficulty Analysis</h3> 
-          
+          <h3 className="text-lg font-semibold mb-4">Exercise Difficulty Analysis</h3>
+
           {/* Difficulty Analysis Component */}
           <DifficultyAnalysis exercises={exercises} />
-          
+
           {/* Insight Box */}
-       {/*<div className="bg-blue-50 p-4 rounded-lg mt-4 flex items-start">
+          {/*<div className="bg-blue-50 p-4 rounded-lg mt-4 flex items-start">
             <Info className="h-5 w-5 text-blue-500 mt-0.5 mr-3 flex-shrink-0" />
             <p className="text-sm text-blue-700">
               Your difficulty ratings show you find mobility exercises most challenging. 
@@ -194,7 +200,7 @@ const ProgressSection = ({
           <PainProgressChart userGoalId={userGoalId} initialPainLevel={goalData?.pain_assessment?.initial_pain_level} />
 
           {/* Chart Summary */}
-         <div className="grid grid-cols-3 gap-4 mt-4 text-center">
+          <div className="grid grid-cols-3 gap-4 mt-4 text-center">
             <div>
               <div className="text-sm text-gray-500">Initial Pain</div>
               <div className="font-bold text-lg">{initialPainLevel}/10</div>
@@ -210,7 +216,7 @@ const ProgressSection = ({
           </div>
         </CardContent>
       </Card>
-      
+
 
     </div>
   );
