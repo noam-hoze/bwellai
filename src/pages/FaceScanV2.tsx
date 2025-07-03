@@ -448,7 +448,7 @@ const FaceScan = () => {
   const handleStartScan = () => {
     const token = localStorage.getItem('token');
     if (token) {
-      window.location.href = `https://localhost:5173?token=${token}`;
+      window.location.href = `${import.meta.env.VITE_SHENAI_SCANNER_URL}?token=${token}`;
     } else {
       console.error('Authentication token not found.');
     }

@@ -170,20 +170,7 @@ const Index = () => {
   };
 
   const handleScanFace = () => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      // Redirect to the standalone scanner app, passing the token
-      const scannerUrl = import.meta.env.VITE_SHENAI_SCANNER_URL;
-      window.location.href = `${scannerUrl}?token=${token}`;
-    } else {
-      // Handle the case where the user is not authenticated
-      console.error('Authentication token not found.');
-      toast({
-        title: 'Authentication Error',
-        description: 'You must be logged in to perform a face scan.',
-        variant: 'destructive',
-      });
-    }
+    navigate('/face-scan');
   };
 
   const overallDataStatus =
